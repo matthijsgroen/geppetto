@@ -1,0 +1,27 @@
+import React from "react";
+import styled from "styled-components";
+
+interface MenuProps {
+  title: string;
+}
+
+const MenuContainer = styled.div`
+  background-color: ${({ theme }) => theme.colors.background};
+  padding: 2px;
+`;
+
+const MenuHeader = styled.h1`
+  color: white;
+  font-size: 16px;
+  font-weight: normal;
+  margin: 0;
+`;
+
+const Menu: React.FC<MenuProps> = ({ title, children }) => (
+  <MenuContainer>
+    <MenuHeader>{title}</MenuHeader>
+    {children}
+  </MenuContainer>
+);
+
+export default Menu;

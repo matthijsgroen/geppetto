@@ -1,6 +1,19 @@
 import React from "react";
-import WebGLCanvas from "./animation/WebGLCanvas";
+import { DefaultTheme, ThemeProvider } from "styled-components";
+import TextureMapCanvas from "./animation/TextureMapCanvas";
+import Menu from "./components/Menu";
+import AppLayout from "./templates/AppLayout";
 
-const App: React.FC = () => <WebGLCanvas />;
+const defaultTheme: DefaultTheme = {
+  colors: {
+    background: "#333333",
+  },
+};
+
+const App: React.FC = () => (
+  <ThemeProvider theme={defaultTheme}>
+    <AppLayout menu={<Menu title="Layers" />} main={<TextureMapCanvas />} />
+  </ThemeProvider>
+);
 
 export default App;
