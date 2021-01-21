@@ -1,10 +1,18 @@
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 
 const textureMapVertexShader = `
-  attribute vec3 coordinates;
+  attribute vec2 coordinates;
+  uniform vec4 viewport;
 
-  void main(void) {
-      gl_Position = vec4(coordinates, 1.0);
+  mat4 viewportScale = mat4(
+    2.0 / viewport.x, 0, 0, 0,   
+    0, -2.0 / viewport.y, 0, 0,    
+    0, 0, 1, 0,    
+    -1, +1, 0, 1
+  );
+
+  void main() {
+    gl_Position = viewportScale * vec4(coordinates + viewport.ba, 0.0, 1.0);
   }
 `;
 
@@ -14,21 +22,28 @@ const textureMapFragmentShader = `
   }
 `;
 
-export const showTextureMap = (): WebGLRenderer => (
-  gl: WebGLRenderingContext
+export const showTextureMap = (img: HTMLImageElement): WebGLRenderer => (
+  gl: WebGLRenderingContext,
+  { getSize }
 ) => {
-  const stride = 3;
+  const stride = 2;
   // prettier-ignore
   const vertices = [
-    -0.5, 0.5, 0.0,
-    -0.5, -0.5, 0.0, 
-    0.5, -0.5, 0.0,
+    0, 0,
+    40, 0,
+    40, 0,
+    40, 40,
+    40, 40,
+    0, 0,
 
-    -0.5, 0.5, 0.0,
-    0.5, 0.5, 0.0, 
-    0.5, -0.5, 0.0
+    0, 0,
+    0, 40,
+    0, 40,
+    40, 40,
+    40, 40,
+    0, 0
   ];
-  const indices = [0, 1, 2, 4, 4, 5];
+  const indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   const vertexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -65,8 +80,22 @@ export const showTextureMap = (): WebGLRenderer => (
       /* offset */ 0
     );
     gl.enableVertexAttribArray(coord);
+    const [canvasWidth, canvasHeight] = getSize();
+    const landscape = img.width / canvasWidth > img.height / canvasHeight;
+
+    const [x, y] = landscape
+      ? [0, (canvasHeight - (canvasWidth / img.width) * img.height) / 2]
+      : [(canvasWidth - (canvasHeight / img.height) * img.width) / 2, 0];
+
+    gl.uniform4f(
+      gl.getUniformLocation(shaderProgram, "viewport"),
+      canvasWidth,
+      canvasHeight,
+      x,
+      y
+    );
 
     // gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-    gl.drawArrays(gl.LINE_STRIP, 0, indices.length);
+    gl.drawArrays(gl.LINES, 0, indices.length);
   };
 };

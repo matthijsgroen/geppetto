@@ -23,7 +23,10 @@ const startWebGL = async (
 
   const image = await loadImage(url);
 
-  const api = await webGLScene(node, [showTexture(image), showTextureMap()]);
+  const api = await webGLScene(node, [
+    showTexture(image),
+    showTextureMap(image),
+  ]);
   api.render();
   let debounce: ReturnType<typeof setTimeout>;
   const onResize = () => {
