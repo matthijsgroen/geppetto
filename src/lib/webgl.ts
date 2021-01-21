@@ -27,7 +27,7 @@ export const compileShader = (
 };
 
 interface ProgramAPI {
-  getUnit(): number;
+  getUnit(): { unit: number; index: number };
   getSize(): [number, number];
 }
 
@@ -78,7 +78,7 @@ export const webGLScene = async (
   ];
 
   const api: ProgramAPI = {
-    getUnit: () => units[textureCounter++],
+    getUnit: () => ({ index: textureCounter, unit: units[textureCounter++] }),
     getSize: () => [element.width, element.height],
   };
 
