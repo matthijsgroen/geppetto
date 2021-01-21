@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 interface AppLayoutProps {
+  icons?: React.ReactElement[];
   menu?: React.ReactElement;
   main?: React.ReactElement;
 }
@@ -11,6 +12,13 @@ const Main = styled.section`
   flex-direction: row;
   width: 100%;
   height: 100%;
+`;
+
+const IconContainer = styled.aside`
+  flex: 0 0 42px;
+  height: 100%;
+  background-color: ${({ theme }) => theme.colors.background};
+  width: 100%;
 `;
 
 const MenuContainer = styled.aside`
@@ -23,8 +31,9 @@ const MainContainer = styled.div`
   height: 100%;
 `;
 
-const AppLayout: React.FC<AppLayoutProps> = ({ menu, main }) => (
+const AppLayout: React.FC<AppLayoutProps> = ({ icons, menu, main }) => (
   <Main>
+    <IconContainer>{icons}</IconContainer>
     <MenuContainer>{menu}</MenuContainer>
     <MainContainer>{main}</MainContainer>
   </Main>

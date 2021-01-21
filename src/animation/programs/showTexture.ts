@@ -17,11 +17,15 @@ const textureFragmentShader = `
   varying mediump vec2 vTextureCoord;
   uniform sampler2D uSampler;
   uniform mediump vec2 uTextureDimensions;
+  uniform mediump vec3 backgroundColor;
 
   void main(void) {
     highp vec2 coord = vTextureCoord.xy / uTextureDimensions;
     mediump vec4 texelColor = texture2D(uSampler, coord);
-    gl_FragColor = texelColor * texelColor.w;
+
+    lowp vec4 baseColor = vec4(backgroundColor, 1.0);
+
+    gl_FragColor = baseColor * (1.0-texelColor.w) + texelColor * texelColor.w;
   }
 `;
 
@@ -125,6 +129,13 @@ export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
     gl.activeTexture(unit.unit);
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.uniform1i(gl.getUniformLocation(shaderProgram, "uSampler"), unit.index);
+
+    gl.uniform3f(
+      gl.getUniformLocation(shaderProgram, "backgroundColor"),
+      0.6,
+      0.6,
+      0.6
+    );
 
     gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
   };

@@ -8,7 +8,7 @@ interface MenuItemProps {
 const Item = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
   padding: 2px;
-  color: white;
+  color: ${({ theme }) => theme.colors.text};
   font-size: 16px;
   font-weight: normal;
 `;

@@ -1,8 +1,11 @@
+import { ShapesDefinition } from "../../lib/types";
+import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 
 const textureMapVertexShader = `
   attribute vec2 coordinates;
   uniform vec4 viewport;
+  uniform float scale;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -12,7 +15,7 @@ const textureMapVertexShader = `
   );
 
   void main() {
-    gl_Position = viewportScale * vec4(coordinates + viewport.ba, 0.0, 1.0);
+    gl_Position = viewportScale * vec4((coordinates * scale) + viewport.ba, 0.0, 1.0);
   }
 `;
 
@@ -22,28 +25,36 @@ const textureMapFragmentShader = `
   }
 `;
 
-export const showTextureMap = (img: HTMLImageElement): WebGLRenderer => (
-  gl: WebGLRenderingContext,
-  { getSize }
-) => {
+export const showTextureMap = (
+  img: HTMLImageElement,
+  shapes: ShapesDefinition[]
+): WebGLRenderer => (gl: WebGLRenderingContext, { getSize }) => {
   const stride = 2;
-  // prettier-ignore
-  const vertices = [
-    0, 0,
-    40, 0,
-    40, 0,
-    40, 40,
-    40, 40,
-    0, 0,
 
-    0, 0,
-    0, 40,
-    0, 40,
-    40, 40,
-    40, 40,
-    0, 0
-  ];
-  const indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const vertices = shapes.reduce((coordList, shape) => {
+    const list = verticesFromPoints(shape.points);
+    const newCoords = [];
+    for (let i = 0; i < list.length; i += 6) {
+      newCoords.push(
+        list[i],
+        list[i + 1],
+        list[i + 2],
+        list[i + 3],
+        list[i + 2],
+        list[i + 3],
+        list[i + 4],
+        list[i + 5],
+        list[i + 4],
+        list[i + 5],
+        list[i],
+        list[i + 1]
+      );
+    }
+    return coordList.concat(newCoords);
+  }, [] as number[]);
+  const indices = Array(vertices.length / 2)
+    .fill(0)
+    .map((_, i) => i);
 
   const vertexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -83,9 +94,14 @@ export const showTextureMap = (img: HTMLImageElement): WebGLRenderer => (
     const [canvasWidth, canvasHeight] = getSize();
     const landscape = img.width / canvasWidth > img.height / canvasHeight;
 
-    const [x, y] = landscape
-      ? [0, (canvasHeight - (canvasWidth / img.width) * img.height) / 2]
-      : [(canvasWidth - (canvasHeight / img.height) * img.width) / 2, 0];
+    const scale = landscape
+      ? canvasWidth / img.width
+      : canvasHeight / img.height;
+
+    const [x, y] = [
+      (canvasWidth - scale * img.width) / 2,
+      (canvasHeight - scale * img.height) / 2,
+    ];
 
     gl.uniform4f(
       gl.getUniformLocation(shaderProgram, "viewport"),
@@ -94,6 +110,8 @@ export const showTextureMap = (img: HTMLImageElement): WebGLRenderer => (
       x,
       y
     );
+
+    gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
 
     // gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     gl.drawArrays(gl.LINES, 0, indices.length);

@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { ShapesDefinition } from "../lib/types";
 import { webGLScene } from "../lib/webgl";
 import { showTexture } from "./programs/showTexture";
 import { showTextureMap } from "./programs/showTextureMap";
@@ -15,7 +16,8 @@ const loadImage = async (url: string): Promise<HTMLImageElement> =>
 
 const startWebGL = async (
   node: HTMLCanvasElement,
-  url: string
+  url: string,
+  shapes: ShapesDefinition[]
 ): Promise<() => void> => {
   const rect = node.getBoundingClientRect();
   node.width = rect.width * window.devicePixelRatio;
@@ -25,7 +27,7 @@ const startWebGL = async (
 
   const api = await webGLScene(node, [
     showTexture(image),
-    showTextureMap(image),
+    showTextureMap(image, shapes),
   ]);
   api.render();
   let debounce: ReturnType<typeof setTimeout>;
@@ -48,15 +50,16 @@ const startWebGL = async (
 
 export interface TextureMapCanvasProps {
   url: string;
+  shapes: ShapesDefinition[];
 }
 
-const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({ url }) => {
+const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({ url, shapes }) => {
   const ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
     if (ref && ref.current) {
       const node = ref.current;
       let cleanup: () => void;
-      startWebGL(node, url).then((result) => {
+      startWebGL(node, url, shapes).then((result) => {
         cleanup = result;
       });
       return () => {
