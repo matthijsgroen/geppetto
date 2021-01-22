@@ -15,6 +15,10 @@ const imageDefinition: ImageDefinition = {
         [27, 7],
       ],
       settings: {
+        parent: {
+          id: "body",
+          offset: [-25, -235, 3],
+        },
         anchor: [16, 12],
       },
     },
@@ -35,7 +39,7 @@ const imageDefinition: ImageDefinition = {
       settings: {
         parent: {
           id: "body",
-          offset: [-300, 40, 3],
+          offset: [10, -235, 3],
         },
         anchor: [50, 11],
       },

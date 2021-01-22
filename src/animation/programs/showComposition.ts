@@ -1,12 +1,13 @@
 import Delaunator from "delaunator";
-import { ShapesDefinition } from "../../lib/types";
+import { ShapesDefinition, Vec3 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 
 const compositionVertexShader = `
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;
   varying lowp vec2 vTextureCoord;
-  uniform vec4 viewport;
+  uniform vec2 viewport;
+  uniform vec3 translate;
   uniform float scale;
 
 
@@ -18,7 +19,7 @@ const compositionVertexShader = `
   );
 
   void main() {
-    gl_Position = viewportScale * vec4((coordinates * scale) + viewport.ba, 0.0, 1.0);
+    gl_Position = viewportScale * vec4((coordinates + translate.xy) * scale, translate.z, 1.0);
     vTextureCoord = aTextureCoord.xy;
   }
 `;
@@ -38,6 +39,23 @@ const compositionFragmentShader = `
   }
 `;
 
+const getParentOffset = (
+  shape: ShapesDefinition | undefined,
+  shapes: ShapesDefinition[]
+): Vec3 => {
+  if (!shape || !shape.settings.parent) {
+    return [0, 0, 0];
+  }
+  const parentId = shape.settings.parent.id;
+  const parent = shapes.find((e) => e.name === parentId);
+  const parentOffset = getParentOffset(parent, shapes);
+  return [
+    shape.settings.parent.offset[0] + parentOffset[0],
+    shape.settings.parent.offset[1] + parentOffset[1],
+    shape.settings.parent.offset[2] + parentOffset[2],
+  ];
+};
+
 export const showComposition = (
   img: HTMLImageElement,
   shapes: ShapesDefinition[]
@@ -53,7 +71,10 @@ export const showComposition = (
 
   const stride = 4;
 
-  const elements: { start: number; amount: number }[] = [];
+  const elements: {
+    start: number;
+    amount: number;
+  }[] = [];
   const indices: number[] = [];
   const vertices: number[] = [];
 
@@ -127,17 +148,10 @@ export const showComposition = (
         ? canvasWidth / img.width
         : canvasHeight / img.height;
 
-      const [x, y] = [
-        (canvasWidth - scale * img.width) / 2,
-        (canvasHeight - scale * img.height) / 2,
-      ];
-
-      gl.uniform4f(
+      gl.uniform2f(
         gl.getUniformLocation(shaderProgram, "viewport"),
         canvasWidth,
-        canvasHeight,
-        x,
-        y
+        canvasHeight
       );
 
       gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
@@ -153,7 +167,28 @@ export const showComposition = (
         unit.index
       );
 
-      elements.forEach((element) => {
+      const basePosition = [
+        canvasWidth / 2 / scale,
+        canvasHeight / 2 / scale,
+        0.1,
+      ];
+      const calculatedElements = elements.map((element, index) => {
+        const shape = shapes[index];
+        const itemOffset = getParentOffset(shape, shapes);
+        return {
+          name: shape.name,
+          ...element,
+          x: basePosition[0] + itemOffset[0] - shape.settings.anchor[0],
+          y: basePosition[1] + itemOffset[1] - shape.settings.anchor[1],
+          z: basePosition[2] - itemOffset[2] * 0.001,
+        };
+      });
+
+      calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
+
+      const translate = gl.getUniformLocation(shaderProgram, "translate");
+      calculatedElements.forEach((element) => {
+        gl.uniform3f(translate, element.x, element.y, element.z);
         gl.drawElements(
           gl.TRIANGLES,
           element.amount,
