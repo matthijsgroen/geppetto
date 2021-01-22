@@ -4,7 +4,7 @@ export type Vec3 = [number, number, number];
 export type ShapesDefinition = {
   name: string;
   points: Vec2[];
-  settings?: {
+  settings: {
     parent?: { id: string; offset?: Vec3 };
     anchor: Vec2;
   };

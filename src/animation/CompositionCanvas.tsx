@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ShapesDefinition } from "../lib/types";
 import { loadImage, WebGLRenderer } from "../lib/webgl";
-import { showTexture } from "./programs/showTexture";
-import { showTextureMap } from "./programs/showTextureMap";
+import { showComposition } from "./programs/showComposition";
 import WebGLCanvas from "./WebGLCanvas";
 
 export interface TextureMapCanvasProps {
@@ -17,7 +16,7 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   const [renderers, setRenderers] = useState([] as WebGLRenderer[]);
   useEffect(() => {
     loadImage(url).then((image) => {
-      setRenderers([showTexture(image), showTextureMap(image, shapes)]);
+      setRenderers([showComposition(image, shapes)]);
     });
   }, []);
 

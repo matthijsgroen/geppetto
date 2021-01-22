@@ -1,38 +1,47 @@
+import Delaunator from "delaunator";
+import { ShapesDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 
-const textureVertexShader = `
+const compositionVertexShader = `
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;
   varying lowp vec2 vTextureCoord;
+  uniform vec4 viewport;
+  uniform float scale;
+
+
+  mat4 viewportScale = mat4(
+    2.0 / viewport.x, 0, 0, 0,   
+    0, -2.0 / viewport.y, 0, 0,    
+    0, 0, 1, 0,    
+    -1, +1, 0, 1
+  );
 
   void main() {
+    gl_Position = viewportScale * vec4((coordinates * scale) + viewport.ba, 0.0, 1.0);
     vTextureCoord = aTextureCoord.xy;
-    gl_Position = vec4(coordinates, 0.1, 1.0);
   }
 `;
 
-const textureFragmentShader = `
+const compositionFragmentShader = `
   precision mediump float;
 
   varying mediump vec2 vTextureCoord;
   uniform sampler2D uSampler;
   uniform mediump vec2 uTextureDimensions;
-  uniform mediump vec3 backgroundColor;
 
   void main(void) {
     highp vec2 coord = vTextureCoord.xy / uTextureDimensions;
     mediump vec4 texelColor = texture2D(uSampler, coord);
 
-    lowp vec4 baseColor = vec4(backgroundColor, 1.0);
-
-    gl_FragColor = baseColor * (1.0-texelColor.w) + texelColor * texelColor.w;
+    gl_FragColor = texelColor * texelColor.w;
   }
 `;
 
-export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
-  gl: WebGLRenderingContext,
-  { getUnit, getSize }
-) => {
+export const showComposition = (
+  img: HTMLImageElement,
+  shapes: ShapesDefinition[]
+): WebGLRenderer => (gl: WebGLRenderingContext, { getUnit, getSize }) => {
   const unit = getUnit();
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -43,34 +52,26 @@ export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
 
   const stride = 4;
-  // prettier-ignore
-  const vertices = [
-    0, 0, 0, 0,
-    0, 0, 0, img.height,
-    0, 0, img.width, img.height,
-    0, 0, img.width, 0,
-  ];
-  const indices = [0, 1, 2, 2, 0, 3];
 
-  const updateVector = (index: number, offset: number, values: number[]) => {
-    for (let i = 0; i < values.length; i++) {
-      vertices[index * stride + offset + i] = values[i];
-    }
-  };
+  const elements: { start: number; amount: number }[] = [];
+  const indices: number[] = [];
+  const vertices: number[] = [];
 
-  const setImageDimensions = () => {
-    const [canvasWidth, canvasHeight] = getSize();
-    const landscape = img.width / canvasWidth > img.height / canvasHeight;
-
-    const [x, y] = landscape
-      ? [1.0, (img.height / img.width) * (canvasWidth / canvasHeight)]
-      : [(img.width / img.height) * (canvasHeight / canvasWidth), 1.0];
-    updateVector(0, 0, [-x, y]);
-    updateVector(1, 0, [-x, -y]);
-    updateVector(2, 0, [x, -y]);
-    updateVector(3, 0, [x, y]);
-  };
-  setImageDimensions();
+  shapes.forEach((shape) => {
+    const shapeIndices = Delaunator.from(shape.points).triangles;
+    const start = indices.length;
+    elements.push({
+      start,
+      amount: shapeIndices.length,
+    });
+    const offset = vertices.length / stride;
+    shape.points.forEach(([x, y]) => {
+      vertices.push(x, y, x, y);
+    });
+    shapeIndices.forEach((index) => {
+      indices.push(index + offset);
+    });
+  });
 
   const vertexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -88,20 +89,14 @@ export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
 
   const [shaderProgram, programCleanup] = createProgram(
     gl,
-    textureVertexShader,
-    textureFragmentShader
+    compositionVertexShader,
+    compositionFragmentShader
   );
 
   return {
     render() {
       gl.useProgram(shaderProgram);
-      setImageDimensions();
       gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array(vertices),
-        gl.STATIC_DRAW
-      );
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
       const coord = gl.getAttribLocation(shaderProgram, "coordinates");
@@ -114,7 +109,6 @@ export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
         /* offset */ 0
       );
       gl.enableVertexAttribArray(coord);
-
       const texCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
       gl.vertexAttribPointer(
         texCoord,
@@ -126,6 +120,27 @@ export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
       );
       gl.enableVertexAttribArray(texCoord);
 
+      const [canvasWidth, canvasHeight] = getSize();
+      const landscape = img.width / canvasWidth > img.height / canvasHeight;
+
+      const scale = landscape
+        ? canvasWidth / img.width
+        : canvasHeight / img.height;
+
+      const [x, y] = [
+        (canvasWidth - scale * img.width) / 2,
+        (canvasHeight - scale * img.height) / 2,
+      ];
+
+      gl.uniform4f(
+        gl.getUniformLocation(shaderProgram, "viewport"),
+        canvasWidth,
+        canvasHeight,
+        x,
+        y
+      );
+
+      gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
       gl.uniform2f(
         gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
         img.width,
@@ -138,14 +153,14 @@ export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
         unit.index
       );
 
-      gl.uniform3f(
-        gl.getUniformLocation(shaderProgram, "backgroundColor"),
-        0.6,
-        0.6,
-        0.6
-      );
-
-      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+      elements.forEach((element) => {
+        gl.drawElements(
+          gl.TRIANGLES,
+          element.amount,
+          gl.UNSIGNED_SHORT,
+          element.start * 2
+        );
+      });
     },
     cleanup() {
       gl.deleteTexture(texture);
