@@ -57,12 +57,14 @@ const App: React.FC = () => {
             title="Layers"
             active={activeItem === MenuItems.Layers}
             onClick={() => setActiveItem(MenuItems.Layers)}
+            key="layers"
           />,
           <TabIcon
             icon="🤷🏼"
             title="Composition"
             active={activeItem === MenuItems.Composition}
             onClick={() => setActiveItem(MenuItems.Composition)}
+            key="composition"
           />,
         ]}
         menu={menu}

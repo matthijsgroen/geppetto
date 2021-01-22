@@ -43,7 +43,7 @@ const startWebGL = async (
   window.addEventListener("resize", onResize);
 
   return () => {
-    // cleanup
+    api.cleanup();
     window.removeEventListener("resize", onResize);
   };
 };

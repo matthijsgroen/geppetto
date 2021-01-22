@@ -86,57 +86,72 @@ export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
   );
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-  const shaderProgram = createProgram(
+  const [shaderProgram, programCleanup] = createProgram(
     gl,
     textureVertexShader,
     textureFragmentShader
   );
 
-  return () => {
-    gl.useProgram(shaderProgram);
-    setImageDimensions();
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  return {
+    render() {
+      gl.useProgram(shaderProgram);
+      setImageDimensions();
+      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array(vertices),
+        gl.STATIC_DRAW
+      );
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-    const coord = gl.getAttribLocation(shaderProgram, "coordinates");
-    gl.vertexAttribPointer(
-      coord,
-      2,
-      gl.FLOAT,
-      false,
-      Float32Array.BYTES_PER_ELEMENT * stride,
-      /* offset */ 0
-    );
-    gl.enableVertexAttribArray(coord);
+      const coord = gl.getAttribLocation(shaderProgram, "coordinates");
+      gl.vertexAttribPointer(
+        coord,
+        2,
+        gl.FLOAT,
+        false,
+        Float32Array.BYTES_PER_ELEMENT * stride,
+        /* offset */ 0
+      );
+      gl.enableVertexAttribArray(coord);
 
-    const texCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
-    gl.vertexAttribPointer(
-      texCoord,
-      2,
-      gl.FLOAT,
-      false,
-      Float32Array.BYTES_PER_ELEMENT * stride,
-      /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
-    );
-    gl.enableVertexAttribArray(texCoord);
+      const texCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+      gl.vertexAttribPointer(
+        texCoord,
+        2,
+        gl.FLOAT,
+        false,
+        Float32Array.BYTES_PER_ELEMENT * stride,
+        /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
+      );
+      gl.enableVertexAttribArray(texCoord);
 
-    gl.uniform2f(
-      gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
-      img.width,
-      img.height
-    );
-    gl.activeTexture(unit.unit);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.uniform1i(gl.getUniformLocation(shaderProgram, "uSampler"), unit.index);
+      gl.uniform2f(
+        gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
+        img.width,
+        img.height
+      );
+      gl.activeTexture(unit.unit);
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.uniform1i(
+        gl.getUniformLocation(shaderProgram, "uSampler"),
+        unit.index
+      );
 
-    gl.uniform3f(
-      gl.getUniformLocation(shaderProgram, "backgroundColor"),
-      0.6,
-      0.6,
-      0.6
-    );
+      gl.uniform3f(
+        gl.getUniformLocation(shaderProgram, "backgroundColor"),
+        0.6,
+        0.6,
+        0.6
+      );
 
-    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+      gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+    },
+    cleanup() {
+      console.log("Cleanup show texture program");
+      gl.deleteBuffer(vertexBuffer);
+      gl.deleteBuffer(indexBuffer);
+      programCleanup();
+    },
   };
 };

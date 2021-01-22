@@ -31,10 +31,6 @@ interface ProgramAPI {
   getSize(): [number, number];
 }
 
-interface SceneAPI {
-  render(): void;
-}
-
 type Attribute = {
   name: string;
   width: number;
@@ -46,15 +42,20 @@ type Attribute = {
 
 export type AttributeTable = { [key: string]: Attribute };
 
+export type RenderAPI = {
+  render(): void;
+  cleanup(): void;
+};
+
 export type WebGLRenderer = (
   gl: WebGLRenderingContext,
   api: ProgramAPI
-) => Promise<() => void> | (() => void);
+) => Promise<RenderAPI> | RenderAPI;
 
 export const webGLScene = async (
   element: HTMLCanvasElement,
   programs: WebGLRenderer[]
-): Promise<SceneAPI> => {
+): Promise<RenderAPI> => {
   const gl = element.getContext("webgl2", {
     premultipliedalpha: true,
     depth: true,
@@ -88,7 +89,7 @@ export const webGLScene = async (
   gl.blendEquation(gl.FUNC_ADD);
   gl.blendFunc(gl.ONE, gl.ONE);
 
-  const renders = await Promise.all<() => void>(
+  const renders = await Promise.all<RenderAPI>(
     programs.map((program) => program(gl, api))
   );
 
@@ -96,7 +97,10 @@ export const webGLScene = async (
     render: () => {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.viewport(0, 0, element.width, element.height);
-      renders.forEach((render) => render());
+      renders.forEach((item) => item.render());
+    },
+    cleanup: () => {
+      renders.forEach((item) => item.cleanup());
     },
   };
 };
@@ -105,7 +109,7 @@ export const createProgram = (
   gl: WebGLRenderingContext,
   vertexShader: string,
   fragmentShader: string
-): WebGLProgram => {
+): [WebGLProgram, () => void] => {
   const program = gl.createProgram();
   if (!program) throw new Error("Failed to create shader program");
   const vertex = compileShader(gl, vertexShader, ShaderType.Vertex);
@@ -118,5 +122,12 @@ export const createProgram = (
     throw new Error("Could not initialise shaders");
   }
 
-  return program;
+  return [
+    program,
+    () => {
+      gl.deleteShader(vertex);
+      gl.deleteShader(fragment);
+      gl.deleteProgram(program);
+    },
+  ];
 };

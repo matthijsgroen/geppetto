@@ -70,50 +70,57 @@ export const showTextureMap = (
   );
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-  const shaderProgram = createProgram(
+  const [shaderProgram, programCleanup] = createProgram(
     gl,
     textureMapVertexShader,
     textureMapFragmentShader
   );
 
-  return () => {
-    gl.useProgram(shaderProgram);
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  return {
+    render() {
+      gl.useProgram(shaderProgram);
+      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-    const coord = gl.getAttribLocation(shaderProgram, "coordinates");
-    gl.vertexAttribPointer(
-      coord,
-      3,
-      gl.FLOAT,
-      false,
-      Float32Array.BYTES_PER_ELEMENT * stride,
-      /* offset */ 0
-    );
-    gl.enableVertexAttribArray(coord);
-    const [canvasWidth, canvasHeight] = getSize();
-    const landscape = img.width / canvasWidth > img.height / canvasHeight;
+      const coord = gl.getAttribLocation(shaderProgram, "coordinates");
+      gl.vertexAttribPointer(
+        coord,
+        3,
+        gl.FLOAT,
+        false,
+        Float32Array.BYTES_PER_ELEMENT * stride,
+        /* offset */ 0
+      );
+      gl.enableVertexAttribArray(coord);
+      const [canvasWidth, canvasHeight] = getSize();
+      const landscape = img.width / canvasWidth > img.height / canvasHeight;
 
-    const scale = landscape
-      ? canvasWidth / img.width
-      : canvasHeight / img.height;
+      const scale = landscape
+        ? canvasWidth / img.width
+        : canvasHeight / img.height;
 
-    const [x, y] = [
-      (canvasWidth - scale * img.width) / 2,
-      (canvasHeight - scale * img.height) / 2,
-    ];
+      const [x, y] = [
+        (canvasWidth - scale * img.width) / 2,
+        (canvasHeight - scale * img.height) / 2,
+      ];
 
-    gl.uniform4f(
-      gl.getUniformLocation(shaderProgram, "viewport"),
-      canvasWidth,
-      canvasHeight,
-      x,
-      y
-    );
+      gl.uniform4f(
+        gl.getUniformLocation(shaderProgram, "viewport"),
+        canvasWidth,
+        canvasHeight,
+        x,
+        y
+      );
 
-    gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
+      gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
 
-    // gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-    gl.drawArrays(gl.LINES, 0, indices.length);
+      gl.drawArrays(gl.LINES, 0, indices.length);
+    },
+    cleanup() {
+      console.log("Cleanup texturemap program");
+      gl.deleteBuffer(vertexBuffer);
+      gl.deleteBuffer(indexBuffer);
+      programCleanup();
+    },
   };
 };
