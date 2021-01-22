@@ -30,7 +30,10 @@ const App: React.FC = () => {
       return (
         <Menu title="Layers">
           {imageDefinition.shapes.map((shape) => (
-            <MenuItem key={shape.name} name={shape.name} />
+            <MenuItem
+              key={shape.name}
+              name={`${shape.name} (${shape.points.length})`}
+            />
           ))}
         </Menu>
       );

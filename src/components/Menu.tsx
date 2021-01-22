@@ -17,6 +17,8 @@ const MenuHeader = styled.h1`
   font-size: 16px;
   font-weight: normal;
   margin: 0;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.text};
 `;
 
 const Menu: React.FC<MenuProps> = ({ title, children }) => (
