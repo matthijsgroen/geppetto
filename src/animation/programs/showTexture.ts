@@ -148,7 +148,6 @@ export const showTexture = (img: HTMLImageElement): WebGLRenderer => (
       gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
     },
     cleanup() {
-      console.log("Cleanup show texture program");
       gl.deleteBuffer(vertexBuffer);
       gl.deleteBuffer(indexBuffer);
       programCleanup();

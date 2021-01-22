@@ -31,28 +31,19 @@ export const showTextureMap = (
 ): WebGLRenderer => (gl: WebGLRenderingContext, { getSize }) => {
   const stride = 2;
 
+  const elements: { start: number; amount: number }[] = [];
+
   const vertices = shapes.reduce((coordList, shape) => {
     const list = verticesFromPoints(shape.points);
-    const newCoords = [];
-    for (let i = 0; i < list.length; i += 6) {
-      newCoords.push(
-        list[i],
-        list[i + 1],
-        list[i + 2],
-        list[i + 3],
-        list[i + 2],
-        list[i + 3],
-        list[i + 4],
-        list[i + 5],
-        list[i + 4],
-        list[i + 5],
-        list[i],
-        list[i + 1]
-      );
-    }
-    return coordList.concat(newCoords);
+    elements.push({
+      start: coordList.length / stride,
+      amount: list.length / 2,
+    });
+
+    return coordList.concat(list);
   }, [] as number[]);
-  const indices = Array(vertices.length / 2)
+
+  const indices = Array(vertices.length / stride)
     .fill(0)
     .map((_, i) => i);
 
@@ -85,7 +76,7 @@ export const showTextureMap = (
       const coord = gl.getAttribLocation(shaderProgram, "coordinates");
       gl.vertexAttribPointer(
         coord,
-        3,
+        2,
         gl.FLOAT,
         false,
         Float32Array.BYTES_PER_ELEMENT * stride,
@@ -114,10 +105,11 @@ export const showTextureMap = (
 
       gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
 
-      gl.drawArrays(gl.LINES, 0, indices.length);
+      elements.forEach((element) => {
+        gl.drawArrays(gl.LINE_STRIP, element.start, element.amount);
+      });
     },
     cleanup() {
-      console.log("Cleanup texturemap program");
       gl.deleteBuffer(vertexBuffer);
       gl.deleteBuffer(indexBuffer);
       programCleanup();
