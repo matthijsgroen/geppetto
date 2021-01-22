@@ -131,3 +131,13 @@ export const createProgram = (
     },
   ];
 };
+
+export const loadImage = async (url: string): Promise<HTMLImageElement> =>
+  new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.addEventListener("load", () => {
+      resolve(img);
+    });
+    img.src = url;
+  });
