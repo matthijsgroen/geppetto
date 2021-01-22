@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { DefaultTheme, ThemeProvider } from "styled-components";
 import TextureMapCanvas from "./animation/TextureMapCanvas";
+import CompositionCanvas from "./animation/CompositionCanvas";
 import Menu from "./components/Menu";
 import AppLayout from "./templates/AppLayout";
 import texture from "./data/hiddo-texture.png";
@@ -44,6 +45,11 @@ const App: React.FC = () => {
   const main = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
       return <TextureMapCanvas url={texture} shapes={imageDefinition.shapes} />;
+    }
+    if (activeItem === MenuItems.Composition) {
+      return (
+        <CompositionCanvas url={texture} shapes={imageDefinition.shapes} />
+      );
     }
     return undefined;
   }, [activeItem]);
