@@ -44,6 +44,18 @@ const App: React.FC = () => {
         </Menu>
       );
     }
+    if (activeItem === MenuItems.Composition) {
+      return (
+        <Menu title="Layers">
+          {imageDefinition.shapes.map((shape) => (
+            <MenuItem
+              key={shape.name}
+              name={`${shape.name} (${shape.points.length})`}
+            />
+          ))}
+        </Menu>
+      );
+    }
     return undefined;
   }, [activeItem]);
 
