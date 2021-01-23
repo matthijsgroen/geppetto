@@ -4,11 +4,11 @@ const textureVertexShader = `
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;
   varying lowp vec2 vTextureCoord;
-  uniform vec2 scale;
+  uniform vec4 scale;
 
   void main() {
     vTextureCoord = aTextureCoord.xy;
-    gl_Position = vec4(coordinates * scale.y, 0.1, 1.0);
+    gl_Position = vec4((coordinates + scale.ba) * scale.y, 0.1, 1.0);
   }
 `;
 
@@ -31,9 +31,10 @@ const textureFragmentShader = `
 `;
 
 export const showTexture = (): {
-  renderer: WebGLRenderer;
   setImage(image: HTMLImageElement): void;
   setZoom(zoom: number): void;
+  setPan(x: number, y: number): void;
+  renderer: WebGLRenderer;
 } => {
   const stride = 4;
   const vertices = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
@@ -52,6 +53,7 @@ export const showTexture = (): {
   let img: HTMLImageElement | null = null;
   let texture: WebGLTexture | null = null;
   let zoom = 1.0;
+  let pan = [0, 0];
 
   const setImageTexture = (): void => {
     if (img === null || texture === null || gl === null) {
@@ -73,6 +75,9 @@ export const showTexture = (): {
     },
     setZoom(newZoom) {
       zoom = newZoom;
+    },
+    setPan(x: number, y: number) {
+      pan = [x, y];
     },
     renderer(initGl: WebGLRenderingContext, { getUnit, getSize }) {
       gl = initGl;
@@ -187,7 +192,13 @@ export const showTexture = (): {
             0.6,
             0.6
           );
-          gl.uniform2f(gl.getUniformLocation(shaderProgram, "scale"), 0, zoom);
+          gl.uniform4f(
+            gl.getUniformLocation(shaderProgram, "scale"),
+            0,
+            zoom,
+            pan[0],
+            pan[1]
+          );
 
           gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
         },

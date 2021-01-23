@@ -5,7 +5,7 @@ import { createProgram, WebGLRenderer } from "../../lib/webgl";
 const textureMapVertexShader = `
   attribute vec2 coordinates;
   uniform vec4 viewport;
-  uniform vec2 scale;
+  uniform vec4 scale;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -16,7 +16,7 @@ const textureMapVertexShader = `
 
   void main() {
     vec4 pos = viewportScale * vec4((coordinates * scale.x) + viewport.ba, 0.0, 1.0);
-    gl_Position = vec4(pos.x * scale.y, pos.y * scale.y, pos.z, 1.0);
+    gl_Position = vec4((pos.xy  + scale.ba) * scale.y, pos.z, 1.0);
   }
 `;
 
@@ -30,6 +30,7 @@ export const showTextureMap = (): {
   setImage(image: HTMLImageElement): void;
   setShapes(shapes: ShapesDefinition[]): void;
   setZoom(zoom: number): void;
+  setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 2;
@@ -40,6 +41,7 @@ export const showTextureMap = (): {
   let indexBuffer: WebGLBuffer | null = null;
   let gl: WebGLRenderingContext | null = null;
   let zoom = 1.0;
+  let pan = [0, 0];
 
   let elements: { start: number; amount: number }[] = [];
 
@@ -84,6 +86,9 @@ export const showTextureMap = (): {
     },
     setZoom(newZoom) {
       zoom = newZoom;
+    },
+    setPan(x: number, y: number) {
+      pan = [x, y];
     },
     renderer(initgl: WebGLRenderingContext, { getSize }) {
       gl = initgl;
@@ -136,10 +141,12 @@ export const showTextureMap = (): {
             y
           );
 
-          gl.uniform2f(
+          gl.uniform4f(
             gl.getUniformLocation(shaderProgram, "scale"),
             scale,
-            zoom
+            zoom,
+            pan[0],
+            pan[1]
           );
 
           elements.forEach((element) => {

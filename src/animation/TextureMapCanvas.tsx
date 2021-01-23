@@ -9,12 +9,16 @@ export interface TextureMapCanvasProps {
   url: string;
   shapes: ShapesDefinition[];
   zoom: number;
+  panX: number;
+  panY: number;
 }
 
 const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   url,
   shapes,
   zoom,
+  panX,
+  panY,
 }) => {
   const textureProgram = useMemo(() => showTexture(), []);
   const textureMapProgram = useMemo(() => showTextureMap(), []);
@@ -33,6 +37,8 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   }, [shapes]);
   textureMapProgram.setZoom(zoom);
   textureProgram.setZoom(zoom);
+  textureMapProgram.setPan(panX, panY);
+  textureProgram.setPan(panX, panY);
 
   return <WebGLCanvas renderers={renderers} />;
 };

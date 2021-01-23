@@ -8,8 +8,7 @@ const compositionVertexShader = `
   varying lowp vec2 vTextureCoord;
   uniform vec2 viewport;
   uniform vec3 translate;
-  uniform float scale;
-
+  uniform vec4 scale;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -19,7 +18,8 @@ const compositionVertexShader = `
   );
 
   void main() {
-    gl_Position = viewportScale * vec4((coordinates + translate.xy) * scale, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((coordinates + translate.xy) * scale.x, translate.z, 1.0);
+    gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z, 1.0);
     vTextureCoord = aTextureCoord.xy;
   }
 `;
@@ -57,9 +57,11 @@ const getParentOffset = (
 };
 
 export const showComposition = (): {
-  renderer: WebGLRenderer;
   setImage(image: HTMLImageElement): void;
   setShapes(s: ShapesDefinition[]): void;
+  setZoom(zoom: number): void;
+  setPan(x: number, y: number): void;
+  renderer: WebGLRenderer;
 } => {
   const stride = 4;
 
@@ -72,6 +74,8 @@ export const showComposition = (): {
   let texture: WebGLTexture | null = null;
 
   let elements: { start: number; amount: number }[] = [];
+  let zoom = 1.0;
+  let pan = [0, 0];
 
   const setImageTexture = (): void => {
     if (img === null || texture === null || gl === null) {
@@ -127,6 +131,12 @@ export const showComposition = (): {
     setShapes(s: ShapesDefinition[]) {
       shapes = s;
       populateShapes();
+    },
+    setZoom(newZoom) {
+      zoom = newZoom;
+    },
+    setPan(x: number, y: number) {
+      pan = [x, y];
     },
     renderer(initgl: WebGLRenderingContext, { getUnit, getSize }) {
       gl = initgl;
@@ -192,7 +202,13 @@ export const showComposition = (): {
             canvasHeight
           );
 
-          gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
+          gl.uniform4f(
+            gl.getUniformLocation(shaderProgram, "scale"),
+            scale,
+            zoom,
+            pan[0],
+            pan[1]
+          );
           gl.uniform2f(
             gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
             img.width,

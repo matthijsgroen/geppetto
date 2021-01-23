@@ -7,11 +7,17 @@ import WebGLCanvas from "./WebGLCanvas";
 export interface TextureMapCanvasProps {
   url: string;
   shapes: ShapesDefinition[];
+  zoom: number;
+  panX: number;
+  panY: number;
 }
 
 const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   url,
   shapes,
+  zoom,
+  panX,
+  panY,
 }) => {
   const composition = useMemo(() => showComposition(), []);
   const renderers = [composition.renderer];
@@ -25,6 +31,8 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   useEffect(() => {
     composition.setShapes(shapes);
   }, [shapes]);
+  composition.setZoom(zoom);
+  composition.setPan(panX, panY);
 
   return <WebGLCanvas renderers={renderers} />;
 };

@@ -28,6 +28,8 @@ enum MenuItems {
 const App: React.FC = () => {
   const [activeItem, setActiveItem] = useState(MenuItems.Layers);
   const [zoom, setZoom] = useState(1.0);
+  const [panX, setPanX] = useState(0.0);
+  const [panY, setPanY] = useState(0.0);
 
   const menu = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
@@ -52,16 +54,24 @@ const App: React.FC = () => {
           url={texture}
           shapes={imageDefinition.shapes}
           zoom={zoom}
+          panX={panX}
+          panY={panY}
         />
       );
     }
     if (activeItem === MenuItems.Composition) {
       return (
-        <CompositionCanvas url={texture} shapes={imageDefinition.shapes} />
+        <CompositionCanvas
+          url={texture}
+          shapes={imageDefinition.shapes}
+          zoom={zoom}
+          panX={panX}
+          panY={panY}
+        />
       );
     }
     return undefined;
-  }, [activeItem, zoom]);
+  }, [activeItem, zoom, panX, panY]);
 
   const tools = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
@@ -74,10 +84,54 @@ const App: React.FC = () => {
           step={0.05}
           onChange={setZoom}
         />,
+        <SliderControl
+          key="x"
+          value={panX}
+          min={-1.0}
+          max={1.0}
+          step={0.05}
+          onChange={setPanX}
+        />,
+        <SliderControl
+          key="y"
+          value={panY}
+          min={-1.0}
+          max={1.0}
+          step={0.05}
+          onChange={setPanY}
+        />,
+      ];
+    }
+    if (activeItem === MenuItems.Composition) {
+      return [
+        <SliderControl
+          key="zoom"
+          value={zoom}
+          min={0.1}
+          max={4.0}
+          step={0.05}
+          onChange={setZoom}
+        />,
+        <SliderControl
+          key="x"
+          value={panX}
+          min={-1.0}
+          max={1.0}
+          step={0.05}
+          onChange={setPanX}
+        />,
+        <SliderControl
+          key="y"
+          value={panY}
+          min={-1.0}
+          max={1.0}
+          step={0.05}
+          onChange={setPanY}
+        />,
       ];
     }
     return undefined;
-  }, [activeItem, zoom, setZoom]);
+  }, [activeItem, zoom, panX, panY]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
