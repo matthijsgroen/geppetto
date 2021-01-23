@@ -8,12 +8,14 @@ import texture from "./data/hiddo-texture.png";
 import MenuItem from "./components/MenuItem";
 import imageDefinition from "./data/hiddo";
 import TabIcon from "./components/TabIcon";
+import SliderControl from "./components/SliderControl";
 
 const defaultTheme: DefaultTheme = {
   colors: {
-    background: "#333333",
-    text: "#999999",
-    backgroundSelected: "#444444",
+    background: "#333",
+    backgroundSecondary: "#444",
+    text: "#999",
+    backgroundSelected: "#444",
     textSelected: "white",
   },
 };
@@ -25,6 +27,7 @@ enum MenuItems {
 
 const App: React.FC = () => {
   const [activeItem, setActiveItem] = useState(MenuItems.Layers);
+  const [zoom, setZoom] = useState(1.0);
 
   const menu = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
@@ -44,7 +47,13 @@ const App: React.FC = () => {
 
   const main = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
-      return <TextureMapCanvas url={texture} shapes={imageDefinition.shapes} />;
+      return (
+        <TextureMapCanvas
+          url={texture}
+          shapes={imageDefinition.shapes}
+          zoom={zoom}
+        />
+      );
     }
     if (activeItem === MenuItems.Composition) {
       return (
@@ -52,7 +61,23 @@ const App: React.FC = () => {
       );
     }
     return undefined;
-  }, [activeItem]);
+  }, [activeItem, zoom]);
+
+  const tools = useMemo(() => {
+    if (activeItem === MenuItems.Layers) {
+      return [
+        <SliderControl
+          key="zoom"
+          value={zoom}
+          min={0.1}
+          max={4.0}
+          step={0.05}
+          onChange={setZoom}
+        />,
+      ];
+    }
+    return undefined;
+  }, [activeItem, zoom, setZoom]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -73,6 +98,7 @@ const App: React.FC = () => {
             key="composition"
           />,
         ]}
+        tools={tools}
         menu={menu}
         main={main}
       />

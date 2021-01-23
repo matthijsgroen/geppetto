@@ -12,14 +12,14 @@ interface IconProps {
   isActive: boolean;
 }
 
-const Icon = styled.button<IconProps>`
+const Icon = styled.button.attrs({ type: "button" })<IconProps>`
   width: 42px;
   height: 42px;
   display: flex;
   background-color: ${(props) =>
     props.isActive
       ? props.theme.colors.backgroundSelected
-      : props.theme.colors.background};
+      : props.theme.colors.backgroundSecondary};
   align-items: center;
   justify-content: center;
   border: none;
@@ -27,7 +27,8 @@ const Icon = styled.button<IconProps>`
     ${(props) =>
       props.isActive
         ? props.theme.colors.textSelected
-        : props.theme.colors.background};
+        : props.theme.colors.backgroundSecondary};
+  outline: none;
 `;
 
 const TabIcon: React.FC<TabIconProps> = ({
