@@ -14,7 +14,7 @@ export interface TextureMapCanvasProps {
 const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   url,
   shapes,
-  //   zoom,
+  zoom,
 }) => {
   const textureProgram = useMemo(() => showTexture(), []);
   const textureMapProgram = useMemo(() => showTextureMap(), []);
@@ -31,6 +31,8 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   useEffect(() => {
     textureMapProgram.setShapes(shapes);
   }, [shapes]);
+  textureMapProgram.setZoom(zoom);
+  textureProgram.setZoom(zoom);
 
   return <WebGLCanvas renderers={renderers} />;
 };
