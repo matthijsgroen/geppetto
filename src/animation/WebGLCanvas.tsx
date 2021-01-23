@@ -22,9 +22,17 @@ const startWebGL = async (
     }, 50);
   };
   window.addEventListener("resize", onResize);
+  let renderLoop = true;
+  const render = () => {
+    if (!renderLoop) return;
+    api.render();
+    window.requestAnimationFrame(render);
+  };
+  window.requestAnimationFrame(render);
 
   return () => {
     api.cleanup();
+    renderLoop = false;
     window.removeEventListener("resize", onResize);
   };
 };
@@ -48,7 +56,7 @@ const WebGLCanvas: React.FC<TextureMapCanvasProps> = ({ renderers }) => {
         cleanup && cleanup();
       };
     }
-  }, [ref, renderers]);
+  }, []);
 
   return <canvas ref={ref} style={{ width: "100%", height: "100%" }} />;
 };

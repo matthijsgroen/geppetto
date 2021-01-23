@@ -56,152 +56,195 @@ const getParentOffset = (
   ];
 };
 
-export const showComposition = (
-  img: HTMLImageElement,
-  shapes: ShapesDefinition[]
-): WebGLRenderer => (gl: WebGLRenderingContext, { getUnit, getSize }) => {
-  const unit = getUnit();
-  const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-
+export const showComposition = (): {
+  renderer: WebGLRenderer;
+  setImage(image: HTMLImageElement): void;
+  setShapes(s: ShapesDefinition[]): void;
+} => {
   const stride = 4;
 
-  const elements: {
-    start: number;
-    amount: number;
-  }[] = [];
-  const indices: number[] = [];
-  const vertices: number[] = [];
+  let shapes: ShapesDefinition[] | null = null;
 
-  shapes.forEach((shape) => {
-    const shapeIndices = Delaunator.from(shape.points).triangles;
-    const start = indices.length;
-    elements.push({
-      start,
-      amount: shapeIndices.length,
+  let gl: WebGLRenderingContext | null = null;
+  let vertexBuffer: WebGLBuffer | null = null;
+  let indexBuffer: WebGLBuffer | null = null;
+  let img: HTMLImageElement | null = null;
+  let texture: WebGLTexture | null = null;
+
+  let elements: { start: number; amount: number }[] = [];
+
+  const setImageTexture = (): void => {
+    if (img === null || texture === null || gl === null) {
+      return;
+    }
+
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+  };
+
+  const populateShapes = () => {
+    if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
+    elements = [];
+
+    const indices: number[] = [];
+    const vertices: number[] = [];
+    elements = [];
+
+    shapes.forEach((shape) => {
+      const shapeIndices = Delaunator.from(shape.points).triangles;
+      const start = indices.length;
+      elements.push({
+        start,
+        amount: shapeIndices.length,
+      });
+      const offset = vertices.length / stride;
+      shape.points.forEach(([x, y]) => {
+        vertices.push(x, y, x, y);
+      });
+      shapeIndices.forEach((index) => {
+        indices.push(index + offset);
+      });
     });
-    const offset = vertices.length / stride;
-    shape.points.forEach(([x, y]) => {
-      vertices.push(x, y, x, y);
-    });
-    shapeIndices.forEach((index) => {
-      indices.push(index + offset);
-    });
-  });
 
-  const vertexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-  const indexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-  gl.bufferData(
-    gl.ELEMENT_ARRAY_BUFFER,
-    new Uint16Array(indices),
-    gl.STATIC_DRAW
-  );
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-
-  const [shaderProgram, programCleanup] = createProgram(
-    gl,
-    compositionVertexShader,
-    compositionFragmentShader
-  );
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(
+      gl.ELEMENT_ARRAY_BUFFER,
+      new Uint16Array(indices),
+      gl.STATIC_DRAW
+    );
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+  };
 
   return {
-    render() {
-      gl.useProgram(shaderProgram);
-      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-      const coord = gl.getAttribLocation(shaderProgram, "coordinates");
-      gl.vertexAttribPointer(
-        coord,
-        2,
-        gl.FLOAT,
-        false,
-        Float32Array.BYTES_PER_ELEMENT * stride,
-        /* offset */ 0
-      );
-      gl.enableVertexAttribArray(coord);
-      const texCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
-      gl.vertexAttribPointer(
-        texCoord,
-        2,
-        gl.FLOAT,
-        false,
-        Float32Array.BYTES_PER_ELEMENT * stride,
-        /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
-      );
-      gl.enableVertexAttribArray(texCoord);
-
-      const [canvasWidth, canvasHeight] = getSize();
-      const landscape = img.width / canvasWidth > img.height / canvasHeight;
-
-      const scale = landscape
-        ? canvasWidth / img.width
-        : canvasHeight / img.height;
-
-      gl.uniform2f(
-        gl.getUniformLocation(shaderProgram, "viewport"),
-        canvasWidth,
-        canvasHeight
-      );
-
-      gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
-      gl.uniform2f(
-        gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
-        img.width,
-        img.height
-      );
-      gl.activeTexture(unit.unit);
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.uniform1i(
-        gl.getUniformLocation(shaderProgram, "uSampler"),
-        unit.index
-      );
-
-      const basePosition = [
-        canvasWidth / 2 / scale,
-        canvasHeight / 2 / scale,
-        0.1,
-      ];
-      const calculatedElements = elements.map((element, index) => {
-        const shape = shapes[index];
-        const itemOffset = getParentOffset(shape, shapes);
-        return {
-          name: shape.name,
-          ...element,
-          x: basePosition[0] + itemOffset[0] - shape.settings.anchor[0],
-          y: basePosition[1] + itemOffset[1] - shape.settings.anchor[1],
-          z: basePosition[2] - itemOffset[2] * 0.001,
-        };
-      });
-
-      calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
-
-      const translate = gl.getUniformLocation(shaderProgram, "translate");
-      calculatedElements.forEach((element) => {
-        gl.uniform3f(translate, element.x, element.y, element.z);
-        gl.drawElements(
-          gl.TRIANGLES,
-          element.amount,
-          gl.UNSIGNED_SHORT,
-          element.start * 2
-        );
-      });
+    setImage(image: HTMLImageElement) {
+      img = image;
+      setImageTexture();
     },
-    cleanup() {
-      gl.deleteTexture(texture);
-      gl.deleteBuffer(vertexBuffer);
-      gl.deleteBuffer(indexBuffer);
-      programCleanup();
+    setShapes(s: ShapesDefinition[]) {
+      shapes = s;
+      populateShapes();
+    },
+    renderer(initgl: WebGLRenderingContext, { getUnit, getSize }) {
+      gl = initgl;
+
+      const unit = getUnit();
+      texture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, texture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+      vertexBuffer = gl.createBuffer();
+      indexBuffer = gl.createBuffer();
+
+      const [shaderProgram, programCleanup] = createProgram(
+        gl,
+        compositionVertexShader,
+        compositionFragmentShader
+      );
+
+      return {
+        render() {
+          if (!img || !shapes) {
+            return;
+          }
+          const gl = initgl;
+          gl.useProgram(shaderProgram);
+          gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+          const coord = gl.getAttribLocation(shaderProgram, "coordinates");
+          gl.vertexAttribPointer(
+            coord,
+            2,
+            gl.FLOAT,
+            false,
+            Float32Array.BYTES_PER_ELEMENT * stride,
+            /* offset */ 0
+          );
+          gl.enableVertexAttribArray(coord);
+          const texCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+          gl.vertexAttribPointer(
+            texCoord,
+            2,
+            gl.FLOAT,
+            false,
+            Float32Array.BYTES_PER_ELEMENT * stride,
+            /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
+          );
+          gl.enableVertexAttribArray(texCoord);
+
+          const [canvasWidth, canvasHeight] = getSize();
+          const landscape = img.width / canvasWidth > img.height / canvasHeight;
+
+          const scale = landscape
+            ? canvasWidth / img.width
+            : canvasHeight / img.height;
+
+          gl.uniform2f(
+            gl.getUniformLocation(shaderProgram, "viewport"),
+            canvasWidth,
+            canvasHeight
+          );
+
+          gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
+          gl.uniform2f(
+            gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
+            img.width,
+            img.height
+          );
+          gl.activeTexture(unit.unit);
+          gl.bindTexture(gl.TEXTURE_2D, texture);
+          gl.uniform1i(
+            gl.getUniformLocation(shaderProgram, "uSampler"),
+            unit.index
+          );
+
+          const basePosition = [
+            canvasWidth / 2 / scale,
+            canvasHeight / 2 / scale,
+            0.1,
+          ];
+          const items = shapes;
+
+          const calculatedElements = elements.map((element, index) => {
+            const shape = items[index];
+            const itemOffset = getParentOffset(shape, items);
+            return {
+              name: shape.name,
+              ...element,
+              x: basePosition[0] + itemOffset[0] - shape.settings.anchor[0],
+              y: basePosition[1] + itemOffset[1] - shape.settings.anchor[1],
+              z: basePosition[2] - itemOffset[2] * 0.001,
+            };
+          });
+
+          calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
+
+          const translate = gl.getUniformLocation(shaderProgram, "translate");
+          calculatedElements.forEach((element) => {
+            gl.uniform3f(translate, element.x, element.y, element.z);
+            gl.drawElements(
+              gl.TRIANGLES,
+              element.amount,
+              gl.UNSIGNED_SHORT,
+              element.start * 2
+            );
+          });
+        },
+        cleanup() {
+          const gl = initgl;
+          gl.deleteTexture(texture);
+          gl.deleteBuffer(vertexBuffer);
+          gl.deleteBuffer(indexBuffer);
+          programCleanup();
+        },
+      };
     },
   };
 };

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { ShapesDefinition } from "../lib/types";
-import { loadImage, WebGLRenderer } from "../lib/webgl";
+import { loadImage } from "../lib/webgl";
 import { showComposition } from "./programs/showComposition";
 import WebGLCanvas from "./WebGLCanvas";
 
@@ -13,12 +13,18 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   url,
   shapes,
 }) => {
-  const [renderers, setRenderers] = useState([] as WebGLRenderer[]);
+  const composition = useMemo(() => showComposition(), []);
+  const renderers = [composition.renderer];
+
   useEffect(() => {
     loadImage(url).then((image) => {
-      setRenderers([showComposition(image, shapes)]);
+      composition.setImage(image);
     });
-  }, []);
+  }, [url]);
+
+  useEffect(() => {
+    composition.setShapes(shapes);
+  }, [shapes]);
 
   return <WebGLCanvas renderers={renderers} />;
 };

@@ -25,94 +25,123 @@ const textureMapFragmentShader = `
   }
 `;
 
-export const showTextureMap = (
-  img: HTMLImageElement,
-  shapes: ShapesDefinition[]
-): WebGLRenderer => (gl: WebGLRenderingContext, { getSize }) => {
+export const showTextureMap = (): {
+  setImage(image: HTMLImageElement): void;
+  setShapes(shapes: ShapesDefinition[]): void;
+  renderer: WebGLRenderer;
+} => {
   const stride = 2;
 
-  const elements: { start: number; amount: number }[] = [];
+  let shapes: ShapesDefinition[] | null = null;
+  let img: HTMLImageElement | null = null;
+  let vertexBuffer: WebGLBuffer | null = null;
+  let indexBuffer: WebGLBuffer | null = null;
+  let gl: WebGLRenderingContext | null = null;
 
-  const vertices = shapes.reduce((coordList, shape) => {
-    const list = verticesFromPoints(shape.points);
-    elements.push({
-      start: coordList.length / stride,
-      amount: list.length / 2,
-    });
+  let elements: { start: number; amount: number }[] = [];
 
-    return coordList.concat(list);
-  }, [] as number[]);
+  const populateShapes = () => {
+    if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
+    elements = [];
 
-  const indices = Array(vertices.length / stride)
-    .fill(0)
-    .map((_, i) => i);
+    const vertices = shapes.reduce((coordList, shape) => {
+      const list = verticesFromPoints(shape.points);
+      elements.push({
+        start: coordList.length / stride,
+        amount: list.length / 2,
+      });
 
-  const vertexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-  gl.bindBuffer(gl.ARRAY_BUFFER, null);
+      return coordList.concat(list);
+    }, [] as number[]);
 
-  const indexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-  gl.bufferData(
-    gl.ELEMENT_ARRAY_BUFFER,
-    new Uint16Array(indices),
-    gl.STATIC_DRAW
-  );
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+    const indices = Array(vertices.length / stride)
+      .fill(0)
+      .map((_, i) => i);
 
-  const [shaderProgram, programCleanup] = createProgram(
-    gl,
-    textureMapVertexShader,
-    textureMapFragmentShader
-  );
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData(
+      gl.ELEMENT_ARRAY_BUFFER,
+      new Uint16Array(indices),
+      gl.STATIC_DRAW
+    );
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+  };
 
   return {
-    render() {
-      gl.useProgram(shaderProgram);
-      gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-      const coord = gl.getAttribLocation(shaderProgram, "coordinates");
-      gl.vertexAttribPointer(
-        coord,
-        2,
-        gl.FLOAT,
-        false,
-        Float32Array.BYTES_PER_ELEMENT * stride,
-        /* offset */ 0
-      );
-      gl.enableVertexAttribArray(coord);
-      const [canvasWidth, canvasHeight] = getSize();
-      const landscape = img.width / canvasWidth > img.height / canvasHeight;
-
-      const scale = landscape
-        ? canvasWidth / img.width
-        : canvasHeight / img.height;
-
-      const [x, y] = [
-        (canvasWidth - scale * img.width) / 2,
-        (canvasHeight - scale * img.height) / 2,
-      ];
-
-      gl.uniform4f(
-        gl.getUniformLocation(shaderProgram, "viewport"),
-        canvasWidth,
-        canvasHeight,
-        x,
-        y
-      );
-
-      gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
-
-      elements.forEach((element) => {
-        gl.drawArrays(gl.LINE_STRIP, element.start, element.amount);
-      });
+    setImage(image: HTMLImageElement) {
+      img = image;
     },
-    cleanup() {
-      gl.deleteBuffer(vertexBuffer);
-      gl.deleteBuffer(indexBuffer);
-      programCleanup();
+    setShapes(s: ShapesDefinition[]) {
+      shapes = s;
+      populateShapes();
+    },
+    renderer(initgl: WebGLRenderingContext, { getSize }) {
+      gl = initgl;
+      vertexBuffer = gl.createBuffer();
+      indexBuffer = gl.createBuffer();
+      populateShapes();
+
+      const [shaderProgram, programCleanup] = createProgram(
+        gl,
+        textureMapVertexShader,
+        textureMapFragmentShader
+      );
+
+      return {
+        render() {
+          if (!shapes || !img || !vertexBuffer || !indexBuffer || !gl) {
+            return;
+          }
+          gl.useProgram(shaderProgram);
+          gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+          const coord = gl.getAttribLocation(shaderProgram, "coordinates");
+          gl.vertexAttribPointer(
+            coord,
+            2,
+            gl.FLOAT,
+            false,
+            Float32Array.BYTES_PER_ELEMENT * stride,
+            /* offset */ 0
+          );
+          gl.enableVertexAttribArray(coord);
+          const [canvasWidth, canvasHeight] = getSize();
+          const landscape = img.width / canvasWidth > img.height / canvasHeight;
+
+          const scale = landscape
+            ? canvasWidth / img.width
+            : canvasHeight / img.height;
+
+          const [x, y] = [
+            (canvasWidth - scale * img.width) / 2,
+            (canvasHeight - scale * img.height) / 2,
+          ];
+
+          gl.uniform4f(
+            gl.getUniformLocation(shaderProgram, "viewport"),
+            canvasWidth,
+            canvasHeight,
+            x,
+            y
+          );
+
+          gl.uniform1f(gl.getUniformLocation(shaderProgram, "scale"), scale);
+
+          elements.forEach((element) => {
+            initgl.drawArrays(initgl.LINE_STRIP, element.start, element.amount);
+          });
+        },
+        cleanup() {
+          initgl.deleteBuffer(vertexBuffer);
+          initgl.deleteBuffer(indexBuffer);
+          programCleanup();
+        },
+      };
     },
   };
 };

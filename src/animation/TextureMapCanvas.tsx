@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { ShapesDefinition } from "../lib/types";
-import { loadImage, WebGLRenderer } from "../lib/webgl";
+import { loadImage } from "../lib/webgl";
 import { showTexture } from "./programs/showTexture";
 import { showTextureMap } from "./programs/showTextureMap";
 import WebGLCanvas from "./WebGLCanvas";
@@ -8,15 +8,29 @@ import WebGLCanvas from "./WebGLCanvas";
 export interface TextureMapCanvasProps {
   url: string;
   shapes: ShapesDefinition[];
+  zoom: number;
 }
 
-const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({ url, shapes }) => {
-  const [renderers, setRenderers] = useState([] as WebGLRenderer[]);
+const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
+  url,
+  shapes,
+  //   zoom,
+}) => {
+  const textureProgram = useMemo(() => showTexture(), []);
+  const textureMapProgram = useMemo(() => showTextureMap(), []);
+
+  const renderers = [textureProgram.renderer, textureMapProgram.renderer];
+
   useEffect(() => {
     loadImage(url).then((image) => {
-      setRenderers([showTexture(image), showTextureMap(image, shapes)]);
+      textureProgram.setImage(image);
+      textureMapProgram.setImage(image);
     });
-  }, []);
+  }, [url]);
+
+  useEffect(() => {
+    textureMapProgram.setShapes(shapes);
+  }, [shapes]);
 
   return <WebGLCanvas renderers={renderers} />;
 };
