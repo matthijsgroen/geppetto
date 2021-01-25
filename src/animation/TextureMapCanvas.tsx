@@ -11,6 +11,7 @@ export interface TextureMapCanvasProps {
   zoom: number;
   panX: number;
   panY: number;
+  onMouseMove?(coordinates: [number, number] | null): void;
 }
 
 const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({

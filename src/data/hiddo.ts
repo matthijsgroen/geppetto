@@ -39,7 +39,7 @@ const imageDefinition: ImageDefinition = {
       settings: {
         parent: {
           id: "body",
-          offset: [10, -235, 3],
+          offset: [7, -235, 3],
         },
         anchor: [50, 11],
       },

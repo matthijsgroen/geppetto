@@ -8,7 +8,7 @@ import texture from "./data/hiddo-texture.png";
 import MenuItem from "./components/MenuItem";
 import imageDefinition from "./data/hiddo";
 import TabIcon from "./components/TabIcon";
-import SliderControl from "./components/SliderControl";
+import MouseControl, { MouseMode } from "./components/MouseControl";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -30,6 +30,13 @@ const App: React.FC = () => {
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0.0);
   const [panY, setPanY] = useState(0.0);
+  const [mouseCoordinates, setMouseCoordinates] = useState<
+    null | [number, number]
+  >(null);
+
+  const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
+    false
+  );
 
   const menu = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
@@ -46,7 +53,7 @@ const App: React.FC = () => {
     }
     if (activeItem === MenuItems.Composition) {
       return (
-        <Menu title="Layers">
+        <Menu title="Composition">
           {imageDefinition.shapes.map((shape) => (
             <MenuItem
               key={shape.name}
@@ -68,6 +75,7 @@ const App: React.FC = () => {
           zoom={zoom}
           panX={panX}
           panY={panY}
+          onMouseMove={setMouseCoordinates}
         />
       );
     }
@@ -87,63 +95,62 @@ const App: React.FC = () => {
 
   const tools = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
-      return [
-        <SliderControl
-          key="zoom"
-          value={zoom}
-          min={0.1}
-          max={4.0}
-          step={0.05}
-          onChange={setZoom}
-        />,
-        <SliderControl
-          key="x"
-          value={panX}
-          min={-1.0}
-          max={1.0}
-          step={0.05}
-          onChange={setPanX}
-        />,
-        <SliderControl
-          key="y"
-          value={panY}
-          min={-1.0}
-          max={1.0}
-          step={0.05}
-          onChange={setPanY}
-        />,
-      ];
+      return [];
     }
     if (activeItem === MenuItems.Composition) {
-      return [
-        <SliderControl
-          key="zoom"
-          value={zoom}
-          min={0.1}
-          max={4.0}
-          step={0.05}
-          onChange={setZoom}
-        />,
-        <SliderControl
-          key="x"
-          value={panX}
-          min={-1.0}
-          max={1.0}
-          step={0.05}
-          onChange={setPanX}
-        />,
-        <SliderControl
-          key="y"
-          value={panY}
-          min={-1.0}
-          max={1.0}
-          step={0.05}
-          onChange={setPanY}
-        />,
-      ];
+      return [];
     }
     return undefined;
-  }, [activeItem, zoom, panX, panY]);
+  }, [activeItem, zoom, panX, panY, mouseCoordinates]);
+
+  const mouseMode = MouseMode.Grab;
+
+  const mouseDown = (event: React.MouseEvent) => {
+    const canvasPos = event.currentTarget.getBoundingClientRect();
+    const elementX = event.pageX - canvasPos.left;
+    const elementY = event.pageY - canvasPos.top;
+    setIsMouseDown([elementX, elementY]);
+  };
+
+  const mouseMove = (event: React.MouseEvent) => {
+    if (isMouseDown) {
+      const canvasPos = event.currentTarget.getBoundingClientRect();
+      const elementX = event.pageX - canvasPos.left;
+      const elementY = event.pageY - canvasPos.top;
+      setIsMouseDown([elementX, elementY]);
+      const deltaX = elementX - isMouseDown[0];
+      const deltaY = elementY - isMouseDown[1];
+
+      const newPanX = Math.min(
+        1.0,
+        Math.max(
+          panX + ((deltaX / canvasPos.width) * window.devicePixelRatio) / zoom,
+          -1.0
+        )
+      );
+      setPanX(newPanX);
+
+      const newPanY = Math.min(
+        1.0,
+        Math.max(
+          panY +
+            ((deltaY / canvasPos.height) * window.devicePixelRatio * -1.0) /
+              zoom,
+          -1.0
+        )
+      );
+      setPanY(newPanY);
+    }
+  };
+
+  const mouseUp = () => {
+    setIsMouseDown(false);
+  };
+
+  const mouseWheel = (delta: number) => {
+    const z = Math.min(4.0, Math.max(0.1, zoom + delta / 100));
+    setZoom(z);
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -166,7 +173,17 @@ const App: React.FC = () => {
         ]}
         tools={tools}
         menu={menu}
-        main={main}
+        main={
+          <MouseControl
+            mode={mouseMode}
+            onMouseDown={mouseDown}
+            onMouseMove={mouseMove}
+            onMouseUp={mouseUp}
+            onWheel={mouseWheel}
+          >
+            {main}
+          </MouseControl>
+        }
       />
     </ThemeProvider>
   );
