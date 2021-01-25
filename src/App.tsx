@@ -33,10 +33,10 @@ const App: React.FC = () => {
   const [mouseCoordinates, setMouseCoordinates] = useState<
     null | [number, number]
   >(null);
-
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
     false
   );
+  const [layerSelected, setLayerSelected] = useState<null | string>(null);
 
   const menu = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
@@ -45,7 +45,13 @@ const App: React.FC = () => {
           {imageDefinition.shapes.map((shape) => (
             <MenuItem
               key={shape.name}
+              selected={shape.name === layerSelected}
               name={`${shape.name} (${shape.points.length})`}
+              onClick={() =>
+                setLayerSelected(
+                  shape.name === layerSelected ? null : shape.name
+                )
+              }
             />
           ))}
         </Menu>
@@ -64,7 +70,7 @@ const App: React.FC = () => {
       );
     }
     return undefined;
-  }, [activeItem]);
+  }, [activeItem, layerSelected]);
 
   const main = useMemo(() => {
     if (activeItem === MenuItems.Layers) {
@@ -148,7 +154,7 @@ const App: React.FC = () => {
   };
 
   const mouseWheel = (delta: number) => {
-    const z = Math.min(4.0, Math.max(0.1, zoom + delta / 100));
+    const z = Math.min(4.0, Math.max(0.1, zoom - delta / 100));
     setZoom(z);
   };
 
