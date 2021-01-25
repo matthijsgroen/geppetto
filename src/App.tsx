@@ -81,6 +81,7 @@ const App: React.FC = () => {
           zoom={zoom}
           panX={panX}
           panY={panY}
+          activeLayer={layerSelected}
           onMouseMove={setMouseCoordinates}
         />
       );
@@ -97,7 +98,7 @@ const App: React.FC = () => {
       );
     }
     return undefined;
-  }, [activeItem, zoom, panX, panY]);
+  }, [activeItem, zoom, panX, panY, layerSelected]);
 
   const tools = useMemo(() => {
     if (activeItem === MenuItems.Layers) {

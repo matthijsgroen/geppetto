@@ -15,7 +15,7 @@ const Item = styled.div<{ selected: boolean }>`
     selected ? theme.colors.textSelected : theme.colors.text};
   font-size: 16px;
   font-weight: normal;
-  cursor: pointer;
+  cursor: default;
 `;
 
 const MenuItem: React.FC<MenuItemProps> = ({ name, selected, onClick }) => (
