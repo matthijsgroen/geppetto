@@ -8,8 +8,27 @@ export type ShapesDefinition = {
     parent?: { id: string; offset: Vec2 };
     anchor: Vec2;
   };
+  mutationVectors?: {
+    [key: string]: Vec3;
+  };
+};
+
+export type Keyframe = {
+  [element: string]: {
+    deformations: {
+      [key: string]: Vec2;
+    };
+  };
+};
+
+export type ControlDefinition = {
+  name: string;
+  type: "slider";
+  min: Keyframe;
+  max: Keyframe;
 };
 
 export type ImageDefinition = {
   shapes: ShapesDefinition[];
+  controls: ControlDefinition[];
 };

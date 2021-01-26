@@ -43,6 +43,9 @@ const imageDefinition: ImageDefinition = {
         },
         anchor: [50, 11],
       },
+      mutationVectors: {
+        deform0: [50, 11, 40],
+      },
     },
     {
       name: "mouthOpen",
@@ -134,6 +137,26 @@ const imageDefinition: ImageDefinition = {
       ],
       settings: {
         anchor: [511, 302],
+      },
+    },
+  ],
+  controls: [
+    {
+      name: "eyebrows",
+      type: "slider",
+      min: {
+        rightEyeBrow: {
+          deformations: {
+            deform0: [0, 0],
+          },
+        },
+      },
+      max: {
+        rightEyeBrow: {
+          deformations: {
+            deform0: [-0.5, -40],
+          },
+        },
       },
     },
   ],
