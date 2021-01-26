@@ -13,12 +13,14 @@ export type ShapesDefinition = {
   };
 };
 
-export type Keyframe = {
-  [element: string]: {
-    deformations: {
-      [key: string]: Vec2;
-    };
+export type ElementData = {
+  deformations: {
+    [key: string]: Vec2;
   };
+};
+
+export type Keyframe = {
+  [element: string]: ElementData;
 };
 
 export type ControlDefinition = {

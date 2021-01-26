@@ -71,7 +71,7 @@ const Layers: React.FC<LayersProps> = ({ texture, imageDefinition }) => {
 
   return (
     <ScreenLayout
-      menu={
+      menus={
         <Menu title="Layers">
           {imageDefinition.shapes.map((shape) => (
             <MenuItem
