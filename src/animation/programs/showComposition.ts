@@ -1,5 +1,5 @@
 import Delaunator from "delaunator";
-import { ShapesDefinition, Vec3 } from "../../lib/types";
+import { ShapesDefinition, Vec2 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 
 const compositionVertexShader = `
@@ -42,9 +42,9 @@ const compositionFragmentShader = `
 const getParentOffset = (
   shape: ShapesDefinition | undefined,
   shapes: ShapesDefinition[]
-): Vec3 => {
+): Vec2 => {
   if (!shape || !shape.settings.parent) {
-    return [0, 0, 0];
+    return [0, 0];
   }
   const parentId = shape.settings.parent.id;
   const parent = shapes.find((e) => e.name === parentId);
@@ -52,7 +52,6 @@ const getParentOffset = (
   return [
     shape.settings.parent.offset[0] + parentOffset[0],
     shape.settings.parent.offset[1] + parentOffset[1],
-    shape.settings.parent.offset[2] + parentOffset[2],
   ];
 };
 
@@ -236,7 +235,7 @@ export const showComposition = (): {
               ...element,
               x: basePosition[0] + itemOffset[0] - shape.settings.anchor[0],
               y: basePosition[1] + itemOffset[1] - shape.settings.anchor[1],
-              z: basePosition[2] - itemOffset[2] * 0.001,
+              z: items.indexOf(shape) * 0.01,
             };
           });
 

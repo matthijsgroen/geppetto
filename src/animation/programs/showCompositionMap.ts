@@ -42,7 +42,7 @@ const getParentOffset = (
   return [
     shape.settings.parent.offset[0] + parentOffset[0],
     shape.settings.parent.offset[1] + parentOffset[1],
-    shape.settings.parent.offset[2] + parentOffset[2],
+    shapes.indexOf(shape) * 0.1,
   ];
 };
 

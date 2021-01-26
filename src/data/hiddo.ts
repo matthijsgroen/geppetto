@@ -17,7 +17,7 @@ const imageDefinition: ImageDefinition = {
       settings: {
         parent: {
           id: "body",
-          offset: [-25, -235, 3],
+          offset: [-25, -235],
         },
         anchor: [16, 12],
       },
@@ -39,21 +39,9 @@ const imageDefinition: ImageDefinition = {
       settings: {
         parent: {
           id: "body",
-          offset: [7, -235, 3],
+          offset: [7, -235],
         },
         anchor: [50, 11],
-      },
-    },
-    {
-      name: "body",
-      points: [
-        [422, 3],
-        [598, 3],
-        [422, 598],
-        [598, 600],
-      ],
-      settings: {
-        anchor: [511, 302],
       },
     },
     {
@@ -67,25 +55,9 @@ const imageDefinition: ImageDefinition = {
       settings: {
         parent: {
           id: "body",
-          offset: [15, -185, 3],
+          offset: [15, -185],
         },
         anchor: [38, 60],
-      },
-    },
-    {
-      name: "leftEye",
-      points: [
-        [9, 21],
-        [25, 32],
-        [25, 21],
-        [9, 32],
-      ],
-      settings: {
-        parent: {
-          id: "body",
-          offset: [-22, -222, 3],
-        },
-        anchor: [17, 27],
       },
     },
     {
@@ -99,25 +71,25 @@ const imageDefinition: ImageDefinition = {
       settings: {
         parent: {
           id: "leftEye",
-          offset: [-2, 0, 3],
+          offset: [-2, 0],
         },
         anchor: [17, 40],
       },
     },
     {
-      name: "rightEye",
+      name: "leftEye",
       points: [
-        [37, 18],
-        [59, 32],
-        [37, 32],
-        [59, 18],
+        [9, 21],
+        [25, 32],
+        [25, 21],
+        [9, 32],
       ],
       settings: {
         parent: {
           id: "body",
-          offset: [7, -222, 3],
+          offset: [-22, -222],
         },
-        anchor: [48, 25],
+        anchor: [17, 27],
       },
     },
     {
@@ -131,9 +103,37 @@ const imageDefinition: ImageDefinition = {
       settings: {
         parent: {
           id: "rightEye",
-          offset: [0, 0, 3],
+          offset: [0, 0],
         },
         anchor: [41, 40],
+      },
+    },
+    {
+      name: "rightEye",
+      points: [
+        [37, 18],
+        [59, 32],
+        [37, 32],
+        [59, 18],
+      ],
+      settings: {
+        parent: {
+          id: "body",
+          offset: [7, -222],
+        },
+        anchor: [48, 25],
+      },
+    },
+    {
+      name: "body",
+      points: [
+        [422, 3],
+        [598, 3],
+        [422, 598],
+        [598, 600],
+      ],
+      settings: {
+        anchor: [511, 302],
       },
     },
   ],

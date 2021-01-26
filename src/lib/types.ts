@@ -5,7 +5,7 @@ export type ShapesDefinition = {
   name: string;
   points: Vec2[];
   settings: {
-    parent?: { id: string; offset: Vec3 };
+    parent?: { id: string; offset: Vec2 };
     anchor: Vec2;
   };
 };
