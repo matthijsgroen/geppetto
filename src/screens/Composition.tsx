@@ -72,35 +72,24 @@ const Composition: React.FC<CompositionProps> = ({
     setZoom(z);
   };
 
-  const menu = (
-    <Menu title="Composition">
-      {imageDefinition.shapes.map((shape) => (
-        <MenuItem
-          key={shape.name}
-          selected={shape.name === layerSelected}
-          name={`${shape.name} (${shape.points.length})`}
-          onClick={() =>
-            setLayerSelected(shape.name === layerSelected ? null : shape.name)
-          }
-        />
-      ))}
-    </Menu>
-  );
-
-  const main = (
-    <CompositionCanvas
-      url={texture}
-      shapes={imageDefinition.shapes}
-      zoom={zoom}
-      panX={panX}
-      panY={panY}
-      activeLayer={layerSelected}
-    />
-  );
-
   return (
     <ScreenLayout
-      menu={menu}
+      menu={
+        <Menu title="Composition">
+          {imageDefinition.shapes.map((shape) => (
+            <MenuItem
+              key={shape.name}
+              selected={shape.name === layerSelected}
+              name={`${shape.name} (${shape.points.length})`}
+              onClick={() =>
+                setLayerSelected(
+                  shape.name === layerSelected ? null : shape.name
+                )
+              }
+            />
+          ))}
+        </Menu>
+      }
       main={
         <MouseControl
           mode={mouseMode}
@@ -109,7 +98,14 @@ const Composition: React.FC<CompositionProps> = ({
           onMouseUp={mouseUp}
           onWheel={mouseWheel}
         >
-          {main}
+          <CompositionCanvas
+            url={texture}
+            shapes={imageDefinition.shapes}
+            zoom={zoom}
+            panX={panX}
+            panY={panY}
+            activeLayer={layerSelected}
+          />
         </MouseControl>
       }
     />

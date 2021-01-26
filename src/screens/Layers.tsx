@@ -69,34 +69,24 @@ const Layers: React.FC<LayersProps> = ({ texture, imageDefinition }) => {
     setZoom(z);
   };
 
-  const menu = (
-    <Menu title="Layers">
-      {imageDefinition.shapes.map((shape) => (
-        <MenuItem
-          key={shape.name}
-          selected={shape.name === layerSelected}
-          name={`${shape.name} (${shape.points.length})`}
-          onClick={() =>
-            setLayerSelected(shape.name === layerSelected ? null : shape.name)
-          }
-        />
-      ))}
-    </Menu>
-  );
-  const main = (
-    <TextureMapCanvas
-      url={texture}
-      shapes={imageDefinition.shapes}
-      zoom={zoom}
-      panX={panX}
-      panY={panY}
-      activeLayer={layerSelected}
-    />
-  );
-
   return (
     <ScreenLayout
-      menu={menu}
+      menu={
+        <Menu title="Layers">
+          {imageDefinition.shapes.map((shape) => (
+            <MenuItem
+              key={shape.name}
+              selected={shape.name === layerSelected}
+              name={`${shape.name} (${shape.points.length})`}
+              onClick={() =>
+                setLayerSelected(
+                  shape.name === layerSelected ? null : shape.name
+                )
+              }
+            />
+          ))}
+        </Menu>
+      }
       main={
         <MouseControl
           mode={mouseMode}
@@ -105,7 +95,14 @@ const Layers: React.FC<LayersProps> = ({ texture, imageDefinition }) => {
           onMouseUp={mouseUp}
           onWheel={mouseWheel}
         >
-          {main}
+          <TextureMapCanvas
+            url={texture}
+            shapes={imageDefinition.shapes}
+            zoom={zoom}
+            panX={panX}
+            panY={panY}
+            activeLayer={layerSelected}
+          />
         </MouseControl>
       }
     />
