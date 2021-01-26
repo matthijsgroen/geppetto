@@ -63,7 +63,13 @@ const App: React.FC = () => {
           {imageDefinition.shapes.map((shape) => (
             <MenuItem
               key={shape.name}
+              selected={shape.name === layerSelected}
               name={`${shape.name} (${shape.points.length})`}
+              onClick={() =>
+                setLayerSelected(
+                  shape.name === layerSelected ? null : shape.name
+                )
+              }
             />
           ))}
         </Menu>
@@ -94,6 +100,7 @@ const App: React.FC = () => {
           zoom={zoom}
           panX={panX}
           panY={panY}
+          activeLayer={layerSelected}
         />
       );
     }
