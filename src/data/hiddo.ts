@@ -44,7 +44,7 @@ const imageDefinition: ImageDefinition = {
         anchor: [50, 11],
       },
       mutationVectors: {
-        deform0: [50, 11, 40],
+        deform0: [0, 0, 40],
       },
     },
     {
@@ -154,7 +154,7 @@ const imageDefinition: ImageDefinition = {
       max: {
         rightEyeBrow: {
           deformations: {
-            deform0: [-0.5, -40],
+            deform0: [-15, -40],
           },
         },
       },

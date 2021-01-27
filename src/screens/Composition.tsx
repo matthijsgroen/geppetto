@@ -4,7 +4,7 @@ import Menu from "../components/Menu";
 import MenuItem from "../components/MenuItem";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import SliderControl from "../components/SliderControl";
-import { ElementData, ImageDefinition, Keyframe } from "../lib/types";
+import { ElementData, ImageDefinition, Keyframe, Vec2 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface CompositionProps {
@@ -14,17 +14,27 @@ interface CompositionProps {
 
 type ControlValues = Record<string, number>;
 
+const mergeVectors = (a: Vec2, b: Vec2 | undefined, mix: number): Vec2 =>
+  b === undefined
+    ? [a[0] * (1 - mix), a[1] * (1 - mix)]
+    : ([a[0] * (1 - mix) + mix * b[0], a[1] * (1 - mix) + mix * b[1]] as Vec2);
+
 const mergeElement = (
   a: ElementData,
   b: ElementData | undefined,
   mix: number
-) => {
-  if (b === undefined) {
-    return a;
-  }
-  console.log(mix);
-  return b;
-};
+): ElementData =>
+  b === undefined
+    ? a
+    : {
+        deformations: Object.entries(a.deformations).reduce(
+          (result, [key, value]) => ({
+            ...result,
+            [key]: mergeVectors(value, result[key], mix),
+          }),
+          b.deformations
+        ),
+      };
 
 const mergeKeyframes = (a: Keyframe, b: Keyframe, mix: number): Keyframe =>
   Object.entries(a).reduce(
@@ -43,7 +53,11 @@ const createKeyframe = (
     (result, control) => ({
       ...result,
       ...mergeKeyframes(
-        mergeKeyframes(control.min, control.max, controlValues[control.name]),
+        mergeKeyframes(
+          control.min,
+          control.max,
+          controlValues[control.name] || 0
+        ),
         result,
         0.5
       ),
@@ -147,7 +161,6 @@ const Composition: React.FC<CompositionProps> = ({
               }}
             />
           ))}
-          {JSON.stringify(createKeyframe(controlValues, imageDefinition))}
         </Menu>,
       ]}
       main={
@@ -165,6 +178,7 @@ const Composition: React.FC<CompositionProps> = ({
             panX={panX}
             panY={panY}
             activeLayer={layerSelected}
+            keyframe={createKeyframe(controlValues, imageDefinition)}
           />
         </MouseControl>
       }
