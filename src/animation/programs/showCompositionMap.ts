@@ -240,7 +240,6 @@ export const showCompositionMap = (): {
           calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
-
           const deformation = gl.getUniformLocation(
             shaderProgram,
             "uDeformPositions"
@@ -256,7 +255,7 @@ export const showCompositionMap = (): {
               const elementData = keyframe && keyframe[element.name];
               const deformValues: number[] = Array(16 * 2).fill(0);
               if (elementData) {
-                Object.entries(elementData.deformations).forEach(
+                Object.entries(elementData.deformations || {}).forEach(
                   ([key, value]) => {
                     const index = element.deformationVectors[key].index;
 

@@ -21,6 +21,9 @@ const imageDefinition: ImageDefinition = {
         },
         anchor: [16, 12],
       },
+      mutationVectors: {
+        deform1: [10, 0, 20],
+      },
     },
     {
       name: "rightEyeBrow",
@@ -44,7 +47,7 @@ const imageDefinition: ImageDefinition = {
         anchor: [50, 11],
       },
       mutationVectors: {
-        deform0: [0, 0, 40],
+        deform0: [-10, 0, 20],
       },
     },
     {
@@ -147,15 +150,59 @@ const imageDefinition: ImageDefinition = {
       min: {
         rightEyeBrow: {
           deformations: {
-            deform0: [0, 0],
+            deform0: [0, 5],
+          },
+        },
+        leftEyeBrow: {
+          deformations: {
+            deform1: [0, 5],
           },
         },
       },
       max: {
         rightEyeBrow: {
           deformations: {
-            deform0: [-15, -40],
+            deform0: [0, -10],
           },
+        },
+        leftEyeBrow: {
+          deformations: {
+            deform1: [0, -10],
+          },
+        },
+      },
+    },
+    {
+      name: "mouth",
+      type: "slider",
+      min: {
+        mouth: {
+          stretchY: 1.0,
+        },
+      },
+      max: {
+        mouth: {
+          stretchY: 0.2,
+        },
+      },
+    },
+    {
+      name: "eyes",
+      type: "slider",
+      min: {
+        leftPupil: {
+          translateX: -3,
+        },
+        rightPupil: {
+          translateX: -5,
+        },
+      },
+      max: {
+        leftPupil: {
+          translateX: 10,
+        },
+        rightPupil: {
+          translateX: 15,
         },
       },
     },

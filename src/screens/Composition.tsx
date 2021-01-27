@@ -14,10 +14,12 @@ interface CompositionProps {
 
 type ControlValues = Record<string, number>;
 
-const mergeVectors = (a: Vec2, b: Vec2 | undefined, mix: number): Vec2 =>
+const merge = (a: number, b: number, mix: number) => a * (1 - mix) + mix * b;
+
+const mergeVec2 = (a: Vec2, b: Vec2 | undefined, mix: number): Vec2 =>
   b === undefined
-    ? [a[0] * (1 - mix), a[1] * (1 - mix)]
-    : ([a[0] * (1 - mix) + mix * b[0], a[1] * (1 - mix) + mix * b[1]] as Vec2);
+    ? [merge(a[0], 0, mix), merge(a[1], 0, mix)]
+    : ([merge(a[0], b[0], mix), merge(a[1], b[1], mix)] as Vec2);
 
 const mergeElement = (
   a: ElementData,
@@ -27,13 +29,17 @@ const mergeElement = (
   b === undefined
     ? a
     : {
-        deformations: Object.entries(a.deformations).reduce(
+        deformations: Object.entries(a.deformations || {}).reduce(
           (result, [key, value]) => ({
             ...result,
-            [key]: mergeVectors(value, result[key], mix),
+            [key]: mergeVec2(value, result[key], mix),
           }),
-          b.deformations
+          b.deformations || {}
         ),
+        stretchX: merge(a.stretchX || 0, b.stretchX || 0, mix),
+        stretchY: merge(a.stretchY || 0, b.stretchY || 0, mix),
+        translateX: merge(a.translateX || 0, b.translateX || 0, mix),
+        translateY: merge(a.translateY || 0, b.translateY || 0, mix),
       };
 
 const mergeKeyframes = (a: Keyframe, b: Keyframe, mix: number): Keyframe =>
@@ -162,6 +168,15 @@ const Composition: React.FC<CompositionProps> = ({
             />
           ))}
         </Menu>,
+        //     <div key="keyfr" style={{ color: "white", width: "200px" }}>
+        //       {Object.entries(createKeyframe(controlValues, imageDefinition)).map(
+        //         ([key, value]) => (
+        //           <p key={key}>
+        //             <strong>{key}</strong> {JSON.stringify(value, null, 2)}
+        //           </p>
+        //         )
+        //       )}
+        //     </div>,
       ]}
       main={
         <MouseControl

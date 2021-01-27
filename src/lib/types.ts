@@ -14,9 +14,13 @@ export type ShapesDefinition = {
 };
 
 export type ElementData = {
-  deformations: {
+  deformations?: {
     [key: string]: Vec2;
   };
+  stretchX?: number;
+  stretchY?: number;
+  translateX?: number;
+  translateY?: number;
 };
 
 export type Keyframe = {

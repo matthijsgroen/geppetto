@@ -91,6 +91,7 @@ export const showComposition = (): {
   let img: HTMLImageElement | null = null;
   let texture: WebGLTexture | null = null;
   let keyframe: Keyframe | null = null;
+  let program: WebGLProgram | null = null;
 
   let elements: {
     start: number;
@@ -101,12 +102,18 @@ export const showComposition = (): {
   let pan = [0, 0];
 
   const setImageTexture = (): void => {
-    if (img === null || texture === null || gl === null) {
+    if (img === null || texture === null || gl === null || program === null) {
       return;
     }
 
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+
+    gl.uniform2f(
+      gl.getUniformLocation(program, "uTextureDimensions"),
+      img.width,
+      img.height
+    );
   };
 
   const populateShapes = () => {
@@ -197,6 +204,15 @@ export const showComposition = (): {
         compositionVertexShader,
         compositionFragmentShader
       );
+      program = shaderProgram;
+
+      gl.useProgram(shaderProgram);
+      gl.uniform1i(
+        gl.getUniformLocation(shaderProgram, "uSampler"),
+        unit.index
+      );
+      setImageTexture();
+      populateShapes();
 
       return {
         render() {
@@ -254,12 +270,9 @@ export const showComposition = (): {
             img.width,
             img.height
           );
+
           gl.activeTexture(unit.unit);
           gl.bindTexture(gl.TEXTURE_2D, texture);
-          gl.uniform1i(
-            gl.getUniformLocation(shaderProgram, "uSampler"),
-            unit.index
-          );
 
           const basePosition = [
             canvasWidth / 2 / scale,
@@ -304,7 +317,7 @@ export const showComposition = (): {
             const elementData = keyframe && keyframe[element.name];
             const deformValues: number[] = Array(16 * 2).fill(0);
             if (elementData) {
-              Object.entries(elementData.deformations).forEach(
+              Object.entries(elementData.deformations || {}).forEach(
                 ([key, value]) => {
                   const index = element.deformationVectors[key].index;
 
