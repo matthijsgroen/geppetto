@@ -10,6 +10,7 @@ const compositionVertexShader = `
 
   uniform vec3 uDeformPositions[16];
   uniform vec2 uDeformValues[16];
+  uniform vec4 moveAndSqueeze;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -19,7 +20,7 @@ const compositionVertexShader = `
   );
 
   void main() {
-    vec2 deform = vec2(0.0, 0.0);
+    vec2 deform = coordinates;
 
     for(int i = 0; i < 16; i++) {
       vec3 position = uDeformPositions[i];
@@ -30,7 +31,7 @@ const compositionVertexShader = `
       }
     }
 
-    vec4 pos = viewportScale * vec4((coordinates + translate.xy + deform) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deform * moveAndSqueeze.ba + moveAndSqueeze.xy + translate.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z - 1.0, 1.0);
   }
 `;
@@ -248,12 +249,19 @@ export const showCompositionMap = (): {
             shaderProgram,
             "uDeformValues"
           );
+          const moveAndSqueeze = gl.getUniformLocation(
+            shaderProgram,
+            "moveAndSqueeze"
+          );
 
           calculatedElements.forEach((element) => {
             if (element.name === layerSelected) {
               gl.uniform3f(translate, element.x, element.y, element.z);
+
               const elementData = keyframe && keyframe[element.name];
               const deformValues: number[] = Array(16 * 2).fill(0);
+              const moveSquezeValues: number[] = [0, 0, 1, 1];
+
               if (elementData) {
                 Object.entries(elementData.deformations || {}).forEach(
                   ([key, value]) => {
@@ -263,7 +271,27 @@ export const showCompositionMap = (): {
                     deformValues[index * 2 + 1] = value[1];
                   }
                 );
+                if (elementData.stretchX) {
+                  moveSquezeValues[2] = elementData.stretchX;
+                }
+                if (elementData.stretchY) {
+                  moveSquezeValues[3] = elementData.stretchY;
+                }
+                if (elementData.translateX) {
+                  moveSquezeValues[0] = elementData.translateX;
+                }
+                if (elementData.translateY) {
+                  moveSquezeValues[1] = elementData.translateY;
+                }
               }
+
+              gl.uniform4f(
+                moveAndSqueeze,
+                moveSquezeValues[0],
+                moveSquezeValues[1],
+                moveSquezeValues[2],
+                moveSquezeValues[3]
+              );
               gl.uniform3fv(
                 deformation,
                 element.deformationVectorList

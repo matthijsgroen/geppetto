@@ -176,12 +176,12 @@ const imageDefinition: ImageDefinition = {
       name: "mouth",
       type: "slider",
       min: {
-        mouth: {
+        mouthOpen: {
           stretchY: 1.0,
         },
       },
       max: {
-        mouth: {
+        mouthOpen: {
           stretchY: 0.2,
         },
       },
@@ -191,18 +191,18 @@ const imageDefinition: ImageDefinition = {
       type: "slider",
       min: {
         leftPupil: {
-          translateX: -3,
+          translateX: -2,
         },
         rightPupil: {
-          translateX: -5,
+          translateX: -4,
         },
       },
       max: {
         leftPupil: {
-          translateX: 10,
+          translateX: 3,
         },
         rightPupil: {
-          translateX: 15,
+          translateX: 4,
         },
       },
     },
