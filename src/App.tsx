@@ -9,6 +9,7 @@ import Composition from "./screens/Composition";
 import texture from "./data/hiddo-texture.png";
 import data from "./data/hiddo.json";
 import { ImageDefinition } from "./lib/types";
+import FileContentDialog from "./screens/FileContentDialog";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -31,6 +32,7 @@ const App: React.FC = () => {
   const [imageDefinition] = useState<ImageDefinition>(
     (data as unknown) as ImageDefinition
   );
+  const [fileContentOpen, setFileContentOpen] = useState<boolean>(false);
 
   const icons = (
     <IconBar
@@ -54,7 +56,7 @@ const App: React.FC = () => {
         <TabIcon
           icon="⚙"
           title="Settings"
-          onClick={() => setActiveItem(MenuItems.Composition)}
+          onClick={() => setFileContentOpen(true)}
           key="settings"
         />,
       ]}
@@ -70,6 +72,12 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
+      {fileContentOpen && (
+        <FileContentDialog
+          imageDefinition={imageDefinition}
+          onClose={() => setFileContentOpen(false)}
+        />
+      )}
       <AppLayout icons={icons} screen={screen} />
     </ThemeProvider>
   );
