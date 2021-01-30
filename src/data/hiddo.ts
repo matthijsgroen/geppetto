@@ -19,7 +19,6 @@ const imageDefinition: ImageDefinition = {
             [27, 17],
             [27, 7],
           ],
-          anchor: [16, 12],
           mutationVectors: {
             deform1: [10, 0, 20],
           },
@@ -43,7 +42,6 @@ const imageDefinition: ImageDefinition = {
             [64, 15],
             [66, 5],
           ],
-          anchor: [50, 11],
           mutationVectors: {
             deform0: [-10, 0, 20],
           },
@@ -61,10 +59,9 @@ const imageDefinition: ImageDefinition = {
             [7, 70],
             [35, 70],
           ],
-          anchor: [38, 60],
           baseElementData: {
-            translateX: 15,
-            translateY: -185,
+            translateX: 0,
+            translateY: -182,
           },
         },
         {
@@ -80,7 +77,6 @@ const imageDefinition: ImageDefinition = {
                 [12, 45],
                 [23, 35],
               ],
-              anchor: [17, 40],
               baseElementData: {
                 translateX: -24,
                 translateY: -222,
@@ -95,7 +91,6 @@ const imageDefinition: ImageDefinition = {
                 [25, 21],
                 [9, 32],
               ],
-              anchor: [17, 27],
               baseElementData: {
                 translateX: -22,
                 translateY: -222,
@@ -120,7 +115,6 @@ const imageDefinition: ImageDefinition = {
                 translateX: 7,
                 translateY: -222,
               },
-              anchor: [41, 40],
             },
             {
               name: "rightEyeSocket",
@@ -131,7 +125,6 @@ const imageDefinition: ImageDefinition = {
                 [37, 32],
                 [59, 18],
               ],
-              anchor: [48, 25],
               baseElementData: {
                 translateX: 7,
                 translateY: -222,
@@ -148,7 +141,6 @@ const imageDefinition: ImageDefinition = {
             [422, 598],
             [598, 600],
           ],
-          anchor: [511, 302],
           baseElementData: {},
         },
       ],

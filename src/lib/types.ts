@@ -15,7 +15,7 @@ export type SpriteDefinition = {
   name: string;
   type: "sprite";
   points: Vec2[];
-  anchor: Vec2;
+  // anchor: Vec2;
   mutationVectors?: {
     [key: string]: Vec3;
   };

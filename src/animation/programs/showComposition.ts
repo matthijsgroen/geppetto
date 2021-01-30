@@ -1,7 +1,7 @@
 import Delaunator from "delaunator";
 import { Keyframe, ShapeDefinition, Vec3 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
-import { flattenShapes } from "./utils";
+import { flattenShapes, getAnchor } from "./utils";
 
 const compositionVertexShader = `
   attribute vec2 coordinates;
@@ -114,7 +114,7 @@ export const showComposition = (): {
     sprites.forEach((shape) => {
       const shapeIndices = Delaunator.from(shape.points).triangles;
       const start = indices.length;
-      const anchor = shape.anchor;
+      const anchor = getAnchor(shape);
 
       const deformationVectors = Object.entries(
         shape.mutationVectors || {}

@@ -1,7 +1,7 @@
 import { Keyframe, ShapeDefinition, Vec3 } from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
-import { flattenShapes } from "./utils";
+import { flattenShapes, getAnchor } from "./utils";
 
 const compositionVertexShader = `
   attribute vec2 coordinates;
@@ -85,7 +85,7 @@ export const showCompositionMap = (): {
     const sprites = flattenShapes(shapes);
 
     sprites.forEach((shape) => {
-      const anchor = shape.anchor;
+      const anchor = getAnchor(shape);
       const points = shape.points.map(([x, y]) => [
         x - anchor[0],
         y - anchor[1],
