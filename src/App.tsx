@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { DefaultTheme, ThemeProvider } from "styled-components";
 import AppLayout from "./templates/AppLayout";
-import texture from "./data/hiddo-texture.png";
-import imageDefinition from "./data/hiddo";
 import TabIcon from "./components/TabIcon";
 import IconBar from "./components/IconBar";
 import Layers from "./screens/Layers";
 import Composition from "./screens/Composition";
+
+import texture from "./data/hiddo-texture.png";
+import data from "./data/hiddo.json";
+import { ImageDefinition } from "./lib/types";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -26,6 +28,9 @@ enum MenuItems {
 
 const App: React.FC = () => {
   const [activeItem, setActiveItem] = useState(MenuItems.Layers);
+  const [imageDefinition] = useState<ImageDefinition>(
+    (data as unknown) as ImageDefinition
+  );
 
   const icons = (
     <IconBar
