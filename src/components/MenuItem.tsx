@@ -9,9 +9,9 @@ interface MenuItemProps {
 }
 
 const Item = styled.div<{ selected: boolean; indent: number }>`
-  background-color: ${({ selected, theme }) =>
+  background: ${({ selected, theme }) =>
     selected ? theme.colors.backgroundSelected : "none"};
-  padding-left: calc(0.5rem + ${(props) => props.indent}rem);
+  padding-left: calc(0.5rem + ${(props) => props.indent * 1.5}rem);
   padding-right: 0.5rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
