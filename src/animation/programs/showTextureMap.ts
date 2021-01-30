@@ -1,6 +1,7 @@
-import { ShapesDefinition } from "../../lib/types";
+import { ShapeDefinition } from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
+import { flattenShapes } from "./utils";
 
 const textureMapVertexShader = `
   attribute vec2 coordinates;
@@ -26,16 +27,17 @@ const textureMapFragmentShader = `
   }
 `;
 
+type Element = { start: number; amount: number };
+const STRIDE = 2;
+
 export const showTextureMap = (): {
   setImage(image: HTMLImageElement): void;
-  setShapes(shapes: ShapesDefinition[]): void;
+  setShapes(shapes: ShapeDefinition[]): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 2;
-
-  let shapes: ShapesDefinition[] | null = null;
+  let shapes: ShapeDefinition[] | null = null;
   let img: HTMLImageElement | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
@@ -43,23 +45,24 @@ export const showTextureMap = (): {
   let zoom = 1.0;
   let pan = [0, 0];
 
-  let elements: { start: number; amount: number }[] = [];
+  let elements: Element[] = [];
 
   const populateShapes = () => {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
     elements = [];
+    const sprites = flattenShapes(shapes);
 
-    const vertices = shapes.reduce((coordList, shape) => {
+    const vertices = sprites.reduce((coordList, shape) => {
       const list = verticesFromPoints(shape.points);
       elements.push({
-        start: coordList.length / stride,
+        start: coordList.length / STRIDE,
         amount: list.length / 2,
       });
 
       return coordList.concat(list);
     }, [] as number[]);
 
-    const indices = Array(vertices.length / stride)
+    const indices = Array(vertices.length / STRIDE)
       .fill(0)
       .map((_, i) => i);
 
@@ -80,7 +83,7 @@ export const showTextureMap = (): {
     setImage(image: HTMLImageElement) {
       img = image;
     },
-    setShapes(s: ShapesDefinition[]) {
+    setShapes(s: ShapeDefinition[]) {
       shapes = s;
       populateShapes();
     },
@@ -117,7 +120,7 @@ export const showTextureMap = (): {
             2,
             gl.FLOAT,
             false,
-            Float32Array.BYTES_PER_ELEMENT * stride,
+            Float32Array.BYTES_PER_ELEMENT * STRIDE,
             /* offset */ 0
           );
           gl.enableVertexAttribArray(coord);

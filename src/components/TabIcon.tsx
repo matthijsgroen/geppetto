@@ -16,6 +16,9 @@ const Icon = styled.button.attrs({ type: "button" })<IconProps>`
   width: 42px;
   height: 42px;
   display: flex;
+  color: ${(props) =>
+    props.isActive ? props.theme.colors.textSelected : props.theme.colors.text};
+  font-size: 1.5rem;
   background-color: ${(props) =>
     props.isActive
       ? props.theme.colors.backgroundSelected

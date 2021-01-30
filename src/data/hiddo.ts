@@ -3,144 +3,155 @@ import { ImageDefinition } from "../lib/types";
 const imageDefinition: ImageDefinition = {
   shapes: [
     {
-      name: "leftEyeBrow",
-      points: [
-        [6, 17],
-        [6, 7],
-        [13, 17],
-        [13, 7],
-        [20, 17],
-        [20, 7],
-        [27, 17],
-        [27, 7],
-      ],
-      settings: {
-        parent: {
-          id: "body",
-          offset: [-25, -235],
+      name: "character",
+      type: "folder",
+      items: [
+        {
+          name: "leftEyeBrow",
+          type: "sprite",
+          points: [
+            [6, 17],
+            [6, 7],
+            [13, 17],
+            [13, 7],
+            [20, 17],
+            [20, 7],
+            [27, 17],
+            [27, 7],
+          ],
+          anchor: [16, 12],
+          mutationVectors: {
+            deform1: [10, 0, 20],
+          },
+          baseElementData: {
+            translateX: -25,
+            translateY: -235,
+          },
         },
-        anchor: [16, 12],
-      },
-      mutationVectors: {
-        deform1: [10, 0, 20],
-      },
-    },
-    {
-      name: "rightEyeBrow",
-      points: [
-        [34, 7],
-        [36, 17],
-        [43, 17],
-        [43, 5],
-        [50, 15],
-        [57, 15],
-        [50, 5],
-        [57, 5],
-        [64, 15],
-        [66, 5],
-      ],
-      settings: {
-        parent: {
-          id: "body",
-          offset: [7, -235],
+        {
+          name: "rightEyeBrow",
+          type: "sprite",
+          points: [
+            [34, 7],
+            [36, 17],
+            [43, 17],
+            [43, 5],
+            [50, 15],
+            [57, 15],
+            [50, 5],
+            [57, 5],
+            [64, 15],
+            [66, 5],
+          ],
+          anchor: [50, 11],
+          mutationVectors: {
+            deform0: [-10, 0, 20],
+          },
+          baseElementData: {
+            translateX: 7,
+            translateY: -235,
+          },
         },
-        anchor: [50, 11],
-      },
-      mutationVectors: {
-        deform0: [-10, 0, 20],
-      },
-    },
-    {
-      name: "mouthOpen",
-      points: [
-        [7, 52],
-        [35, 52],
-        [7, 70],
-        [35, 70],
-      ],
-      settings: {
-        parent: {
-          id: "body",
-          offset: [15, -185],
+        {
+          name: "mouthOpen",
+          type: "sprite",
+          points: [
+            [7, 52],
+            [35, 52],
+            [7, 70],
+            [35, 70],
+          ],
+          anchor: [38, 60],
+          baseElementData: {
+            translateX: 15,
+            translateY: -185,
+          },
         },
-        anchor: [38, 60],
-      },
-    },
-    {
-      name: "leftPupil",
-      points: [
-        [12, 35],
-        [23, 45],
-        [12, 45],
-        [23, 35],
-      ],
-      settings: {
-        parent: {
-          id: "leftEye",
-          offset: [-2, 0],
+        {
+          name: "leftEye",
+          type: "folder",
+          items: [
+            {
+              name: "leftPupil",
+              type: "sprite",
+              points: [
+                [12, 35],
+                [23, 45],
+                [12, 45],
+                [23, 35],
+              ],
+              anchor: [17, 40],
+              baseElementData: {
+                translateX: -24,
+                translateY: -222,
+              },
+            },
+            {
+              name: "eyeSocket",
+              type: "sprite",
+              points: [
+                [9, 21],
+                [25, 32],
+                [25, 21],
+                [9, 32],
+              ],
+              anchor: [17, 27],
+              baseElementData: {
+                translateX: -22,
+                translateY: -222,
+              },
+            },
+          ],
         },
-        anchor: [17, 40],
-      },
-    },
-    {
-      name: "leftEye",
-      points: [
-        [9, 21],
-        [25, 32],
-        [25, 21],
-        [9, 32],
-      ],
-      settings: {
-        parent: {
-          id: "body",
-          offset: [-22, -222],
+        {
+          name: "rightEye",
+          type: "folder",
+          items: [
+            {
+              name: "rightPupil",
+              type: "sprite",
+              points: [
+                [34, 35],
+                [47, 45],
+                [34, 45],
+                [47, 35],
+              ],
+              baseElementData: {
+                translateX: 7,
+                translateY: -222,
+              },
+              anchor: [41, 40],
+            },
+            {
+              name: "rightEyeSocket",
+              type: "sprite",
+              points: [
+                [37, 18],
+                [59, 32],
+                [37, 32],
+                [59, 18],
+              ],
+              anchor: [48, 25],
+              baseElementData: {
+                translateX: 7,
+                translateY: -222,
+              },
+            },
+          ],
         },
-        anchor: [17, 27],
-      },
-    },
-    {
-      name: "rightPupil",
-      points: [
-        [34, 35],
-        [47, 45],
-        [34, 45],
-        [47, 35],
-      ],
-      settings: {
-        parent: {
-          id: "rightEye",
-          offset: [0, 0],
+        {
+          name: "body",
+          type: "sprite",
+          points: [
+            [422, 3],
+            [598, 3],
+            [422, 598],
+            [598, 600],
+          ],
+          anchor: [511, 302],
+          baseElementData: {},
         },
-        anchor: [41, 40],
-      },
-    },
-    {
-      name: "rightEye",
-      points: [
-        [37, 18],
-        [59, 32],
-        [37, 32],
-        [59, 18],
       ],
-      settings: {
-        parent: {
-          id: "body",
-          offset: [7, -222],
-        },
-        anchor: [48, 25],
-      },
-    },
-    {
-      name: "body",
-      points: [
-        [422, 3],
-        [598, 3],
-        [422, 598],
-        [598, 600],
-      ],
-      settings: {
-        anchor: [511, 302],
-      },
     },
   ],
   controls: [

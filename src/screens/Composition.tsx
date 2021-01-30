@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
-import MenuItem from "../components/MenuItem";
 import MouseControl, { MouseMode } from "../components/MouseControl";
+import ShapeList from "../components/ShapeList";
 import SliderControl from "../components/SliderControl";
 import { ElementData, ImageDefinition, Keyframe, Vec2 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
@@ -137,18 +137,11 @@ const Composition: React.FC<CompositionProps> = ({
     <ScreenLayout
       menus={[
         <Menu title="Composition" key="layers">
-          {imageDefinition.shapes.map((shape) => (
-            <MenuItem
-              key={shape.name}
-              selected={shape.name === layerSelected}
-              name={`${shape.name} (${shape.points.length})`}
-              onClick={() =>
-                setLayerSelected(
-                  shape.name === layerSelected ? null : shape.name
-                )
-              }
-            />
-          ))}
+          <ShapeList
+            shapes={imageDefinition.shapes}
+            layerSelected={layerSelected}
+            setLayerSelected={setLayerSelected}
+          />
         </Menu>,
         <Menu title="Controls" key="controls">
           {imageDefinition.controls.map((control) => (

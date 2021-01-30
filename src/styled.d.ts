@@ -7,6 +7,7 @@ declare module "styled-components" {
     colors: {
       background: string;
       backgroundSecondary: string;
+      itemContainerBackground: string;
       text: string;
       backgroundSelected: string;
       textSelected: string;

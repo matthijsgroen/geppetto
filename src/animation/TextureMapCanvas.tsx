@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { ShapesDefinition } from "../lib/types";
+import { ShapeDefinition } from "../lib/types";
 import { loadImage } from "../lib/webgl";
 import { showLayerPoints } from "./programs/showLayerPoints";
 import { showTexture } from "./programs/showTexture";
@@ -8,7 +8,7 @@ import WebGLCanvas from "./WebGLCanvas";
 
 export interface TextureMapCanvasProps {
   url: string;
-  shapes: ShapesDefinition[];
+  shapes: ShapeDefinition[];
   zoom?: number;
   panX: number;
   panY: number;

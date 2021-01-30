@@ -1,5 +1,6 @@
-import { ShapesDefinition } from "../../lib/types";
+import { ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
+import { flattenShapes } from "./utils";
 
 const textureMapVertexShader = `
   attribute vec2 coordinates;
@@ -28,7 +29,7 @@ const textureMapFragmentShader = `
 
 export const showLayerPoints = (): {
   setImage(image: HTMLImageElement): void;
-  setShapes(shapes: ShapesDefinition[]): void;
+  setShapes(shapes: ShapeDefinition[]): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   setLayerSelected(layer: null | string): void;
@@ -36,7 +37,7 @@ export const showLayerPoints = (): {
 } => {
   const stride = 2;
 
-  let shapes: ShapesDefinition[] | null = null;
+  let shapes: ShapeDefinition[] | null = null;
   let img: HTMLImageElement | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
@@ -50,8 +51,9 @@ export const showLayerPoints = (): {
   const populateShapes = () => {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
     elements = [];
+    const sprites = flattenShapes(shapes);
 
-    const vertices = shapes.reduce((coordList, shape) => {
+    const vertices = sprites.reduce((coordList, shape) => {
       const list = shape.points.reduce(
         (result, point) => result.concat(point),
         [] as number[]

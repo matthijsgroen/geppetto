@@ -12,6 +12,7 @@ const defaultTheme: DefaultTheme = {
   colors: {
     background: "#333",
     backgroundSecondary: "#444",
+    itemContainerBackground: "#111",
     text: "#999",
     backgroundSelected: "#444",
     textSelected: "white",
@@ -42,6 +43,14 @@ const App: React.FC = () => {
           active={activeItem === MenuItems.Composition}
           onClick={() => setActiveItem(MenuItems.Composition)}
           key="composition"
+        />,
+      ]}
+      bottomIcons={[
+        <TabIcon
+          icon="⚙"
+          title="Settings"
+          onClick={() => setActiveItem(MenuItems.Composition)}
+          key="settings"
         />,
       ]}
     />

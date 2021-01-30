@@ -1,18 +1,6 @@
 export type Vec2 = [number, number];
 export type Vec3 = [number, number, number];
 
-export type ShapesDefinition = {
-  name: string;
-  points: Vec2[];
-  settings: {
-    parent?: { id: string; offset: Vec2 };
-    anchor: Vec2;
-  };
-  mutationVectors?: {
-    [key: string]: Vec3;
-  };
-};
-
 export type ElementData = {
   deformations?: {
     [key: string]: Vec2;
@@ -22,6 +10,25 @@ export type ElementData = {
   translateX?: number;
   translateY?: number;
 };
+
+export type SpriteDefinition = {
+  name: string;
+  type: "sprite";
+  points: Vec2[];
+  anchor: Vec2;
+  mutationVectors?: {
+    [key: string]: Vec3;
+  };
+  baseElementData: ElementData;
+};
+
+export type FolderDefinition = {
+  name: string;
+  type: "folder";
+  items: ShapeDefinition[];
+};
+
+export type ShapeDefinition = FolderDefinition | SpriteDefinition;
 
 export type Keyframe = {
   [element: string]: ElementData;
@@ -35,6 +42,6 @@ export type ControlDefinition = {
 };
 
 export type ImageDefinition = {
-  shapes: ShapesDefinition[];
+  shapes: ShapeDefinition[];
   controls: ControlDefinition[];
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { Keyframe, ShapesDefinition } from "../lib/types";
+import { Keyframe, ShapeDefinition } from "../lib/types";
 import { loadImage } from "../lib/webgl";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
@@ -7,7 +7,7 @@ import WebGLCanvas from "./WebGLCanvas";
 
 export interface TextureMapCanvasProps {
   url: string;
-  shapes: ShapesDefinition[];
+  shapes: ShapeDefinition[];
   zoom: number;
   panX: number;
   panY: number;

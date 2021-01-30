@@ -1,6 +1,7 @@
 import Delaunator from "delaunator";
-import { Keyframe, ShapesDefinition, Vec2, Vec3 } from "../../lib/types";
+import { Keyframe, ShapeDefinition, Vec3 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
+import { flattenShapes } from "./utils";
 
 const compositionVertexShader = `
   attribute vec2 coordinates;
@@ -53,22 +54,6 @@ const compositionFragmentShader = `
   }
 `;
 
-const getParentOffset = (
-  shape: ShapesDefinition | undefined,
-  shapes: ShapesDefinition[]
-): Vec2 => {
-  if (!shape || !shape.settings.parent) {
-    return [0, 0];
-  }
-  const parentId = shape.settings.parent.id;
-  const parent = shapes.find((e) => e.name === parentId);
-  const parentOffset = getParentOffset(parent, shapes);
-  return [
-    shape.settings.parent.offset[0] + parentOffset[0],
-    shape.settings.parent.offset[1] + parentOffset[1],
-  ];
-};
-
 type MutationVector = {
   index: number;
   vector: Vec3;
@@ -76,7 +61,7 @@ type MutationVector = {
 
 export const showComposition = (): {
   setImage(image: HTMLImageElement): void;
-  setShapes(s: ShapesDefinition[]): void;
+  setShapes(s: ShapeDefinition[]): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   setKeyframe(frame: Keyframe | null): void;
@@ -84,7 +69,7 @@ export const showComposition = (): {
 } => {
   const stride = 4;
 
-  let shapes: ShapesDefinition[] | null = null;
+  let shapes: ShapeDefinition[] | null = null;
 
   let gl: WebGLRenderingContext | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
@@ -124,11 +109,12 @@ export const showComposition = (): {
     const indices: number[] = [];
     const vertices: number[] = [];
     elements = [];
+    const sprites = flattenShapes(shapes);
 
-    shapes.forEach((shape) => {
+    sprites.forEach((shape) => {
       const shapeIndices = Delaunator.from(shape.points).triangles;
       const start = indices.length;
-      const anchor = shape.settings.anchor;
+      const anchor = shape.anchor;
 
       const deformationVectors = Object.entries(
         shape.mutationVectors || {}
@@ -173,7 +159,7 @@ export const showComposition = (): {
       img = image;
       setImageTexture();
     },
-    setShapes(s: ShapesDefinition[]) {
+    setShapes(s: ShapeDefinition[]) {
       shapes = s;
       populateShapes();
     },
@@ -280,22 +266,25 @@ export const showComposition = (): {
             canvasHeight / 2 / scale,
             0.1,
           ];
-          const items = shapes;
+          const sprites = flattenShapes(shapes);
 
           const calculatedElements = elements.map((element, index) => {
-            const shape = items[index];
-            const itemOffset = getParentOffset(shape, items);
+            const sprite = sprites[index];
+            const itemOffset = [
+              sprite.baseElementData.translateX || 0,
+              sprite.baseElementData.translateY || 0,
+            ];
 
             const deformationVectorList = Object.values(
               element.deformationVectors
             ).reduce((list, item) => list.concat(item.vector), [] as number[]);
 
             return {
-              name: shape.name,
+              name: sprite.name,
               ...element,
               x: basePosition[0] + itemOffset[0],
               y: basePosition[1] + itemOffset[1],
-              z: items.indexOf(shape) * 0.01,
+              z: sprites.indexOf(sprite) * 0.01,
               deformationVectorList,
             };
           });

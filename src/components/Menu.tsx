@@ -6,7 +6,7 @@ interface MenuProps {
 }
 
 const MenuContainer = styled.div`
-  background-color: ${({ theme }) => theme.colors.background};
+  background-color: ${({ theme }) => theme.colors.itemContainerBackground};
   width: 100%;
   height: 100%;
   padding: 2px;
@@ -14,6 +14,7 @@ const MenuContainer = styled.div`
 
 const MenuHeader = styled.h1`
   color: ${({ theme }) => theme.colors.text};
+  background-color: ${({ theme }) => theme.colors.background};
   font-size: 16px;
   font-weight: normal;
   margin: 0;
