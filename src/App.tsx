@@ -7,9 +7,9 @@ import Layers from "./screens/Layers";
 import Composition from "./screens/Composition";
 
 import texture from "./data/hiddo-texture.png";
-import data from "./data/hiddo.json";
 import { ImageDefinition } from "./lib/types";
 import FileContentDialog from "./screens/FileContentDialog";
+import { newDefinition } from "./lib/definitionHelpers";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -29,8 +29,8 @@ enum MenuItems {
 
 const App: React.FC = () => {
   const [activeItem, setActiveItem] = useState(MenuItems.Layers);
-  const [imageDefinition] = useState<ImageDefinition>(
-    (data as unknown) as ImageDefinition
+  const [imageDefinition, setImageDefinition] = useState<ImageDefinition>(
+    newDefinition()
   );
   const [fileContentOpen, setFileContentOpen] = useState<boolean>(false);
 
@@ -75,6 +75,7 @@ const App: React.FC = () => {
       {fileContentOpen && (
         <FileContentDialog
           imageDefinition={imageDefinition}
+          onUpdate={setImageDefinition}
           onClose={() => setFileContentOpen(false)}
         />
       )}

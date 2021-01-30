@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Backdrop from "../components/Backdrop";
 import Dialog from "../components/Dialog";
 import DialogBody from "../components/DialogBody";
@@ -9,6 +9,7 @@ import styled from "styled-components";
 interface FileContentDialogProps {
   imageDefinition: ImageDefinition;
   onClose?(): void;
+  onUpdate?(newImageDefinition: ImageDefinition): void;
 }
 
 const CodeBox = styled.textarea`
@@ -24,6 +25,10 @@ const ButtonBar = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
 
   padding: 0.75rem 1rem;
+
+  > * + * {
+    margin-left: 1rem;
+  }
 `;
 
 const Button = styled.button`
@@ -43,18 +48,52 @@ const Button = styled.button`
 const FileContentDialog: React.FC<FileContentDialogProps> = ({
   imageDefinition,
   onClose,
-}) => (
-  <Backdrop>
-    <Dialog open>
-      <DialogTitle>File Contents</DialogTitle>
-      <DialogBody>
-        <CodeBox readOnly>{JSON.stringify(imageDefinition)}</CodeBox>
-      </DialogBody>
-      <ButtonBar>
-        <Button onClick={() => onClose && onClose()}>Close</Button>
-      </ButtonBar>
-    </Dialog>
-  </Backdrop>
-);
+  onUpdate,
+}) => {
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!ref || !ref.current) {
+      return;
+    }
+    const changeHandler = function (this: HTMLInputElement) {
+      const fr = new FileReader();
+      fr.onload = function () {
+        try {
+          onUpdate &&
+            typeof fr.result === "string" &&
+            onUpdate(JSON.parse(fr.result) as ImageDefinition);
+        } catch (e) {
+          console.error(e.message);
+        }
+      };
+      if (this.files && this.files[0]) {
+        fr.readAsText(this.files[0]);
+      }
+    };
+    ref.current.addEventListener("change", changeHandler);
+
+    return () => {
+      ref.current?.removeEventListener("change", changeHandler);
+    };
+  }, [ref]);
+
+  return (
+    <Backdrop>
+      <Dialog open>
+        <DialogTitle>File Contents</DialogTitle>
+        <DialogBody>
+          <CodeBox readOnly value={JSON.stringify(imageDefinition, null, 2)} />
+        </DialogBody>
+        <ButtonBar>
+          <Button onClick={() => onClose && onClose()}>Close</Button>
+          {onUpdate && (
+            <input type="file" ref={ref} accept="application/json" />
+          )}
+        </ButtonBar>
+      </Dialog>
+    </Backdrop>
+  );
+};
 
 export default FileContentDialog;
