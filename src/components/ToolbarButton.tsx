@@ -19,7 +19,7 @@ const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
   color: ${(props) =>
     props.isActive ? props.theme.colors.textSelected : props.theme.colors.text};
   opacity: ${(props) => (props.isDisabled ? "0.2" : "1")};
-  font-size: 1rem;
+  font-size: 0.75rem;
   background-color: ${(props) =>
     props.isDisabled
       ? "transparent"

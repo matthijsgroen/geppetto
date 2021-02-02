@@ -1,6 +1,8 @@
 import {
+  ControlDefinition,
   FolderDefinition,
   ImageDefinition,
+  Keyframe,
   ShapeDefinition,
   SpriteDefinition,
 } from "./types";
@@ -10,7 +12,7 @@ export const newDefinition = (): ImageDefinition => ({
   controls: [],
 });
 
-export const getLayerNames = (layers: ShapeDefinition[]): string[] =>
+const getLayerNames = (layers: ShapeDefinition[]): string[] =>
   layers.reduce(
     (result, layer) =>
       layer.type === "folder"
@@ -19,28 +21,39 @@ export const getLayerNames = (layers: ShapeDefinition[]): string[] =>
     [] as string[]
   );
 
+export const makeLayerName = (
+  image: ImageDefinition,
+  intendedName: string,
+  previousName: string | null = null
+): string => {
+  let counter = 0;
+  const makeName = () =>
+    counter === 0 ? intendedName : `${intendedName} (${counter})`;
+  const names = getLayerNames(image.shapes).filter(
+    (name) => !previousName || name !== previousName
+  );
+  while (names.includes(makeName())) {
+    counter++;
+  }
+  return makeName();
+};
+
 export const addLayer = (
   mutator: (
     mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ) => void,
   defaultName: string
-): Promise<string> => {
-  let counter = 0;
-  const makeName = () =>
-    counter === 0 ? defaultName : `${defaultName} (${counter})`;
-  return new Promise((resolve) => {
+): Promise<string> =>
+  new Promise((resolve) => {
     mutator((image) => {
-      const names = getLayerNames(image.shapes);
-      while (names.includes(makeName())) {
-        counter++;
-      }
-      resolve(makeName());
+      const newName = makeLayerName(image, defaultName);
+      resolve(newName);
 
       return {
         ...image,
         shapes: ([
           {
-            name: makeName(),
+            name: newName,
             type: "sprite",
             points: [],
             baseElementData: {},
@@ -49,30 +62,23 @@ export const addLayer = (
       };
     });
   });
-};
 
 export const addFolder = (
   mutator: (
     mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ) => void,
   defaultName: string
-): Promise<string> => {
-  let counter = 0;
-  const makeName = () =>
-    counter === 0 ? defaultName : `${defaultName} (${counter})`;
-  return new Promise((resolve) => {
+): Promise<string> =>
+  new Promise((resolve) => {
     mutator((image) => {
-      const names = getLayerNames(image.shapes);
-      while (names.includes(makeName())) {
-        counter++;
-      }
-      resolve(makeName());
+      const newName = makeLayerName(image, defaultName);
+      resolve(newName);
 
       return {
         ...image,
         shapes: ([
           {
-            name: makeName(),
+            name: newName,
             type: "folder",
             items: [],
           } as FolderDefinition,
@@ -80,7 +86,6 @@ export const addFolder = (
       };
     });
   });
-};
 
 export const canMoveUp = (
   selectedItem: string | null,
@@ -187,4 +192,62 @@ export const moveUp = (
 ): ImageDefinition => ({
   ...image,
   shapes: move(false, selectedItem, image.shapes),
+});
+
+const renameShape = (
+  shapes: ShapeDefinition[],
+  currentName: string,
+  newName: string
+): ShapeDefinition[] =>
+  shapes.reduce(
+    (result, shape) =>
+      shape.name === currentName
+        ? result.concat({ ...shape, name: newName })
+        : shape.type === "folder"
+        ? result.concat({
+            ...shape,
+            items: renameShape(shape.items, currentName, newName),
+          })
+        : result.concat(shape),
+    [] as ShapeDefinition[]
+  );
+
+const renameKeyframe = (
+  frame: Keyframe,
+  currentName: string,
+  newName: string
+) =>
+  Object.entries(frame).reduce(
+    (result, [key, data]) =>
+      key === currentName
+        ? {
+            ...result,
+            [newName]: data,
+          }
+        : {
+            ...result,
+            [key]: data,
+          },
+    {} as Keyframe
+  );
+
+const renameControlShape = (
+  controls: ControlDefinition[],
+  currentName: string,
+  newName: string
+) =>
+  controls.map((control) => ({
+    ...control,
+    min: renameKeyframe(control.min, currentName, newName),
+    max: renameKeyframe(control.max, currentName, newName),
+  }));
+
+export const rename = (
+  image: ImageDefinition,
+  currentName: string,
+  newName: string
+): ImageDefinition => ({
+  ...image,
+  shapes: renameShape(image.shapes, currentName, newName),
+  controls: renameControlShape(image.controls, currentName, newName),
 });

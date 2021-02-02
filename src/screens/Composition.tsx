@@ -9,8 +9,10 @@ import {
   addFolder,
   canMoveDown,
   canMoveUp,
+  makeLayerName,
   moveDown,
   moveUp,
+  rename,
 } from "../lib/definitionHelpers";
 import { ElementData, ImageDefinition, Keyframe, Vec2 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
@@ -188,6 +190,30 @@ const Composition: React.FC<CompositionProps> = ({
                 updateImageDefinition((state) =>
                   moveDown(layerSelected, state)
                 );
+              }}
+            />,
+            <ToolbarButton
+              key="5"
+              icon="🏷"
+              disabled={!layerSelected}
+              label=""
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                const newName = prompt("New name", layerSelected);
+                if (newName === null) {
+                  return;
+                }
+                const layerName = makeLayerName(
+                  imageDefinition,
+                  newName,
+                  layerSelected
+                );
+                updateImageDefinition((state) =>
+                  rename(state, layerSelected, layerName)
+                );
+                setLayerSelected(layerName);
               }}
             />,
           ]}

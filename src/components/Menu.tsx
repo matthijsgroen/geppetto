@@ -34,7 +34,7 @@ const Toolbar = styled.div`
   display: flex;
   flex-direction: row;
   > * + * {
-    margin-left: 0.5rem;
+    margin-left: 0.25rem;
   }
 `;
 

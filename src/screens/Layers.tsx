@@ -9,8 +9,10 @@ import {
   addLayer,
   canMoveDown,
   canMoveUp,
+  makeLayerName,
   moveDown,
   moveUp,
+  rename,
 } from "../lib/definitionHelpers";
 import { ImageDefinition } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
@@ -139,6 +141,30 @@ const Layers: React.FC<LayersProps> = ({
                 updateImageDefinition((state) =>
                   moveDown(layerSelected, state)
                 );
+              }}
+            />,
+            <ToolbarButton
+              key="5"
+              icon="🏷"
+              disabled={!layerSelected}
+              label=""
+              onClick={async () => {
+                if (layerSelected === null) {
+                  return;
+                }
+                const newName = prompt("New name", layerSelected);
+                if (newName === null) {
+                  return;
+                }
+                const layerName = makeLayerName(
+                  imageDefinition,
+                  newName,
+                  layerSelected
+                );
+                updateImageDefinition((state) =>
+                  rename(state, layerSelected, layerName)
+                );
+                setLayerSelected(layerName);
               }}
             />,
           ]}
