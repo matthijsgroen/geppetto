@@ -4,12 +4,23 @@ import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import ShapeList from "../components/ShapeList";
 import SliderControl from "../components/SliderControl";
+import ToolbarButton from "../components/ToolbarButton";
+import {
+  addFolder,
+  canMoveDown,
+  canMoveUp,
+  moveDown,
+  moveUp,
+} from "../lib/definitionHelpers";
 import { ElementData, ImageDefinition, Keyframe, Vec2 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface CompositionProps {
   imageDefinition: ImageDefinition;
   texture: string;
+  updateImageDefinition(
+    mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
+  ): void;
 }
 
 type ControlValues = Record<string, number>;
@@ -74,6 +85,7 @@ const createKeyframe = (
 const Composition: React.FC<CompositionProps> = ({
   texture,
   imageDefinition,
+  updateImageDefinition,
 }) => {
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0.0);
@@ -136,15 +148,61 @@ const Composition: React.FC<CompositionProps> = ({
   return (
     <ScreenLayout
       menus={[
-        <Menu title="Composition" key="layers">
-          <ShapeList
-            shapes={imageDefinition.shapes}
-            layerSelected={layerSelected}
-            setLayerSelected={setLayerSelected}
-          />
-        </Menu>,
-        <Menu title="Controls" key="controls">
-          {imageDefinition.controls.map((control) => (
+        <Menu
+          title="Composition"
+          key="layers"
+          toolbarItems={[
+            <ToolbarButton
+              key="2"
+              icon="📁"
+              label="+"
+              onClick={async () => {
+                const newLayerName = await addFolder(
+                  updateImageDefinition,
+                  "New Folder"
+                );
+                setLayerSelected(newLayerName);
+              }}
+            />,
+            <ToolbarButton
+              key="3"
+              icon="⬆"
+              disabled={!canMoveUp(layerSelected, imageDefinition)}
+              label=""
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                updateImageDefinition((state) => moveUp(layerSelected, state));
+              }}
+            />,
+            <ToolbarButton
+              key="4"
+              icon="⬇"
+              disabled={!canMoveDown(layerSelected, imageDefinition)}
+              label=""
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                updateImageDefinition((state) =>
+                  moveDown(layerSelected, state)
+                );
+              }}
+            />,
+          ]}
+          items={
+            <ShapeList
+              shapes={imageDefinition.shapes}
+              layerSelected={layerSelected}
+              setLayerSelected={setLayerSelected}
+            />
+          }
+        />,
+        <Menu
+          title="Controls"
+          key="controls"
+          items={imageDefinition.controls.map((control) => (
             <SliderControl
               key={control.name}
               title={control.name}
@@ -160,7 +218,7 @@ const Composition: React.FC<CompositionProps> = ({
               }}
             />
           ))}
-        </Menu>,
+        />,
         //     <div key="keyfr" style={{ color: "white", width: "200px" }}>
         //       {Object.entries(createKeyframe(controlValues, imageDefinition)).map(
         //         ([key, value]) => (

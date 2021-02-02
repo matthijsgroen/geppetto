@@ -3,15 +3,31 @@ import TextureMapCanvas from "../animation/TextureMapCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import ShapeList from "../components/ShapeList";
+import ToolbarButton from "../components/ToolbarButton";
+import {
+  addFolder,
+  addLayer,
+  canMoveDown,
+  canMoveUp,
+  moveDown,
+  moveUp,
+} from "../lib/definitionHelpers";
 import { ImageDefinition } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface LayersProps {
   imageDefinition: ImageDefinition;
   texture: string;
+  updateImageDefinition(
+    mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
+  ): void;
 }
 
-const Layers: React.FC<LayersProps> = ({ texture, imageDefinition }) => {
+const Layers: React.FC<LayersProps> = ({
+  texture,
+  imageDefinition,
+  updateImageDefinition,
+}) => {
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0.0);
   const [panY, setPanY] = useState(0.0);
@@ -72,13 +88,68 @@ const Layers: React.FC<LayersProps> = ({ texture, imageDefinition }) => {
   return (
     <ScreenLayout
       menus={
-        <Menu title="Layers">
-          <ShapeList
-            shapes={imageDefinition.shapes}
-            layerSelected={layerSelected}
-            setLayerSelected={setLayerSelected}
-          />
-        </Menu>
+        <Menu
+          title="Layers"
+          toolbarItems={[
+            <ToolbarButton
+              key="1"
+              icon="📄"
+              label="+"
+              onClick={async () => {
+                const newLayerName = await addLayer(
+                  updateImageDefinition,
+                  "New Layer"
+                );
+                setLayerSelected(newLayerName);
+              }}
+            />,
+            <ToolbarButton
+              key="2"
+              icon="📁"
+              label="+"
+              onClick={async () => {
+                const newLayerName = await addFolder(
+                  updateImageDefinition,
+                  "New Folder"
+                );
+                setLayerSelected(newLayerName);
+              }}
+            />,
+            <ToolbarButton
+              key="3"
+              icon="⬆"
+              disabled={!canMoveUp(layerSelected, imageDefinition)}
+              label=""
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                updateImageDefinition((state) => moveUp(layerSelected, state));
+              }}
+            />,
+            <ToolbarButton
+              key="4"
+              icon="⬇"
+              disabled={!canMoveDown(layerSelected, imageDefinition)}
+              label=""
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                updateImageDefinition((state) =>
+                  moveDown(layerSelected, state)
+                );
+              }}
+            />,
+          ]}
+          items={
+            <ShapeList
+              shapes={imageDefinition.shapes}
+              layerSelected={layerSelected}
+              setLayerSelected={setLayerSelected}
+            />
+          }
+        />
       }
       main={
         <MouseControl

@@ -65,9 +65,17 @@ const App: React.FC = () => {
 
   const screen =
     activeItem === MenuItems.Layers ? (
-      <Layers texture={texture} imageDefinition={imageDefinition} />
+      <Layers
+        texture={texture}
+        imageDefinition={imageDefinition}
+        updateImageDefinition={setImageDefinition}
+      />
     ) : (
-      <Composition texture={texture} imageDefinition={imageDefinition} />
+      <Composition
+        texture={texture}
+        imageDefinition={imageDefinition}
+        updateImageDefinition={setImageDefinition}
+      />
     );
 
   return (

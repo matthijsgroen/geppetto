@@ -153,7 +153,13 @@ export const showTextureMap = (): {
           );
 
           elements.forEach((element) => {
-            initgl.drawArrays(initgl.LINE_STRIP, element.start, element.amount);
+            if (element.amount > 0) {
+              initgl.drawArrays(
+                initgl.LINE_STRIP,
+                element.start,
+                element.amount
+              );
+            }
           });
         },
         cleanup() {

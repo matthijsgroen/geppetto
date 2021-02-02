@@ -306,6 +306,9 @@ export const showComposition = (): {
           );
 
           calculatedElements.forEach((element) => {
+            if (element.amount === 0) {
+              return;
+            }
             gl.uniform3f(translate, element.x, element.y, element.z);
 
             const elementData = keyframe && keyframe[element.name];

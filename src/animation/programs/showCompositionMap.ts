@@ -244,7 +244,7 @@ export const showCompositionMap = (): {
           );
 
           calculatedElements.forEach((element) => {
-            if (element.name === layerSelected) {
+            if (element.name === layerSelected && element.amount > 0) {
               gl.uniform3f(translate, element.x, element.y, element.z);
 
               const elementData = keyframe && keyframe[element.name];

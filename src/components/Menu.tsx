@@ -3,6 +3,8 @@ import styled from "styled-components";
 
 interface MenuProps {
   title: string;
+  items: React.ReactElement | React.ReactElement[];
+  toolbarItems?: React.ReactElement | React.ReactElement[];
 }
 
 const MenuContainer = styled.div`
@@ -22,10 +24,28 @@ const MenuHeader = styled.h1`
   border-bottom: 1px solid ${({ theme }) => theme.colors.text};
 `;
 
-const Menu: React.FC<MenuProps> = ({ title, children }) => (
+const Toolbar = styled.div`
+  color: ${({ theme }) => theme.colors.text};
+  background-color: ${({ theme }) => theme.colors.background};
+  font-size: 16px;
+  font-weight: normal;
+  margin: 0;
+  padding: 0.1rem 0.5rem;
+  display: flex;
+  flex-direction: row;
+  > * + * {
+    margin-left: 0.5rem;
+  }
+`;
+
+const hasItems = (items: React.ReactElement | React.ReactElement[]): boolean =>
+  Array.isArray(items) ? items.length > 0 : !!items;
+
+const Menu: React.FC<MenuProps> = ({ title, items, toolbarItems = [] }) => (
   <MenuContainer>
     <MenuHeader>{title}</MenuHeader>
-    {children}
+    {hasItems(toolbarItems) && <Toolbar>{toolbarItems}</Toolbar>}
+    {items}
   </MenuContainer>
 );
 

@@ -161,8 +161,7 @@ export const showLayerPoints = (): {
           );
 
           elements.forEach((element) => {
-            // initgl.drawArrays(initgl.LINE_STRIP, element.start, element.amount);
-            if (element.name === layerSelected) {
+            if (element.name === layerSelected && element.amount > 0) {
               initgl.drawArrays(initgl.POINTS, element.start, element.amount);
             }
           });
