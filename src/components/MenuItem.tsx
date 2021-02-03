@@ -11,13 +11,13 @@ interface MenuItemProps {
 const Item = styled.div<{ selected: boolean; indent: number }>`
   background: ${({ selected, theme }) =>
     selected ? theme.colors.backgroundSelected : "none"};
-  padding-left: calc(0.5rem + ${(props) => props.indent * 1.5}rem);
-  padding-right: 0.5rem;
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
+  padding-left: calc(0.25rem + ${(props) => props.indent * 1.5}rem);
+  padding-right: 0.25rem;
+  padding-top: 0.1rem;
+  padding-bottom: 0.1rem;
   color: ${({ selected, theme }) =>
     selected ? theme.colors.textSelected : theme.colors.text};
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: normal;
   cursor: default;
 `;

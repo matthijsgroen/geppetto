@@ -1,9 +1,10 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 interface TabIconProps {
   icon: string;
   label: string;
+  size?: "medium" | "small";
   active?: boolean;
   disabled?: boolean;
   onClick: () => void;
@@ -12,6 +13,7 @@ interface TabIconProps {
 interface IconProps {
   isActive: boolean;
   isDisabled: boolean;
+  size: string;
 }
 
 const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
@@ -19,7 +21,14 @@ const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
   color: ${(props) =>
     props.isActive ? props.theme.colors.textSelected : props.theme.colors.text};
   opacity: ${(props) => (props.isDisabled ? "0.2" : "1")};
-  font-size: 0.75rem;
+  font-size: ${(props) => (props.size === "small" ? "0.75rem" : "1.5rem")};
+  ${(props) =>
+    props.size === "medium"
+      ? css`
+          height: 42px;
+          min-width: 42px;
+        `
+      : ""}
   background-color: ${(props) =>
     props.isDisabled
       ? "transparent"
@@ -33,8 +42,6 @@ const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
     ${(props) =>
       props.isDisabled
         ? "transparent"
-        : props.isActive
-        ? props.theme.colors.textSelected
         : props.theme.colors.backgroundSecondary};
   outline: none;
 `;
@@ -42,11 +49,17 @@ const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
 const ToolbarButton: React.FC<TabIconProps> = ({
   icon,
   label,
+  size = "medium",
   disabled = false,
   active = false,
   onClick,
 }) => (
-  <IconButton isDisabled={disabled} isActive={active} onClick={onClick}>
+  <IconButton
+    isDisabled={disabled}
+    isActive={active}
+    size={size}
+    onClick={onClick}
+  >
     {icon} {label}
   </IconButton>
 );

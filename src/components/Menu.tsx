@@ -11,7 +11,7 @@ const MenuContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.itemContainerBackground};
   width: 100%;
   height: 100%;
-  padding: 2px;
+  padding: 0 2px;
 `;
 
 const MenuHeader = styled.h1`
