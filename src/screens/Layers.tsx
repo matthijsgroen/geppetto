@@ -4,15 +4,18 @@ import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import ShapeList from "../components/ShapeList";
 import ToolbarButton from "../components/ToolbarButton";
+import ToolbarSeperator from "../components/ToolbarSeperator";
 import {
   addFolder,
   addLayer,
   addPoint,
   canMoveDown,
   canMoveUp,
+  getShape,
   makeLayerName,
   moveDown,
   moveUp,
+  removePoint,
   rename,
 } from "../lib/definitionHelpers";
 import { ImageDefinition } from "../lib/types";
@@ -38,12 +41,14 @@ const Layers: React.FC<LayersProps> = ({
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
     false
   );
+  const [activeCoord, setActiveCoord] = useState<null | [number, number]>(null);
   const [layerSelected, setLayerSelected] = useState<null | string>(null);
   const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
 
   useEffect(() => {
     if (layerSelected === null) {
       setMouseMode(MouseMode.Grab);
+      setActiveCoord(null);
     }
   }, [layerSelected]);
 
@@ -97,12 +102,26 @@ const Layers: React.FC<LayersProps> = ({
         zoom,
         [elementX, elementY]
       );
-      updateImageDefinition((state) =>
-        addPoint(state, layerSelected, [
-          Math.round(coord[0]),
-          Math.round(coord[1]),
-        ])
-      );
+      const shape = getShape(imageDefinition.shapes, layerSelected);
+      if (shape && shape.type === "sprite") {
+        const closePoint = shape.points.find((p) => {
+          const dx = p[0] - coord[0];
+          const dy = p[1] - coord[1];
+
+          return (
+            dx > -6 / zoom && dx < 6 / zoom && dy > -6 / zoom && dy < 6 / zoom
+          );
+        });
+
+        if (!closePoint) {
+          updateImageDefinition((state) =>
+            addPoint(state, layerSelected, coord)
+          );
+          setActiveCoord(coord);
+        } else {
+          setActiveCoord(closePoint);
+        }
+      }
     }
     setIsMouseDown(false);
   };
@@ -233,6 +252,22 @@ const Layers: React.FC<LayersProps> = ({
             setMouseMode(MouseMode.Grab);
           }}
         />,
+        <ToolbarSeperator key="sep1" />,
+        <ToolbarButton
+          key="delete"
+          icon="🗑"
+          label=""
+          disabled={!activeCoord}
+          onClick={async () => {
+            if (activeCoord === null || layerSelected === null) {
+              return;
+            }
+            updateImageDefinition((state) =>
+              removePoint(state, layerSelected, activeCoord)
+            );
+            setActiveCoord(null);
+          }}
+        />,
       ]}
       main={
         <MouseControl
@@ -249,6 +284,7 @@ const Layers: React.FC<LayersProps> = ({
             panX={panX}
             panY={panY}
             activeLayer={layerSelected}
+            activeCoord={activeCoord}
           />
         </MouseControl>
       }

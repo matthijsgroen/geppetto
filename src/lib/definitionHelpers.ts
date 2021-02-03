@@ -253,16 +253,33 @@ export const rename = (
   controls: renameControlShape(image.controls, currentName, newName),
 });
 
-const addPointToShape = (
+const addRemovePointToShape = (
   shapes: ShapeDefinition[],
   layerName: string,
-  point: Vec2
+  point: Vec2,
+  updateType: "add" | "remove"
 ): ShapeDefinition[] =>
   shapes.map((shape) =>
     shape.type === "folder"
-      ? { ...shape, items: addPointToShape(shape.items, layerName, point) }
+      ? {
+          ...shape,
+          items: addRemovePointToShape(
+            shape.items,
+            layerName,
+            point,
+            updateType
+          ),
+        }
       : shape.name === layerName
-      ? { ...shape, points: shape.points.concat([point]) }
+      ? {
+          ...shape,
+          points:
+            updateType === "add"
+              ? shape.points.concat([point])
+              : shape.points.filter(
+                  (p) => p[0] !== point[0] || p[1] !== point[1]
+                ),
+        }
       : shape
   );
 
@@ -272,5 +289,30 @@ export const addPoint = (
   point: Vec2
 ): ImageDefinition => ({
   ...image,
-  shapes: addPointToShape(image.shapes, layer, point),
+  shapes: addRemovePointToShape(image.shapes, layer, point, "add"),
 });
+
+export const removePoint = (
+  image: ImageDefinition,
+  layer: string,
+  point: Vec2
+): ImageDefinition => ({
+  ...image,
+  shapes: addRemovePointToShape(image.shapes, layer, point, "remove"),
+});
+
+export const getShape = (
+  items: ShapeDefinition[],
+  layer: string
+): ShapeDefinition | null =>
+  items.reduce<ShapeDefinition | null>(
+    (result, item) =>
+      result
+        ? result
+        : item.name === layer
+        ? item
+        : item.type === "folder"
+        ? getShape(item.items, layer)
+        : result,
+    null
+  );

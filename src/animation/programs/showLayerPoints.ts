@@ -1,11 +1,13 @@
-import { ShapeDefinition } from "../../lib/types";
+import { ShapeDefinition, Vec2 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes } from "./utils";
 
 const textureMapVertexShader = `
-  attribute vec2 coordinates;
+  attribute vec3 coordinates;
   uniform vec4 viewport;
   uniform vec4 scale;
+
+  varying lowp float selected;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -15,15 +17,24 @@ const textureMapVertexShader = `
   );
 
   void main() {
-    vec4 pos = viewportScale * vec4((coordinates * scale.x) + viewport.ba, 0.0, 1.0);
+    vec4 pos = viewportScale * vec4((coordinates.xy * scale.x) + viewport.ba, 0.0, 1.0);
     gl_Position = vec4((pos.xy  + scale.ba) * scale.y, pos.z, 1.0);
     gl_PointSize = 4.0 * scale.x;
+    if (coordinates.z > 0.0) {
+      gl_PointSize = 6.0 * scale.x;
+    }
+    selected = coordinates.z;
   }
 `;
 
 const textureMapFragmentShader = `
+  varying lowp float selected;
+
   void main(void) {
     gl_FragColor = vec4(1.0, 1.0, 1.0, 0.1);
+    if (selected > 0.0) {
+      gl_FragColor = vec4(1.0, 1.0, 0.4, 0.1);
+    }
   }
 `;
 
@@ -33,9 +44,10 @@ export const showLayerPoints = (): {
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   setLayerSelected(layer: null | string): void;
+  setActiveCoord(coord: null | Vec2): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 2;
+  const stride = 3;
 
   let shapes: ShapeDefinition[] | null = null;
   let img: HTMLImageElement | null = null;
@@ -45,6 +57,7 @@ export const showLayerPoints = (): {
   let zoom = 1.0;
   let pan = [0, 0];
   let layerSelected: string | null = null;
+  let coordSelected: Vec2 | null = null;
 
   let elements: { start: number; amount: number; name: string }[] = [];
 
@@ -55,12 +68,21 @@ export const showLayerPoints = (): {
 
     const vertices = sprites.reduce((coordList, shape) => {
       const list = shape.points.reduce(
-        (result, point) => result.concat(point),
+        (result, point) =>
+          result
+            .concat(point)
+            .concat(
+              coordSelected &&
+                point[0] === coordSelected[0] &&
+                point[1] === coordSelected[1]
+                ? 1.0
+                : 0.0
+            ),
         [] as number[]
       );
       elements.push({
         start: coordList.length / stride,
-        amount: list.length / 2,
+        amount: list.length / stride,
         name: shape.name,
       });
 
@@ -101,6 +123,10 @@ export const showLayerPoints = (): {
     setLayerSelected(layer) {
       layerSelected = layer;
     },
+    setActiveCoord(coord) {
+      coordSelected = coord;
+      populateShapes();
+    },
     renderer(initgl: WebGLRenderingContext, { getSize }) {
       gl = initgl;
       vertexBuffer = gl.createBuffer();
@@ -125,7 +151,7 @@ export const showLayerPoints = (): {
           const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
             coord,
-            2,
+            3,
             gl.FLOAT,
             false,
             Float32Array.BYTES_PER_ELEMENT * stride,

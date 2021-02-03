@@ -173,5 +173,5 @@ export const getTextureCoordinate = (
   const x = (relativeX - left - halfW) / zoom + halfW;
   const y = (relativeY - top - halfH) / zoom + halfH;
 
-  return [x, y];
+  return [Math.round(x), Math.round(y)];
 };
