@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DefaultTheme, ThemeProvider } from "styled-components";
 import AppLayout from "./templates/AppLayout";
 import TabIcon from "./components/TabIcon";
@@ -10,6 +10,7 @@ import texture from "./data/hiddo-texture.png";
 import { ImageDefinition } from "./lib/types";
 import FileContentDialog from "./screens/FileContentDialog";
 import { newDefinition } from "./lib/definitionHelpers";
+import { loadImage } from "./lib/webgl";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -17,7 +18,7 @@ const defaultTheme: DefaultTheme = {
     backgroundSecondary: "#444",
     itemContainerBackground: "#111",
     text: "#999",
-    backgroundSelected: "#444",
+    backgroundSelected: "#666",
     textSelected: "white",
   },
 };
@@ -33,6 +34,11 @@ const App: React.FC = () => {
     newDefinition()
   );
   const [fileContentOpen, setFileContentOpen] = useState<boolean>(false);
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    loadImage(texture).then((image) => setImage(image));
+  }, []);
 
   const icons = (
     <IconBar
@@ -66,13 +72,13 @@ const App: React.FC = () => {
   const screen =
     activeItem === MenuItems.Layers ? (
       <Layers
-        texture={texture}
+        texture={image}
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
       />
     ) : (
       <Composition
-        texture={texture}
+        texture={image}
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
       />

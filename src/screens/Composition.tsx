@@ -19,7 +19,7 @@ import ScreenLayout from "../templates/ScreenLayout";
 
 interface CompositionProps {
   imageDefinition: ImageDefinition;
-  texture: string;
+  texture: HTMLImageElement | null;
   updateImageDefinition(
     mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ): void;
@@ -158,6 +158,7 @@ const Composition: React.FC<CompositionProps> = ({
               key="2"
               icon="📁"
               label="+"
+              size="small"
               onClick={async () => {
                 const newLayerName = await addFolder(
                   updateImageDefinition,
@@ -171,6 +172,7 @@ const Composition: React.FC<CompositionProps> = ({
               icon="⬆"
               disabled={!canMoveUp(layerSelected, imageDefinition)}
               label=""
+              size="small"
               onClick={() => {
                 if (layerSelected === null) {
                   return;
@@ -183,6 +185,7 @@ const Composition: React.FC<CompositionProps> = ({
               icon="⬇"
               disabled={!canMoveDown(layerSelected, imageDefinition)}
               label=""
+              size="small"
               onClick={() => {
                 if (layerSelected === null) {
                   return;
@@ -197,6 +200,7 @@ const Composition: React.FC<CompositionProps> = ({
               icon="🏷"
               disabled={!layerSelected}
               label=""
+              size="small"
               onClick={() => {
                 if (layerSelected === null) {
                   return;
@@ -245,15 +249,6 @@ const Composition: React.FC<CompositionProps> = ({
             />
           ))}
         />,
-        //     <div key="keyfr" style={{ color: "white", width: "200px" }}>
-        //       {Object.entries(createKeyframe(controlValues, imageDefinition)).map(
-        //         ([key, value]) => (
-        //           <p key={key}>
-        //             <strong>{key}</strong> {JSON.stringify(value, null, 2)}
-        //           </p>
-        //         )
-        //       )}
-        //     </div>,
       ]}
       main={
         <MouseControl
@@ -264,7 +259,7 @@ const Composition: React.FC<CompositionProps> = ({
           onWheel={mouseWheel}
         >
           <CompositionCanvas
-            url={texture}
+            image={texture}
             shapes={imageDefinition.shapes}
             zoom={zoom}
             panX={panX}

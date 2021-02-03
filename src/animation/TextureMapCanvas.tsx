@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo } from "react";
 import { ShapeDefinition } from "../lib/types";
-import { loadImage } from "../lib/webgl";
 import { showLayerPoints } from "./programs/showLayerPoints";
 import { showTexture } from "./programs/showTexture";
 import { showTextureMap } from "./programs/showTextureMap";
 import WebGLCanvas from "./WebGLCanvas";
 
 export interface TextureMapCanvasProps {
-  url: string;
+  image: HTMLImageElement | null;
   shapes: ShapeDefinition[];
   zoom?: number;
   panX: number;
@@ -17,7 +16,7 @@ export interface TextureMapCanvasProps {
 }
 
 const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
-  url,
+  image,
   shapes,
   zoom = 1.0,
   panX,
@@ -35,12 +34,12 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   ];
 
   useEffect(() => {
-    loadImage(url).then((image) => {
+    if (image) {
       textureProgram.setImage(image);
       textureMapProgram.setImage(image);
       pointsProgram.setImage(image);
-    });
-  }, [url]);
+    }
+  }, [image]);
 
   useEffect(() => {
     textureMapProgram.setShapes(shapes);

@@ -1,12 +1,11 @@
 import React, { useEffect, useMemo } from "react";
 import { Keyframe, ShapeDefinition } from "../lib/types";
-import { loadImage } from "../lib/webgl";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
 import WebGLCanvas from "./WebGLCanvas";
 
 export interface TextureMapCanvasProps {
-  url: string;
+  image: HTMLImageElement | null;
   shapes: ShapeDefinition[];
   zoom: number;
   panX: number;
@@ -16,7 +15,7 @@ export interface TextureMapCanvasProps {
 }
 
 const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
-  url,
+  image,
   shapes,
   zoom,
   panX,
@@ -29,11 +28,11 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   const renderers = [composition.renderer, layer.renderer];
 
   useEffect(() => {
-    loadImage(url).then((image) => {
+    if (image) {
       composition.setImage(image);
       layer.setImage(image);
-    });
-  }, [url]);
+    }
+  }, [image]);
 
   useEffect(() => {
     composition.setShapes(shapes);

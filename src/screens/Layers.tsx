@@ -19,7 +19,7 @@ import ScreenLayout from "../templates/ScreenLayout";
 
 interface LayersProps {
   imageDefinition: ImageDefinition;
-  texture: string;
+  texture: HTMLImageElement | null;
   updateImageDefinition(
     mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ): void;
@@ -97,6 +97,7 @@ const Layers: React.FC<LayersProps> = ({
               key="1"
               icon="📄"
               label="+"
+              size="small"
               onClick={async () => {
                 const newLayerName = await addLayer(
                   updateImageDefinition,
@@ -109,6 +110,7 @@ const Layers: React.FC<LayersProps> = ({
               key="2"
               icon="📁"
               label="+"
+              size="small"
               onClick={async () => {
                 const newLayerName = await addFolder(
                   updateImageDefinition,
@@ -120,6 +122,7 @@ const Layers: React.FC<LayersProps> = ({
             <ToolbarButton
               key="3"
               icon="⬆"
+              size="small"
               disabled={!canMoveUp(layerSelected, imageDefinition)}
               label=""
               onClick={() => {
@@ -132,6 +135,7 @@ const Layers: React.FC<LayersProps> = ({
             <ToolbarButton
               key="4"
               icon="⬇"
+              size="small"
               disabled={!canMoveDown(layerSelected, imageDefinition)}
               label=""
               onClick={() => {
@@ -146,6 +150,7 @@ const Layers: React.FC<LayersProps> = ({
             <ToolbarButton
               key="5"
               icon="🏷"
+              size="small"
               disabled={!layerSelected}
               label=""
               onClick={async () => {
@@ -186,7 +191,7 @@ const Layers: React.FC<LayersProps> = ({
           onWheel={mouseWheel}
         >
           <TextureMapCanvas
-            url={texture}
+            image={texture}
             shapes={imageDefinition.shapes}
             zoom={zoom}
             panX={panX}
