@@ -5,6 +5,7 @@ import {
   Keyframe,
   ShapeDefinition,
   SpriteDefinition,
+  Vec2,
 } from "./types";
 
 export const newDefinition = (): ImageDefinition => ({
@@ -250,4 +251,26 @@ export const rename = (
   ...image,
   shapes: renameShape(image.shapes, currentName, newName),
   controls: renameControlShape(image.controls, currentName, newName),
+});
+
+const addPointToShape = (
+  shapes: ShapeDefinition[],
+  layerName: string,
+  point: Vec2
+): ShapeDefinition[] =>
+  shapes.map((shape) =>
+    shape.type === "folder"
+      ? { ...shape, items: addPointToShape(shape.items, layerName, point) }
+      : shape.name === layerName
+      ? { ...shape, points: shape.points.concat([point]) }
+      : shape
+  );
+
+export const addPoint = (
+  image: ImageDefinition,
+  layer: string,
+  point: Vec2
+): ImageDefinition => ({
+  ...image,
+  shapes: addPointToShape(image.shapes, layer, point),
 });

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TextureMapCanvas from "../animation/TextureMapCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -7,6 +7,7 @@ import ToolbarButton from "../components/ToolbarButton";
 import {
   addFolder,
   addLayer,
+  addPoint,
   canMoveDown,
   canMoveUp,
   makeLayerName,
@@ -15,6 +16,7 @@ import {
   rename,
 } from "../lib/definitionHelpers";
 import { ImageDefinition } from "../lib/types";
+import { getTextureCoordinate } from "../lib/webgl";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface LayersProps {
@@ -37,8 +39,13 @@ const Layers: React.FC<LayersProps> = ({
     false
   );
   const [layerSelected, setLayerSelected] = useState<null | string>(null);
+  const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
 
-  const mouseMode = MouseMode.Grab;
+  useEffect(() => {
+    if (layerSelected === null) {
+      setMouseMode(MouseMode.Grab);
+    }
+  }, [layerSelected]);
 
   const mouseDown = (event: React.MouseEvent) => {
     const canvasPos = event.currentTarget.getBoundingClientRect();
@@ -78,7 +85,25 @@ const Layers: React.FC<LayersProps> = ({
     }
   };
 
-  const mouseUp = () => {
+  const mouseUp = (event: React.MouseEvent) => {
+    if (mouseMode === MouseMode.Aim && texture && layerSelected) {
+      const canvasPos = event.currentTarget.getBoundingClientRect();
+      const elementX = event.pageX - canvasPos.left;
+      const elementY = event.pageY - canvasPos.top;
+      const coord = getTextureCoordinate(
+        [canvasPos.width, canvasPos.height],
+        [texture.width, texture.height],
+        [panX, panY],
+        zoom,
+        [elementX, elementY]
+      );
+      updateImageDefinition((state) =>
+        addPoint(state, layerSelected, [
+          Math.round(coord[0]),
+          Math.round(coord[1]),
+        ])
+      );
+    }
     setIsMouseDown(false);
   };
 
@@ -182,6 +207,33 @@ const Layers: React.FC<LayersProps> = ({
           }
         />
       }
+      tools={[
+        <ToolbarButton
+          key="addPoints"
+          icon="✏️"
+          disabled={!layerSelected}
+          active={mouseMode === MouseMode.Aim}
+          label=""
+          onClick={async () => {
+            if (layerSelected === null) {
+              return;
+            }
+            setMouseMode(MouseMode.Aim);
+          }}
+        />,
+        <ToolbarButton
+          key="move"
+          icon="✋"
+          active={mouseMode === MouseMode.Grab}
+          label=""
+          onClick={async () => {
+            if (layerSelected === null) {
+              return;
+            }
+            setMouseMode(MouseMode.Grab);
+          }}
+        />,
+      ]}
       main={
         <MouseControl
           mode={mouseMode}

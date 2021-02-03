@@ -1,3 +1,5 @@
+import { Vec2 } from "./types";
+
 export enum ShaderType {
   Vertex,
   Fragment,
@@ -141,3 +143,35 @@ export const loadImage = async (url: string): Promise<HTMLImageElement> =>
     });
     img.src = url;
   });
+
+export const getTextureCoordinate = (
+  canvasSize: Vec2,
+  textureSize: Vec2,
+  panning: Vec2,
+  zoom: number,
+  coordinate: Vec2
+): Vec2 => {
+  const [texW, texH] = textureSize;
+  const [canvW, canvH] = canvasSize;
+  const [panX, panY] = panning;
+  const [coordX, coordY] = coordinate;
+
+  const landscape = texW / canvW > texH / canvH;
+
+  const scale = landscape ? canvW / texW : canvH / texH;
+  const scaledCanvasWidth = canvW / scale;
+  const scaledCanvasHeight = canvH / scale;
+  const relativeX = (coordX / canvW) * scaledCanvasWidth;
+  const relativeY = (coordY / canvH) * scaledCanvasHeight;
+  const halfH = texH / 2;
+  const halfW = texW / 2;
+  const top =
+    scaledCanvasHeight / 2 - halfH - (panY * scaledCanvasHeight * zoom) / 2;
+  const left =
+    scaledCanvasWidth / 2 - halfW + (panX * scaledCanvasWidth * zoom) / 2;
+
+  const x = (relativeX - left - halfW) / zoom + halfW;
+  const y = (relativeY - top - halfH) / zoom + halfH;
+
+  return [x, y];
+};
