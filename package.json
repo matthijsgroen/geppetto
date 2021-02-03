@@ -1,7 +1,10 @@
 {
   "name": "animation",
+  "productName": "WebGLAnimator",
+  "main": "public/electron.js",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -11,6 +14,7 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "delaunator": "^4.0.1",
+    "electron-is-dev": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
@@ -19,11 +23,37 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
+    "electron-dev": "concurrently -s first -k \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint src/**/*.ts{,x}",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "package": "electron-builder build --mac --win --linux deb -c.extraMetadata.main=build/electron.js --publish never",
+    "preelectron-pack": "yarn build",
+    "electron-pack": "electron-builder build --mac --win --linux deb --c.extraMetadata.main=build/electron.js",
+    "release": "yarn build && yarn build-electron && yarn package"
+  },
+  "build": {
+    "appId": "com.example.electron-cra",
+    "files": [
+      "build/**/*",
+      "build/icon.png",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    },
+    "win": {
+      "icon": "build/icon.png"
+    },
+    "mac": {
+      "category": "public.app-category.graphics-design",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "category": "2DGraphics"
+    }
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
@@ -61,9 +91,13 @@
     "@types/styled-components": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
+    "concurrently": "^5.3.0",
+    "electron": "^11.2.2",
+    "electron-builder": "^22.9.1",
     "eslint": "^7.18.0",
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-prettier": "^3.3.1",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "wait-on": "^5.2.1"
   }
 }
