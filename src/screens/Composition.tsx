@@ -195,37 +195,23 @@ const Composition: React.FC<CompositionProps> = ({
                 );
               }}
             />,
-            <ToolbarButton
-              key="5"
-              icon="🏷"
-              disabled={!layerSelected}
-              label=""
-              size="small"
-              onClick={() => {
-                if (layerSelected === null) {
-                  return;
-                }
-                const newName = prompt("New name", layerSelected);
-                if (newName === null) {
-                  return;
-                }
-                const layerName = makeLayerName(
-                  imageDefinition,
-                  newName,
-                  layerSelected
-                );
-                updateImageDefinition((state) =>
-                  rename(state, layerSelected, layerName)
-                );
-                setLayerSelected(layerName);
-              }}
-            />,
           ]}
           items={
             <ShapeList
               shapes={imageDefinition.shapes}
               layerSelected={layerSelected}
               setLayerSelected={setLayerSelected}
+              onRename={(oldName, newName) => {
+                const layerName = makeLayerName(
+                  imageDefinition,
+                  newName,
+                  layerSelected
+                );
+                updateImageDefinition((state) =>
+                  rename(state, oldName, layerName)
+                );
+                setLayerSelected(layerName);
+              }}
             />
           }
         />,

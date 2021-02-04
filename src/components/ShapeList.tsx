@@ -6,6 +6,7 @@ const displayShapes = (
   shapes: ShapeDefinition[],
   layerSelected: string | null,
   setLayerSelected: (activeLayer: string | null) => void,
+  onRename: (oldName: string, newName: string) => void,
   indent = 0
 ): React.ReactElement[] =>
   shapes.reduce(
@@ -15,13 +16,18 @@ const displayShapes = (
             <MenuItem
               key={shape.name}
               selected={shape.name === layerSelected}
-              name={`📄 ${shape.name} (${shape.points.length})`}
+              label={`📄 ${shape.name} (${shape.points.length})`}
+              name={shape.name}
+              allowRename
               indent={indent}
               onClick={() =>
                 setLayerSelected(
                   shape.name === layerSelected ? null : shape.name
                 )
               }
+              onRename={(newName) => {
+                onRename(shape.name, newName);
+              }}
             />
           )
         : result
@@ -29,13 +35,18 @@ const displayShapes = (
               <MenuItem
                 key={shape.name}
                 selected={shape.name === layerSelected}
-                name={`📁 ${shape.name}`}
+                label={`📁 ${shape.name}`}
+                name={shape.name}
+                allowRename
                 indent={indent}
                 onClick={() =>
                   setLayerSelected(
                     shape.name === layerSelected ? null : shape.name
                   )
                 }
+                onRename={(newName) => {
+                  onRename(shape.name, newName);
+                }}
               />
             )
             .concat(
@@ -43,6 +54,7 @@ const displayShapes = (
                 shape.items,
                 layerSelected,
                 setLayerSelected,
+                onRename,
                 indent + 1
               )
             ),
@@ -53,11 +65,15 @@ interface ShapeListProps {
   shapes: ShapeDefinition[];
   layerSelected: string | null;
   setLayerSelected: (activeLayer: string | null) => void;
+  onRename?: (oldName: string, newName: string) => void;
 }
 const ShapeList: React.FC<ShapeListProps> = ({
   shapes,
   layerSelected,
   setLayerSelected,
-}) => <>{displayShapes(shapes, layerSelected, setLayerSelected)}</>;
+  onRename = () => {
+    /* noop */
+  },
+}) => <>{displayShapes(shapes, layerSelected, setLayerSelected, onRename)}</>;
 
 export default ShapeList;

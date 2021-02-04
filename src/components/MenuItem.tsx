@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 interface MenuItemProps {
-  name: string;
+  label: string;
+  name?: string;
+  allowRename?: boolean;
   selected?: boolean;
   indent?: number;
   onClick?(e: React.MouseEvent): void;
+  onRename?(newName: string): void;
 }
 
 const Item = styled.div<{ selected: boolean; indent: number }>`
@@ -22,15 +25,63 @@ const Item = styled.div<{ selected: boolean; indent: number }>`
   cursor: default;
 `;
 
+const RenameInput = styled.input.attrs({
+  type: "text",
+  autoFocus: true,
+})`
+  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  color: ${({ theme }) => theme.colors.textSelected};
+  font-size: 1rem;
+  font-weight: normal;
+  width: max-content;
+  padding: 0.2rem;
+  outline: none;
+  border: 1px solid ${({ theme }) => theme.colors.textSelected};
+`;
+
 const MenuItem: React.FC<MenuItemProps> = ({
-  name,
+  label,
+  name = label,
+  allowRename = false,
   selected,
   indent = 0,
   onClick,
-}) => (
-  <Item onClick={onClick} selected={!!selected} indent={indent}>
-    {name}
-  </Item>
-);
+  onRename,
+}) => {
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newName, setNewName] = useState(name);
+
+  return (
+    <Item
+      onClick={onClick}
+      selected={!!selected}
+      indent={indent}
+      onDoubleClick={() => {
+        allowRename && !isRenaming && setIsRenaming(true);
+      }}
+    >
+      {isRenaming ? (
+        <RenameInput
+          value={newName}
+          onChange={(event) => {
+            setNewName(event.target.value);
+          }}
+          onKeyUp={(e) => {
+            if (e.key === "Enter") {
+              onRename && onRename(newName);
+              setIsRenaming(false);
+            }
+          }}
+          onBlur={() => {
+            onRename && onRename(newName);
+            setIsRenaming(false);
+          }}
+        />
+      ) : (
+        label
+      )}
+    </Item>
+  );
+};
 
 export default MenuItem;

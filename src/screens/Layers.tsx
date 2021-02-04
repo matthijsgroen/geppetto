@@ -191,37 +191,23 @@ const Layers: React.FC<LayersProps> = ({
                 );
               }}
             />,
-            <ToolbarButton
-              key="5"
-              icon="🏷"
-              size="small"
-              disabled={!layerSelected}
-              label=""
-              onClick={async () => {
-                if (layerSelected === null) {
-                  return;
-                }
-                const newName = prompt("New name", layerSelected);
-                if (newName === null) {
-                  return;
-                }
-                const layerName = makeLayerName(
-                  imageDefinition,
-                  newName,
-                  layerSelected
-                );
-                updateImageDefinition((state) =>
-                  rename(state, layerSelected, layerName)
-                );
-                setLayerSelected(layerName);
-              }}
-            />,
           ]}
           items={
             <ShapeList
               shapes={imageDefinition.shapes}
               layerSelected={layerSelected}
               setLayerSelected={setLayerSelected}
+              onRename={(oldName, newName) => {
+                const layerName = makeLayerName(
+                  imageDefinition,
+                  newName,
+                  layerSelected
+                );
+                updateImageDefinition((state) =>
+                  rename(state, oldName, layerName)
+                );
+                setLayerSelected(layerName);
+              }}
             />
           }
         />
