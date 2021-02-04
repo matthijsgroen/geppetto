@@ -1,6 +1,5 @@
 // eslint-env node
-const { app, BrowserWindow, Menu, powerSaveBlocker } = require("electron");
-const express = require("express");
+const { app, BrowserWindow, Menu } = require("electron");
 const path = require("path");
 const isDev = require("electron-is-dev");
 
