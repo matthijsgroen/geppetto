@@ -222,7 +222,12 @@ async function saveFile(browserWindow, useFilePath) {
   const status = windows.find((w) => w.window === browserWindow);
   let filePath = useFilePath ? status.filePath : null;
   if (filePath === null) {
+    const defaultName =
+      status && status.filePath
+        ? path.basename(status.filePath)
+        : "new-animation.json";
     const result = await dialog.showSaveDialog(browserWindow, {
+      defaultPath: defaultName,
       filters: [{ name: "Animation file", extensions: ["json"] }],
     });
     if (result.canceled) {
