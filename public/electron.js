@@ -10,11 +10,10 @@ let windows = [];
 
 const isMac = process.platform === "darwin";
 const template = [
-  // { role: 'appMenu' }
   ...(isMac
     ? [
         {
-          label: app.name,
+          role: "appMenu",
           submenu: [
             { role: "about" },
             { type: "separator" },
@@ -29,9 +28,8 @@ const template = [
         },
       ]
     : []),
-  // { role: 'fileMenu' }
   {
-    label: "File",
+    role: "fileMenu",
     submenu: [
       {
         label: "New",
@@ -48,13 +46,11 @@ const template = [
         },
       },
       {
-        label: "Open Recent",
-        role: "recentDocuments",
+        role: "recentdocuments",
         submenu: [
-          { type: "separator" },
           {
             label: "Clear Recent",
-            role: "clearRecentDocuments",
+            role: "clearrecentdocuments",
           },
         ],
       },
@@ -80,11 +76,10 @@ const template = [
       ...(isMac ? [] : [{ role: "quit" }]),
     ],
   },
-  // { role: 'viewMenu' }
   ...(isDev
     ? [
         {
-          label: "View",
+          role: "viewMenu",
           submenu: [
             { role: "reload" },
             { role: "forcereload" },
@@ -94,9 +89,7 @@ const template = [
         },
       ]
     : []),
-  // { role: 'windowMenu' }
   {
-    label: "Window",
     role: "windowMenu",
     submenu: [
       { role: "minimize" },

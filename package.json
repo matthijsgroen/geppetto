@@ -1,10 +1,10 @@
 {
   "name": "animation",
-  "productName": "WebGLAnimator",
+  "productName": "WebGL Animator",
   "description": "Create awesome WebGL Animations.",
   "author": "Matthijs Groen <matthijs.groen@gmail.com>",
   "main": "public/electron.js",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha",
   "private": true,
   "homepage": "./",
   "dependencies": {
@@ -17,7 +17,6 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "delaunator": "^4.0.1",
-    "electron": "^11.2.2",
     "electron-is-dev": "^1.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -32,8 +31,6 @@
     "build": "craco build",
     "lint": "eslint src/**/*.ts{,x}",
     "test": "craco test",
-    "eject": "react-scripts eject",
-    "package": "electron-builder build --mac --win --linux deb -c.extraMetadata.main=build/electron.js --publish never",
     "preelectron-pack": "yarn build",
     "electron-pack": "electron-builder build --mac --win --linux deb --c.extraMetadata.main=build/electron.js",
     "release": "yarn build && yarn build-electron && yarn package"
@@ -96,6 +93,7 @@
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
     "concurrently": "^5.3.0",
+    "electron": "^11.2.2",
     "electron-builder": "^22.9.1",
     "eslint": "^7.18.0",
     "eslint-config-prettier": "^7.2.0",
