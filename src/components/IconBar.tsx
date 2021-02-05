@@ -10,8 +10,8 @@ const IconContainer = styled.aside`
 `;
 
 interface IconBarProps {
-  topIcons: React.ReactElement[];
-  bottomIcons: React.ReactElement[];
+  topIcons?: React.ReactElement[];
+  bottomIcons?: React.ReactElement[];
 }
 
 const Spacer = styled.div`

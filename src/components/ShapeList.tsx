@@ -16,7 +16,8 @@ const displayShapes = (
             <MenuItem
               key={shape.name}
               selected={shape.name === layerSelected}
-              label={`📄 ${shape.name} (${shape.points.length})`}
+              icon={"📄"}
+              label={`${shape.name} (${shape.points.length})`}
               name={shape.name}
               allowRename
               indent={indent}
@@ -35,7 +36,8 @@ const displayShapes = (
               <MenuItem
                 key={shape.name}
                 selected={shape.name === layerSelected}
-                label={`📁 ${shape.name}`}
+                icon={"📁"}
+                label={shape.name}
                 name={shape.name}
                 allowRename
                 indent={indent}

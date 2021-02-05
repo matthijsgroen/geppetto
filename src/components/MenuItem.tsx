@@ -4,6 +4,7 @@ import styled from "styled-components";
 interface MenuItemProps {
   label: string;
   name?: string;
+  icon?: React.ReactNode;
   allowRename?: boolean;
   selected?: boolean;
   indent?: number;
@@ -42,6 +43,7 @@ const RenameInput = styled.input.attrs({
 const MenuItem: React.FC<MenuItemProps> = ({
   label,
   name = label,
+  icon,
   allowRename = false,
   selected,
   indent = 0,
@@ -60,6 +62,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
         allowRename && !isRenaming && setIsRenaming(true);
       }}
     >
+      {icon}{" "}
       {isRenaming ? (
         <RenameInput
           value={newName}
@@ -67,13 +70,21 @@ const MenuItem: React.FC<MenuItemProps> = ({
             setNewName(event.target.value);
           }}
           onKeyUp={(e) => {
+            if (e.key === "Escape") {
+              setNewName(name);
+              setIsRenaming(false);
+            }
             if (e.key === "Enter") {
-              onRename && onRename(newName);
+              if (newName !== name) {
+                onRename && onRename(newName);
+              }
               setIsRenaming(false);
             }
           }}
           onBlur={() => {
-            onRename && onRename(newName);
+            if (newName !== name) {
+              onRename && onRename(newName);
+            }
             setIsRenaming(false);
           }}
         />

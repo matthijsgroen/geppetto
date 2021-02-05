@@ -8,9 +8,9 @@ import Composition from "./screens/Composition";
 
 import texture from "./data/hiddo-texture.png";
 import { ImageDefinition } from "./lib/types";
-import FileContentDialog from "./screens/FileContentDialog";
 import { newDefinition } from "./lib/definitionHelpers";
 import { loadImage } from "./lib/webgl";
+import { ipcRenderer } from "electron";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -28,17 +28,46 @@ enum MenuItems {
   Composition,
 }
 
+const updateWindowTitle = (
+  animFile: string | null,
+  textureFile: string | null
+) => {
+  document.title = `${animFile ? animFile : "Untitled"} - ${
+    textureFile ? textureFile : "No texture"
+  }`;
+};
+
 const App: React.FC = () => {
   const [activeItem, setActiveItem] = useState(MenuItems.Layers);
   const [imageDefinition, setImageDefinition] = useState<ImageDefinition>(
     newDefinition()
   );
-  const [fileContentOpen, setFileContentOpen] = useState<boolean>(false);
+  const [baseFileName, setBaseFilename] = useState<string | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
 
   useEffect(() => {
     loadImage(texture).then((image) => setImage(image));
   }, []);
+
+  useEffect(() => {
+    ipcRenderer.on(
+      "animation-file-contents-loaded",
+      (_event, _path, baseName, contents) => {
+        setImageDefinition(
+          (JSON.parse(contents) as unknown) as ImageDefinition
+        );
+        setBaseFilename(baseName);
+      }
+    );
+    ipcRenderer.on("animation-file-new", () => {
+      setImageDefinition(newDefinition());
+      setBaseFilename(null);
+    });
+  }, []);
+
+  useEffect(() => {
+    updateWindowTitle(baseFileName, null);
+  }, [baseFileName]);
 
   const icons = (
     <IconBar
@@ -56,14 +85,6 @@ const App: React.FC = () => {
           active={activeItem === MenuItems.Composition}
           onClick={() => setActiveItem(MenuItems.Composition)}
           key="composition"
-        />,
-      ]}
-      bottomIcons={[
-        <TabIcon
-          icon="⚙"
-          title="Settings"
-          onClick={() => setFileContentOpen(true)}
-          key="settings"
         />,
       ]}
     />
@@ -86,13 +107,6 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      {fileContentOpen && (
-        <FileContentDialog
-          imageDefinition={imageDefinition}
-          onUpdate={setImageDefinition}
-          onClose={() => setFileContentOpen(false)}
-        />
-      )}
       <AppLayout icons={icons} screen={screen} />
     </ThemeProvider>
   );
