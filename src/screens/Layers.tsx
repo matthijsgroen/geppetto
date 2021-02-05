@@ -11,6 +11,7 @@ import {
   addPoint,
   canMoveDown,
   canMoveUp,
+  getLayerNames,
   getShape,
   makeLayerName,
   moveDown,
@@ -51,6 +52,16 @@ const Layers: React.FC<LayersProps> = ({
       setActiveCoord(null);
     }
   }, [layerSelected]);
+
+  useEffect(() => {
+    if (!layerSelected) {
+      return;
+    }
+    const names = getLayerNames(imageDefinition.shapes);
+    if (!names.includes(layerSelected)) {
+      setLayerSelected(null);
+    }
+  }, [imageDefinition]);
 
   const mouseDown = (event: React.MouseEvent) => {
     const canvasPos = event.currentTarget.getBoundingClientRect();

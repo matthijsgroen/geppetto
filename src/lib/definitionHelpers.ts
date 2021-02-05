@@ -13,7 +13,7 @@ export const newDefinition = (): ImageDefinition => ({
   controls: [],
 });
 
-const getLayerNames = (layers: ShapeDefinition[]): string[] =>
+export const getLayerNames = (layers: ShapeDefinition[]): string[] =>
   layers.reduce(
     (result, layer) =>
       layer.type === "folder"

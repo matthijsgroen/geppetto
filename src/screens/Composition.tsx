@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -9,6 +9,7 @@ import {
   addFolder,
   canMoveDown,
   canMoveUp,
+  getLayerNames,
   makeLayerName,
   moveDown,
   moveUp,
@@ -99,6 +100,16 @@ const Composition: React.FC<CompositionProps> = ({
   const [controlValues, setControlValues] = useState<ControlValues>({});
 
   const mouseMode = MouseMode.Grab;
+
+  useEffect(() => {
+    if (!layerSelected) {
+      return;
+    }
+    const names = getLayerNames(imageDefinition.shapes);
+    if (!names.includes(layerSelected)) {
+      setLayerSelected(null);
+    }
+  }, [imageDefinition]);
 
   const mouseDown = (event: React.MouseEvent) => {
     const canvasPos = event.currentTarget.getBoundingClientRect();

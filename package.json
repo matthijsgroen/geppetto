@@ -1,6 +1,8 @@
 {
   "name": "animation",
   "productName": "WebGLAnimator",
+  "description": "Create awesome WebGL Animations.",
+  "author": "Matthijs Groen <matthijs.groen@gmail.com>",
   "main": "public/electron.js",
   "version": "0.1.0",
   "private": true,

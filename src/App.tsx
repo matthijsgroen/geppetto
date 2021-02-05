@@ -50,20 +50,49 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const animationFileContentsLoaded = (
+      _event: Electron.IpcRendererEvent,
+      _path: string,
+      baseName: string,
+      contents: string
+    ) => {
+      setImageDefinition((JSON.parse(contents) as unknown) as ImageDefinition);
+      setBaseFilename(baseName);
+    };
     ipcRenderer.on(
       "animation-file-contents-loaded",
-      (_event, _path, baseName, contents) => {
-        setImageDefinition(
-          (JSON.parse(contents) as unknown) as ImageDefinition
-        );
-        setBaseFilename(baseName);
-      }
+      animationFileContentsLoaded
     );
-    ipcRenderer.on("animation-file-new", () => {
+    const animationFileNew = () => {
       setImageDefinition(newDefinition());
       setBaseFilename(null);
-    });
+    };
+    ipcRenderer.on("animation-file-new", animationFileNew);
+    const animationFileNameChange = (
+      _event: Electron.IpcRendererEvent,
+      _path: string,
+      baseName: string
+    ) => {
+      setBaseFilename(baseName);
+    };
+    ipcRenderer.on("animation-file-name-change", animationFileNameChange);
+
+    return () => {
+      ipcRenderer.off(
+        "animation-file-contents-loaded",
+        animationFileContentsLoaded
+      );
+      ipcRenderer.off("animation-file-new", animationFileNew);
+      ipcRenderer.off("animation-file-name-change", animationFileNameChange);
+    };
   }, []);
+
+  useEffect(() => {
+    ipcRenderer.send(
+      "animation-file-contents-changed",
+      JSON.stringify(imageDefinition)
+    );
+  }, [imageDefinition]);
 
   useEffect(() => {
     updateWindowTitle(baseFileName, null);

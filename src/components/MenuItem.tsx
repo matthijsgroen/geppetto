@@ -75,14 +75,14 @@ const MenuItem: React.FC<MenuItemProps> = ({
               setIsRenaming(false);
             }
             if (e.key === "Enter") {
-              if (newName !== name) {
+              if (newName !== name && newName.trim().length > 0) {
                 onRename && onRename(newName);
               }
               setIsRenaming(false);
             }
           }}
           onBlur={() => {
-            if (newName !== name) {
+            if (newName !== name && newName.trim().length > 0) {
               onRename && onRename(newName);
             }
             setIsRenaming(false);
