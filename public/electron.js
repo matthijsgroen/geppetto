@@ -57,18 +57,15 @@ const template = [
   // { role: 'viewMenu' }
   {
     label: "View",
-    submenu: [
-      // { role: "reload" },
-      // { role: "forcereload" },
-      // { role: "toggledevtools" },
-      // { type: "separator" },
-      // { role: "resetzoom" },
-      // { role: "zoomin" },
-      // { role: "zoomout" },
-      // { type: "separator" },
-      { role: "togglefullscreen" },
-      { type: "separator" },
-    ],
+    submenu: (isDev
+      ? [
+          { role: "reload" },
+          { role: "forcereload" },
+          { role: "toggledevtools" },
+          { type: "separator" },
+        ]
+      : []
+    ).concat([{ role: "togglefullscreen" }]),
   },
   // { role: 'windowMenu' }
   {
