@@ -5,6 +5,104 @@
       "type": "folder",
       "items": [
         {
+          "name": "rightArm",
+          "type": "folder",
+          "items": [
+            {
+              "name": "rightArmBottom",
+              "type": "sprite",
+              "points": [
+                [
+                  49,
+                  641
+                ],
+                [
+                  71,
+                  662
+                ],
+                [
+                  98,
+                  705
+                ],
+                [
+                  106,
+                  747
+                ],
+                [
+                  98,
+                  765
+                ],
+                [
+                  69,
+                  774
+                ],
+                [
+                  25,
+                  702
+                ],
+                [
+                  8,
+                  670
+                ]
+              ],
+              "baseElementData": {
+                "translateX": -31,
+                "translateY": -26
+              }
+            },
+            {
+              "name": "rightArmTop",
+              "type": "sprite",
+              "points": [
+                [
+                  149,
+                  630
+                ],
+                [
+                  170,
+                  616
+                ],
+                [
+                  207,
+                  619
+                ],
+                [
+                  217,
+                  641
+                ],
+                [
+                  211,
+                  695
+                ],
+                [
+                  191,
+                  749
+                ],
+                [
+                  148,
+                  785
+                ],
+                [
+                  116,
+                  788
+                ],
+                [
+                  103,
+                  775
+                ],
+                [
+                  125,
+                  726
+                ]
+              ],
+              "baseElementData": {
+                "translateX": 31,
+                "translateY": -37
+              }
+            }
+          ]
+        },
+        {
           "name": "leftEyeBrow",
           "type": "sprite",
           "points": [
@@ -253,33 +351,192 @@
           ]
         },
         {
+          "name": "face",
+          "type": "sprite",
+          "points": [
+            [
+              310,
+              40
+            ],
+            [
+              416,
+              34
+            ],
+            [
+              411,
+              119
+            ],
+            [
+              399,
+              165
+            ],
+            [
+              346,
+              185
+            ],
+            [
+              310,
+              104
+            ]
+          ],
+          "baseElementData": {
+            "translateY": -210,
+            "translateX": 11
+          }
+        },
+        {
           "name": "body",
           "type": "sprite",
           "points": [
             [
-              422,
-              3
+              413,
+              137
             ],
             [
-              598,
-              3
+              595,
+              137
             ],
             [
-              422,
-              598
+              588,
+              615
             ],
             [
-              598,
-              600
+              419,
+              616
             ]
           ],
-          "baseElementData": {}
+          "baseElementData": {
+            "translateY": 59,
+            "translateX": 9
+          }
         },
         {
-          "name": "leftArmTop",
+          "name": "hair",
           "type": "sprite",
-          "points": [],
-          "baseElementData": {}
+          "points": [
+            [
+              417,
+              599
+            ],
+            [
+              299,
+              597
+            ],
+            [
+              295,
+              441
+            ],
+            [
+              384,
+              444
+            ],
+            [
+              409,
+              501
+            ]
+          ],
+          "baseElementData": {
+            "translateY": -219,
+            "translateX": 12
+          }
+        },
+        {
+          "name": "leftArm",
+          "type": "folder",
+          "items": [
+            {
+              "name": "leftArmBottom",
+              "type": "sprite",
+              "points": [
+                [
+                  119,
+                  547
+                ],
+                [
+                  134,
+                  594
+                ],
+                [
+                  105,
+                  610
+                ],
+                [
+                  73,
+                  592
+                ],
+                [
+                  59,
+                  570
+                ],
+                [
+                  35,
+                  524
+                ],
+                [
+                  26,
+                  489
+                ],
+                [
+                  67,
+                  471
+                ],
+                [
+                  97,
+                  495
+                ],
+                [
+                  96,
+                  521
+                ],
+                [
+                  105,
+                  543
+                ]
+              ],
+              "baseElementData": {
+                "translateX": -120,
+                "translateY": -64
+              }
+            },
+            {
+              "name": "leftArmTop",
+              "type": "sprite",
+              "points": [
+                [
+                  145,
+                  589
+                ],
+                [
+                  178,
+                  609
+                ],
+                [
+                  210,
+                  590
+                ],
+                [
+                  247,
+                  475
+                ],
+                [
+                  235,
+                  442
+                ],
+                [
+                  205,
+                  449
+                ],
+                [
+                  155,
+                  553
+                ]
+              ],
+              "baseElementData": {
+                "translateX": -69,
+                "translateY": -81
+              }
+            }
+          ]
         }
       ]
     }

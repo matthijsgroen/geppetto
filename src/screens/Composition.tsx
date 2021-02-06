@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
+import NumberInputControl from "../components/NumberInputControl";
 import ShapeList from "../components/ShapeList";
 import SliderControl from "../components/SliderControl";
 import ToolbarButton from "../components/ToolbarButton";
@@ -10,10 +11,12 @@ import {
   canMoveDown,
   canMoveUp,
   getLayerNames,
+  getShape,
   makeLayerName,
   moveDown,
   moveUp,
   rename,
+  updateSpriteData,
 } from "../lib/definitionHelpers";
 import { ElementData, ImageDefinition, Keyframe, Vec2 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
@@ -100,6 +103,10 @@ const Composition: React.FC<CompositionProps> = ({
   const [controlValues, setControlValues] = useState<ControlValues>({});
 
   const mouseMode = MouseMode.Grab;
+  const shapeSelected =
+    layerSelected === null
+      ? null
+      : getShape(imageDefinition.shapes, layerSelected);
 
   useEffect(() => {
     if (!layerSelected) {
@@ -226,7 +233,62 @@ const Composition: React.FC<CompositionProps> = ({
             />
           }
         />,
-        <Menu title="Info" key="info" items={[]} />,
+        <Menu
+          title="Info"
+          key="info"
+          items={[
+            <NumberInputControl
+              key={"x"}
+              title={"xOffset"}
+              disabled={
+                shapeSelected === null || shapeSelected.type === "folder"
+              }
+              value={
+                (shapeSelected &&
+                  shapeSelected.type === "sprite" &&
+                  shapeSelected.baseElementData.translateX) ||
+                0
+              }
+              onChange={(newValue) => {
+                if (!layerSelected) return;
+                updateImageDefinition((state) =>
+                  updateSpriteData(state, layerSelected, (sprite) => ({
+                    ...sprite,
+                    baseElementData: {
+                      ...sprite.baseElementData,
+                      translateX: newValue,
+                    },
+                  }))
+                );
+              }}
+            />,
+            <NumberInputControl
+              key={"y"}
+              title={"yOffset"}
+              disabled={
+                shapeSelected === null || shapeSelected.type === "folder"
+              }
+              value={
+                (shapeSelected &&
+                  shapeSelected.type === "sprite" &&
+                  shapeSelected.baseElementData.translateY) ||
+                0
+              }
+              onChange={(newValue) => {
+                if (!layerSelected) return;
+                updateImageDefinition((state) =>
+                  updateSpriteData(state, layerSelected, (sprite) => ({
+                    ...sprite,
+                    baseElementData: {
+                      ...sprite.baseElementData,
+                      translateY: newValue,
+                    },
+                  }))
+                );
+              }}
+            />,
+          ]}
+        />,
         <Menu
           title="Controls"
           key="controls"
@@ -246,6 +308,33 @@ const Composition: React.FC<CompositionProps> = ({
               }}
             />
           ))}
+        />,
+      ]}
+      tools={[
+        <ToolbarButton
+          key="addPoints"
+          icon="✏️"
+          disabled={!layerSelected}
+          // active={mouseMode === MouseMode.Aim}
+          label=""
+          onClick={async () => {
+            // if (layerSelected === null) {
+            //   return;
+            // }
+            // setMouseMode(MouseMode.Aim);
+          }}
+        />,
+        <ToolbarButton
+          key="move"
+          icon="✋"
+          // active={mouseMode === MouseMode.Grab}
+          label=""
+          onClick={async () => {
+            // if (layerSelected === null) {
+            //   return;
+            // }
+            // setMouseMode(MouseMode.Grab);
+          }}
         />,
       ]}
       main={

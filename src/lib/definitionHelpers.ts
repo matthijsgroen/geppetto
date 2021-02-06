@@ -316,3 +316,25 @@ export const getShape = (
         : result,
     null
   );
+
+const mutateShapes = (
+  items: ShapeDefinition[],
+  shapeName: string,
+  mutation: (sprite: SpriteDefinition) => SpriteDefinition
+): ShapeDefinition[] =>
+  items.map((shape) =>
+    shape.type === "folder"
+      ? { ...shape, items: mutateShapes(shape.items, shapeName, mutation) }
+      : shape.name === shapeName
+      ? mutation(shape)
+      : shape
+  );
+
+export const updateSpriteData = (
+  imageDefinition: ImageDefinition,
+  shapeName: string,
+  mutation: (sprite: SpriteDefinition) => SpriteDefinition
+): ImageDefinition => ({
+  ...imageDefinition,
+  shapes: mutateShapes(imageDefinition.shapes, shapeName, mutation),
+});
