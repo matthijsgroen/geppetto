@@ -276,16 +276,10 @@
           "baseElementData": {}
         },
         {
-          "name": "leftArm",
-          "type": "folder",
-          "items": [
-            {
-              "name": "leftArmTop",
-              "type": "sprite",
-              "points": [],
-              "baseElementData": {}
-            }
-          ]
+          "name": "leftArmTop",
+          "type": "sprite",
+          "points": [],
+          "baseElementData": {}
         }
       ]
     }

@@ -46,6 +46,15 @@ const template = [
         },
       },
       {
+        label: "Load texture",
+        accelerator: "Shift+CmdOrCtrl+O",
+        enabled: false,
+        id: "loadTexture",
+        click(_event, browserWindow) {
+          loadTexture(browserWindow);
+        },
+      },
+      {
         role: "recentdocuments",
         submenu: [
           {
@@ -122,6 +131,7 @@ function createWindow() {
     backgroundColor: "#000",
     webPreferences: {
       nodeIntegration: true,
+      webSecurity: false,
     },
   });
   win.setFullScreenable(false);
@@ -174,6 +184,8 @@ function createWindow() {
     item.enabled = false;
     const itemAs = menu.getMenuItemById("fileSaveAs");
     itemAs.enabled = false;
+    const loadTexture = menu.getMenuItemById("loadTexture");
+    loadTexture.enabled = false;
   });
 
   win.on("focus", () => {
@@ -181,6 +193,8 @@ function createWindow() {
     item.enabled = status.changed;
     const itemAs = menu.getMenuItemById("fileSaveAs");
     itemAs.enabled = true;
+    const loadTexture = menu.getMenuItemById("loadTexture");
+    loadTexture.enabled = true;
   });
 
   win.webContents.on("ipc-message", (_event, channel, data) => {
@@ -196,16 +210,27 @@ function createWindow() {
   return win;
 }
 
-function openFile() {
-  dialog
-    .showOpenDialog({
-      filters: [{ name: "Animation file", extensions: ["json"] }],
-    })
-    .then((result) => {
-      if (!result.canceled) {
-        loadFile(result.filePaths[0]);
-      }
-    });
+async function openFile() {
+  const result = await dialog.showOpenDialog({
+    filters: [{ name: "Animation file", extensions: ["json"] }],
+  });
+  if (!result.canceled) {
+    loadFile(result.filePaths[0]);
+  }
+}
+
+async function loadTexture(browserWindow) {
+  const result = await dialog.showOpenDialog(browserWindow, {
+    filters: [{ name: "Texture file", extensions: ["png"] }],
+  });
+  if (!result.canceled) {
+    const filePath = result.filePaths[0];
+    browserWindow.webContents.send(
+      "texture-file-loaded",
+      filePath,
+      path.basename(filePath)
+    );
+  }
 }
 
 async function saveFile(browserWindow, useFilePath) {

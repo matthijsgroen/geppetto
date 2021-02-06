@@ -6,7 +6,6 @@ import IconBar from "./components/IconBar";
 import Layers from "./screens/Layers";
 import Composition from "./screens/Composition";
 
-import texture from "./data/hiddo-texture.png";
 import { ImageDefinition } from "./lib/types";
 import { newDefinition } from "./lib/definitionHelpers";
 import { loadImage } from "./lib/webgl";
@@ -43,11 +42,12 @@ const App: React.FC = () => {
     newDefinition()
   );
   const [baseFileName, setBaseFilename] = useState<string | null>(null);
+  const [textureFileName, setTextureFilename] = useState<string | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
 
-  useEffect(() => {
-    loadImage(texture).then((image) => setImage(image));
-  }, []);
+  // useEffect(() => {
+  //   loadImage(texture).then((image) => setImage(image));
+  // }, []);
 
   useEffect(() => {
     const animationFileContentsLoaded = (
@@ -77,6 +77,16 @@ const App: React.FC = () => {
     };
     ipcRenderer.on("animation-file-name-change", animationFileNameChange);
 
+    const textureFileLoaded = (
+      _event: Electron.IpcRendererEvent,
+      path: string,
+      baseName: string
+    ) => {
+      setTextureFilename(baseName);
+      loadImage(path).then((image) => setImage(image));
+    };
+    ipcRenderer.on("texture-file-loaded", textureFileLoaded);
+
     return () => {
       ipcRenderer.off(
         "animation-file-contents-loaded",
@@ -84,6 +94,7 @@ const App: React.FC = () => {
       );
       ipcRenderer.off("animation-file-new", animationFileNew);
       ipcRenderer.off("animation-file-name-change", animationFileNameChange);
+      ipcRenderer.off("texture-file-loaded", textureFileLoaded);
     };
   }, []);
 
@@ -95,8 +106,8 @@ const App: React.FC = () => {
   }, [imageDefinition]);
 
   useEffect(() => {
-    updateWindowTitle(baseFileName, null);
-  }, [baseFileName]);
+    updateWindowTitle(baseFileName, textureFileName);
+  }, [baseFileName, textureFileName]);
 
   const icons = (
     <IconBar

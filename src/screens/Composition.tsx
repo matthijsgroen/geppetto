@@ -226,6 +226,7 @@ const Composition: React.FC<CompositionProps> = ({
             />
           }
         />,
+        <Menu title="Info" key="info" items={[]} />,
         <Menu
           title="Controls"
           key="controls"
