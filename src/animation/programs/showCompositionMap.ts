@@ -67,7 +67,7 @@ export const showCompositionMap = (): {
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
-  let layerSelected: string | null = null;
+  let layersSelected: string[] = [];
   let keyframe: Keyframe | null = null;
 
   let elements: {
@@ -139,7 +139,32 @@ export const showCompositionMap = (): {
       pan = [x, y];
     },
     setLayerSelected(layer) {
-      layerSelected = layer;
+      if (layer === null) {
+        layersSelected = [];
+        return;
+      }
+      if (shapes === null) return;
+
+      const collectSpriteNames = (
+        s: ShapeDefinition[],
+        collect = false
+      ): string[] =>
+        s.reduce(
+          (result, shape) =>
+            shape.type === "sprite"
+              ? collect || shape.name === layer
+                ? result.concat(shape.name)
+                : result
+              : result.concat(
+                  collectSpriteNames(
+                    shape.items,
+                    collect || shape.name === layer
+                  )
+                ),
+          [] as string[]
+        );
+
+      layersSelected = collectSpriteNames(shapes);
     },
     setKeyframe(frame) {
       keyframe = frame;
@@ -244,7 +269,7 @@ export const showCompositionMap = (): {
           );
 
           calculatedElements.forEach((element) => {
-            if (element.name === layerSelected && element.amount > 0) {
+            if (layersSelected.includes(element.name) && element.amount > 0) {
               gl.uniform3f(translate, element.x, element.y, element.z);
 
               const elementData = keyframe && keyframe[element.name];

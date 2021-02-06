@@ -37,13 +37,17 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   useEffect(() => {
     composition.setShapes(shapes);
     layer.setShapes(shapes);
+    layer.setLayerSelected(activeLayer);
   }, [shapes]);
+  useEffect(() => {
+    layer.setLayerSelected(activeLayer);
+  }, [activeLayer]);
+
   composition.setZoom(zoom);
   composition.setPan(panX, panY);
   composition.setKeyframe(keyframe || null);
   layer.setZoom(zoom);
   layer.setPan(panX, panY);
-  layer.setLayerSelected(activeLayer);
   layer.setKeyframe(keyframe || null);
 
   return <WebGLCanvas renderers={renderers} />;
