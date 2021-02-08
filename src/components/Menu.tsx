@@ -1,27 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 interface MenuProps {
   title: string;
   items: React.ReactElement | React.ReactElement[];
+  size?: "default" | "large";
   toolbarItems?: React.ReactElement | React.ReactElement[];
+  collapsable?: boolean;
 }
 
-const MenuContainer = styled.div`
+const MenuHeaderContainer = styled.header`
   background-color: ${({ theme }) => theme.colors.itemContainerBackground};
   width: 100%;
-  height: 100%;
+  box-sizing: border-box;
   padding: 0 2px;
+  flex: 0;
 `;
 
-const MenuHeader = styled.h1`
+const MenuContainer = styled.div<{
+  collapsed: boolean;
+  size: "default" | "large";
+}>`
+  background-color: ${({ theme }) => theme.colors.itemContainerBackground};
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 2px;
+  flex: ${({ size }) => (size === "large" ? 2 : 1)};
+  overflow-y: auto;
+  max-height: ${({ collapsed }) => (collapsed ? "0" : "100vh")};
+`;
+
+const MenuHeader = styled.div`
   color: ${({ theme }) => theme.colors.text};
   background-color: ${({ theme }) => theme.colors.background};
   font-size: 16px;
   font-weight: normal;
   margin: 0;
-  padding: 0.75rem 1rem;
+  padding: 0 1rem;
   border-bottom: 1px solid ${({ theme }) => theme.colors.text};
+  display: flex;
+`;
+
+const MenuTitle = styled.h1`
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 16px;
+  font-weight: normal;
+  margin: 0;
+  padding: 0.75rem 0;
+  flex: 1;
+`;
+
+const CollapseButton = styled.button.attrs({ type: "button" })<{
+  collapsed: boolean;
+}>`
+  background-color: ${({ theme }) => theme.colors.background};
+  border-radius: 50%;
+  color: ${({ theme }) => theme.colors.text};
+  font-size: 16px;
+  outline: none;
+  border: none;
+  transform: rotate(${({ collapsed }) => (collapsed ? "0" : "180")}deg);
+  flex: 0;
 `;
 
 const Toolbar = styled.div`
@@ -41,12 +80,37 @@ const Toolbar = styled.div`
 const hasItems = (items: React.ReactElement | React.ReactElement[]): boolean =>
   Array.isArray(items) ? items.length > 0 : !!items;
 
-const Menu: React.FC<MenuProps> = ({ title, items, toolbarItems = [] }) => (
-  <MenuContainer>
-    <MenuHeader>{title}</MenuHeader>
-    {hasItems(toolbarItems) && <Toolbar>{toolbarItems}</Toolbar>}
-    {items}
-  </MenuContainer>
-);
+const Menu: React.FC<MenuProps> = ({
+  title,
+  items,
+  size = "default",
+  toolbarItems = [],
+  collapsable,
+}) => {
+  const [collapsed, setCollapsed] = useState(false);
+  return (
+    <>
+      <MenuHeaderContainer>
+        <MenuHeader>
+          <MenuTitle>{title}</MenuTitle>
+          {collapsable && (
+            <CollapseButton
+              collapsed={collapsed}
+              onClick={() => setCollapsed((state) => !state)}
+            >
+              ↓
+            </CollapseButton>
+          )}
+        </MenuHeader>
+        {hasItems(toolbarItems) && !collapsed && (
+          <Toolbar>{toolbarItems}</Toolbar>
+        )}
+      </MenuHeaderContainer>
+      <MenuContainer collapsed={collapsed} size={size}>
+        {items}
+      </MenuContainer>
+    </>
+  );
+};
 
 export default Menu;

@@ -171,6 +171,8 @@ const Composition: React.FC<CompositionProps> = ({
         <Menu
           title="Composition"
           key="layers"
+          collapsable={true}
+          size={"large"}
           toolbarItems={[
             <ToolbarButton
               key="2"
@@ -236,6 +238,7 @@ const Composition: React.FC<CompositionProps> = ({
         <Menu
           title="Info"
           key="info"
+          collapsable={true}
           items={[
             <NumberInputControl
               key={"x"}
@@ -292,6 +295,7 @@ const Composition: React.FC<CompositionProps> = ({
         <Menu
           title="Controls"
           key="controls"
+          collapsable={true}
           items={imageDefinition.controls.map((control) => (
             <SliderControl
               key={control.name}
@@ -308,33 +312,6 @@ const Composition: React.FC<CompositionProps> = ({
               }}
             />
           ))}
-        />,
-      ]}
-      tools={[
-        <ToolbarButton
-          key="addPoints"
-          icon="✏️"
-          disabled={!layerSelected}
-          // active={mouseMode === MouseMode.Aim}
-          label=""
-          onClick={async () => {
-            // if (layerSelected === null) {
-            //   return;
-            // }
-            // setMouseMode(MouseMode.Aim);
-          }}
-        />,
-        <ToolbarButton
-          key="move"
-          icon="✋"
-          // active={mouseMode === MouseMode.Grab}
-          label=""
-          onClick={async () => {
-            // if (layerSelected === null) {
-            //   return;
-            // }
-            // setMouseMode(MouseMode.Grab);
-          }}
         />,
       ]}
       main={
