@@ -188,6 +188,15 @@ function createWindow() {
     loadTexture.enabled = false;
   });
 
+  win.on("hide", () => {
+    const item = menu.getMenuItemById("fileSave");
+    item.enabled = false;
+    const itemAs = menu.getMenuItemById("fileSaveAs");
+    itemAs.enabled = false;
+    const loadTexture = menu.getMenuItemById("loadTexture");
+    loadTexture.enabled = false;
+  });
+
   win.on("focus", () => {
     const item = menu.getMenuItemById("fileSave");
     item.enabled = status.changed;
