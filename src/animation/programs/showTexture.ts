@@ -26,7 +26,7 @@ const textureFragmentShader = `
 
     lowp vec4 baseColor = vec4(backgroundColor, 1.0);
 
-    gl_FragColor = baseColor * (1.0-texelColor.w) + texelColor * texelColor.w;
+    gl_FragColor = baseColor * (1.0-texelColor.a) + vec4(texelColor.rgb * texelColor.a, texelColor.a);
   }
 `;
 
