@@ -50,7 +50,7 @@ const compositionFragmentShader = `
     highp vec2 coord = vTextureCoord.xy / uTextureDimensions;
     mediump vec4 texelColor = texture2D(uSampler, coord);
 
-    gl_FragColor = texelColor * texelColor.w;
+    gl_FragColor = vec4(texelColor.rgb * texelColor.a, texelColor.a);
   }
 `;
 
@@ -180,8 +180,8 @@ export const showComposition = (): {
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
       vertexBuffer = gl.createBuffer();
       indexBuffer = gl.createBuffer();
