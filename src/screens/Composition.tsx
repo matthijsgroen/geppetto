@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -18,7 +18,14 @@ import {
   rename,
   updateSpriteData,
 } from "../lib/definitionHelpers";
-import { ElementData, ImageDefinition, Keyframe, Vec2 } from "../lib/types";
+import {
+  ElementData,
+  ImageDefinition,
+  Keyframe,
+  MutationVector,
+  ShapeDefinition,
+  Vec2,
+} from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface CompositionProps {
@@ -102,6 +109,13 @@ const Composition: React.FC<CompositionProps> = ({
   const [layerSelected, setLayerSelected] = useState<null | string>(null);
   const [controlValues, setControlValues] = useState<ControlValues>({});
 
+  const setItemSelected = useCallback(
+    (item: ShapeDefinition | MutationVector | null) => {
+      setLayerSelected(item === null ? null : item.name);
+    },
+    [setLayerSelected]
+  );
+
   const mouseMode = MouseMode.Grab;
   const shapeSelected =
     layerSelected === null
@@ -114,7 +128,7 @@ const Composition: React.FC<CompositionProps> = ({
     }
     const names = getLayerNames(imageDefinition.shapes);
     if (!names.includes(layerSelected)) {
-      setLayerSelected(null);
+      setItemSelected(null);
     }
   }, [imageDefinition]);
 
@@ -180,11 +194,11 @@ const Composition: React.FC<CompositionProps> = ({
               label="+"
               size="small"
               onClick={async () => {
-                const newLayerName = await addFolder(
+                const newFolder = await addFolder(
                   updateImageDefinition,
                   "New Folder"
                 );
-                setLayerSelected(newLayerName);
+                setItemSelected(newFolder);
               }}
             />,
             <ToolbarButton
@@ -220,7 +234,8 @@ const Composition: React.FC<CompositionProps> = ({
             <ShapeList
               shapes={imageDefinition.shapes}
               layerSelected={layerSelected}
-              setLayerSelected={setLayerSelected}
+              setItemSelected={setItemSelected}
+              showMutationVectors={true}
               onRename={(oldName, newName) => {
                 const layerName = makeLayerName(
                   imageDefinition,
@@ -236,9 +251,16 @@ const Composition: React.FC<CompositionProps> = ({
           }
         />,
         <Menu
-          title="Info"
+          title={
+            shapeSelected === null
+              ? "Info"
+              : shapeSelected.type === "sprite"
+              ? `📄 ${shapeSelected.name}`
+              : `📁 ${shapeSelected.name}`
+          }
           key="info"
           collapsable={true}
+          size="minimal"
           items={[
             <NumberInputControl
               key={"x"}

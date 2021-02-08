@@ -1,6 +1,37 @@
 export type Vec2 = [number, number];
 export type Vec3 = [number, number, number];
 
+export type TranslationVector = {
+  name: string;
+  type: "translate";
+  origin: Vec2;
+};
+
+export type DeformationVector = {
+  name: string;
+  type: "deform";
+  origin: Vec2;
+  radius: number;
+};
+
+export type StretchVector = {
+  name: string;
+  type: "stretch";
+  origin: Vec2;
+};
+
+export type RotationVector = {
+  name: "string";
+  type: "rotate";
+  origin: Vec2;
+};
+
+export type MutationVector =
+  | TranslationVector
+  | DeformationVector
+  | StretchVector
+  | RotationVector;
+
 export type ElementData = {
   deformations?: {
     [key: string]: Vec2;
@@ -15,16 +46,14 @@ export type SpriteDefinition = {
   name: string;
   type: "sprite";
   points: Vec2[];
-  // anchor: Vec2;
-  mutationVectors?: {
-    [key: string]: Vec3;
-  };
+  mutationVectors?: MutationVector[];
   baseElementData: ElementData;
 };
 
 export type FolderDefinition = {
   name: string;
   type: "folder";
+  mutationVectors?: MutationVector[];
   items: ShapeDefinition[];
 };
 

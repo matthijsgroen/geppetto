@@ -44,22 +44,21 @@ export const addLayer = (
     mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ) => void,
   defaultName: string
-): Promise<string> =>
+): Promise<SpriteDefinition> =>
   new Promise((resolve) => {
     mutator((image) => {
       const newName = makeLayerName(image, defaultName);
-      resolve(newName);
+      const newSprite: SpriteDefinition = {
+        name: newName,
+        type: "sprite",
+        points: [],
+        baseElementData: {},
+      };
+      resolve(newSprite);
 
       return {
         ...image,
-        shapes: ([
-          {
-            name: newName,
-            type: "sprite",
-            points: [],
-            baseElementData: {},
-          } as SpriteDefinition,
-        ] as ShapeDefinition[]).concat(image.shapes),
+        shapes: ([newSprite] as ShapeDefinition[]).concat(image.shapes),
       };
     });
   });
@@ -69,21 +68,21 @@ export const addFolder = (
     mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ) => void,
   defaultName: string
-): Promise<string> =>
+): Promise<FolderDefinition> =>
   new Promise((resolve) => {
     mutator((image) => {
       const newName = makeLayerName(image, defaultName);
-      resolve(newName);
+      const newFolder: FolderDefinition = {
+        name: newName,
+        type: "folder",
+        items: [],
+      };
+
+      resolve(newFolder);
 
       return {
         ...image,
-        shapes: ([
-          {
-            name: newName,
-            type: "folder",
-            items: [],
-          } as FolderDefinition,
-        ] as ShapeDefinition[]).concat(image.shapes),
+        shapes: ([newFolder] as ShapeDefinition[]).concat(image.shapes),
       };
     });
   });

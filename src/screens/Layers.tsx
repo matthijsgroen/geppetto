@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import TextureMapCanvas from "../animation/TextureMapCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -19,7 +19,7 @@ import {
   removePoint,
   rename,
 } from "../lib/definitionHelpers";
-import { ImageDefinition } from "../lib/types";
+import { ImageDefinition, MutationVector, ShapeDefinition } from "../lib/types";
 import { getTextureCoordinate } from "../lib/webgl";
 import ScreenLayout from "../templates/ScreenLayout";
 
@@ -45,6 +45,13 @@ const Layers: React.FC<LayersProps> = ({
   const [activeCoord, setActiveCoord] = useState<null | [number, number]>(null);
   const [layerSelected, setLayerSelected] = useState<null | string>(null);
   const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
+
+  const setItemSelected = useCallback(
+    (item: ShapeDefinition | MutationVector | null) => {
+      setLayerSelected(item === null ? null : item.name);
+    },
+    [setLayerSelected]
+  );
 
   useEffect(() => {
     if (layerSelected === null) {
@@ -154,11 +161,11 @@ const Layers: React.FC<LayersProps> = ({
               label="+"
               size="small"
               onClick={async () => {
-                const newLayerName = await addLayer(
+                const newSprite = await addLayer(
                   updateImageDefinition,
                   "New Layer"
                 );
-                setLayerSelected(newLayerName);
+                setItemSelected(newSprite);
               }}
             />,
             <ToolbarButton
@@ -167,11 +174,11 @@ const Layers: React.FC<LayersProps> = ({
               label="+"
               size="small"
               onClick={async () => {
-                const newLayerName = await addFolder(
+                const newFolder = await addFolder(
                   updateImageDefinition,
                   "New Folder"
                 );
-                setLayerSelected(newLayerName);
+                setItemSelected(newFolder);
               }}
             />,
             <ToolbarButton
@@ -207,7 +214,7 @@ const Layers: React.FC<LayersProps> = ({
             <ShapeList
               shapes={imageDefinition.shapes}
               layerSelected={layerSelected}
-              setLayerSelected={setLayerSelected}
+              setItemSelected={setItemSelected}
               onRename={(oldName, newName) => {
                 const layerName = makeLayerName(
                   imageDefinition,

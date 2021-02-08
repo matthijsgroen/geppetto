@@ -4,7 +4,7 @@ import styled from "styled-components";
 interface MenuProps {
   title: string;
   items: React.ReactElement | React.ReactElement[];
-  size?: "default" | "large";
+  size?: "default" | "large" | "minimal";
   toolbarItems?: React.ReactElement | React.ReactElement[];
   collapsable?: boolean;
 }
@@ -19,13 +19,14 @@ const MenuHeaderContainer = styled.header`
 
 const MenuContainer = styled.div<{
   collapsed: boolean;
-  size: "default" | "large";
+  size: MenuProps["size"];
 }>`
   background-color: ${({ theme }) => theme.colors.itemContainerBackground};
   width: 100%;
   box-sizing: border-box;
   padding: 0 2px;
-  flex: ${({ size }) => (size === "large" ? 2 : 1)};
+  flex: ${({ size }) =>
+    size === "large" ? 2 : size === "minimal" ? "0 0 auto" : 1};
   overflow-y: auto;
   max-height: ${({ collapsed }) => (collapsed ? "0" : "100vh")};
 `;

@@ -9,6 +9,7 @@ const Control = styled.div`
 
 const ControlLabel = styled.p`
   color: ${({ theme }) => theme.colors.text};
+  padding: 0 1rem;
   margin: 0;
   flex: 1;
 `;
