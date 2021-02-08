@@ -11,7 +11,9 @@ const ControlLabel = styled.p`
   margin: 0;
 `;
 
-const NumberInput = styled.input.attrs({ type: "number" })``;
+const NumberInput = styled.input.attrs({ type: "number" })`
+  text-align: right;
+`;
 
 interface SliderControlProps {
   title?: string;
