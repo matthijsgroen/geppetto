@@ -61,17 +61,26 @@ const displayShapes = (
                     (vector) => (
                       <MenuItem
                         key={vector.name}
-                        // selected={shape.name === layerSelected}
+                        selected={
+                          !!(
+                            layerSelected &&
+                            vector.name === layerSelected.name &&
+                            layerSelected.type === "vector"
+                          )
+                        }
                         icon={iconForType(vector.type)}
-                        label={`${vector.name}`}
+                        label={vector.name}
                         name={vector.name}
                         // allowRename
                         indent={indent + 1}
-                        // onClick={() =>
-                        //   setLayerSelected(
-                        //     shape.name === layerSelected ? null : shape.name
-                        //   )
-                        // }
+                        onClick={() =>
+                          setItemSelected(
+                            layerSelected?.type === "vector" &&
+                              vector.name === layerSelected.name
+                              ? null
+                              : vector
+                          )
+                        }
                         // onRename={(newName) => {
                         //   onRename(shape.name, newName);
                         // }}

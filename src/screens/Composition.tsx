@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from "react";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
-import NumberInputControl from "../components/NumberInputControl";
 import ShapeList from "../components/ShapeList";
 import SliderControl from "../components/SliderControl";
 import ToolbarButton from "../components/ToolbarButton";
@@ -16,7 +15,6 @@ import {
   moveDown,
   moveUp,
   rename,
-  updateSpriteData,
 } from "../lib/definitionHelpers";
 import {
   ElementData,
@@ -28,6 +26,7 @@ import {
   Vec2,
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
+import LayerInfoPanel from "./LayerInfoPanel";
 
 interface CompositionProps {
   imageDefinition: ImageDefinition;
@@ -115,7 +114,15 @@ const Composition: React.FC<CompositionProps> = ({
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | null) => {
       setLayerSelected(
-        item === null ? null : { name: item.name, type: "layer" }
+        item === null
+          ? null
+          : {
+              name: item.name,
+              type:
+                item.type === "folder" || item.type === "sprite"
+                  ? "layer"
+                  : "vector",
+            }
       );
     },
     [setLayerSelected]
@@ -253,79 +260,31 @@ const Composition: React.FC<CompositionProps> = ({
                 updateImageDefinition((state) =>
                   rename(state, oldName, layerName)
                 );
-                if (item.type === "folder" || item.type === "sprite") {
-                  setLayerSelected({ name: layerName, type: "layer" });
-                } else {
-                  setLayerSelected({ name: layerName, type: "vector" });
-                }
+                setLayerSelected({
+                  name: layerName,
+                  type:
+                    item.type === "folder" || item.type === "sprite"
+                      ? "layer"
+                      : "vector",
+                });
               }}
             />
           }
         />,
-        <Menu
-          title={
-            shapeSelected === null
-              ? "Info"
-              : shapeSelected.type === "sprite"
-              ? `📄 ${shapeSelected.name}`
-              : `📁 ${shapeSelected.name}`
-          }
-          key="info"
-          collapsable={true}
-          size="minimal"
-          items={[
-            <NumberInputControl
-              key={"x"}
-              title={"xOffset"}
-              disabled={
-                shapeSelected === null || shapeSelected.type === "folder"
-              }
-              value={
-                (shapeSelected &&
-                  shapeSelected.type === "sprite" &&
-                  shapeSelected.baseElementData.translateX) ||
-                0
-              }
-              onChange={(newValue) => {
-                if (!layerSelected) return;
-                updateImageDefinition((state) =>
-                  updateSpriteData(state, layerSelected.name, (sprite) => ({
-                    ...sprite,
-                    baseElementData: {
-                      ...sprite.baseElementData,
-                      translateX: newValue,
-                    },
-                  }))
-                );
-              }}
-            />,
-            <NumberInputControl
-              key={"y"}
-              title={"yOffset"}
-              disabled={
-                shapeSelected === null || shapeSelected.type === "folder"
-              }
-              value={
-                (shapeSelected &&
-                  shapeSelected.type === "sprite" &&
-                  shapeSelected.baseElementData.translateY) ||
-                0
-              }
-              onChange={(newValue) => {
-                if (!layerSelected) return;
-                updateImageDefinition((state) =>
-                  updateSpriteData(state, layerSelected.name, (sprite) => ({
-                    ...sprite,
-                    baseElementData: {
-                      ...sprite.baseElementData,
-                      translateY: newValue,
-                    },
-                  }))
-                );
-              }}
-            />,
-          ]}
-        />,
+        shapeSelected ? (
+          <LayerInfoPanel
+            shapeSelected={shapeSelected}
+            updateImageDefinition={updateImageDefinition}
+          />
+        ) : (
+          <Menu
+            title={"Info"}
+            key="info"
+            collapsable={true}
+            size="minimal"
+            items={[]}
+          />
+        ),
         <Menu
           title="Controls"
           key="controls"
