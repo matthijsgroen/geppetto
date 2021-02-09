@@ -21,6 +21,7 @@ import {
 import {
   ElementData,
   ImageDefinition,
+  ItemSelection,
   Keyframe,
   MutationVector,
   ShapeDefinition,
@@ -106,30 +107,37 @@ const Composition: React.FC<CompositionProps> = ({
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
     false
   );
-  const [layerSelected, setLayerSelected] = useState<null | string>(null);
+  const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
+    null
+  );
   const [controlValues, setControlValues] = useState<ControlValues>({});
 
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | null) => {
-      setLayerSelected(item === null ? null : item.name);
+      setLayerSelected(
+        item === null ? null : { name: item.name, type: "layer" }
+      );
     },
     [setLayerSelected]
   );
 
   const mouseMode = MouseMode.Grab;
   const shapeSelected =
-    layerSelected === null
+    layerSelected === null || layerSelected.type !== "layer"
       ? null
-      : getShape(imageDefinition.shapes, layerSelected);
+      : getShape(imageDefinition.shapes, layerSelected.name);
 
   useEffect(() => {
     if (!layerSelected) {
       return;
     }
-    const names = getLayerNames(imageDefinition.shapes);
-    if (!names.includes(layerSelected)) {
-      setItemSelected(null);
+    if (layerSelected.type === "layer") {
+      const names = getLayerNames(imageDefinition.shapes);
+      if (!names.includes(layerSelected.name)) {
+        setItemSelected(null);
+      }
     }
+    // TODO: Add same path for vector
   }, [imageDefinition]);
 
   const mouseDown = (event: React.MouseEvent) => {
@@ -236,16 +244,20 @@ const Composition: React.FC<CompositionProps> = ({
               layerSelected={layerSelected}
               setItemSelected={setItemSelected}
               showMutationVectors={true}
-              onRename={(oldName, newName) => {
+              onRename={(oldName, newName, item) => {
                 const layerName = makeLayerName(
                   imageDefinition,
                   newName,
-                  layerSelected
+                  layerSelected ? layerSelected.name : null
                 );
                 updateImageDefinition((state) =>
                   rename(state, oldName, layerName)
                 );
-                setLayerSelected(layerName);
+                if (item.type === "folder" || item.type === "sprite") {
+                  setLayerSelected({ name: layerName, type: "layer" });
+                } else {
+                  setLayerSelected({ name: layerName, type: "vector" });
+                }
               }}
             />
           }
@@ -277,7 +289,7 @@ const Composition: React.FC<CompositionProps> = ({
               onChange={(newValue) => {
                 if (!layerSelected) return;
                 updateImageDefinition((state) =>
-                  updateSpriteData(state, layerSelected, (sprite) => ({
+                  updateSpriteData(state, layerSelected.name, (sprite) => ({
                     ...sprite,
                     baseElementData: {
                       ...sprite.baseElementData,
@@ -302,7 +314,7 @@ const Composition: React.FC<CompositionProps> = ({
               onChange={(newValue) => {
                 if (!layerSelected) return;
                 updateImageDefinition((state) =>
-                  updateSpriteData(state, layerSelected, (sprite) => ({
+                  updateSpriteData(state, layerSelected.name, (sprite) => ({
                     ...sprite,
                     baseElementData: {
                       ...sprite.baseElementData,

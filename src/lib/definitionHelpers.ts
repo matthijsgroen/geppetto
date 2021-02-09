@@ -2,6 +2,7 @@ import {
   ControlDefinition,
   FolderDefinition,
   ImageDefinition,
+  ItemSelection,
   Keyframe,
   ShapeDefinition,
   SpriteDefinition,
@@ -88,28 +89,37 @@ export const addFolder = (
   });
 
 export const canMoveUp = (
-  selectedItem: string | null,
+  selectedItem: ItemSelection | null,
   image: ImageDefinition
 ): boolean => {
   if (selectedItem === null) {
     return false;
   }
-  return !(image.shapes[0].name === selectedItem);
+  if (selectedItem.type === "layer") {
+    return !(image.shapes[0].name === selectedItem.name);
+  }
+  // TODO: Implement for vector
+  return false;
 };
 
 export const canMoveDown = (
-  selectedItem: string | null,
+  selectedItem: ItemSelection | null,
   image: ImageDefinition
 ): boolean => {
   if (selectedItem === null) {
     return false;
   }
-  return !(image.shapes[image.shapes.length - 1].name === selectedItem);
+  if (selectedItem.type === "layer") {
+    return !(image.shapes[image.shapes.length - 1].name === selectedItem.name);
+  }
+
+  // TODO: Implement for vector
+  return false;
 };
 
 const move = (
   moveDown: boolean,
-  itemName: string,
+  item: ItemSelection,
   shapes: ShapeDefinition[]
 ): ShapeDefinition[] =>
   shapes.reduce((result, shape, index, list) => {
@@ -123,7 +133,7 @@ const move = (
         return result;
       }
     }
-    if (shape.name === itemName && moveDown) {
+    if (shape.name === item.name && item.type === "layer" && moveDown) {
       // get next item
       const next = list[index + 1];
       if (next) {
@@ -138,7 +148,7 @@ const move = (
       }
     }
     const next = list[index + 1];
-    if (next && next.name === itemName && !moveDown) {
+    if (next && next.name === item.name && item.type === "layer" && !moveDown) {
       // get next item
       if (shape.type === "sprite") {
         return result.concat(next, shape);
@@ -152,7 +162,7 @@ const move = (
     if (shape.type === "folder") {
       if (moveDown) {
         const lastItem = shape.items[shape.items.length - 1];
-        if (lastItem && lastItem.name === itemName) {
+        if (lastItem && lastItem.name === item.name && item.type === "layer") {
           // last item in the folder
           return result.concat(
             { ...shape, items: shape.items.slice(0, -1) },
@@ -162,7 +172,11 @@ const move = (
       }
       if (!moveDown) {
         const firstItem = shape.items[0];
-        if (firstItem && firstItem.name === itemName) {
+        if (
+          firstItem &&
+          firstItem.name === item.name &&
+          item.type === "layer"
+        ) {
           // last item in the folder
           return result.concat(firstItem, {
             ...shape,
@@ -172,14 +186,14 @@ const move = (
       }
       return result.concat({
         ...shape,
-        items: move(moveDown, itemName, shape.items),
+        items: move(moveDown, item, shape.items),
       });
     }
     return result.concat(shape);
   }, [] as ShapeDefinition[]);
 
 export const moveDown = (
-  selectedItem: string,
+  selectedItem: ItemSelection,
   image: ImageDefinition
 ): ImageDefinition => ({
   ...image,
@@ -187,7 +201,7 @@ export const moveDown = (
 });
 
 export const moveUp = (
-  selectedItem: string,
+  selectedItem: ItemSelection,
   image: ImageDefinition
 ): ImageDefinition => ({
   ...image,

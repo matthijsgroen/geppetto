@@ -19,7 +19,12 @@ import {
   removePoint,
   rename,
 } from "../lib/definitionHelpers";
-import { ImageDefinition, MutationVector, ShapeDefinition } from "../lib/types";
+import {
+  ImageDefinition,
+  ItemSelection,
+  MutationVector,
+  ShapeDefinition,
+} from "../lib/types";
 import { getTextureCoordinate } from "../lib/webgl";
 import ScreenLayout from "../templates/ScreenLayout";
 
@@ -43,12 +48,16 @@ const Layers: React.FC<LayersProps> = ({
     false
   );
   const [activeCoord, setActiveCoord] = useState<null | [number, number]>(null);
-  const [layerSelected, setLayerSelected] = useState<null | string>(null);
+  const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
+    null
+  );
   const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
 
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | null) => {
-      setLayerSelected(item === null ? null : item.name);
+      setLayerSelected(
+        item === null ? null : { name: item.name, type: "layer" }
+      );
     },
     [setLayerSelected]
   );
@@ -65,7 +74,7 @@ const Layers: React.FC<LayersProps> = ({
       return;
     }
     const names = getLayerNames(imageDefinition.shapes);
-    if (!names.includes(layerSelected)) {
+    if (!names.includes(layerSelected.name)) {
       setLayerSelected(null);
     }
   }, [imageDefinition]);
@@ -120,7 +129,7 @@ const Layers: React.FC<LayersProps> = ({
         zoom,
         [elementX, elementY]
       );
-      const shape = getShape(imageDefinition.shapes, layerSelected);
+      const shape = getShape(imageDefinition.shapes, layerSelected.name);
       if (shape && shape.type === "sprite") {
         const closePoint = shape.points.find((p) => {
           const dx = p[0] - coord[0];
@@ -133,7 +142,7 @@ const Layers: React.FC<LayersProps> = ({
 
         if (!closePoint) {
           updateImageDefinition((state) =>
-            addPoint(state, layerSelected, coord)
+            addPoint(state, layerSelected.name, coord)
           );
           setActiveCoord(coord);
         } else {
@@ -219,12 +228,12 @@ const Layers: React.FC<LayersProps> = ({
                 const layerName = makeLayerName(
                   imageDefinition,
                   newName,
-                  layerSelected
+                  layerSelected ? layerSelected.name : null
                 );
                 updateImageDefinition((state) =>
                   rename(state, oldName, layerName)
                 );
-                setLayerSelected(layerName);
+                setLayerSelected({ name: layerName, type: "layer" });
               }}
             />
           }
@@ -267,7 +276,7 @@ const Layers: React.FC<LayersProps> = ({
               return;
             }
             updateImageDefinition((state) =>
-              removePoint(state, layerSelected, activeCoord)
+              removePoint(state, layerSelected.name, activeCoord)
             );
             setActiveCoord(null);
           }}

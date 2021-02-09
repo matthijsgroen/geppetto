@@ -63,6 +63,11 @@ export type Keyframe = {
   [element: string]: ElementData;
 };
 
+export type ItemSelection = {
+  name: string;
+  type: "layer" | "vector";
+};
+
 export type ControlDefinition = {
   name: string;
   type: "slider";

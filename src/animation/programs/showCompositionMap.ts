@@ -1,4 +1,9 @@
-import { Keyframe, MutationVector, ShapeDefinition } from "../../lib/types";
+import {
+  ItemSelection,
+  Keyframe,
+  MutationVector,
+  ShapeDefinition,
+} from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes, getAnchor } from "./utils";
@@ -50,7 +55,7 @@ export const showCompositionMap = (): {
   setShapes(s: ShapeDefinition[]): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
-  setLayerSelected(layer: null | string): void;
+  setLayerSelected(layer: null | ItemSelection): void;
   setKeyframe(frame: Keyframe | null): void;
   renderer: WebGLRenderer;
 } => {
@@ -147,13 +152,13 @@ export const showCompositionMap = (): {
         s.reduce(
           (result, shape) =>
             shape.type === "sprite"
-              ? collect || shape.name === layer
+              ? collect || shape.name === layer.name
                 ? result.concat(shape.name)
                 : result
               : result.concat(
                   collectSpriteNames(
                     shape.items,
-                    collect || shape.name === layer
+                    collect || shape.name === layer.name
                   )
                 ),
           [] as string[]

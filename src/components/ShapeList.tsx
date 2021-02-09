@@ -1,5 +1,5 @@
 import React from "react";
-import { MutationVector, ShapeDefinition } from "../lib/types";
+import { ItemSelection, MutationVector, ShapeDefinition } from "../lib/types";
 import MenuItem from "./MenuItem";
 
 const iconForType = (type: MutationVector["type"]): string =>
@@ -13,7 +13,7 @@ const iconForType = (type: MutationVector["type"]): string =>
 
 const displayShapes = (
   shapes: ShapeDefinition[],
-  layerSelected: string | null,
+  layerSelected: ItemSelection | null,
   setItemSelected: (item: ShapeDefinition | MutationVector | null) => void,
   onRename: (
     oldName: string,
@@ -30,14 +30,25 @@ const displayShapes = (
             .concat(
               <MenuItem
                 key={shape.name}
-                selected={shape.name === layerSelected}
+                selected={
+                  !!(
+                    layerSelected &&
+                    shape.name === layerSelected.name &&
+                    layerSelected.type === "layer"
+                  )
+                }
                 icon={"📄"}
                 label={`${shape.name} (${shape.points.length})`}
                 name={shape.name}
                 allowRename
                 indent={indent}
                 onClick={() =>
-                  setItemSelected(shape.name === layerSelected ? null : shape)
+                  setItemSelected(
+                    layerSelected?.type === "layer" &&
+                      shape.name === layerSelected.name
+                      ? null
+                      : shape
+                  )
                 }
                 onRename={(newName) => {
                   onRename(shape.name, newName, shape);
@@ -73,14 +84,25 @@ const displayShapes = (
             .concat(
               <MenuItem
                 key={shape.name}
-                selected={shape.name === layerSelected}
+                selected={
+                  !!(
+                    layerSelected &&
+                    shape.name === layerSelected.name &&
+                    layerSelected.type === "layer"
+                  )
+                }
                 icon={"📁"}
                 label={shape.name}
                 name={shape.name}
                 allowRename
                 indent={indent}
                 onClick={() =>
-                  setItemSelected(shape.name === layerSelected ? null : shape)
+                  setItemSelected(
+                    layerSelected?.type === "layer" &&
+                      shape.name === layerSelected.name
+                      ? null
+                      : shape
+                  )
                 }
                 onRename={(newName) => {
                   onRename(shape.name, newName, shape);
@@ -102,7 +124,7 @@ const displayShapes = (
 
 interface ShapeListProps {
   shapes: ShapeDefinition[];
-  layerSelected: string | null;
+  layerSelected: ItemSelection | null;
   showMutationVectors?: boolean;
   setItemSelected: (item: ShapeDefinition | MutationVector | null) => void;
   onRename?: (

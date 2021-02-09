@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { ShapeDefinition, Vec2 } from "../lib/types";
+import { ItemSelection, ShapeDefinition, Vec2 } from "../lib/types";
 import { showLayerPoints } from "./programs/showLayerPoints";
 import { showTexture } from "./programs/showTexture";
 import { showTextureMap } from "./programs/showTextureMap";
@@ -12,7 +12,7 @@ export interface TextureMapCanvasProps {
   panX: number;
   panY: number;
   activeCoord?: Vec2 | null;
-  activeLayer?: string | null;
+  activeLayer?: ItemSelection | null;
   onMouseMove?(coordinates: [number, number] | null): void;
 }
 
@@ -53,7 +53,7 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   textureMapProgram.setPan(panX, panY);
   textureProgram.setPan(panX, panY);
   pointsProgram.setPan(panX, panY);
-  pointsProgram.setLayerSelected(activeLayer);
+  pointsProgram.setLayerSelected(activeLayer ? activeLayer.name : null);
   pointsProgram.setActiveCoord(activeCoord);
 
   return <WebGLCanvas renderers={renderers} />;
