@@ -265,10 +265,7 @@ export const showComposition = (): {
 
           const calculatedElements = elements.map((element, index) => {
             const sprite = sprites[index];
-            const itemOffset = [
-              sprite.baseElementData.translateX || 0,
-              sprite.baseElementData.translateY || 0,
-            ];
+            const itemOffset = sprite.baseElementData.translate || [0, 0];
 
             // const deformationVectorList = Object.values(
             //   element.deformationVectors
@@ -324,11 +321,11 @@ export const showComposition = (): {
               // if (elementData.stretchY) {
               //   moveSquezeValues[3] = elementData.stretchY;
               // }
-              if (elementData.translateX) {
-                moveSquezeValues[0] = elementData.translateX;
+              if (elementData.translate) {
+                moveSquezeValues[0] = elementData.translate[0];
               }
-              if (elementData.translateY) {
-                moveSquezeValues[1] = elementData.translateY;
+              if (elementData.translate) {
+                moveSquezeValues[1] = elementData.translate[1];
               }
             }
             gl.uniform4f(

@@ -22,8 +22,7 @@
                 [8, 670]
               ],
               "baseElementData": {
-                "translateX": -29,
-                "translateY": -24
+                "translate": [-29, -24]
               }
             },
             {
@@ -42,8 +41,7 @@
                 [125, 726]
               ],
               "baseElementData": {
-                "translateX": 31,
-                "translateY": -37
+                "translate": [31, -37]
               }
             }
           ]
@@ -65,13 +63,12 @@
             {
               "name": "deform1",
               "type": "deform",
-              "origin": [10, 0],
+              "origin": [-15, -235],
               "radius": 20
             }
           ],
           "baseElementData": {
-            "translateX": -25,
-            "translateY": -235
+            "translate": [-25, -235]
           }
         },
         {
@@ -93,13 +90,12 @@
             {
               "name": "deform0",
               "type": "deform",
-              "origin": [-10, 0],
+              "origin": [-3, -235],
               "radius": 20
             }
           ],
           "baseElementData": {
-            "translateX": 7,
-            "translateY": -235
+            "translate": [7, -235]
           }
         },
         {
@@ -112,8 +108,7 @@
             [35, 70]
           ],
           "baseElementData": {
-            "translateX": 0,
-            "translateY": -182
+            "translate": [0, -182]
           }
         },
         {
@@ -130,8 +125,7 @@
                 [23, 35]
               ],
               "baseElementData": {
-                "translateX": -24,
-                "translateY": -221
+                "translate": [-24, -221]
               }
             },
             {
@@ -144,8 +138,7 @@
                 [9, 32]
               ],
               "baseElementData": {
-                "translateX": -22,
-                "translateY": -222
+                "translate": [-22, -222]
               }
             }
           ]
@@ -164,8 +157,7 @@
                 [47, 35]
               ],
               "baseElementData": {
-                "translateX": 7,
-                "translateY": -222
+                "translate": [7, -222]
               }
             },
             {
@@ -178,8 +170,7 @@
                 [59, 18]
               ],
               "baseElementData": {
-                "translateX": 7,
-                "translateY": -222
+                "translate": [7, -222]
               }
             }
           ]
@@ -196,8 +187,7 @@
             [310, 104]
           ],
           "baseElementData": {
-            "translateY": -210,
-            "translateX": 11
+            "translate": [11, -210]
           }
         },
         {
@@ -210,8 +200,7 @@
             [419, 616]
           ],
           "baseElementData": {
-            "translateY": 59,
-            "translateX": 9
+            "translate": [9, 59]
           }
         },
         {
@@ -225,8 +214,7 @@
             [409, 501]
           ],
           "baseElementData": {
-            "translateY": -219,
-            "translateX": 12
+            "translate": [12, -219]
           }
         },
         {
@@ -250,8 +238,7 @@
                 [105, 543]
               ],
               "baseElementData": {
-                "translateX": -115,
-                "translateY": -68
+                "translate": [-115, -68]
               }
             },
             {
@@ -267,8 +254,7 @@
                 [155, 553]
               ],
               "baseElementData": {
-                "translateX": -69,
-                "translateY": -81
+                "translate": [-69, -81]
               }
             }
           ]
@@ -276,68 +262,5 @@
       ]
     }
   ],
-  "controls": [
-    {
-      "name": "eyebrows",
-      "type": "slider",
-      "min": {
-        "rightEyeBrow": {
-          "deformations": {
-            "deform0": [0, 5]
-          }
-        },
-        "leftEyeBrow": {
-          "deformations": {
-            "deform1": [0, 5]
-          }
-        }
-      },
-      "max": {
-        "rightEyeBrow": {
-          "deformations": {
-            "deform0": [0, -10]
-          }
-        },
-        "leftEyeBrow": {
-          "deformations": {
-            "deform1": [0, -10]
-          }
-        }
-      }
-    },
-    {
-      "name": "mouth",
-      "type": "slider",
-      "min": {
-        "mouthOpen": {
-          "stretchY": 1
-        }
-      },
-      "max": {
-        "mouthOpen": {
-          "stretchY": 0.2
-        }
-      }
-    },
-    {
-      "name": "eyes",
-      "type": "slider",
-      "min": {
-        "leftPupil": {
-          "translateX": -2
-        },
-        "rightPupil": {
-          "translateX": -4
-        }
-      },
-      "max": {
-        "leftPupil": {
-          "translateX": 3
-        },
-        "rightPupil": {
-          "translateX": 4
-        }
-      }
-    }
-  ]
+  "controls": []
 }

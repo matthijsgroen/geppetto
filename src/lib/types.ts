@@ -36,10 +36,7 @@ export type ElementData = {
   deformations?: {
     [key: string]: Vec2;
   };
-  stretchX?: number;
-  stretchY?: number;
-  translateX?: number;
-  translateY?: number;
+  translate?: Vec2;
 };
 
 export type SpriteDefinition = {

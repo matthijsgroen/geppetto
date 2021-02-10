@@ -42,10 +42,8 @@ type ControlValues = Record<string, number>;
 
 const merge = (a: number, b: number, mix: number) => a * (1 - mix) + mix * b;
 
-const mergeVec2 = (a: Vec2, b: Vec2 | undefined, mix: number): Vec2 =>
-  b === undefined
-    ? [merge(a[0], 0, mix), merge(a[1], 0, mix)]
-    : ([merge(a[0], b[0], mix), merge(a[1], b[1], mix)] as Vec2);
+const mergeVec2 = (a: Vec2 = [0, 0], b: Vec2 = [0, 0], mix: number): Vec2 =>
+  [merge(a[0], b[0], mix), merge(a[1], b[1], mix)] as Vec2;
 
 const mergeElement = (
   a: ElementData,
@@ -62,10 +60,7 @@ const mergeElement = (
           }),
           b.deformations || {}
         ),
-        stretchX: merge(a.stretchX || 0, b.stretchX || 0, mix),
-        stretchY: merge(a.stretchY || 0, b.stretchY || 0, mix),
-        translateX: merge(a.translateX || 0, b.translateX || 0, mix),
-        translateY: merge(a.translateY || 0, b.translateY || 0, mix),
+        translate: mergeVec2(a.translate, b.translate, mix),
       };
 
 const mergeKeyframes = (a: Keyframe, b: Keyframe, mix: number): Keyframe =>

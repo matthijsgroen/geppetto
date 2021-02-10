@@ -239,8 +239,7 @@ export const showCompositionMap = (): {
           const calculatedElements = elements.map((element, index) => {
             const sprite = sprites[index];
             const itemOffset = [
-              sprite.baseElementData.translateX || 0,
-              sprite.baseElementData.translateY || 0,
+              ...(sprite.baseElementData.translate || [0, 0]),
               sprites.indexOf(sprite) * 0.1,
             ];
 
@@ -297,11 +296,11 @@ export const showCompositionMap = (): {
                 // if (elementData.stretchY) {
                 //   moveSquezeValues[3] = elementData.stretchY;
                 // }
-                if (elementData.translateX) {
-                  moveSquezeValues[0] = elementData.translateX;
+                if (elementData.translate) {
+                  moveSquezeValues[0] = elementData.translate[0];
                 }
-                if (elementData.translateY) {
-                  moveSquezeValues[1] = elementData.translateY;
+                if (elementData.translate) {
+                  moveSquezeValues[1] = elementData.translate[1];
                 }
               }
 
