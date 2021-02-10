@@ -4,6 +4,7 @@ import {
   ImageDefinition,
   ItemSelection,
   Keyframe,
+  MutationVector,
   ShapeDefinition,
   SpriteDefinition,
   Vec2,
@@ -314,20 +315,41 @@ export const removePoint = (
   shapes: addRemovePointToShape(image.shapes, layer, point, "remove"),
 });
 
+const walkShapes = <T>(
+  items: ShapeDefinition[],
+  fetcher: (item: ShapeDefinition) => null | T
+): T | null =>
+  items.reduce<T | null>((result, item) => {
+    if (result !== null) {
+      return result;
+    }
+    const test = fetcher(item);
+    if (test !== null) {
+      return test;
+    }
+    if (item.type === "folder") {
+      return walkShapes(item.items, fetcher);
+    }
+    return result;
+  }, null);
+
 export const getShape = (
   items: ShapeDefinition[],
-  layer: string
+  name: string
 ): ShapeDefinition | null =>
-  items.reduce<ShapeDefinition | null>(
-    (result, item) =>
-      result
-        ? result
-        : item.name === layer
-        ? item
-        : item.type === "folder"
-        ? getShape(item.items, layer)
-        : result,
-    null
+  walkShapes(items, (item) => (item.name === name ? item : null));
+
+export const getVector = (
+  items: ShapeDefinition[],
+  name: string
+): MutationVector | null =>
+  walkShapes(
+    items,
+    (item) =>
+      (item.type === "sprite" &&
+        item.mutationVectors &&
+        item.mutationVectors.find((v) => v.name === name)) ||
+      null
   );
 
 const mutateShapes = (

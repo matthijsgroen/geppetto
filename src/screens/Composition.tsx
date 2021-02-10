@@ -11,6 +11,7 @@ import {
   canMoveUp,
   getLayerNames,
   getShape,
+  getVector,
   makeLayerName,
   moveDown,
   moveUp,
@@ -27,6 +28,7 @@ import {
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 import LayerInfoPanel from "./LayerInfoPanel";
+import VectorInfoPanel from "./VectorInfoPanel";
 
 interface CompositionProps {
   imageDefinition: ImageDefinition;
@@ -133,6 +135,10 @@ const Composition: React.FC<CompositionProps> = ({
     layerSelected === null || layerSelected.type !== "layer"
       ? null
       : getShape(imageDefinition.shapes, layerSelected.name);
+  const vectorSelected =
+    layerSelected === null || layerSelected.type !== "vector"
+      ? null
+      : getVector(imageDefinition.shapes, layerSelected.name);
 
   useEffect(() => {
     if (!layerSelected) {
@@ -204,6 +210,20 @@ const Composition: React.FC<CompositionProps> = ({
           size={"large"}
           toolbarItems={[
             <ToolbarButton
+              key="1"
+              icon="⚪️"
+              label="+"
+              size="small"
+              disabled={layerSelected === null}
+              onClick={async () => {
+                // const newFolder = await addFolder(
+                //   updateImageDefinition,
+                //   "New Folder"
+                // );
+                // setItemSelected(newFolder);
+              }}
+            />,
+            <ToolbarButton
               key="2"
               icon="📁"
               label="+"
@@ -274,6 +294,11 @@ const Composition: React.FC<CompositionProps> = ({
         shapeSelected ? (
           <LayerInfoPanel
             shapeSelected={shapeSelected}
+            updateImageDefinition={updateImageDefinition}
+          />
+        ) : vectorSelected ? (
+          <VectorInfoPanel
+            vectorSelected={vectorSelected}
             updateImageDefinition={updateImageDefinition}
           />
         ) : (
