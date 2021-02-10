@@ -139,11 +139,17 @@ export const showCompositionMap = (): {
       pan = [x, y];
     },
     setLayerSelected(layer) {
-      if (layer === null) {
+      if (layer === null || shapes === null) {
         layersSelected = [];
         return;
       }
-      if (shapes === null) return;
+
+      const checkMatch = (shape: ShapeDefinition, item: ItemSelection) =>
+        (shape.name === item.name && item.type === "layer") ||
+        (item.type === "vector" &&
+          shape.type === "sprite" &&
+          shape.mutationVectors &&
+          shape.mutationVectors.map((v) => v.name).includes(item.name));
 
       const collectSpriteNames = (
         s: ShapeDefinition[],
@@ -152,13 +158,13 @@ export const showCompositionMap = (): {
         s.reduce(
           (result, shape) =>
             shape.type === "sprite"
-              ? collect || shape.name === layer.name
+              ? collect || checkMatch(shape, layer)
                 ? result.concat(shape.name)
                 : result
               : result.concat(
                   collectSpriteNames(
                     shape.items,
-                    collect || shape.name === layer.name
+                    collect || checkMatch(shape, layer)
                   )
                 ),
           [] as string[]

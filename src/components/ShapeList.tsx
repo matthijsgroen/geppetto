@@ -2,14 +2,15 @@ import React from "react";
 import { ItemSelection, MutationVector, ShapeDefinition } from "../lib/types";
 import MenuItem from "./MenuItem";
 
-const iconForType = (type: MutationVector["type"]): string =>
-  type === "deform"
-    ? "🟠"
-    : type === "rotate"
-    ? "🔴"
-    : type === "stretch"
-    ? "🟣"
-    : "🟢";
+type VectorTypes = MutationVector["type"];
+
+const iconForType = (type: VectorTypes): string =>
+  (({
+    deform: "🟠",
+    rotate: "🔴",
+    stretch: "🟣",
+    translate: "🟢",
+  } as Record<VectorTypes, string>)[type]);
 
 const displayShapes = (
   shapes: ShapeDefinition[],
