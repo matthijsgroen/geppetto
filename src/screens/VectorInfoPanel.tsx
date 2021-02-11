@@ -1,8 +1,9 @@
 import React from "react";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
+import SelectControl from "src/components/SelectControl";
 import { updateVectorData } from "src/lib/definitionHelpers";
-import { ImageDefinition, MutationVector } from "src/lib/types";
+import { ImageDefinition, MutationVector, Vec2 } from "src/lib/types";
 import { vector2X, vector2Y } from "src/lib/vertices";
 
 interface VectorInfoPanelProps {
@@ -13,6 +14,23 @@ interface VectorInfoPanelProps {
 }
 
 type VectorTypes = MutationVector["type"];
+
+const createVector = (
+  name: string,
+  origin: Vec2,
+  newType: VectorTypes
+): MutationVector => {
+  switch (newType) {
+    case "deform":
+      return { type: "deform", origin, name, radius: 10 };
+    case "rotate":
+      return { type: "rotate", origin, name };
+    case "stretch":
+      return { type: "stretch", origin, name };
+    case "translate":
+      return { type: "translate", origin, name };
+  }
+};
 
 const iconForType = (type: VectorTypes): string =>
   (({
@@ -31,6 +49,40 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
     collapsable={true}
     size="minimal"
     items={[
+      <SelectControl
+        key={"type"}
+        title={"Type"}
+        value={vectorSelected.type}
+        options={[
+          {
+            name: "Deformation",
+            id: "deform",
+            value: "deform" as VectorTypes,
+          },
+          {
+            name: "Translation",
+            id: "translate",
+            value: "translate" as VectorTypes,
+          },
+          {
+            name: "Rotation",
+            id: "rotate",
+            value: "rotate" as VectorTypes,
+          },
+          {
+            name: "Stretch",
+            id: "stretch",
+            value: "stretch" as VectorTypes,
+          },
+        ]}
+        onChange={(newValue) => {
+          updateImageDefinition((state) =>
+            updateVectorData(state, vectorSelected.name, (vector) =>
+              createVector(vector.name, vector.origin, newValue.value)
+            )
+          );
+        }}
+      />,
       <NumberInputControl
         key={"x"}
         title={"x"}

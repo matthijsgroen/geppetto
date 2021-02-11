@@ -21,7 +21,7 @@ export type StretchVector = {
 };
 
 export type RotationVector = {
-  name: "string";
+  name: string;
   type: "rotate";
   origin: Vec2;
 };
