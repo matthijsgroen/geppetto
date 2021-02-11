@@ -17,7 +17,7 @@ import {
   moveDown,
   moveUp,
   removePoint,
-  rename,
+  renameLayer,
 } from "../lib/definitionHelpers";
 import {
   ImageDefinition,
@@ -231,7 +231,7 @@ const Layers: React.FC<LayersProps> = ({
                   layerSelected ? layerSelected.name : null
                 );
                 updateImageDefinition((state) =>
-                  rename(state, oldName, layerName)
+                  renameLayer(state, oldName, layerName)
                 );
                 setLayerSelected({ name: layerName, type: "layer" });
               }}

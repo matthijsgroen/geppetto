@@ -72,7 +72,7 @@ const displayShapes = (
                         icon={iconForType(vector.type)}
                         label={vector.name}
                         name={vector.name}
-                        // allowRename
+                        allowRename
                         indent={indent + 1}
                         onClick={() =>
                           setItemSelected(
@@ -82,9 +82,9 @@ const displayShapes = (
                               : vector
                           )
                         }
-                        // onRename={(newName) => {
-                        //   onRename(shape.name, newName);
-                        // }}
+                        onRename={(newName) => {
+                          onRename(vector.name, newName, vector);
+                        }}
                       />
                     )
                   )

@@ -8,15 +8,18 @@ import SliderControl from "../components/SliderControl";
 import ToolbarButton from "../components/ToolbarButton";
 import {
   addFolder,
+  addVector,
   canMoveDown,
   canMoveUp,
   getLayerNames,
   getShape,
   getVector,
   makeLayerName,
+  makeVectorName,
   moveDown,
   moveUp,
-  rename,
+  renameLayer,
+  renameVector,
 } from "../lib/definitionHelpers";
 import {
   ElementData,
@@ -204,13 +207,17 @@ const Composition: React.FC<CompositionProps> = ({
               icon="⚪️"
               label="+"
               size="small"
-              disabled={layerSelected === null}
+              disabled={shapeSelected === null}
               onClick={async () => {
-                // const newFolder = await addFolder(
-                //   updateImageDefinition,
-                //   "New Folder"
-                // );
-                // setItemSelected(newFolder);
+                if (shapeSelected === null) {
+                  return;
+                }
+                const newVector = await addVector(
+                  updateImageDefinition,
+                  shapeSelected,
+                  "New Mutator"
+                );
+                setItemSelected(newVector);
               }}
             />,
             <ToolbarButton
@@ -262,21 +269,34 @@ const Composition: React.FC<CompositionProps> = ({
               setItemSelected={setItemSelected}
               showMutationVectors={true}
               onRename={(oldName, newName, item) => {
-                const layerName = makeLayerName(
-                  imageDefinition,
-                  newName,
-                  layerSelected ? layerSelected.name : null
-                );
-                updateImageDefinition((state) =>
-                  rename(state, oldName, layerName)
-                );
-                setLayerSelected({
-                  name: layerName,
-                  type:
-                    item.type === "folder" || item.type === "sprite"
-                      ? "layer"
-                      : "vector",
-                });
+                if (item.type === "folder" || item.type === "sprite") {
+                  const layerName = makeLayerName(
+                    imageDefinition,
+                    newName,
+                    layerSelected ? layerSelected.name : null
+                  );
+                  updateImageDefinition((state) =>
+                    renameLayer(state, oldName, layerName)
+                  );
+                  setLayerSelected({
+                    name: layerName,
+                    type: "layer",
+                  });
+                } else {
+                  const vectorName = makeVectorName(
+                    imageDefinition,
+                    newName,
+                    layerSelected ? layerSelected.name : null
+                  );
+                  console.log(layerSelected, oldName, vectorName);
+                  updateImageDefinition((state) =>
+                    renameVector(state, oldName, vectorName)
+                  );
+                  setLayerSelected({
+                    name: vectorName,
+                    type: "vector",
+                  });
+                }
               }}
             />
           }
