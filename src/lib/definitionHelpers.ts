@@ -373,3 +373,30 @@ export const updateSpriteData = (
   ...imageDefinition,
   shapes: mutateShapes(imageDefinition.shapes, shapeName, mutation),
 });
+
+const mutateVectors = (
+  items: ShapeDefinition[],
+  vectorName: string,
+  mutation: (vector: MutationVector) => MutationVector
+): ShapeDefinition[] =>
+  items.map((shape) =>
+    shape.type === "folder"
+      ? { ...shape, items: mutateVectors(shape.items, vectorName, mutation) }
+      : shape.mutationVectors
+      ? {
+          ...shape,
+          mutationVectors: shape.mutationVectors.map((vector) =>
+            vector.name === vectorName ? mutation(vector) : vector
+          ),
+        }
+      : shape
+  );
+
+export const updateVectorData = (
+  imageDefinition: ImageDefinition,
+  vectorName: string,
+  mutation: (vector: MutationVector) => MutationVector
+): ImageDefinition => ({
+  ...imageDefinition,
+  shapes: mutateVectors(imageDefinition.shapes, vectorName, mutation),
+});

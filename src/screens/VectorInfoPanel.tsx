@@ -1,8 +1,9 @@
 import React from "react";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
-import { updateSpriteData } from "src/lib/definitionHelpers";
+import { updateVectorData } from "src/lib/definitionHelpers";
 import { ImageDefinition, MutationVector } from "src/lib/types";
+import { vector2X, vector2Y } from "src/lib/vertices";
 
 interface VectorInfoPanelProps {
   vectorSelected: MutationVector;
@@ -36,16 +37,12 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
         title={"x"}
         value={vectorSelected.origin[0]}
         onChange={(newValue) => {
-          //   if (!vectorSelected) return;
-          //   updateImageDefinition((state) =>
-          //     updateSpriteData(state, vectorSelected.name, (sprite) => ({
-          //       ...sprite,
-          //       baseElementData: {
-          //         ...sprite.baseElementData,
-          //         translateX: newValue,
-          //       },
-          //     }))
-          //   );
+          updateImageDefinition((state) =>
+            updateVectorData(state, vectorSelected.name, (vector) => ({
+              ...vector,
+              origin: vector2X(newValue, vector.origin),
+            }))
+          );
         }}
       />,
       <NumberInputControl
@@ -53,16 +50,12 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
         title={"y"}
         value={vectorSelected.origin[1]}
         onChange={(newValue) => {
-          //   if (!vectorSelected) return;
-          //   updateImageDefinition((state) =>
-          //     updateSpriteData(state, vectorSelected.name, (sprite) => ({
-          //       ...sprite,
-          //       baseElementData: {
-          //         ...sprite.baseElementData,
-          //         translateY: newValue,
-          //       },
-          //     }))
-          //   );
+          updateImageDefinition((state) =>
+            updateVectorData(state, vectorSelected.name, (vector) => ({
+              ...vector,
+              origin: vector2Y(newValue, vector.origin),
+            }))
+          );
         }}
       />,
     ]}

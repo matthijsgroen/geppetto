@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { mergeVec2 } from "src/lib/vertices";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -24,7 +25,6 @@ import {
   Keyframe,
   MutationVector,
   ShapeDefinition,
-  Vec2,
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 import LayerInfoPanel from "./LayerInfoPanel";
@@ -39,11 +39,6 @@ interface CompositionProps {
 }
 
 type ControlValues = Record<string, number>;
-
-const merge = (a: number, b: number, mix: number) => a * (1 - mix) + mix * b;
-
-const mergeVec2 = (a: Vec2 = [0, 0], b: Vec2 = [0, 0], mix: number): Vec2 =>
-  [merge(a[0], b[0], mix), merge(a[1], b[1], mix)] as Vec2;
 
 const mergeElement = (
   a: ElementData,

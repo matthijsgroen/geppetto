@@ -2,7 +2,8 @@ import React from "react";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
 import { updateSpriteData } from "src/lib/definitionHelpers";
-import { ImageDefinition, ShapeDefinition, Vec2 } from "src/lib/types";
+import { ImageDefinition, ShapeDefinition } from "src/lib/types";
+import { getX, getY, vector2Y } from "src/lib/vertices";
 
 interface LayerInfoPanelProps {
   shapeSelected: ShapeDefinition;
@@ -10,11 +11,6 @@ interface LayerInfoPanelProps {
     mutation: (oldState: ImageDefinition) => ImageDefinition
   ): void;
 }
-
-const vector2X = (x: number, vec: Vec2 = [0, 0]): Vec2 => [x, vec[1]];
-const vector2Y = (y: number, vec: Vec2 = [0, 0]): Vec2 => [vec[0], y];
-const getX = (vec: Vec2 = [0, 0]): number => vec[0];
-const getY = (vec: Vec2 = [0, 0]): number => vec[1];
 
 const LayerInfoPanel: React.FC<LayerInfoPanelProps> = ({
   shapeSelected,
@@ -47,7 +43,7 @@ const LayerInfoPanel: React.FC<LayerInfoPanelProps> = ({
               ...sprite,
               baseElementData: {
                 ...sprite.baseElementData,
-                translate: vector2X(newValue, sprite.baseElementData.translate),
+                translate: vector2Y(newValue, sprite.baseElementData.translate),
               },
             }))
           );
