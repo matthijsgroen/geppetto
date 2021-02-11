@@ -283,11 +283,13 @@ const Composition: React.FC<CompositionProps> = ({
         />,
         shapeSelected ? (
           <LayerInfoPanel
+            key="info"
             shapeSelected={shapeSelected}
             updateImageDefinition={updateImageDefinition}
           />
         ) : vectorSelected ? (
           <VectorInfoPanel
+            key="info"
             vectorSelected={vectorSelected}
             updateImageDefinition={updateImageDefinition}
           />

@@ -1,12 +1,18 @@
 import { ShapeDefinition, SpriteDefinition, Vec2 } from "../../lib/types";
 
 export const flattenShapes = (shapes: ShapeDefinition[]): SpriteDefinition[] =>
+  flattenTree(shapes).filter(
+    (shape) => shape.type === "sprite"
+  ) as SpriteDefinition[];
+
+export const flattenTree = (shapes: ShapeDefinition[]): ShapeDefinition[] =>
   shapes.reduce(
     (result, shape) =>
       result.concat(
-        shape.type === "sprite" ? shape : flattenShapes(shape.items)
+        shape,
+        shape.type === "sprite" ? [] : flattenShapes(shape.items)
       ),
-    [] as SpriteDefinition[]
+    [] as ShapeDefinition[]
   );
 
 export const getAnchor = (sprite: SpriteDefinition): Vec2 => {

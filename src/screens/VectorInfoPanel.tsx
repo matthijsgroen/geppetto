@@ -28,7 +28,6 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
 }) => (
   <Menu
     title={`${iconForType(vectorSelected.type)} ${vectorSelected.name}`}
-    key="info"
     collapsable={true}
     size="minimal"
     items={[
@@ -58,6 +57,23 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
           );
         }}
       />,
+      ...(vectorSelected.type === "deform"
+        ? [
+            <NumberInputControl
+              key={"radius"}
+              title={"radius"}
+              value={vectorSelected.radius}
+              onChange={(newValue) => {
+                updateImageDefinition((state) =>
+                  updateVectorData(state, vectorSelected.name, (vector) => ({
+                    ...vector,
+                    radius: newValue,
+                  }))
+                );
+              }}
+            />,
+          ]
+        : []),
     ]}
   />
 );

@@ -22,7 +22,6 @@ const LayerInfoPanel: React.FC<LayerInfoPanelProps> = ({
         ? `📄 ${shapeSelected.name}`
         : `📁 ${shapeSelected.name}`
     }
-    key="info"
     collapsable={true}
     size="minimal"
     items={[
