@@ -1,3 +1,4 @@
+import { vectorNamesFromShape } from "src/lib/definitionHelpers";
 import {
   ItemSelection,
   Keyframe,
@@ -185,9 +186,6 @@ export const showCompositionVectors = (): {
           shape.type === "sprite" &&
           shape.mutationVectors &&
           shape.mutationVectors.map((v) => v.name).includes(item.name));
-
-      const vectorNamesFromShape = (shape: ShapeDefinition): string[] =>
-        shape.mutationVectors ? shape.mutationVectors.map((e) => e.name) : [];
 
       const collectVectorNames = (
         s: ShapeDefinition[],
