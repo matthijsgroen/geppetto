@@ -1,15 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-
-const Control = styled.div`
-  padding: 0.5rem 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.text};
-`;
-
-const ControlLabel = styled.p`
-  color: ${({ theme }) => theme.colors.text};
-  margin: 0;
-`;
+import { Control, ControlLabel } from "./Control";
 
 const Slider = styled.input.attrs({ type: "range" })``;
 

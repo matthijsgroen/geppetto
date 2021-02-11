@@ -1,18 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-
-const Control = styled.div`
-  padding: 0.5rem 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.text};
-  display: flex;
-`;
-
-const ControlLabel = styled.p`
-  color: ${({ theme }) => theme.colors.text};
-  padding: 0 1rem;
-  margin: 0;
-  flex: 1;
-`;
+import { Control, ControlLabel } from "./Control";
 
 const SelectInput = styled.select`
   width: 7em;
