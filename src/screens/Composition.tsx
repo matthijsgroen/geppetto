@@ -9,6 +9,7 @@ import ToolbarButton from "../components/ToolbarButton";
 import {
   addFolder,
   addVector,
+  canDelete,
   canMoveDown,
   canMoveUp,
   getLayerNames,
@@ -18,6 +19,7 @@ import {
   makeVectorName,
   moveDown,
   moveUp,
+  removeItem,
   renameLayer,
   renameVector,
 } from "../lib/definitionHelpers";
@@ -231,6 +233,25 @@ const Composition: React.FC<CompositionProps> = ({
                   "New Folder"
                 );
                 setItemSelected(newFolder);
+              }}
+            />,
+            <ToolbarButton
+              key="remove"
+              icon="🗑"
+              size="small"
+              disabled={
+                !!(shapeSelected && shapeSelected.type === "sprite") ||
+                !canDelete(layerSelected, imageDefinition)
+              }
+              label=""
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                setItemSelected(null);
+                updateImageDefinition((state) =>
+                  removeItem(state, layerSelected)
+                );
               }}
             />,
             <ToolbarButton

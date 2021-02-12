@@ -3,14 +3,17 @@
     {
       "name": "character",
       "type": "folder",
+      "mutationVectors": [],
       "items": [
         {
           "name": "rightArm",
           "type": "folder",
+          "mutationVectors": [],
           "items": [
             {
               "name": "rightArmBottom",
               "type": "sprite",
+              "mutationVectors": [],
               "points": [
                 [49, 641],
                 [71, 662],
@@ -28,6 +31,7 @@
             {
               "name": "rightArmTop",
               "type": "sprite",
+              "mutationVectors": [],
               "points": [
                 [149, 630],
                 [170, 616],
@@ -101,6 +105,7 @@
         {
           "name": "mouthOpen",
           "type": "sprite",
+          "mutationVectors": [],
           "points": [
             [7, 52],
             [35, 52],
@@ -114,10 +119,12 @@
         {
           "name": "leftEye",
           "type": "folder",
+          "mutationVectors": [],
           "items": [
             {
               "name": "leftPupil",
               "type": "sprite",
+              "mutationVectors": [],
               "points": [
                 [12, 35],
                 [23, 45],
@@ -131,6 +138,7 @@
             {
               "name": "eyeSocket",
               "type": "sprite",
+              "mutationVectors": [],
               "points": [
                 [9, 21],
                 [25, 32],
@@ -146,10 +154,12 @@
         {
           "name": "rightEye",
           "type": "folder",
+          "mutationVectors": [],
           "items": [
             {
               "name": "rightPupil",
               "type": "sprite",
+              "mutationVectors": [],
               "points": [
                 [34, 35],
                 [47, 45],
@@ -163,6 +173,7 @@
             {
               "name": "rightEyeSocket",
               "type": "sprite",
+              "mutationVectors": [],
               "points": [
                 [37, 18],
                 [59, 32],
@@ -178,6 +189,7 @@
         {
           "name": "face",
           "type": "sprite",
+          "mutationVectors": [],
           "points": [
             [310, 40],
             [416, 34],
@@ -193,6 +205,7 @@
         {
           "name": "body",
           "type": "sprite",
+          "mutationVectors": [],
           "points": [
             [413, 137],
             [595, 137],
@@ -206,6 +219,7 @@
         {
           "name": "hair",
           "type": "sprite",
+          "mutationVectors": [],
           "points": [
             [417, 599],
             [299, 597],
@@ -220,10 +234,12 @@
         {
           "name": "leftArm",
           "type": "folder",
+          "mutationVectors": [],
           "items": [
             {
               "name": "leftArmBottom",
               "type": "sprite",
+              "mutationVectors": [],
               "points": [
                 [119, 547],
                 [134, 594],
@@ -244,6 +260,7 @@
             {
               "name": "leftArmTop",
               "type": "sprite",
+              "mutationVectors": [],
               "points": [
                 [145, 589],
                 [178, 609],

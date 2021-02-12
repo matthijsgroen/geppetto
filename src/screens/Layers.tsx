@@ -63,13 +63,16 @@ const Layers: React.FC<LayersProps> = ({
     },
     [setLayerSelected]
   );
+  const shapeSelected = layerSelected
+    ? getShape(imageDefinition, layerSelected.name)
+    : null;
 
   useEffect(() => {
-    if (layerSelected === null) {
+    if (shapeSelected === null || shapeSelected.type === "folder") {
       setMouseMode(MouseMode.Grab);
       setActiveCoord(null);
     }
-  }, [layerSelected]);
+  }, [shapeSelected]);
 
   useEffect(() => {
     if (!layerSelected) {
@@ -202,8 +205,9 @@ const Layers: React.FC<LayersProps> = ({
                 if (layerSelected === null) {
                   return;
                 }
+                setItemSelected(null);
                 updateImageDefinition((state) =>
-                  removeItem(layerSelected, state)
+                  removeItem(state, layerSelected)
                 );
               }}
             />,
@@ -240,6 +244,7 @@ const Layers: React.FC<LayersProps> = ({
             <ShapeList
               shapes={imageDefinition.shapes}
               layerSelected={layerSelected}
+              showPoints={true}
               setItemSelected={setItemSelected}
               onRename={(oldName, newName) => {
                 const layerName = makeLayerName(
@@ -260,13 +265,10 @@ const Layers: React.FC<LayersProps> = ({
         <ToolbarButton
           key="addPoints"
           icon="✏️"
-          disabled={!layerSelected}
+          disabled={!shapeSelected || shapeSelected.type === "folder"}
           active={mouseMode === MouseMode.Aim}
           label=""
-          onClick={async () => {
-            if (layerSelected === null) {
-              return;
-            }
+          onClick={() => {
             setMouseMode(MouseMode.Aim);
           }}
         />,
@@ -275,10 +277,7 @@ const Layers: React.FC<LayersProps> = ({
           icon="✋"
           active={mouseMode === MouseMode.Grab}
           label=""
-          onClick={async () => {
-            if (layerSelected === null) {
-              return;
-            }
+          onClick={() => {
             setMouseMode(MouseMode.Grab);
           }}
         />,

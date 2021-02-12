@@ -58,7 +58,7 @@ const ToolbarButton: React.FC<TabIconProps> = ({
     isDisabled={disabled}
     isActive={active}
     size={size}
-    onClick={onClick}
+    onClick={() => onClick && !disabled && onClick()}
   >
     {icon} {label}
   </IconButton>

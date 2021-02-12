@@ -22,6 +22,7 @@ const displayShapes = (
     item: ShapeDefinition | MutationVector
   ) => void,
   showMutationVectors: boolean,
+  showPoints: boolean,
   indent = 0
 ): React.ReactElement[] =>
   shapes.reduce(
@@ -39,7 +40,11 @@ const displayShapes = (
                   )
                 }
                 icon={"📄"}
-                label={`${shape.name} (${shape.points.length})`}
+                label={
+                  showPoints
+                    ? `${shape.name} (${shape.points.length})`
+                    : shape.name
+                }
                 name={shape.name}
                 allowRename
                 indent={indent}
@@ -126,6 +131,7 @@ const displayShapes = (
                 setItemSelected,
                 onRename,
                 showMutationVectors,
+                showPoints,
                 indent + 1
               )
             ),
@@ -136,6 +142,7 @@ interface ShapeListProps {
   shapes: ShapeDefinition[];
   layerSelected: ItemSelection | null;
   showMutationVectors?: boolean;
+  showPoints?: boolean;
   setItemSelected: (item: ShapeDefinition | MutationVector | null) => void;
   onRename?: (
     oldName: string,
@@ -147,6 +154,7 @@ const ShapeList: React.FC<ShapeListProps> = ({
   shapes,
   layerSelected,
   showMutationVectors = false,
+  showPoints = false,
   setItemSelected,
   onRename = () => {
     /* noop */
@@ -158,7 +166,8 @@ const ShapeList: React.FC<ShapeListProps> = ({
       layerSelected,
       setItemSelected,
       onRename,
-      showMutationVectors
+      showMutationVectors,
+      showPoints
     )}
   </>
 );

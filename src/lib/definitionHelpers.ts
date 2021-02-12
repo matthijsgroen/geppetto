@@ -177,7 +177,7 @@ export const canDelete = (
       return item.items.length === 0;
     }
   }
-  return false;
+  return true;
 };
 
 export const canMoveDown = (
@@ -407,8 +407,13 @@ export const updateVectorData = (
   );
 
 export const removeItem = (
-  selectedItem: ItemSelection,
-  image: ImageDefinition
-): ImageDefinition => {
-  return image;
-};
+  image: ImageDefinition,
+  selectedItem: ItemSelection
+): ImageDefinition =>
+  visit(image, (item) =>
+    ((selectedItem.type === "layer" && isShapeDefintion(item)) ||
+      (selectedItem.type === "vector" && isMutationVector(item))) &&
+    item.name === selectedItem.name
+      ? false
+      : undefined
+  );
