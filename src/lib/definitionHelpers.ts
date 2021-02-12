@@ -160,8 +160,22 @@ export const canMoveUp = (
   if (selectedItem.type === "layer") {
     return !(image.shapes[0].name === selectedItem.name);
   }
-  // TODO: Implement for vector
+  if (selectedItem.type === "vector") {
+    const topMutationVector = image.shapes[0].mutationVectors[0];
+    return !(topMutationVector && topMutationVector.name === selectedItem.name);
+  }
   return false;
+};
+
+const getBottomShape = (image: ImageDefinition): ShapeDefinition | null => {
+  let result: ShapeDefinition | null = null;
+  visit(image, (item) => {
+    if (isShapeDefintion(item)) {
+      result = item;
+    }
+    return undefined;
+  });
+  return result;
 };
 
 export const canMoveDown = (
@@ -174,8 +188,16 @@ export const canMoveDown = (
   if (selectedItem.type === "layer") {
     return !(image.shapes[image.shapes.length - 1].name === selectedItem.name);
   }
+  if (selectedItem.type === "vector") {
+    const bottomShape = getBottomShape(image);
+    const bottomMutationVector = bottomShape
+      ? bottomShape.mutationVectors.slice(-1)[0]
+      : null;
+    return !(
+      bottomMutationVector && bottomMutationVector.name === selectedItem.name
+    );
+  }
 
-  // TODO: Implement for vector
   return false;
 };
 
@@ -189,6 +211,49 @@ const move = (
       return result;
     }
     const lastAdded = result[result.length - 1];
+
+    if (item.type === "vector") {
+      const vectorIndex = shape.mutationVectors.findIndex(
+        (e) => e.name === item.name
+      );
+      if (
+        vectorIndex !== -1 &&
+        moveDown &&
+        vectorIndex < shape.mutationVectors.length - 1
+      ) {
+        // move item down in same list
+        return result.concat({
+          ...shape,
+          mutationVectors: shape.mutationVectors.map((item, index, list) => {
+            if (index === vectorIndex) {
+              return list[index + 1];
+            }
+            if (index === vectorIndex + 1) {
+              return list[index - 1];
+            }
+            return item;
+          }),
+        });
+      }
+      if (vectorIndex !== -1 && !moveDown && vectorIndex > 0) {
+        // move item up in same list
+        return result.concat({
+          ...shape,
+          mutationVectors: shape.mutationVectors.map((item, index, list) => {
+            if (index === vectorIndex) {
+              return list[index - 1];
+            }
+            if (index === vectorIndex - 1) {
+              return list[index + 1];
+            }
+            return item;
+          }),
+        });
+      }
+      // TODO: If vectorIndex === 0, add to bottom of previous element in the list (could be nested folder)
+      // TODO: If vectorIndex === 'last', add to top of next element in the list (could be nested folder)
+    }
+
     if (lastAdded && lastAdded.type === "folder") {
       const lastFolderItem = lastAdded.items[lastAdded.items.length - 1];
       if (lastFolderItem && lastFolderItem.name === shape.name) {
