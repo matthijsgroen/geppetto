@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 interface MenuItemProps {
   label: string;
@@ -12,7 +12,11 @@ interface MenuItemProps {
   onRename?(newName: string): void;
 }
 
-const Item = styled.div<{ selected: boolean; indent: number }>`
+const Item = styled.div<{
+  selected: boolean;
+  indent: number;
+  renaming: boolean;
+}>`
   background: ${({ selected, theme }) =>
     selected ? theme.colors.backgroundSelected : "none"};
   padding-left: calc(0.25rem + ${(props) => props.indent * 1.5}rem);
@@ -23,6 +27,11 @@ const Item = styled.div<{ selected: boolean; indent: number }>`
     selected ? theme.colors.textSelected : theme.colors.text};
   font-size: 1rem;
   font-weight: normal;
+  ${({ renaming }) =>
+    renaming &&
+    css`
+      white-space: nowrap;
+    `}
   cursor: default;
 `;
 
@@ -58,6 +67,7 @@ const MenuItem: React.FC<MenuItemProps> = ({
       onClick={onClick}
       selected={!!selected}
       indent={indent}
+      renaming={isRenaming}
       onDoubleClick={() => {
         allowRename && !isRenaming && setIsRenaming(true);
       }}
