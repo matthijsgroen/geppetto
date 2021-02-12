@@ -2,9 +2,12 @@ import React from "react";
 import styled from "styled-components";
 import { Control, ControlLabel } from "./Control";
 
-const NumberInput = styled.input.attrs({ type: "number", size: 6 })`
+export const NumberInput = styled.input.attrs({ type: "number", size: 6 })`
   text-align: right;
-  width: 6em;
+  width: 5em;
+  color: ${({ theme }) => theme.colors.text};
+  background-color: ${({ theme }) => theme.colors.itemContainerBackground};
+  border: 1px solid ${({ theme }) => theme.colors.backgroundSecondary};
   flex: 0;
 `;
 

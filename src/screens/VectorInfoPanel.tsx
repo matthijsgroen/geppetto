@@ -2,6 +2,7 @@ import React from "react";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
 import SelectControl from "src/components/SelectControl";
+import Vect2InputControl from "src/components/Vec2InputControl";
 import { updateVectorData } from "src/lib/definitionHelpers";
 import { ImageDefinition, MutationVector, Vec2 } from "src/lib/types";
 import { vector2X, vector2Y } from "src/lib/vertices";
@@ -83,28 +84,15 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
           );
         }}
       />,
-      <NumberInputControl
-        key={"x"}
-        title={"x"}
-        value={vectorSelected.origin[0]}
+      <Vect2InputControl
+        key={"origin"}
+        title={"origin"}
+        value={vectorSelected.origin}
         onChange={(newValue) => {
           updateImageDefinition((state) =>
             updateVectorData(state, vectorSelected.name, (vector) => ({
               ...vector,
-              origin: vector2X(newValue, vector.origin),
-            }))
-          );
-        }}
-      />,
-      <NumberInputControl
-        key={"y"}
-        title={"y"}
-        value={vectorSelected.origin[1]}
-        onChange={(newValue) => {
-          updateImageDefinition((state) =>
-            updateVectorData(state, vectorSelected.name, (vector) => ({
-              ...vector,
-              origin: vector2Y(newValue, vector.origin),
+              origin: newValue,
             }))
           );
         }}

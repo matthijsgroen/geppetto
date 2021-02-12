@@ -164,22 +164,6 @@ export const canMoveUp = (
   return false;
 };
 
-export const canDelete = (
-  selectedItem: ItemSelection | null,
-  image: ImageDefinition
-): boolean => {
-  if (selectedItem === null) {
-    return false;
-  }
-  if (selectedItem.type === "layer") {
-    const item = getShape(image, selectedItem.name);
-    if (item?.type === "folder") {
-      return item.items.length === 0;
-    }
-  }
-  return true;
-};
-
 export const canMoveDown = (
   selectedItem: ItemSelection | null,
   image: ImageDefinition
@@ -405,6 +389,22 @@ export const updateVectorData = (
       ? mutation(item)
       : undefined
   );
+
+export const canDelete = (
+  selectedItem: ItemSelection | null,
+  image: ImageDefinition
+): boolean => {
+  if (selectedItem === null) {
+    return false;
+  }
+  if (selectedItem.type === "layer") {
+    const item = getShape(image, selectedItem.name);
+    if (item?.type === "folder") {
+      return item.items.length === 0;
+    }
+  }
+  return true;
+};
 
 export const removeItem = (
   image: ImageDefinition,

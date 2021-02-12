@@ -1,9 +1,8 @@
 import React from "react";
 import Menu from "src/components/Menu";
-import NumberInputControl from "src/components/NumberInputControl";
+import Vect2InputControl from "src/components/Vec2InputControl";
 import { updateSpriteData } from "src/lib/definitionHelpers";
 import { ImageDefinition, ShapeDefinition } from "src/lib/types";
-import { getX, getY, vector2Y } from "src/lib/vertices";
 
 interface LayerInfoPanelProps {
   shapeSelected: ShapeDefinition;
@@ -25,15 +24,14 @@ const LayerInfoPanel: React.FC<LayerInfoPanelProps> = ({
     collapsable={true}
     size="minimal"
     items={[
-      <NumberInputControl
-        key={"x"}
-        title={"xOffset"}
+      <Vect2InputControl
+        key={"offset"}
+        title={"offset"}
         disabled={shapeSelected === null || shapeSelected.type === "folder"}
         value={
           (shapeSelected &&
             shapeSelected.type === "sprite" &&
-            getX(shapeSelected.baseElementData.translate)) ||
-          0
+            shapeSelected.baseElementData.translate) || [0, 0]
         }
         onChange={(newValue) => {
           if (!shapeSelected) return;
@@ -42,30 +40,7 @@ const LayerInfoPanel: React.FC<LayerInfoPanelProps> = ({
               ...sprite,
               baseElementData: {
                 ...sprite.baseElementData,
-                translate: vector2Y(newValue, sprite.baseElementData.translate),
-              },
-            }))
-          );
-        }}
-      />,
-      <NumberInputControl
-        key={"y"}
-        title={"yOffset"}
-        disabled={shapeSelected === null || shapeSelected.type === "folder"}
-        value={
-          (shapeSelected &&
-            shapeSelected.type === "sprite" &&
-            getY(shapeSelected.baseElementData.translate)) ||
-          0
-        }
-        onChange={(newValue) => {
-          if (!shapeSelected) return;
-          updateImageDefinition((state) =>
-            updateSpriteData(state, shapeSelected.name, (sprite) => ({
-              ...sprite,
-              baseElementData: {
-                ...sprite.baseElementData,
-                translate: vector2Y(newValue, sprite.baseElementData.translate),
+                translate: newValue,
               },
             }))
           );
