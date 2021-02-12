@@ -127,11 +127,11 @@ const Composition: React.FC<CompositionProps> = ({
   const shapeSelected =
     layerSelected === null || layerSelected.type !== "layer"
       ? null
-      : getShape(imageDefinition.shapes, layerSelected.name);
+      : getShape(imageDefinition, layerSelected.name);
   const vectorSelected =
     layerSelected === null || layerSelected.type !== "vector"
       ? null
-      : getVector(imageDefinition.shapes, layerSelected.name);
+      : getVector(imageDefinition, layerSelected.name);
 
   useEffect(() => {
     if (!layerSelected) {

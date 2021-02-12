@@ -9,6 +9,7 @@ import {
   addFolder,
   addLayer,
   addPoint,
+  canDelete,
   canMoveDown,
   canMoveUp,
   getLayerNames,
@@ -16,6 +17,7 @@ import {
   makeLayerName,
   moveDown,
   moveUp,
+  removeItem,
   removePoint,
   renameLayer,
 } from "../lib/definitionHelpers";
@@ -129,7 +131,7 @@ const Layers: React.FC<LayersProps> = ({
         zoom,
         [elementX, elementY]
       );
-      const shape = getShape(imageDefinition.shapes, layerSelected.name);
+      const shape = getShape(imageDefinition, layerSelected.name);
       if (shape && shape.type === "sprite") {
         const closePoint = shape.points.find((p) => {
           const dx = p[0] - coord[0];
@@ -165,7 +167,7 @@ const Layers: React.FC<LayersProps> = ({
           title="Layers"
           toolbarItems={[
             <ToolbarButton
-              key="1"
+              key="addLayer"
               icon="📄"
               label="+"
               size="small"
@@ -178,7 +180,7 @@ const Layers: React.FC<LayersProps> = ({
               }}
             />,
             <ToolbarButton
-              key="2"
+              key="addFolder"
               icon="📁"
               label="+"
               size="small"
@@ -191,7 +193,22 @@ const Layers: React.FC<LayersProps> = ({
               }}
             />,
             <ToolbarButton
-              key="3"
+              key="remove"
+              icon="🗑"
+              size="small"
+              disabled={!canDelete(layerSelected, imageDefinition)}
+              label=""
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                updateImageDefinition((state) =>
+                  removeItem(layerSelected, state)
+                );
+              }}
+            />,
+            <ToolbarButton
+              key="moveUp"
               icon="⬆"
               size="small"
               disabled={!canMoveUp(layerSelected, imageDefinition)}
@@ -204,7 +221,7 @@ const Layers: React.FC<LayersProps> = ({
               }}
             />,
             <ToolbarButton
-              key="4"
+              key="moveDown"
               icon="⬇"
               size="small"
               disabled={!canMoveDown(layerSelected, imageDefinition)}

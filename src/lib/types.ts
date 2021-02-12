@@ -43,14 +43,14 @@ export type SpriteDefinition = {
   name: string;
   type: "sprite";
   points: Vec2[];
-  mutationVectors?: MutationVector[];
+  mutationVectors: MutationVector[];
   baseElementData: ElementData;
 };
 
 export type FolderDefinition = {
   name: string;
   type: "folder";
-  mutationVectors?: MutationVector[];
+  mutationVectors: MutationVector[];
   items: ShapeDefinition[];
 };
 

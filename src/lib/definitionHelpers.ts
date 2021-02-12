@@ -1,14 +1,13 @@
 import {
-  ControlDefinition,
   FolderDefinition,
   ImageDefinition,
   ItemSelection,
-  Keyframe,
   MutationVector,
   ShapeDefinition,
   SpriteDefinition,
   Vec2,
 } from "./types";
+import { isMutationVector, isShapeDefintion, visit } from "./visit";
 
 export const newDefinition = (): ImageDefinition => ({
   shapes: [],
@@ -25,7 +24,7 @@ export const getLayerNames = (layers: ShapeDefinition[]): string[] =>
   );
 
 export const vectorNamesFromShape = (shape: ShapeDefinition): string[] =>
-  shape.mutationVectors ? shape.mutationVectors.map((e) => e.name) : [];
+  shape.mutationVectors.map((e) => e.name);
 
 export const getVectorNames = (layers: ShapeDefinition[]): string[] =>
   layers.reduce(
@@ -39,15 +38,15 @@ export const getVectorNames = (layers: ShapeDefinition[]): string[] =>
     [] as string[]
   );
 
-export const makeLayerName = (
-  image: ImageDefinition,
+const makeItemName = (
+  existingNames: string[],
   intendedName: string,
   previousName: string | null = null
-): string => {
+) => {
   let counter = 0;
   const makeName = () =>
     counter === 0 ? intendedName : `${intendedName} (${counter})`;
-  const names = getLayerNames(image.shapes).filter(
+  const names = existingNames.filter(
     (name) => !previousName || name !== previousName
   );
   while (names.includes(makeName())) {
@@ -56,23 +55,19 @@ export const makeLayerName = (
   return makeName();
 };
 
+export const makeLayerName = (
+  image: ImageDefinition,
+  intendedName: string,
+  previousName: string | null = null
+): string =>
+  makeItemName(getLayerNames(image.shapes), intendedName, previousName);
+
 export const makeVectorName = (
   image: ImageDefinition,
   intendedName: string,
   previousName: string | null = null
-): string => {
-  let counter = 0;
-  const makeName = () =>
-    counter === 0 ? intendedName : `${intendedName} (${counter})`;
-  const names = getVectorNames(image.shapes).filter(
-    (name) => !previousName || name !== previousName
-  );
-  console.log(names);
-  while (names.includes(makeName())) {
-    counter++;
-  }
-  return makeName();
-};
+): string =>
+  makeItemName(getVectorNames(image.shapes), intendedName, previousName);
 
 export const addLayer = (
   mutator: (
@@ -88,6 +83,7 @@ export const addLayer = (
         type: "sprite",
         points: [],
         baseElementData: {},
+        mutationVectors: [],
       };
       resolve(newSprite);
 
@@ -111,6 +107,7 @@ export const addFolder = (
         name: newName,
         type: "folder",
         items: [],
+        mutationVectors: [],
       };
 
       resolve(newFolder);
@@ -140,15 +137,16 @@ export const addVector = (
 
       resolve(newVector);
 
-      return {
-        ...image,
-        shapes: mutateShapes(image.shapes, parent.name, (shape) => ({
-          ...shape,
-          mutationVectors: ([newVector] as MutationVector[]).concat(
-            shape.mutationVectors || []
-          ),
-        })),
-      };
+      return visit(image, (item) =>
+        isShapeDefintion(item) && item.name === parent.name
+          ? {
+              ...item,
+              mutationVectors: ([newVector] as MutationVector[]).concat(
+                item.mutationVectors || []
+              ),
+            }
+          : undefined
+      );
     });
   });
 
@@ -163,6 +161,22 @@ export const canMoveUp = (
     return !(image.shapes[0].name === selectedItem.name);
   }
   // TODO: Implement for vector
+  return false;
+};
+
+export const canDelete = (
+  selectedItem: ItemSelection | null,
+  image: ImageDefinition
+): boolean => {
+  if (selectedItem === null) {
+    return false;
+  }
+  if (selectedItem.type === "layer") {
+    const item = getShape(image, selectedItem.name);
+    if (item?.type === "folder") {
+      return item.items.length === 0;
+    }
+  }
   return false;
 };
 
@@ -272,60 +286,27 @@ export const moveUp = (
   shapes: move(false, selectedItem, image.shapes),
 });
 
-const renameKeyframe = (
-  frame: Keyframe,
-  currentName: string,
-  newName: string
-) =>
-  Object.entries(frame).reduce(
-    (result, [key, data]) =>
-      key === currentName
-        ? {
-            ...result,
-            [newName]: data,
-          }
-        : {
-            ...result,
-            [key]: data,
-          },
-    {} as Keyframe
-  );
-
-const renameControlShape = (
-  controls: ControlDefinition[],
-  currentName: string,
-  newName: string
-) =>
-  controls.map((control) => ({
-    ...control,
-    min: renameKeyframe(control.min, currentName, newName),
-    max: renameKeyframe(control.max, currentName, newName),
-  }));
-
 export const renameLayer = (
   image: ImageDefinition,
   currentName: string,
   newName: string
-): ImageDefinition => ({
-  ...image,
-  shapes: mutateShapes(image.shapes, currentName, (shape) => ({
-    ...shape,
-    name: newName,
-  })),
-  controls: renameControlShape(image.controls, currentName, newName),
-});
+): ImageDefinition =>
+  visit(image, (item) =>
+    isShapeDefintion(item) && item.name === currentName
+      ? { ...item, name: newName }
+      : undefined
+  );
 
 export const renameVector = (
   image: ImageDefinition,
   currentName: string,
   newName: string
-): ImageDefinition => ({
-  ...image,
-  shapes: mutateVectors(image.shapes, currentName, (v) => ({
-    ...v,
-    name: newName,
-  })),
-});
+): ImageDefinition =>
+  visit(image, (item) =>
+    isMutationVector(item) && item.name === currentName
+      ? { ...item, name: newName }
+      : undefined
+  );
 
 const addRemovePointToShape = (
   shapes: ShapeDefinition[],
@@ -375,102 +356,59 @@ export const removePoint = (
   shapes: addRemovePointToShape(image.shapes, layer, point, "remove"),
 });
 
-const walkShapes = <T>(
-  items: ShapeDefinition[],
-  fetcher: (item: ShapeDefinition) => null | T
-): T | null =>
-  items.reduce<T | null>((result, item) => {
-    if (result !== null) {
-      return result;
-    }
-    const test = fetcher(item);
-    if (test !== null) {
-      return test;
-    }
-    if (item.type === "folder") {
-      return walkShapes(item.items, fetcher);
-    }
-    return result;
-  }, null);
-
 export const getShape = (
-  items: ShapeDefinition[],
+  image: ImageDefinition,
   name: string
-): ShapeDefinition | null =>
-  walkShapes(items, (item) => (item.name === name ? item : null));
+): ShapeDefinition | null => {
+  let result = null;
+  visit(image, (item) => {
+    if (isShapeDefintion(item) && item.name === name) {
+      result = item;
+    }
+    return undefined;
+  });
+  return result;
+};
 
 export const getVector = (
-  items: ShapeDefinition[],
+  image: ImageDefinition,
   name: string
-): MutationVector | null =>
-  walkShapes(
-    items,
-    (item) =>
-      (item.type === "sprite" &&
-        item.mutationVectors &&
-        item.mutationVectors.find((v) => v.name === name)) ||
-      null
-  );
-
-const mutateShapes = (
-  items: ShapeDefinition[],
-  shapeName: string,
-  mutation: (sprite: ShapeDefinition) => ShapeDefinition
-): ShapeDefinition[] =>
-  items.map((shape) =>
-    shape.type === "folder"
-      ? shape.name === shapeName
-        ? mutation(shape)
-        : { ...shape, items: mutateShapes(shape.items, shapeName, mutation) }
-      : shape.name === shapeName
-      ? mutation(shape)
-      : shape
-  );
+): MutationVector | null => {
+  let result = null;
+  visit(image, (item) => {
+    if (isMutationVector(item) && item.name === name) {
+      result = item;
+    }
+    return undefined;
+  });
+  return result;
+};
 
 export const updateSpriteData = (
   imageDefinition: ImageDefinition,
   shapeName: string,
   mutation: (sprite: SpriteDefinition) => SpriteDefinition
-): ImageDefinition => ({
-  ...imageDefinition,
-  shapes: mutateShapes(imageDefinition.shapes, shapeName, (s) =>
-    s.type === "sprite" ? mutation(s) : s
-  ),
-});
-
-const mutateVectors = (
-  items: ShapeDefinition[],
-  vectorName: string,
-  mutation: (vector: MutationVector) => MutationVector
-): ShapeDefinition[] =>
-  items.map((shape) =>
-    shape.type === "folder"
-      ? {
-          ...shape,
-          items: mutateVectors(shape.items, vectorName, mutation),
-          ...(shape.mutationVectors
-            ? {
-                mutationVectors: shape.mutationVectors.map((vector) =>
-                  vector.name === vectorName ? mutation(vector) : vector
-                ),
-              }
-            : {}),
-        }
-      : shape.mutationVectors
-      ? {
-          ...shape,
-          mutationVectors: shape.mutationVectors.map((vector) =>
-            vector.name === vectorName ? mutation(vector) : vector
-          ),
-        }
-      : shape
+): ImageDefinition =>
+  visit(imageDefinition, (item) =>
+    item.type === "sprite" && item.name === shapeName
+      ? mutation(item)
+      : undefined
   );
 
 export const updateVectorData = (
   imageDefinition: ImageDefinition,
   vectorName: string,
   mutation: (vector: MutationVector) => MutationVector
-): ImageDefinition => ({
-  ...imageDefinition,
-  shapes: mutateVectors(imageDefinition.shapes, vectorName, mutation),
-});
+): ImageDefinition =>
+  visit(imageDefinition, (item) =>
+    isMutationVector(item) && item.name === vectorName
+      ? mutation(item)
+      : undefined
+  );
+
+export const removeItem = (
+  selectedItem: ItemSelection,
+  image: ImageDefinition
+): ImageDefinition => {
+  return image;
+};
