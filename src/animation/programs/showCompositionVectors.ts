@@ -1,4 +1,5 @@
 import { vectorNamesFromShape } from "src/lib/definitionHelpers";
+import { isShapeDefintion, visitShapes } from "src/lib/visit";
 import {
   ItemSelection,
   Keyframe,
@@ -7,7 +8,6 @@ import {
   Vec2,
 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
-import { flattenTree } from "./utils";
 
 const compositionVertexShader = `
   attribute vec3 coordinates;
@@ -122,11 +122,9 @@ export const showCompositionVectors = (): {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
     const vertices: number[] = [];
     vectors = [];
-    const items = flattenTree(shapes);
-
-    items.forEach((shape) => {
-      if (!shape.mutationVectors) {
-        return;
+    visitShapes(shapes, (shape) => {
+      if (!isShapeDefintion(shape)) {
+        return undefined;
       }
       shape.mutationVectors.forEach((vector) => {
         vectors.push({
@@ -139,9 +137,10 @@ export const showCompositionVectors = (): {
         const color = colorMapping[vector.type];
         vertices.push(...vector.origin, 8, ...color, 1);
         if (vector.type === "deform") {
-          vertices.push(...vector.origin, vector.radius, ...color, 0.2);
+          vertices.push(...vector.origin, vector.radius * 2, ...color, 0.2);
         }
       });
+      return undefined;
     });
     const indices = Array(vertices.length / stride)
       .fill(0)
@@ -183,7 +182,7 @@ export const showCompositionVectors = (): {
       const checkMatch = (shape: ShapeDefinition, item: ItemSelection) =>
         (shape.name === item.name && item.type === "layer") ||
         (item.type === "vector" &&
-          shape.type === "sprite" &&
+          (shape.type === "sprite" || shape.type === "folder") &&
           shape.mutationVectors &&
           shape.mutationVectors.map((v) => v.name).includes(item.name));
 
@@ -203,7 +202,10 @@ export const showCompositionVectors = (): {
                   )
               : result.concat(
                   vectorNamesFromShape(shape).filter(
-                    (n) => layer.type === "vector" && n === layer.name
+                    (n) =>
+                      (layer.type === "vector" && n === layer.name) ||
+                      collect ||
+                      checkMatch(shape, layer)
                   ),
                   collectVectorNames(
                     shape.items,

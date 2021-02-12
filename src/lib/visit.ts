@@ -17,7 +17,7 @@ export const isMutationVector = (item: ItemWithType): item is MutationVector =>
   item.type === "translate" ||
   item.type === "stretch";
 
-const visitVectors = (
+export const visitVectors = (
   vectors: MutationVector[],
   visitor: Visitor
 ): MutationVector[] =>
@@ -34,7 +34,7 @@ const visitVectors = (
     return result.concat(newNode);
   }, [] as MutationVector[]);
 
-const visitShapes = (
+export const visitShapes = (
   shapes: ShapeDefinition[],
   visitor: Visitor
 ): ShapeDefinition[] =>

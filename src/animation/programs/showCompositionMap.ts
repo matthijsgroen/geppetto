@@ -147,7 +147,7 @@ export const showCompositionMap = (): {
       const checkMatch = (shape: ShapeDefinition, item: ItemSelection) =>
         (shape.name === item.name && item.type === "layer") ||
         (item.type === "vector" &&
-          shape.type === "sprite" &&
+          (shape.type === "sprite" || shape.type === "folder") &&
           shape.mutationVectors &&
           shape.mutationVectors.map((v) => v.name).includes(item.name));
 

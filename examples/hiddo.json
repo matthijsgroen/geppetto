@@ -8,12 +8,24 @@
         {
           "name": "rightArm",
           "type": "folder",
-          "mutationVectors": [],
+          "mutationVectors": [
+            {
+              "type": "rotate",
+              "origin": [55, -95],
+              "name": "rightTopRotation"
+            }
+          ],
           "items": [
             {
               "name": "rightArmBottom",
               "type": "sprite",
-              "mutationVectors": [],
+              "mutationVectors": [
+                {
+                  "type": "rotate",
+                  "origin": [-2, 20],
+                  "name": "rightBottomRotation"
+                }
+              ],
               "points": [
                 [49, 641],
                 [71, 662],
@@ -105,7 +117,13 @@
         {
           "name": "mouthOpen",
           "type": "sprite",
-          "mutationVectors": [],
+          "mutationVectors": [
+            {
+              "type": "stretch",
+              "origin": [0, -182],
+              "name": "mouth"
+            }
+          ],
           "points": [
             [7, 52],
             [35, 52],
@@ -124,7 +142,13 @@
             {
               "name": "leftPupil",
               "type": "sprite",
-              "mutationVectors": [],
+              "mutationVectors": [
+                {
+                  "name": "leftEye",
+                  "type": "translate",
+                  "origin": [-22, -210]
+                }
+              ],
               "points": [
                 [12, 35],
                 [23, 45],
@@ -159,7 +183,13 @@
             {
               "name": "rightPupil",
               "type": "sprite",
-              "mutationVectors": [],
+              "mutationVectors": [
+                {
+                  "name": "rightPupil",
+                  "type": "translate",
+                  "origin": [7, -213]
+                }
+              ],
               "points": [
                 [34, 35],
                 [47, 45],

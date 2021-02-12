@@ -125,6 +125,40 @@ const displayShapes = (
               />
             )
             .concat(
+              showMutationVectors
+                ? (shape.mutationVectors || ([] as MutationVector[])).map(
+                    (vector) => (
+                      <MenuItem
+                        key={vector.name}
+                        selected={
+                          !!(
+                            layerSelected &&
+                            vector.name === layerSelected.name &&
+                            layerSelected.type === "vector"
+                          )
+                        }
+                        icon={iconForType(vector.type)}
+                        label={vector.name}
+                        name={vector.name}
+                        allowRename
+                        indent={indent + 1}
+                        onClick={() =>
+                          setItemSelected(
+                            layerSelected?.type === "vector" &&
+                              vector.name === layerSelected.name
+                              ? null
+                              : vector
+                          )
+                        }
+                        onRename={(newName) => {
+                          onRename(vector.name, newName, vector);
+                        }}
+                      />
+                    )
+                  )
+                : []
+            )
+            .concat(
               displayShapes(
                 shape.items,
                 layerSelected,
