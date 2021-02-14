@@ -113,6 +113,19 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
             />,
           ]
         : []),
+      <Vect2InputControl
+        key={"value"}
+        title={"value"}
+        value={vectorSelected.value || [0, 0]}
+        onChange={(newValue) => {
+          updateImageDefinition((state) =>
+            updateVectorData(state, vectorSelected.name, (vector) => ({
+              ...vector,
+              value: newValue,
+            }))
+          );
+        }}
+      />,
     ]}
   />
 );

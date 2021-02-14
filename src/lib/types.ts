@@ -5,6 +5,7 @@ export type TranslationVector = {
   name: string;
   type: "translate";
   origin: Vec2;
+  value?: Vec2;
 };
 
 export type DeformationVector = {
@@ -12,18 +13,21 @@ export type DeformationVector = {
   type: "deform";
   origin: Vec2;
   radius: number;
+  value?: Vec2;
 };
 
 export type StretchVector = {
   name: string;
   type: "stretch";
   origin: Vec2;
+  value?: Vec2;
 };
 
 export type RotationVector = {
   name: string;
   type: "rotate";
   origin: Vec2;
+  value?: Vec2;
 };
 
 export type MutationVector =
