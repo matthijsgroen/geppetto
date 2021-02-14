@@ -1,8 +1,4 @@
-import {
-  ItemSelection,
-  MutationVector,
-  ShapeDefinition,
-} from "../../lib/types";
+import { ItemSelection, ShapeDefinition } from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes, getAnchor } from "./utils";
@@ -68,9 +64,13 @@ export const showCompositionMap = (): {
   let layersSelected: string[] = [];
 
   let elements: {
+    name: string;
     start: number;
     amount: number;
-    mutationVectors: MutationVector[];
+    x: number;
+    y: number;
+    z: number;
+    // mutationVectors: MutationVector[];
   }[] = [];
   let zoom = 1.0;
   let pan = [0, 0];
@@ -81,29 +81,28 @@ export const showCompositionMap = (): {
     elements = [];
     const sprites = flattenShapes(shapes);
 
-    sprites.forEach((shape) => {
+    sprites.forEach((shape, index) => {
       const anchor = getAnchor(shape);
+      const itemOffset = [...shape.translate, index * 0.1];
       const points = shape.points.map(([x, y]) => [
         x - anchor[0],
         y - anchor[1],
       ]);
       const list = verticesFromPoints(points);
-      // const deformationVectors = Object.entries(
-      //   shape.mutationVectors || {}
-      // ).reduce(
-      //   (result, [key, value], index) => ({
-      //     ...result,
-      //     [key]: { vector: value, index },
-      //   }),
-      //   {} as Record<string, MutationVector>
-      // );
+
       elements.push({
+        name: shape.name,
         start: vertices.length / stride,
         amount: list.length / 2,
-        mutationVectors: [],
+        x: itemOffset[0],
+        y: itemOffset[1],
+        z: -itemOffset[2] * 0.001,
+        // mutationVectors: [],
       });
       vertices.push(...list);
     });
+    elements.sort((a, b) => (b.z || 0) - (a.z || 0));
+
     const indices = Array(vertices.length / stride)
       .fill(0)
       .map((_, i) => i);
@@ -120,6 +119,10 @@ export const showCompositionMap = (): {
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
+
+  let cWidth = 0;
+  let cHeight = 0;
+  let basePosition = [0, 0, 0.1];
 
   return {
     setImage(image: HTMLImageElement) {
@@ -203,69 +206,51 @@ export const showCompositionMap = (): {
           gl.enableVertexAttribArray(coord);
 
           const [canvasWidth, canvasHeight] = getSize();
-          const landscape = img.width / canvasWidth > img.height / canvasHeight;
+          if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
+            const landscape =
+              img.width / canvasWidth > img.height / canvasHeight;
 
-          const scale = landscape
-            ? canvasWidth / img.width
-            : canvasHeight / img.height;
+            const scale = landscape
+              ? canvasWidth / img.width
+              : canvasHeight / img.height;
 
-          gl.uniform2f(
-            gl.getUniformLocation(shaderProgram, "viewport"),
-            canvasWidth,
-            canvasHeight
-          );
+            gl.uniform2f(
+              gl.getUniformLocation(shaderProgram, "viewport"),
+              canvasWidth,
+              canvasHeight
+            );
 
-          gl.uniform4f(
-            gl.getUniformLocation(shaderProgram, "scale"),
-            scale,
-            zoom,
-            pan[0],
-            pan[1]
-          );
+            gl.uniform4f(
+              gl.getUniformLocation(shaderProgram, "scale"),
+              scale,
+              zoom,
+              pan[0],
+              pan[1]
+            );
 
-          const basePosition = [
-            canvasWidth / 2 / scale,
-            canvasHeight / 2 / scale,
-            0.1,
-          ];
-          const sprites = flattenShapes(shapes);
-
-          const calculatedElements = elements.map((element, index) => {
-            const sprite = sprites[index];
-            const itemOffset = [
-              ...sprite.translate,
-              sprites.indexOf(sprite) * 0.1,
+            basePosition = [
+              canvasWidth / 2 / scale,
+              canvasHeight / 2 / scale,
+              0.1,
             ];
-
-            // const deformationVectorList = Object.values(
-            //   element.deformationVectors
-            // ).reduce((list, item) => list.concat(item.vector), [] as number[]);
-
-            return {
-              name: sprite.name,
-              ...element,
-              x: basePosition[0] + itemOffset[0],
-              y: basePosition[1] + itemOffset[1],
-              z: basePosition[2] - itemOffset[2] * 0.001,
-              // deformationVectorList,
-            };
-          });
-
-          calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
+            cWidth = canvasWidth;
+            cHeight = canvasHeight;
+          }
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
-          // const deformation = gl.getUniformLocation(
-          //   shaderProgram,
-          //   "uMutationVectors"
-          // );
           const deformationValues = gl.getUniformLocation(
             shaderProgram,
             "uMutationValues"
           );
 
-          calculatedElements.forEach((element) => {
+          elements.forEach((element) => {
             if (layersSelected.includes(element.name) && element.amount > 0) {
-              gl.uniform3f(translate, element.x, element.y, element.z);
+              gl.uniform3f(
+                translate,
+                basePosition[0] + element.x,
+                basePosition[1] + element.y,
+                basePosition[2] + element.z
+              );
 
               const deformValues: number[] = Array(16 * 2).fill(0);
               gl.uniform2fv(deformationValues, deformValues);

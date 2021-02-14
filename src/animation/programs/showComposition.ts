@@ -4,15 +4,17 @@ import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes, getAnchor } from "./utils";
 
 const compositionVertexShader = `
-  attribute vec2 coordinates;
-  attribute vec2 aTextureCoord;
-  varying lowp vec2 vTextureCoord;
   uniform vec2 viewport;
   uniform vec3 translate;
   uniform vec4 scale;
 
   uniform vec3 uMutationVectors[16];
   uniform vec2 uMutationValues[16];
+
+  attribute vec2 coordinates;
+  attribute vec2 aTextureCoord;
+
+  varying lowp vec2 vTextureCoord;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -72,8 +74,12 @@ export const showComposition = (): {
   let program: WebGLProgram | null = null;
 
   let elements: {
+    name: string;
     start: number;
     amount: number;
+    x: number;
+    y: number;
+    z: number;
     mutationVectors: MutationVector[];
   }[] = [];
   let zoom = 1.0;
@@ -96,32 +102,26 @@ export const showComposition = (): {
 
   const populateShapes = () => {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
-    elements = [];
-
     const indices: number[] = [];
     const vertices: number[] = [];
     elements = [];
     const sprites = flattenShapes(shapes);
 
-    sprites.forEach((shape) => {
+    sprites.forEach((shape, index) => {
       const shapeIndices = Delaunator.from(shape.points).triangles;
       const start = indices.length;
       const anchor = getAnchor(shape);
-
-      // const deformationVectors = Object.entries(
-      //   shape.mutationVectors || {}
-      // ).reduce(
-      //   (result, [key, value], index) => ({
-      //     ...result,
-      //     [key]: { vector: value, index },
-      //   }),
-      //   {} as Record<string, MutationVector>
-      // );
+      const itemOffset = [...shape.translate, index * 0.1];
 
       elements.push({
+        name: shape.name,
         start,
         amount: shapeIndices.length,
         mutationVectors: [],
+        x: itemOffset[0],
+        y: itemOffset[1],
+        z: itemOffset[2] * 0.001,
+        // mutationVectors: [],
       });
       const offset = vertices.length / stride;
       shape.points.forEach(([x, y]) => {
@@ -132,6 +132,7 @@ export const showComposition = (): {
         indices.push(index + offset);
       });
     });
+    elements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -145,6 +146,10 @@ export const showComposition = (): {
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
+
+  let cWidth = 0;
+  let cHeight = 0;
+  let basePosition = [0, 0, 0.1];
 
   return {
     setImage(image: HTMLImageElement) {
@@ -222,60 +227,43 @@ export const showComposition = (): {
           gl.enableVertexAttribArray(texCoord);
 
           const [canvasWidth, canvasHeight] = getSize();
-          const landscape = img.width / canvasWidth > img.height / canvasHeight;
+          if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
+            const landscape =
+              img.width / canvasWidth > img.height / canvasHeight;
 
-          const scale = landscape
-            ? canvasWidth / img.width
-            : canvasHeight / img.height;
+            const scale = landscape
+              ? canvasWidth / img.width
+              : canvasHeight / img.height;
 
-          gl.uniform2f(
-            gl.getUniformLocation(shaderProgram, "viewport"),
-            canvasWidth,
-            canvasHeight
-          );
+            gl.uniform2f(
+              gl.getUniformLocation(shaderProgram, "viewport"),
+              canvasWidth,
+              canvasHeight
+            );
 
-          gl.uniform4f(
-            gl.getUniformLocation(shaderProgram, "scale"),
-            scale,
-            zoom,
-            pan[0],
-            pan[1]
-          );
-          gl.uniform2f(
-            gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
-            img.width,
-            img.height
-          );
+            gl.uniform4f(
+              gl.getUniformLocation(shaderProgram, "scale"),
+              scale,
+              zoom,
+              pan[0],
+              pan[1]
+            );
+            gl.uniform2f(
+              gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
+              img.width,
+              img.height
+            );
+            basePosition = [
+              canvasWidth / 2 / scale,
+              canvasHeight / 2 / scale,
+              0.1,
+            ];
+            cWidth = canvasWidth;
+            cHeight = canvasHeight;
+          }
 
           gl.activeTexture(unit.unit);
           gl.bindTexture(gl.TEXTURE_2D, texture);
-
-          const basePosition = [
-            canvasWidth / 2 / scale,
-            canvasHeight / 2 / scale,
-            0.1,
-          ];
-          const sprites = flattenShapes(shapes);
-
-          const calculatedElements = elements.map((element, index) => {
-            const sprite = sprites[index];
-            const itemOffset = sprite.translate || [0, 0];
-
-            // const deformationVectorList = Object.values(
-            //   element.deformationVectors
-            // ).reduce((list, item) => list.concat(item.vector), [] as number[]);
-
-            return {
-              name: sprite.name,
-              ...element,
-              x: basePosition[0] + itemOffset[0],
-              y: basePosition[1] + itemOffset[1],
-              z: sprites.indexOf(sprite) * 0.01,
-              // deformationVectorList,
-            };
-          });
-
-          calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
           // const deformation = gl.getUniformLocation(
@@ -287,11 +275,16 @@ export const showComposition = (): {
             "uMutationValues"
           );
 
-          calculatedElements.forEach((element) => {
+          elements.forEach((element) => {
             if (element.amount === 0) {
               return;
             }
-            gl.uniform3f(translate, element.x, element.y, element.z);
+            gl.uniform3f(
+              translate,
+              basePosition[0] + element.x,
+              basePosition[1] + element.y,
+              basePosition[2] + element.z
+            );
 
             const deformValues: number[] = Array(16 * 2).fill(0);
             // gl.uniform3fv(
