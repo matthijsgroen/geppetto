@@ -235,6 +235,24 @@ const move = (
           }
           if (
             vectorIndex === shape.mutationVectors.length - 1 &&
+            shape.type === "folder" &&
+            shape.items.length > 0
+          ) {
+            return result.concat({
+              ...shape,
+              mutationVectors: shape.mutationVectors.slice(0, -1),
+              items: shape.items.map((child, index) =>
+                index === 0
+                  ? {
+                      ...child,
+                      mutationVectors: [vector].concat(child.mutationVectors),
+                    }
+                  : child
+              ),
+            });
+          }
+          if (
+            vectorIndex === shape.mutationVectors.length - 1 &&
             list[index + 1]
           ) {
             // move item down to next in list
@@ -275,7 +293,6 @@ const move = (
                     }
                   : shape
               );
-              console.log(lastAdded.mutationVectors);
               return updatedResult.concat({
                 ...shape,
                 mutationVectors: shape.mutationVectors.slice(1),
@@ -283,9 +300,34 @@ const move = (
             }
           }
         }
+      } else {
+        const next = list[index + 1];
+        if (shape.type === "folder" && next) {
+          const lastChild = shape.items[shape.items.length - 1];
+          const lastVector =
+            lastChild.mutationVectors[lastChild.mutationVectors.length - 1];
+          if (lastVector && lastVector.name === item.name) {
+            return result.concat(
+              {
+                ...shape,
+                items: shape.items.map((child, index, list) =>
+                  index === list.length - 1
+                    ? {
+                        ...child,
+                        mutationVectors: child.mutationVectors.slice(0, -1),
+                      }
+                    : child
+                ),
+              },
+              {
+                ...next,
+                mutationVectors: [lastVector].concat(next.mutationVectors),
+              }
+            );
+          }
+        }
       }
       // TODO: If vectorIndex === 0, add to bottom of previous element in the list (could be nested folder)
-      // TODO: If vectorIndex === 'last', add to top of next element in the list (could be nested folder)
     }
 
     if (shape.name === item.name && item.type === "layer" && moveDown) {
