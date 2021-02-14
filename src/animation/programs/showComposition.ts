@@ -3,13 +3,15 @@ import { MutationVector, ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes, getAnchor } from "./utils";
 
+const MAX_MUTATION_VECTORS = 20;
+
 const compositionVertexShader = `
   uniform vec2 viewport;
   uniform vec3 translate;
   uniform vec4 scale;
 
-  uniform vec3 uMutationVectors[16];
-  uniform vec2 uMutationValues[16];
+  uniform vec3 uMutationVectors[${MAX_MUTATION_VECTORS}];
+  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
 
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;
@@ -26,7 +28,7 @@ const compositionVertexShader = `
   void main() {
     vec2 deform = coordinates;
 
-    for(int i = 0; i < 16; i++) {
+    for(int i = 0; i < ${MAX_MUTATION_VECTORS}; i++) {
       vec3 position = uMutationVectors[i];
       if (position.z > 0.0) {
         float effect = 1.0 - clamp(distance(coordinates, position.xy), 0.0, position.z) / position.z;
@@ -288,12 +290,14 @@ export const showComposition = (): {
               basePosition[2] + element.z
             );
 
-            const deformValues: number[] = Array(16 * 2).fill(0);
+            const deformValues: number[] = Array(MAX_MUTATION_VECTORS * 2).fill(
+              0
+            );
             // gl.uniform3fv(
             //   deformation,
             //   element.deformationVectorList
-            //     .concat(Array(16 * 3).fill(0))
-            //     .slice(0, 16 * 3)
+            //     .concat(Array(MAX_MUTATION_VECTORS * 3).fill(0))
+            //     .slice(0, MAX_MUTATION_VECTORS * 3)
             // );
             gl.uniform2fv(deformationValues, deformValues);
 
