@@ -66,7 +66,7 @@ const displayShapes = (
                 ? (shape.mutationVectors || ([] as MutationVector[])).map(
                     (vector) => (
                       <MenuItem
-                        key={vector.name}
+                        key={`__v-${vector.name}`}
                         selected={
                           !!(
                             layerSelected &&
@@ -129,7 +129,7 @@ const displayShapes = (
                 ? (shape.mutationVectors || ([] as MutationVector[])).map(
                     (vector) => (
                       <MenuItem
-                        key={vector.name}
+                        key={`__v-${vector.name}`}
                         selected={
                           !!(
                             layerSelected &&

@@ -216,50 +216,78 @@ const move = (
       const vectorIndex = shape.mutationVectors.findIndex(
         (e) => e.name === item.name
       );
-      if (
-        vectorIndex !== -1 &&
-        moveDown &&
-        vectorIndex < shape.mutationVectors.length - 1
-      ) {
-        // move item down in same list
-        return result.concat({
-          ...shape,
-          mutationVectors: shape.mutationVectors.map((item, index, list) => {
-            if (index === vectorIndex) {
-              return list[index + 1];
+      const vector =
+        vectorIndex !== -1 ? shape.mutationVectors[vectorIndex] : null;
+      if (vector) {
+        if (moveDown) {
+          if (vectorIndex < shape.mutationVectors.length - 1) {
+            // move item down in same list
+            return result.concat({
+              ...shape,
+              mutationVectors: shape.mutationVectors.map((item, index, list) =>
+                index === vectorIndex
+                  ? list[index + 1]
+                  : index === vectorIndex + 1
+                  ? list[index - 1]
+                  : item
+              ),
+            });
+          }
+          if (
+            vectorIndex === shape.mutationVectors.length - 1 &&
+            list[index + 1]
+          ) {
+            // move item down to next in list
+            const next = list[index + 1];
+
+            return result.concat(
+              {
+                ...shape,
+                mutationVectors: shape.mutationVectors.slice(0, -1),
+              },
+              {
+                ...next,
+                mutationVectors: [vector].concat(next.mutationVectors),
+              }
+            );
+          }
+        } else {
+          if (vectorIndex > 0) {
+            // move item up in same list
+            return result.concat({
+              ...shape,
+              mutationVectors: shape.mutationVectors.map((item, vIndex, list) =>
+                vIndex === vectorIndex - 1
+                  ? list[vIndex + 1]
+                  : vIndex === vectorIndex
+                  ? list[vIndex - 1]
+                  : item
+              ),
+            });
+          }
+          if (vectorIndex === 0) {
+            if (lastAdded && lastAdded.type === "sprite") {
+              const updatedResult = result.map((shape, index, list) =>
+                index === list.length - 1
+                  ? {
+                      ...shape,
+                      mutationVectors: shape.mutationVectors.concat(vector),
+                    }
+                  : shape
+              );
+              console.log(lastAdded.mutationVectors);
+              return updatedResult.concat({
+                ...shape,
+                mutationVectors: shape.mutationVectors.slice(1),
+              });
             }
-            if (index === vectorIndex + 1) {
-              return list[index - 1];
-            }
-            return item;
-          }),
-        });
-      }
-      if (vectorIndex !== -1 && !moveDown && vectorIndex > 0) {
-        // move item up in same list
-        return result.concat({
-          ...shape,
-          mutationVectors: shape.mutationVectors.map((item, index, list) => {
-            if (index === vectorIndex) {
-              return list[index - 1];
-            }
-            if (index === vectorIndex - 1) {
-              return list[index + 1];
-            }
-            return item;
-          }),
-        });
+          }
+        }
       }
       // TODO: If vectorIndex === 0, add to bottom of previous element in the list (could be nested folder)
       // TODO: If vectorIndex === 'last', add to top of next element in the list (could be nested folder)
     }
 
-    if (lastAdded && lastAdded.type === "folder") {
-      const lastFolderItem = lastAdded.items[lastAdded.items.length - 1];
-      if (lastFolderItem && lastFolderItem.name === shape.name) {
-        return result;
-      }
-    }
     if (shape.name === item.name && item.type === "layer" && moveDown) {
       // get next item
       const next = list[index + 1];
