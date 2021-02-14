@@ -1,3 +1,4 @@
+import { isMutationVector, visitShapes } from "src/lib/visit";
 import { ItemSelection, ShapeDefinition } from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
@@ -10,7 +11,7 @@ const compositionVertexShader = `
   uniform vec3 translate;
   uniform vec4 scale;
 
-  uniform vec3 uMutationVectors[${MAX_MUTATION_VECTORS}];
+  uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];
   uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
 
   attribute vec2 coordinates;
@@ -26,7 +27,7 @@ const compositionVertexShader = `
     vec2 deform = coordinates;
 
     for(int i = 0; i < ${MAX_MUTATION_VECTORS}; i++) {
-      vec3 position = uMutationVectors[i];
+      vec4 position = uMutationVectors[i];
       // if (position.z > 0.0) {
       //   float effect = 1.0 - clamp(distance(coordinates, position.xy), 0.0, position.z) / position.z;
 
@@ -46,6 +47,13 @@ const compositionFragmentShader = `
     gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
   }
 `;
+
+const vectorTypeMapping = {
+  translate: 1,
+  stretch: 2,
+  rotate: 3,
+  deform: 4,
+};
 
 export const showCompositionMap = (): {
   setImage(image: HTMLImageElement): void;
@@ -77,11 +85,38 @@ export const showCompositionMap = (): {
   }[] = [];
   let zoom = 1.0;
   let pan = [0, 0];
+  let scale = 1.0;
 
   const populateShapes = () => {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer || !program) return;
     const vertices: number[] = [];
     elements = [];
+
+    const mutationVectors = gl.getUniformLocation(program, "uMutationVectors");
+    const vectorSettings: number[] = Array(MAX_MUTATION_VECTORS * 4).fill(0);
+    const mutators: string[] = [];
+
+    visitShapes(shapes, (item) => {
+      if (isMutationVector(item)) {
+        const index = mutators.length;
+        mutators.push(item.name);
+        vectorSettings[index * 4] = vectorTypeMapping[item.type];
+        vectorSettings[index * 4 + 1] = item.origin[0];
+        vectorSettings[index * 4 + 2] = item.origin[1];
+        if (item.type === "deform") {
+          vectorSettings[index * 4 + 3] = item.radius;
+        }
+      }
+      return undefined;
+    });
+
+    if (mutators.length >= MAX_MUTATION_VECTORS) {
+      throw new Error("More vectors than shader permits");
+    }
+    // console.log("Amount of vectors: ", mutators.length);
+
+    gl.uniform2fv(mutationVectors, vectorSettings);
+
     const sprites = flattenShapes(shapes);
 
     sprites.forEach((shape, index) => {
@@ -121,10 +156,6 @@ export const showCompositionMap = (): {
       gl.STATIC_DRAW
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-
-    const mutationVectors = gl.getUniformLocation(program, "uMutationVectors");
-    const vectorSettings: number[] = Array(MAX_MUTATION_VECTORS * 3).fill(0);
-    gl.uniform2fv(mutationVectors, vectorSettings);
   };
 
   let cWidth = 0;
@@ -218,7 +249,7 @@ export const showCompositionMap = (): {
             const landscape =
               img.width / canvasWidth > img.height / canvasHeight;
 
-            const scale = landscape
+            scale = landscape
               ? canvasWidth / img.width
               : canvasHeight / img.height;
 
@@ -226,14 +257,6 @@ export const showCompositionMap = (): {
               gl.getUniformLocation(shaderProgram, "viewport"),
               canvasWidth,
               canvasHeight
-            );
-
-            gl.uniform4f(
-              gl.getUniformLocation(shaderProgram, "scale"),
-              scale,
-              zoom,
-              pan[0],
-              pan[1]
             );
 
             basePosition = [
@@ -244,6 +267,14 @@ export const showCompositionMap = (): {
             cWidth = canvasWidth;
             cHeight = canvasHeight;
           }
+
+          gl.uniform4f(
+            gl.getUniformLocation(shaderProgram, "scale"),
+            scale,
+            zoom,
+            pan[0],
+            pan[1]
+          );
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
           const deformationValues = gl.getUniformLocation(

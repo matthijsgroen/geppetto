@@ -83,6 +83,7 @@ export const showComposition = (): {
     mutationVectors: MutationVector[];
   }[] = [];
   let zoom = 1.0;
+  let scale = 1.0;
   let pan = [0, 0];
 
   const setImageTexture = (): void => {
@@ -231,7 +232,7 @@ export const showComposition = (): {
             const landscape =
               img.width / canvasWidth > img.height / canvasHeight;
 
-            const scale = landscape
+            scale = landscape
               ? canvasWidth / img.width
               : canvasHeight / img.height;
 
@@ -241,13 +242,6 @@ export const showComposition = (): {
               canvasHeight
             );
 
-            gl.uniform4f(
-              gl.getUniformLocation(shaderProgram, "scale"),
-              scale,
-              zoom,
-              pan[0],
-              pan[1]
-            );
             gl.uniform2f(
               gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
               img.width,
@@ -261,6 +255,14 @@ export const showComposition = (): {
             cWidth = canvasWidth;
             cHeight = canvasHeight;
           }
+
+          gl.uniform4f(
+            gl.getUniformLocation(shaderProgram, "scale"),
+            scale,
+            zoom,
+            pan[0],
+            pan[1]
+          );
 
           gl.activeTexture(unit.unit);
           gl.bindTexture(gl.TEXTURE_2D, texture);
