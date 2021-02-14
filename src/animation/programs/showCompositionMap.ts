@@ -3,13 +3,15 @@ import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes, getAnchor } from "./utils";
 
+const MAX_MUTATION_VECTORS = 20;
+
 const compositionVertexShader = `
   uniform vec2 viewport;
   uniform vec3 translate;
   uniform vec4 scale;
 
-  uniform vec3 uMutationVectors[16];
-  uniform vec2 uMutationValues[16];
+  uniform vec3 uMutationVectors[${MAX_MUTATION_VECTORS}];
+  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
 
   attribute vec2 coordinates;
 
@@ -23,13 +25,13 @@ const compositionVertexShader = `
   void main() {
     vec2 deform = coordinates;
 
-    for(int i = 0; i < 16; i++) {
+    for(int i = 0; i < ${MAX_MUTATION_VECTORS}; i++) {
       vec3 position = uMutationVectors[i];
-      if (position.z > 0.0) {
-        float effect = 1.0 - clamp(distance(coordinates, position.xy), 0.0, position.z) / position.z;
+      // if (position.z > 0.0) {
+      //   float effect = 1.0 - clamp(distance(coordinates, position.xy), 0.0, position.z) / position.z;
 
-        deform = deform + uMutationValues[i] * effect;
-      }
+      //   deform = deform + uMutationValues[i] * effect;
+      // }
     }
 
     vec4 pos = viewportScale * vec4((deform + translate.xy) * scale.x, translate.z, 1.0);
@@ -58,6 +60,7 @@ export const showCompositionMap = (): {
   let shapes: ShapeDefinition[] | null = null;
 
   let gl: WebGLRenderingContext | null = null;
+  let program: WebGLProgram | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
@@ -76,7 +79,7 @@ export const showCompositionMap = (): {
   let pan = [0, 0];
 
   const populateShapes = () => {
-    if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
+    if (!shapes || !gl || !indexBuffer || !vertexBuffer || !program) return;
     const vertices: number[] = [];
     elements = [];
     const sprites = flattenShapes(shapes);
@@ -118,6 +121,10 @@ export const showCompositionMap = (): {
       gl.STATIC_DRAW
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+    const mutationVectors = gl.getUniformLocation(program, "uMutationVectors");
+    const vectorSettings: number[] = Array(MAX_MUTATION_VECTORS * 3).fill(0);
+    gl.uniform2fv(mutationVectors, vectorSettings);
   };
 
   let cWidth = 0;
@@ -183,6 +190,7 @@ export const showCompositionMap = (): {
         compositionVertexShader,
         compositionFragmentShader
       );
+      program = shaderProgram;
 
       return {
         render() {
@@ -252,7 +260,9 @@ export const showCompositionMap = (): {
                 basePosition[2] + element.z
               );
 
-              const deformValues: number[] = Array(16 * 2).fill(0);
+              const deformValues: number[] = Array(
+                MAX_MUTATION_VECTORS * 2
+              ).fill(0);
               gl.uniform2fv(deformationValues, deformValues);
 
               gl.drawArrays(initgl.LINE_STRIP, element.start, element.amount);
