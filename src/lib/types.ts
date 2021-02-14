@@ -36,19 +36,12 @@ export type MutationVector =
   | StretchVector
   | RotationVector;
 
-export type ElementData = {
-  deformations?: {
-    [key: string]: Vec2;
-  };
-  translate?: Vec2;
-};
-
 export type SpriteDefinition = {
   name: string;
   type: "sprite";
   points: Vec2[];
   mutationVectors: MutationVector[];
-  baseElementData: ElementData;
+  translate: Vec2;
 };
 
 export type FolderDefinition = {
@@ -59,10 +52,6 @@ export type FolderDefinition = {
 };
 
 export type ShapeDefinition = FolderDefinition | SpriteDefinition;
-
-export type Keyframe = {
-  [element: string]: ElementData;
-};
 
 export type ItemSelection = {
   name: string;

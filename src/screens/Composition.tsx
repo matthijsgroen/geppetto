@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { mergeVec2 } from "src/lib/vertices";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -24,10 +23,8 @@ import {
   renameVector,
 } from "../lib/definitionHelpers";
 import {
-  ElementData,
   ImageDefinition,
   ItemSelection,
-  Keyframe,
   MutationVector,
   ShapeDefinition,
 } from "../lib/types";
@@ -45,52 +42,52 @@ interface CompositionProps {
 
 type ControlValues = Record<string, number>;
 
-const mergeElement = (
-  a: ElementData,
-  b: ElementData | undefined,
-  mix: number
-): ElementData =>
-  b === undefined
-    ? a
-    : {
-        deformations: Object.entries(a.deformations || {}).reduce(
-          (result, [key, value]) => ({
-            ...result,
-            [key]: mergeVec2(value, result[key], mix),
-          }),
-          b.deformations || {}
-        ),
-        translate: mergeVec2(a.translate, b.translate, mix),
-      };
+// const mergeElement = (
+//   a: ElementData,
+//   b: ElementData | undefined,
+//   mix: number
+// ): ElementData =>
+//   b === undefined
+//     ? a
+//     : {
+//         deformations: Object.entries(a.deformations || {}).reduce(
+//           (result, [key, value]) => ({
+//             ...result,
+//             [key]: mergeVec2(value, result[key], mix),
+//           }),
+//           b.deformations || {}
+//         ),
+//         translate: mergeVec2(a.translate, b.translate, mix),
+//       };
 
-const mergeKeyframes = (a: Keyframe, b: Keyframe, mix: number): Keyframe =>
-  Object.entries(a).reduce(
-    (result, [key, value]) => ({
-      ...result,
-      [key]: mergeElement(value, b[key], mix),
-    }),
-    {} as Keyframe
-  );
+// const mergeKeyframes = (a: Keyframe, b: Keyframe, mix: number): Keyframe =>
+//   Object.entries(a).reduce(
+//     (result, [key, value]) => ({
+//       ...result,
+//       [key]: mergeElement(value, b[key], mix),
+//     }),
+//     {} as Keyframe
+//   );
 
-const createKeyframe = (
-  controlValues: ControlValues,
-  imageDefinition: ImageDefinition
-) =>
-  imageDefinition.controls.reduce(
-    (result, control) => ({
-      ...result,
-      ...mergeKeyframes(
-        mergeKeyframes(
-          control.min,
-          control.max,
-          controlValues[control.name] || 0
-        ),
-        result,
-        0.5
-      ),
-    }),
-    {} as Keyframe
-  );
+// const createKeyframe = (
+//   controlValues: ControlValues,
+//   imageDefinition: ImageDefinition
+// ) =>
+//   imageDefinition.controls.reduce(
+//     (result, control) => ({
+//       ...result,
+//       ...mergeKeyframes(
+//         mergeKeyframes(
+//           control.min,
+//           control.max,
+//           controlValues[control.name] || 0
+//         ),
+//         result,
+//         0.5
+//       ),
+//     }),
+//     {} as Keyframe
+//   );
 
 const Composition: React.FC<CompositionProps> = ({
   texture,
@@ -380,7 +377,6 @@ const Composition: React.FC<CompositionProps> = ({
             panX={panX}
             panY={panY}
             activeLayer={layerSelected}
-            keyframe={createKeyframe(controlValues, imageDefinition)}
           />
         </MouseControl>
       }

@@ -82,7 +82,7 @@ export const addLayer = (
         name: newName,
         type: "sprite",
         points: [],
-        baseElementData: {},
+        translate: [0, 0],
         mutationVectors: [],
       };
       resolve(newSprite);

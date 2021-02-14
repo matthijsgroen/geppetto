@@ -1,6 +1,5 @@
 import {
   ItemSelection,
-  Keyframe,
   MutationVector,
   ShapeDefinition,
 } from "../../lib/types";
@@ -9,14 +8,14 @@ import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes, getAnchor } from "./utils";
 
 const compositionVertexShader = `
-  attribute vec2 coordinates;
   uniform vec2 viewport;
   uniform vec3 translate;
   uniform vec4 scale;
 
-  uniform vec3 uDeformPositions[16];
-  uniform vec2 uDeformValues[16];
-  uniform vec4 moveAndSqueeze;
+  uniform vec3 uMutationVectors[16];
+  uniform vec2 uMutationValues[16];
+
+  attribute vec2 coordinates;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -29,15 +28,15 @@ const compositionVertexShader = `
     vec2 deform = coordinates;
 
     for(int i = 0; i < 16; i++) {
-      vec3 position = uDeformPositions[i];
+      vec3 position = uMutationVectors[i];
       if (position.z > 0.0) {
         float effect = 1.0 - clamp(distance(coordinates, position.xy), 0.0, position.z) / position.z;
 
-        deform = deform + uDeformValues[i] * effect;
+        deform = deform + uMutationValues[i] * effect;
       }
     }
 
-    vec4 pos = viewportScale * vec4((deform * moveAndSqueeze.ba + moveAndSqueeze.xy + translate.xy) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deform + translate.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z - 1.0, 1.0);
   }
 `;
@@ -56,7 +55,6 @@ export const showCompositionMap = (): {
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   setLayerSelected(layer: null | ItemSelection): void;
-  setKeyframe(frame: Keyframe | null): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 2;
@@ -68,7 +66,6 @@ export const showCompositionMap = (): {
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
   let layersSelected: string[] = [];
-  let keyframe: Keyframe | null = null;
 
   let elements: {
     start: number;
@@ -172,9 +169,6 @@ export const showCompositionMap = (): {
 
       layersSelected = collectSpriteNames(shapes);
     },
-    setKeyframe(frame) {
-      keyframe = frame;
-    },
     renderer(initgl: WebGLRenderingContext, { getSize }) {
       gl = initgl;
 
@@ -239,7 +233,7 @@ export const showCompositionMap = (): {
           const calculatedElements = elements.map((element, index) => {
             const sprite = sprites[index];
             const itemOffset = [
-              ...(sprite.baseElementData.translate || [0, 0]),
+              ...sprite.translate,
               sprites.indexOf(sprite) * 0.1,
             ];
 
@@ -262,61 +256,18 @@ export const showCompositionMap = (): {
           const translate = gl.getUniformLocation(shaderProgram, "translate");
           // const deformation = gl.getUniformLocation(
           //   shaderProgram,
-          //   "uDeformPositions"
+          //   "uMutationVectors"
           // );
           const deformationValues = gl.getUniformLocation(
             shaderProgram,
-            "uDeformValues"
-          );
-          const moveAndSqueeze = gl.getUniformLocation(
-            shaderProgram,
-            "moveAndSqueeze"
+            "uMutationValues"
           );
 
           calculatedElements.forEach((element) => {
             if (layersSelected.includes(element.name) && element.amount > 0) {
               gl.uniform3f(translate, element.x, element.y, element.z);
 
-              const elementData = keyframe && keyframe[element.name];
               const deformValues: number[] = Array(16 * 2).fill(0);
-              const moveSquezeValues: number[] = [0, 0, 1, 1];
-
-              if (elementData) {
-                // Object.entries(elementData.deformations || {}).forEach(
-                //   ([key, value]) => {
-                //     const index = element.deformationVectors[key].index;
-
-                //     deformValues[index * 2] = value[0];
-                //     deformValues[index * 2 + 1] = value[1];
-                //   }
-                // );
-                // if (elementData.stretchX) {
-                //   moveSquezeValues[2] = elementData.stretchX;
-                // }
-                // if (elementData.stretchY) {
-                //   moveSquezeValues[3] = elementData.stretchY;
-                // }
-                if (elementData.translate) {
-                  moveSquezeValues[0] = elementData.translate[0];
-                }
-                if (elementData.translate) {
-                  moveSquezeValues[1] = elementData.translate[1];
-                }
-              }
-
-              gl.uniform4f(
-                moveAndSqueeze,
-                moveSquezeValues[0],
-                moveSquezeValues[1],
-                moveSquezeValues[2],
-                moveSquezeValues[3]
-              );
-              // gl.uniform3fv(
-              //   deformation,
-              //   element.deformationVectorList
-              //     .concat(Array(16 * 3).fill(0))
-              //     .slice(0, 16 * 3)
-              // );
               gl.uniform2fv(deformationValues, deformValues);
 
               gl.drawArrays(initgl.LINE_STRIP, element.start, element.amount);

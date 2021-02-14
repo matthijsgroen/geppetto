@@ -36,9 +36,7 @@
                 [25, 702],
                 [8, 670]
               ],
-              "baseElementData": {
-                "translate": [-29, -24]
-              }
+              "translate": [-29, -24]
             },
             {
               "name": "rightArmTop",
@@ -56,9 +54,7 @@
                 [103, 775],
                 [125, 726]
               ],
-              "baseElementData": {
-                "translate": [31, -37]
-              }
+              "translate": [31, -37]
             }
           ]
         },
@@ -83,9 +79,7 @@
               "radius": 20
             }
           ],
-          "baseElementData": {
-            "translate": [-25, -235]
-          }
+          "translate": [-25, -235]
         },
         {
           "name": "rightEyeBrow",
@@ -110,9 +104,7 @@
               "radius": 20
             }
           ],
-          "baseElementData": {
-            "translate": [7, -235]
-          }
+          "translate": [7, -235]
         },
         {
           "name": "mouthOpen",
@@ -130,9 +122,7 @@
             [7, 70],
             [35, 70]
           ],
-          "baseElementData": {
-            "translate": [0, -182]
-          }
+          "translate": [0, -182]
         },
         {
           "name": "leftEye",
@@ -155,9 +145,7 @@
                 [12, 45],
                 [23, 35]
               ],
-              "baseElementData": {
-                "translate": [-24, -221]
-              }
+              "translate": [-24, -221]
             },
             {
               "name": "eyeSocket",
@@ -169,9 +157,7 @@
                 [25, 21],
                 [9, 32]
               ],
-              "baseElementData": {
-                "translate": [-22, -222]
-              }
+              "translate": [-22, -222]
             }
           ]
         },
@@ -196,9 +182,7 @@
                 [34, 45],
                 [47, 35]
               ],
-              "baseElementData": {
-                "translate": [7, -222]
-              }
+              "translate": [7, -222]
             },
             {
               "name": "rightEyeSocket",
@@ -210,9 +194,7 @@
                 [37, 32],
                 [59, 18]
               ],
-              "baseElementData": {
-                "translate": [7, -222]
-              }
+              "translate": [7, -222]
             }
           ]
         },
@@ -228,9 +210,7 @@
             [346, 185],
             [310, 104]
           ],
-          "baseElementData": {
-            "translate": [11, -210]
-          }
+          "translate": [11, -210]
         },
         {
           "name": "body",
@@ -242,9 +222,7 @@
             [588, 615],
             [419, 616]
           ],
-          "baseElementData": {
-            "translate": [9, 59]
-          }
+          "translate": [9, 59]
         },
         {
           "name": "hair",
@@ -257,9 +235,7 @@
             [384, 444],
             [409, 501]
           ],
-          "baseElementData": {
-            "translate": [12, -219]
-          }
+          "translate": [12, -219]
         },
         {
           "name": "leftArm",
@@ -283,9 +259,7 @@
                 [96, 521],
                 [105, 543]
               ],
-              "baseElementData": {
-                "translate": [-115, -68]
-              }
+              "translate": [-115, -68]
             },
             {
               "name": "leftArmTop",
@@ -300,9 +274,7 @@
                 [205, 449],
                 [155, 553]
               ],
-              "baseElementData": {
-                "translate": [-69, -81]
-              }
+              "translate": [-69, -81]
             }
           ]
         }

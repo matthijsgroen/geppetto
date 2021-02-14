@@ -31,17 +31,14 @@ const LayerInfoPanel: React.FC<LayerInfoPanelProps> = ({
         value={
           (shapeSelected &&
             shapeSelected.type === "sprite" &&
-            shapeSelected.baseElementData.translate) || [0, 0]
+            shapeSelected.translate) || [0, 0]
         }
         onChange={(newValue) => {
           if (!shapeSelected) return;
           updateImageDefinition((state) =>
             updateSpriteData(state, shapeSelected.name, (sprite) => ({
               ...sprite,
-              baseElementData: {
-                ...sprite.baseElementData,
-                translate: newValue,
-              },
+              translate: newValue,
             }))
           );
         }}

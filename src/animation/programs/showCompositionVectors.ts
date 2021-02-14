@@ -2,7 +2,6 @@ import { vectorNamesFromShape } from "src/lib/definitionHelpers";
 import { isShapeDefintion, visitShapes } from "src/lib/visit";
 import {
   ItemSelection,
-  Keyframe,
   MutationVector,
   ShapeDefinition,
   Vec2,
@@ -17,9 +16,8 @@ const compositionVertexShader = `
   uniform vec3 translate;
   uniform vec4 scale;
 
-  uniform vec3 uDeformPositions[16];
-  uniform vec2 uDeformValues[16];
-  uniform vec4 moveAndSqueeze;
+  uniform vec3 uMutationVectors[16];
+  uniform vec2 uMutationValues[16];
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -32,15 +30,15 @@ const compositionVertexShader = `
     vec2 deform = coordinates.xy;
 
     for(int i = 0; i < 16; i++) {
-      vec3 position = uDeformPositions[i];
+      vec3 position = uMutationVectors[i];
       if (position.z > 0.0) {
         float effect = 1.0 - clamp(distance(coordinates.xy, position.xy), 0.0, position.z) / position.z;
 
-        deform = deform + uDeformValues[i] * effect;
+        deform = deform + uMutationValues[i] * effect;
       }
     }
 
-    vec4 pos = viewportScale * vec4((deform * moveAndSqueeze.ba + moveAndSqueeze.xy + translate.xy) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deform + translate.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z - 1.0, 1.0);
     if (color.a == 1.0) {
       gl_PointSize = coordinates.z * scale.x;
@@ -94,7 +92,6 @@ export const showCompositionVectors = (): {
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   setLayerSelected(layer: null | ItemSelection): void;
-  setKeyframe(frame: Keyframe | null): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 7;
@@ -106,7 +103,6 @@ export const showCompositionVectors = (): {
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
   let vectorsSelected: string[] = [];
-  let keyframe: Keyframe | null = null;
 
   let vectors: {
     name: string;
@@ -217,9 +213,6 @@ export const showCompositionVectors = (): {
 
       vectorsSelected = collectVectorNames(shapes);
     },
-    setKeyframe(frame) {
-      keyframe = frame;
-    },
     renderer(initgl: WebGLRenderingContext, { getSize }) {
       gl = initgl;
 
@@ -303,51 +296,18 @@ export const showCompositionVectors = (): {
           calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
-          // const deformation = gl.getUniformLocation(
-          //   shaderProgram,
-          //   "uDeformPositions"
-          // );
-          const deformationValues = gl.getUniformLocation(
+          const mutationValues = gl.getUniformLocation(
             shaderProgram,
-            "uDeformValues"
-          );
-          const moveAndSqueeze = gl.getUniformLocation(
-            shaderProgram,
-            "moveAndSqueeze"
+            "uMutationValues"
           );
 
           calculatedElements.forEach((element) => {
             if (vectorsSelected.includes(element.name)) {
               gl.uniform3f(translate, element.x, element.y, element.z);
 
-              const elementData = keyframe && keyframe[element.boundToLayer];
-              const deformValues: number[] = Array(16 * 2).fill(0);
-              const moveSquezeValues: number[] = [0, 0, 1, 1];
+              const mutationVectorValues: number[] = Array(16 * 2).fill(0);
 
-              if (elementData) {
-                if (elementData.translate) {
-                  moveSquezeValues[0] = elementData.translate[0];
-                }
-                if (elementData.translate) {
-                  moveSquezeValues[1] = elementData.translate[1];
-                }
-              }
-
-              gl.uniform4f(
-                moveAndSqueeze,
-                moveSquezeValues[0],
-                moveSquezeValues[1],
-                moveSquezeValues[2],
-                moveSquezeValues[3]
-              );
-              // gl.uniform3fv(
-              //   deformation,
-              //   element.deformationVectorList
-              //     .concat(Array(16 * 3).fill(0))
-              //     .slice(0, 16 * 3)
-              // );
-              gl.uniform2fv(deformationValues, deformValues);
-
+              gl.uniform2fv(mutationValues, mutationVectorValues);
               gl.drawArrays(initgl.POINTS, element.start, element.amount);
             }
           });

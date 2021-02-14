@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { ItemSelection, Keyframe, ShapeDefinition } from "../lib/types";
+import { ItemSelection, ShapeDefinition } from "../lib/types";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
 import { showCompositionVectors } from "./programs/showCompositionVectors";
@@ -12,7 +12,6 @@ export interface TextureMapCanvasProps {
   panX: number;
   panY: number;
   activeLayer?: ItemSelection | null;
-  keyframe?: Keyframe;
 }
 
 const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
@@ -21,7 +20,6 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   zoom,
   panX,
   panY,
-  keyframe,
   activeLayer = null,
 }) => {
   const composition = useMemo(() => showComposition(), []);
@@ -52,15 +50,12 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
 
   composition.setZoom(zoom);
   composition.setPan(panX, panY);
-  composition.setKeyframe(keyframe || null);
 
   layer.setZoom(zoom);
   layer.setPan(panX, panY);
-  layer.setKeyframe(keyframe || null);
 
   vectorMap.setZoom(zoom);
   vectorMap.setPan(panX, panY);
-  vectorMap.setKeyframe(keyframe || null);
 
   return <WebGLCanvas renderers={renderers} />;
 };
