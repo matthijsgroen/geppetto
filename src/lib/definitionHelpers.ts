@@ -201,6 +201,21 @@ export const canMoveDown = (
   return false;
 };
 
+const addToBottomChild = (
+  children: ShapeDefinition[],
+  vector: MutationVector
+): ShapeDefinition[] =>
+  children.map((shape, index, list) =>
+    index === list.length - 1
+      ? shape.type === "folder" && shape.items.length > 0
+        ? { ...shape, items: addToBottomChild(shape.items, vector) }
+        : {
+            ...shape,
+            mutationVectors: shape.mutationVectors.concat(vector),
+          }
+      : shape
+  );
+
 const move = (
   moveDown: boolean,
   item: ItemSelection,
@@ -283,55 +298,65 @@ const move = (
               ),
             });
           }
-          if (vectorIndex === 0) {
-            if (lastAdded && lastAdded.type === "sprite") {
-              const updatedResult = result.map((shape, index, list) =>
-                index === list.length - 1
-                  ? {
-                      ...shape,
-                      mutationVectors: shape.mutationVectors.concat(vector),
-                    }
-                  : shape
+          if (vectorIndex === 0 && lastAdded) {
+            const updatedResult = addToBottomChild(result, vector);
+            return updatedResult.concat({
+              ...shape,
+              mutationVectors: shape.mutationVectors.slice(1),
+            });
+          }
+        }
+      } else {
+        if (moveDown) {
+          const next = list[index + 1];
+          if (shape.type === "folder" && next) {
+            const lastChild = shape.items[shape.items.length - 1];
+            const lastVector =
+              lastChild.mutationVectors[lastChild.mutationVectors.length - 1];
+            if (lastVector && lastVector.name === item.name) {
+              return result.concat(
+                {
+                  ...shape,
+                  items: shape.items.map((child, index, list) =>
+                    index === list.length - 1
+                      ? {
+                          ...child,
+                          mutationVectors: child.mutationVectors.slice(0, -1),
+                        }
+                      : child
+                  ),
+                },
+                {
+                  ...next,
+                  mutationVectors: [lastVector].concat(next.mutationVectors),
+                }
               );
-              return updatedResult.concat({
+            }
+          }
+        } else {
+          if (shape.type === "folder") {
+            const firstChild = shape.items[0];
+            const firstVector = firstChild.mutationVectors[0];
+            if (firstVector && firstVector.name === item.name) {
+              return result.concat({
                 ...shape,
-                mutationVectors: shape.mutationVectors.slice(1),
+                mutationVectors: shape.mutationVectors.concat(firstVector),
+                items: shape.items.map((child, index) =>
+                  index === 0
+                    ? {
+                        ...child,
+                        mutationVectors: child.mutationVectors.slice(1),
+                      }
+                    : child
+                ),
               });
             }
           }
         }
-      } else {
-        const next = list[index + 1];
-        if (shape.type === "folder" && next) {
-          const lastChild = shape.items[shape.items.length - 1];
-          const lastVector =
-            lastChild.mutationVectors[lastChild.mutationVectors.length - 1];
-          if (lastVector && lastVector.name === item.name) {
-            return result.concat(
-              {
-                ...shape,
-                items: shape.items.map((child, index, list) =>
-                  index === list.length - 1
-                    ? {
-                        ...child,
-                        mutationVectors: child.mutationVectors.slice(0, -1),
-                      }
-                    : child
-                ),
-              },
-              {
-                ...next,
-                mutationVectors: [lastVector].concat(next.mutationVectors),
-              }
-            );
-          }
-        }
       }
-      // TODO: If vectorIndex === 0, add to bottom of previous element in the list (could be nested folder)
     }
 
     if (shape.name === item.name && item.type === "layer" && moveDown) {
-      // get next item
       const next = list[index + 1];
       if (next) {
         if (next.type === "sprite") {
@@ -346,7 +371,6 @@ const move = (
     }
     const next = list[index + 1];
     if (next && next.name === item.name && item.type === "layer" && !moveDown) {
-      // get next item
       if (shape.type === "sprite") {
         return result.concat(next, shape);
       } else {
