@@ -240,12 +240,24 @@
         {
           "name": "leftArm",
           "type": "folder",
-          "mutationVectors": [],
+          "mutationVectors": [
+            {
+              "type": "rotate",
+              "origin": [-43, -131],
+              "name": "leftTopRotation"
+            }
+          ],
           "items": [
             {
               "name": "leftArmBottom",
               "type": "sprite",
-              "mutationVectors": [],
+              "mutationVectors": [
+                {
+                  "type": "rotate",
+                  "origin": [-96, -29],
+                  "name": "leftBottomRotation"
+                }
+              ],
               "points": [
                 [119, 547],
                 [134, 594],
