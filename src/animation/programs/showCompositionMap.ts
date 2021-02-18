@@ -1,4 +1,4 @@
-import { isMutationVector, visitShapes } from "src/lib/visit";
+import { isMutationVector, isShapeDefintion, visitShapes } from "src/lib/visit";
 import { ItemSelection, ShapeDefinition } from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
@@ -78,6 +78,7 @@ export const showCompositionMap = (): {
     name: string;
     start: number;
     amount: number;
+    mutator: number;
     x: number;
     y: number;
     z: number;
@@ -96,7 +97,9 @@ export const showCompositionMap = (): {
     const vectorSettings: number[] = Array(MAX_MUTATION_VECTORS * 4).fill(0);
     const mutators: string[] = [];
 
-    visitShapes(shapes, (item) => {
+    const treeInfo: { mutator: number; shape: ShapeDefinition }[][] = [];
+
+    visitShapes(shapes, (item, parents) => {
       if (isMutationVector(item)) {
         const index = mutators.length;
         mutators.push(item.name);
@@ -106,14 +109,60 @@ export const showCompositionMap = (): {
         if (item.type === "deform") {
           vectorSettings[index * 4 + 3] = item.radius;
         }
+
+        const existingBranch = treeInfo.find((branch) =>
+          branch.find((node) => parents.includes(node.shape))
+        );
+        if (existingBranch) {
+          existingBranch.push({
+            mutator: index + 1,
+            shape: parents
+              .reverse()
+              .find((e) => isShapeDefintion(e)) as ShapeDefinition,
+          });
+        } else {
+          treeInfo.push([
+            {
+              mutator: index + 1,
+              shape: parents
+                .reverse()
+                .find((e) => isShapeDefintion(e)) as ShapeDefinition,
+            },
+          ]);
+        }
       }
       return undefined;
     });
 
+    const maxDepth = treeInfo.reduce(
+      (result, branch) => (branch.length > result ? branch.length : result),
+      0
+    );
+
+    let level = 1;
+    let lengthRequired = 2;
+    while (Math.pow(2, level) < treeInfo.length) {
+      lengthRequired += Math.pow(2, level);
+      level++;
+    }
+    lengthRequired += Math.pow(2, level);
+
+    for (let i = 1; i < maxDepth; i++) {
+      lengthRequired += Math.pow(2, level + i);
+    }
+
+    const parentOf = (node: number): number => Math.floor(node / 2.0);
+    const childrenOf = (node: number): [number, number] => [
+      node * 2,
+      node * 2 + 1,
+    ];
+
+    const treeData = new Float32Array(lengthRequired);
+    const startElement = Math.pow(2, level);
+
     if (mutators.length >= MAX_MUTATION_VECTORS) {
       throw new Error("More vectors than shader permits");
     }
-    // console.log("Amount of vectors: ", mutators.length);
 
     gl.uniform2fv(mutationVectors, vectorSettings);
 
@@ -132,6 +181,7 @@ export const showCompositionMap = (): {
         name: shape.name,
         start: vertices.length / stride,
         amount: list.length / 2,
+        mutator: 0,
         x: itemOffset[0],
         y: itemOffset[1],
         z: -itemOffset[2] * 0.001,
@@ -139,7 +189,46 @@ export const showCompositionMap = (): {
       });
       vertices.push(...list);
     });
+
+    treeInfo.forEach((vectors, index) => {
+      let nodeIndex = startElement + index;
+      vectors.forEach((item, branchIndex) => {
+        if (branchIndex > 0) {
+          nodeIndex = childrenOf(nodeIndex)[0];
+        }
+        treeData[nodeIndex] = item.mutator;
+        elements.forEach((e) => {
+          if (
+            (e.name === item.shape.name ||
+              (item.shape.type === "folder" &&
+                item.shape.items.find(
+                  (c) => c.type === "sprite" && c.name === e.name
+                ))) &&
+            e.mutator < nodeIndex
+          ) {
+            e.mutator = nodeIndex;
+          }
+        });
+      });
+    });
+
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));
+    console.log(treeData);
+    console.log(elements);
+
+    // -- DEBUG PRINT
+    elements.forEach((e) => {
+      const mutatorNames = [];
+      let treeNode = e.mutator;
+      while (treeNode > 0) {
+        const index = treeData[treeNode];
+        if (index > 0) mutatorNames.push(mutators[index - 1]);
+        treeNode = parentOf(treeNode);
+      }
+
+      console.log("Element: ", e.name, "Mutators", mutatorNames);
+    });
+    // -- END DEBUG PRINT
 
     const indices = Array(vertices.length / stride)
       .fill(0)

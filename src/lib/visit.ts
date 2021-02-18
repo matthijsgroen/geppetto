@@ -1,7 +1,8 @@
 import { ShapeDefinition, MutationVector, ImageDefinition } from "./types";
 
 export type Visitor = (
-  item: ShapeDefinition | MutationVector
+  item: ShapeDefinition | MutationVector,
+  parents: (ShapeDefinition | MutationVector)[]
 ) => ShapeDefinition | MutationVector | false | undefined;
 
 interface ItemWithType {
@@ -19,10 +20,11 @@ export const isMutationVector = (item: ItemWithType): item is MutationVector =>
 
 export const visitVectors = (
   vectors: MutationVector[],
-  visitor: Visitor
+  visitor: Visitor,
+  parents: (ShapeDefinition | MutationVector)[] = []
 ): MutationVector[] =>
   vectors.reduce((result, item) => {
-    const visited = visitor(item);
+    const visited = visitor(item, parents);
     if (visited === false) {
       return result;
     }
@@ -36,10 +38,11 @@ export const visitVectors = (
 
 export const visitShapes = (
   shapes: ShapeDefinition[],
-  visitor: Visitor
+  visitor: Visitor,
+  parents: (ShapeDefinition | MutationVector)[] = []
 ): ShapeDefinition[] =>
   shapes.reduce((result, item) => {
-    const visited = visitor(item);
+    const visited = visitor(item, parents);
     if (visited === false) {
       return result;
     }
@@ -52,12 +55,20 @@ export const visitShapes = (
       newNode.type === "folder"
         ? {
             ...newNode,
-            items: visitShapes(newNode.items, visitor),
-            mutationVectors: visitVectors(newNode.mutationVectors, visitor),
+            mutationVectors: visitVectors(
+              newNode.mutationVectors,
+              visitor,
+              parents.concat(newNode)
+            ),
+            items: visitShapes(newNode.items, visitor, parents.concat(newNode)),
           }
         : {
             ...newNode,
-            mutationVectors: visitVectors(newNode.mutationVectors, visitor),
+            mutationVectors: visitVectors(
+              newNode.mutationVectors,
+              visitor,
+              parents.concat(newNode)
+            ),
           };
 
     return result.concat(updatedChildSprites);
