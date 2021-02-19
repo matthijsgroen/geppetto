@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const Control = styled.div`
+  color: ${({ theme }) => theme.colors.text};
   padding: 0.5rem 0;
   border-bottom: 1px solid ${({ theme }) => theme.colors.text};
   display: flex;

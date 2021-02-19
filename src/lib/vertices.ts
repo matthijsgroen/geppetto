@@ -1,5 +1,5 @@
 import Delaunator from "delaunator";
-import { Vec2 } from "./types";
+import { MutationVector, Vec2 } from "./types";
 
 export const verticesFromPoints = (points: number[][]): number[] =>
   Delaunator.from(points).triangles.reduce(
@@ -20,3 +20,6 @@ export const vector2X = (x: number, vec: Vec2 = [0, 0]): Vec2 => [x, vec[1]];
 export const vector2Y = (y: number, vec: Vec2 = [0, 0]): Vec2 => [vec[0], y];
 export const getX = (vec: Vec2 = [0, 0]): number => vec[0];
 export const getY = (vec: Vec2 = [0, 0]): number => vec[1];
+
+export const defaultValueForVector = (type: MutationVector["type"]): Vec2 =>
+  type === "stretch" ? [1, 1] : [0, 0];

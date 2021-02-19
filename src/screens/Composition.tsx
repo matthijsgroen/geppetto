@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { defaultValueForVector } from "src/lib/vertices";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -332,7 +333,10 @@ const Composition: React.FC<CompositionProps> = ({
             key="info"
             vectorSelected={vectorSelected}
             updateImageDefinition={updateImageDefinition}
-            vectorValue={vectorValues[vectorSelected.name] || [0, 0]}
+            vectorValue={
+              vectorValues[vectorSelected.name] ||
+              defaultValueForVector(vectorSelected.type)
+            }
             updateVectorValue={(newValue) => {
               setVectorValues((data) => ({
                 ...data,

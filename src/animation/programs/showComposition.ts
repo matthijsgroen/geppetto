@@ -7,13 +7,12 @@ import {
 import { ShapeDefinition, Vec2 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
+  MAX_MUTATION_VECTORS,
   MAX_TREE_SIZE,
   mutationShader,
   vectorTypeMapping,
 } from "./mutatePoint";
 import { flattenShapes, getAnchor } from "./utils";
-
-const MAX_MUTATION_VECTORS = 20;
 
 const compositionVertexShader = `
   uniform vec2 viewport;

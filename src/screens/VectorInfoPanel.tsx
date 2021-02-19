@@ -2,9 +2,11 @@ import React from "react";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
 import SelectControl from "src/components/SelectControl";
+import SliderControl from "src/components/SliderControl";
 import Vect2InputControl from "src/components/Vec2InputControl";
 import { updateVectorData } from "src/lib/definitionHelpers";
 import { ImageDefinition, MutationVector, Vec2 } from "src/lib/types";
+import { defaultValueForVector } from "src/lib/vertices";
 
 interface VectorInfoPanelProps {
   vectorSelected: MutationVector;
@@ -85,6 +87,7 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
               createVector(vector.name, vector.origin, newValue.value)
             )
           );
+          updateVectorValue(defaultValueForVector(newValue.value));
         }}
       />,
       <Vect2InputControl
@@ -115,16 +118,56 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                 );
               }}
             />,
+            <Vect2InputControl
+              key={"value"}
+              title={"value"}
+              value={vectorValue}
+              onChange={(newValue) => {
+                updateVectorValue(newValue);
+              }}
+            />,
           ]
         : []),
-      <Vect2InputControl
-        key={"value"}
-        title={"value"}
-        value={vectorValue}
-        onChange={(newValue) => {
-          updateVectorValue(newValue);
-        }}
-      />,
+      ...(vectorSelected.type === "stretch"
+        ? [
+            <Vect2InputControl
+              key={"value"}
+              title={"value"}
+              value={vectorValue}
+              step={0.05}
+              onChange={(newValue) => {
+                updateVectorValue(newValue);
+              }}
+            />,
+          ]
+        : []),
+      ...(vectorSelected.type === "translate"
+        ? [
+            <Vect2InputControl
+              key={"value"}
+              title={"value"}
+              value={vectorValue}
+              onChange={(newValue) => {
+                updateVectorValue(newValue);
+              }}
+            />,
+          ]
+        : []),
+      ...(vectorSelected.type === "rotate"
+        ? [
+            <SliderControl
+              key={"value"}
+              title={"value"}
+              value={vectorValue[0]}
+              min={-Math.PI * 2}
+              max={Math.PI * 2}
+              step={Math.PI / 180}
+              onChange={(newValue) => {
+                updateVectorValue([newValue, 0]);
+              }}
+            />,
+          ]
+        : []),
     ]}
   />
 );

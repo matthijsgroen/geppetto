@@ -1,5 +1,6 @@
 export const MAX_MUTATION_VECTORS = 20;
-export const MAX_TREE_SIZE = 128;
+export const MAX_TREE_LEVELS = 7;
+export const MAX_TREE_SIZE = Math.pow(2, MAX_TREE_LEVELS);
 
 export const vectorTypeMapping = {
   translate: 1,
@@ -16,7 +17,7 @@ export const mutationShader = `
   uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
   uniform float uMutationTree[${MAX_TREE_SIZE}];
 
-  vec2 mutatePoint(vec2 startValue, int treeIndex) {
+  vec2 mutateOnce(vec2 startValue, int treeIndex) {
     if (treeIndex == 0) {
       return startValue;
     }
@@ -28,19 +29,47 @@ export const mutationShader = `
     vec4 mutation = uMutationVectors[mutationIndex - 1];
     vec2 mutationValue = uMutationValues[mutationIndex - 1];
     int mutationType = int(mutation.x);
+    vec2 origin = mutation.yz;
+
+    vec2 result = startValue;
 
     if (mutationType == 1) { // Translate
-      return startValue + mutationValue;
+      result = startValue + mutationValue;
     }
 
     if (mutationType == 2) { // Translate
-      vec2 origin = mutation.yz;
-      return origin + vec2(
+      result = origin + vec2(
         (startValue.x - origin.x) * mutationValue.x, 
         (startValue.y - origin.y) * mutationValue.y
       );
     }
 
-    return startValue;
+    if (mutationType == 3) { // Rotation
+      mat2 entityRotationMatrix = mat2(cos(mutationValue.x), sin(mutationValue.x), -sin(mutationValue.x), cos(mutationValue.x));
+      result = (startValue - origin) * entityRotationMatrix + origin;
+    }
+
+    if (mutationType == 4) { // Deform
+      float effect = 1.0 - clamp(distance(startValue, origin), 0.0, mutation.a) / mutation.a;	
+      result = startValue + mutationValue * effect;	
+    }
+
+    return result;
   }
+
+
+  vec2 mutatePoint(vec2 startValue, int treeIndex) {
+    int currentNode = treeIndex;
+    vec2 result = startValue;
+
+    for(int i = 0; i < ${MAX_TREE_LEVELS}; i++) {
+        if (currentNode == 0) {
+            return result;
+        }
+        result = mutateOnce(result, currentNode);
+        currentNode /= 2;
+    }
+    return result;
+  }
+
 `;
