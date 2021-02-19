@@ -3,9 +3,16 @@ import styled from "styled-components";
 import { Control, ControlLabel } from "./Control";
 
 const Slider = styled.input.attrs({ type: "range" })``;
+const Value = styled.p`
+  font-size: 0.7rem;
+  text-align: right;
+  padding-right: 1em;
+  margin: 0;
+`;
 
 interface SliderControlProps {
   title?: string;
+  showValue?: boolean;
   value: number;
   min: number;
   max: number;
@@ -19,17 +26,21 @@ const SliderControl: React.FC<SliderControlProps> = ({
   max,
   step,
   value,
+  showValue = false,
   onChange,
 }) => (
   <Control>
     {title && <ControlLabel>{title}</ControlLabel>}
-    <Slider
-      min={min}
-      max={max}
-      step={step}
-      value={value}
-      onChange={(e) => onChange(e.currentTarget.valueAsNumber)}
-    />
+    <div>
+      {showValue && <Value>{Math.round(value * 10e3) / 10e3}</Value>}
+      <Slider
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(e.currentTarget.valueAsNumber)}
+      />
+    </div>
   </Control>
 );
 
