@@ -1,5 +1,5 @@
 import { vectorNamesFromShape } from "src/lib/definitionHelpers";
-import { isShapeDefintion, visitShapes } from "src/lib/visit";
+import { isShapeDefinition, visitShapes } from "src/lib/visit";
 import {
   ItemSelection,
   MutationVector,
@@ -119,7 +119,7 @@ export const showCompositionVectors = (): {
     const vertices: number[] = [];
     vectors = [];
     visitShapes(shapes, (shape) => {
-      if (!isShapeDefintion(shape)) {
+      if (!isShapeDefinition(shape)) {
         return undefined;
       }
       shape.mutationVectors.forEach((vector) => {

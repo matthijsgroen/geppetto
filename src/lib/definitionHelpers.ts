@@ -7,7 +7,7 @@ import {
   SpriteDefinition,
   Vec2,
 } from "./types";
-import { isMutationVector, isShapeDefintion, visit } from "./visit";
+import { isMutationVector, isShapeDefinition, visit } from "./visit";
 
 export const newDefinition = (): ImageDefinition => ({
   shapes: [],
@@ -138,7 +138,7 @@ export const addVector = (
       resolve(newVector);
 
       return visit(image, (item) =>
-        isShapeDefintion(item) && item.name === parent.name
+        isShapeDefinition(item) && item.name === parent.name
           ? {
               ...item,
               mutationVectors: ([newVector] as MutationVector[]).concat(
@@ -170,7 +170,7 @@ export const canMoveUp = (
 const getBottomShape = (image: ImageDefinition): ShapeDefinition | null => {
   let result: ShapeDefinition | null = null;
   visit(image, (item) => {
-    if (isShapeDefintion(item)) {
+    if (isShapeDefinition(item)) {
       result = item;
     }
     return undefined;
@@ -435,7 +435,7 @@ export const renameLayer = (
   newName: string
 ): ImageDefinition =>
   visit(image, (item) =>
-    isShapeDefintion(item) && item.name === currentName
+    isShapeDefinition(item) && item.name === currentName
       ? { ...item, name: newName }
       : undefined
   );
@@ -505,7 +505,7 @@ export const getShape = (
 ): ShapeDefinition | null => {
   let result = null;
   visit(image, (item) => {
-    if (isShapeDefintion(item) && item.name === name) {
+    if (isShapeDefinition(item) && item.name === name) {
       result = item;
     }
     return undefined;
@@ -570,7 +570,7 @@ export const removeItem = (
   selectedItem: ItemSelection
 ): ImageDefinition =>
   visit(image, (item) =>
-    ((selectedItem.type === "layer" && isShapeDefintion(item)) ||
+    ((selectedItem.type === "layer" && isShapeDefinition(item)) ||
       (selectedItem.type === "vector" && isMutationVector(item))) &&
     item.name === selectedItem.name
       ? false

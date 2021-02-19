@@ -1,29 +1,23 @@
-import { isMutationVector, isShapeDefintion, visitShapes } from "src/lib/visit";
+import {
+  isMutationVector,
+  isShapeDefinition,
+  visitShapes,
+} from "src/lib/visit";
 import { ItemSelection, ShapeDefinition, Vec2 } from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
+import {
+  MAX_MUTATION_VECTORS,
+  MAX_TREE_SIZE,
+  mutationShader,
+  vectorTypeMapping,
+} from "./mutatePoint";
 import { flattenShapes, getAnchor } from "./utils";
-
-const MAX_MUTATION_VECTORS = 20;
-const MAX_TREE_SIZE = 128;
-
-const vectorTypeMapping = {
-  translate: 1,
-  stretch: 2,
-  rotate: 3,
-  deform: 4,
-};
 
 const compositionVertexShader = `
   uniform vec2 viewport;
   uniform vec3 translate;
   uniform vec4 scale;
-  uniform float mutation; 
-
-  // x = type, yz = origin, a = radius
-  uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];
-  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
-  uniform float uMutationTree[${MAX_TREE_SIZE}];
 
   attribute vec2 coordinates;
 
@@ -34,26 +28,7 @@ const compositionVertexShader = `
     -1, +1, 0, 1
   );
 
-  vec2 mutatePoint(vec2 startValue, int treeIndex) {
-    if (treeIndex == 0) {
-      return startValue;
-    }
-    int mutationIndex = int(uMutationTree[treeIndex]);
-    if (mutationIndex == 0) {
-      // TODO, iterate higher into tree until treeIndex == 0
-      return startValue;
-    }
-    vec4 mutation = uMutationVectors[mutationIndex - 1];
-    vec2 mutationValue = uMutationValues[mutationIndex - 1];
-    int mutationType = int(mutation.x);
-
-    if (mutationType == 1) { // Translate
-      return startValue + mutationValue;
-    }
-
-    return startValue;
-  }
-
+  ${mutationShader}
 
   void main() {
     vec2 deform = mutatePoint(coordinates, int(mutation));
@@ -138,7 +113,7 @@ export const showCompositionMap = (): {
             mutator: index + 1,
             shape: parents
               .reverse()
-              .find((e) => isShapeDefintion(e)) as ShapeDefinition,
+              .find((e) => isShapeDefinition(e)) as ShapeDefinition,
           });
         } else {
           treeInfo.push([
@@ -146,7 +121,7 @@ export const showCompositionMap = (): {
               mutator: index + 1,
               shape: parents
                 .reverse()
-                .find((e) => isShapeDefintion(e)) as ShapeDefinition,
+                .find((e) => isShapeDefinition(e)) as ShapeDefinition,
             },
           ]);
         }
@@ -159,7 +134,6 @@ export const showCompositionMap = (): {
       level++;
     }
 
-    // const parentOf = (node: number): number => Math.floor(node / 2.0);
     const childrenOf = (node: number): [number, number] => [
       node * 2,
       node * 2 + 1,
@@ -173,7 +147,6 @@ export const showCompositionMap = (): {
     }
 
     gl.uniform4fv(uMutationVectors, vectorSettings);
-    console.log("uMutationVectors", vectorSettings);
 
     const sprites = flattenShapes(shapes);
 
@@ -193,7 +166,7 @@ export const showCompositionMap = (): {
         mutator: 0,
         x: itemOffset[0],
         y: itemOffset[1],
-        z: -itemOffset[2] * 0.001,
+        z: itemOffset[2] * 0.001,
       });
       vertices.push(...list);
     });
@@ -221,27 +194,9 @@ export const showCompositionMap = (): {
     });
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));
-    console.log(treeData);
-    console.log(elements);
-
-    // // -- DEBUG PRINT
-    // elements.forEach((e) => {
-    //   const mutatorNames = [];
-    //   let treeNode = e.mutator;
-    //   while (treeNode > 0) {
-    //     const index = treeData[treeNode];
-    //     if (index > 0) mutatorNames.push(mutators[index - 1]);
-    //     treeNode = parentOf(treeNode);
-    //   }
-
-    //   console.log("Element: ", e.name, "Mutators", mutatorNames);
-    // });
-    // -- END DEBUG PRINT
 
     const uMutationTree = gl.getUniformLocation(program, "uMutationTree");
     gl.uniform1fv(uMutationTree, treeData);
-    console.log("uMutationTree", treeData);
-    console.log("elements", elements);
 
     const indices = Array(vertices.length / stride)
       .fill(0)
@@ -397,8 +352,8 @@ export const showCompositionMap = (): {
           const mutation = gl.getUniformLocation(shaderProgram, "mutation");
 
           elements.forEach((element) => {
-            // if (layersSelected.includes(element.name) && element.amount > 0) {
-            if (element.amount > 0) {
+            if (layersSelected.includes(element.name) && element.amount > 0) {
+              // if (element.amount > 0) {
               gl.uniform3f(
                 translate,
                 basePosition[0] + element.x,

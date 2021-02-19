@@ -47,6 +47,7 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
 
   useEffect(() => {
     layer.setVectorValues(vectorValues);
+    composition.setVectorValues(vectorValues);
   }, [vectorValues]);
 
   useEffect(() => {

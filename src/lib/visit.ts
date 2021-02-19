@@ -9,8 +9,9 @@ interface ItemWithType {
   type: string;
 }
 
-export const isShapeDefintion = (item: ItemWithType): item is ShapeDefinition =>
-  item.type === "folder" || item.type === "sprite";
+export const isShapeDefinition = (
+  item: ItemWithType
+): item is ShapeDefinition => item.type === "folder" || item.type === "sprite";
 
 export const isMutationVector = (item: ItemWithType): item is MutationVector =>
   item.type === "deform" ||
@@ -47,7 +48,7 @@ export const visitShapes = (
       return result;
     }
     const newNode =
-      (visited && !isShapeDefintion(visited)) || visited === undefined
+      (visited && !isShapeDefinition(visited)) || visited === undefined
         ? item
         : visited;
 
