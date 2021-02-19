@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { defaultValueForVector } from "src/lib/vertices";
+import { isMutationVector, visit } from "src/lib/visit";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -136,6 +137,21 @@ const Composition: React.FC<CompositionProps> = ({
       : getVector(imageDefinition, layerSelected.name);
 
   useEffect(() => {
+    let updatedValues = false;
+    const newVectorValues = {
+      ...vectorValues,
+    };
+    visit(imageDefinition, (item) => {
+      if (isMutationVector(item) && newVectorValues[item.name] === undefined) {
+        updatedValues = true;
+        newVectorValues[item.name] = defaultValueForVector(item.type);
+      }
+      return undefined;
+    });
+    if (updatedValues) {
+      setVectorValues(newVectorValues);
+    }
+
     if (!layerSelected) {
       return;
     }
@@ -145,6 +161,7 @@ const Composition: React.FC<CompositionProps> = ({
         setItemSelected(null);
       }
     }
+
     // TODO: Add same path for vector
   }, [imageDefinition]);
 
