@@ -27,9 +27,9 @@ import {
 import {
   ImageDefinition,
   ItemSelection,
+  Keyframe,
   MutationVector,
   ShapeDefinition,
-  Vec2,
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 import LayerInfoPanel from "./LayerInfoPanel";
@@ -107,7 +107,7 @@ const Composition: React.FC<CompositionProps> = ({
     null
   );
   const [controlValues, setControlValues] = useState<ControlValues>({});
-  const [vectorValues, setVectorValues] = useState<Record<string, Vec2>>({});
+  const [vectorValues, setVectorValues] = useState<Keyframe>({});
 
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | null) => {
@@ -326,7 +326,6 @@ const Composition: React.FC<CompositionProps> = ({
                     newName,
                     layerSelected ? layerSelected.name : null
                   );
-                  console.log(layerSelected, oldName, vectorName);
                   updateImageDefinition((state) =>
                     renameVector(state, oldName, vectorName)
                   );

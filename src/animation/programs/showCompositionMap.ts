@@ -3,7 +3,7 @@ import {
   isShapeDefinition,
   visitShapes,
 } from "src/lib/visit";
-import { ItemSelection, ShapeDefinition, Vec2 } from "../../lib/types";
+import { ItemSelection, Keyframe, ShapeDefinition } from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
@@ -50,7 +50,7 @@ const compositionFragmentShader = `
 export const showCompositionMap = (): {
   setImage(image: HTMLImageElement): void;
   setShapes(s: ShapeDefinition[]): void;
-  setVectorValues(v: Record<string, Vec2>): void;
+  setVectorValues(v: Keyframe): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   setLayerSelected(layer: null | ItemSelection): void;
@@ -66,7 +66,7 @@ export const showCompositionMap = (): {
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
   let layersSelected: string[] = [];
-  let vectorValues: Record<string, Vec2> = {};
+  let vectorValues: Keyframe = {};
 
   let elements: {
     name: string;

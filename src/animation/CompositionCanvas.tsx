@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { ItemSelection, ShapeDefinition, Vec2 } from "../lib/types";
+import { ItemSelection, Keyframe, ShapeDefinition } from "../lib/types";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
 import { showCompositionVectors } from "./programs/showCompositionVectors";
@@ -8,7 +8,7 @@ import WebGLCanvas from "./WebGLCanvas";
 export interface TextureMapCanvasProps {
   image: HTMLImageElement | null;
   shapes: ShapeDefinition[];
-  vectorValues: Record<string, Vec2>;
+  vectorValues: Keyframe;
   zoom: number;
   panX: number;
   panY: number;

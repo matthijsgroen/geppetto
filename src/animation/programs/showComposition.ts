@@ -4,7 +4,7 @@ import {
   isShapeDefinition,
   visitShapes,
 } from "src/lib/visit";
-import { ShapeDefinition, Vec2 } from "../../lib/types";
+import { Keyframe, ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
   MAX_MUTATION_VECTORS,
@@ -61,7 +61,7 @@ const compositionFragmentShader = `
 export const showComposition = (): {
   setImage(image: HTMLImageElement): void;
   setShapes(s: ShapeDefinition[]): void;
-  setVectorValues(v: Record<string, Vec2>): void;
+  setVectorValues(v: Keyframe): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
@@ -77,7 +77,7 @@ export const showComposition = (): {
   let texture: WebGLTexture | null = null;
   let program: WebGLProgram | null = null;
 
-  let vectorValues: Record<string, Vec2> = {};
+  let vectorValues: Keyframe = {};
   let elements: {
     name: string;
     start: number;

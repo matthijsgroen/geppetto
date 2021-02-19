@@ -54,6 +54,8 @@ export type ItemSelection = {
   type: "layer" | "vector";
 };
 
+export type Keyframe = Record<string, Vec2>;
+
 export type ControlDefinition = {
   name: string;
   type: "slider";
