@@ -11,6 +11,8 @@ interface VectorInfoPanelProps {
   updateImageDefinition(
     mutation: (oldState: ImageDefinition) => ImageDefinition
   ): void;
+  vectorValue: Vec2;
+  updateVectorValue(newValue: Vec2): void;
 }
 
 type VectorTypes = MutationVector["type"];
@@ -43,6 +45,8 @@ const iconForType = (type: VectorTypes): string =>
 const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
   vectorSelected,
   updateImageDefinition,
+  vectorValue,
+  updateVectorValue,
 }) => (
   <Menu
     title={`${iconForType(vectorSelected.type)} ${vectorSelected.name}`}
@@ -116,14 +120,9 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
       <Vect2InputControl
         key={"value"}
         title={"value"}
-        value={vectorSelected.value || [0, 0]}
+        value={vectorValue}
         onChange={(newValue) => {
-          updateImageDefinition((state) =>
-            updateVectorData(state, vectorSelected.name, (vector) => ({
-              ...vector,
-              value: newValue,
-            }))
-          );
+          updateVectorValue(newValue);
         }}
       />,
     ]}

@@ -27,6 +27,7 @@ import {
   ItemSelection,
   MutationVector,
   ShapeDefinition,
+  Vec2,
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 import LayerInfoPanel from "./LayerInfoPanel";
@@ -104,6 +105,7 @@ const Composition: React.FC<CompositionProps> = ({
     null
   );
   const [controlValues, setControlValues] = useState<ControlValues>({});
+  const [vectorValues, setVectorValues] = useState<Record<string, Vec2>>({});
 
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | null) => {
@@ -330,6 +332,13 @@ const Composition: React.FC<CompositionProps> = ({
             key="info"
             vectorSelected={vectorSelected}
             updateImageDefinition={updateImageDefinition}
+            vectorValue={vectorValues[vectorSelected.name] || [0, 0]}
+            updateVectorValue={(newValue) => {
+              setVectorValues((data) => ({
+                ...data,
+                [vectorSelected.name]: newValue,
+              }));
+            }}
           />
         ) : (
           <Menu
@@ -373,6 +382,7 @@ const Composition: React.FC<CompositionProps> = ({
           <CompositionCanvas
             image={texture}
             shapes={imageDefinition.shapes}
+            vectorValues={vectorValues}
             zoom={zoom}
             panX={panX}
             panY={panY}

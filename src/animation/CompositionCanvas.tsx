@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { ItemSelection, ShapeDefinition } from "../lib/types";
+import { ItemSelection, ShapeDefinition, Vec2 } from "../lib/types";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
 import { showCompositionVectors } from "./programs/showCompositionVectors";
@@ -8,6 +8,7 @@ import WebGLCanvas from "./WebGLCanvas";
 export interface TextureMapCanvasProps {
   image: HTMLImageElement | null;
   shapes: ShapeDefinition[];
+  vectorValues: Record<string, Vec2>;
   zoom: number;
   panX: number;
   panY: number;
@@ -17,6 +18,7 @@ export interface TextureMapCanvasProps {
 const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   image,
   shapes,
+  vectorValues,
   zoom,
   panX,
   panY,
@@ -42,6 +44,10 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
     vectorMap.setLayerSelected(activeLayer);
     vectorMap.setShapes(shapes);
   }, [shapes]);
+
+  useEffect(() => {
+    layer.setVectorValues(vectorValues);
+  }, [vectorValues]);
 
   useEffect(() => {
     layer.setLayerSelected(activeLayer);
