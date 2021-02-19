@@ -373,6 +373,26 @@ const Composition: React.FC<CompositionProps> = ({
           title="Controls"
           key="controls"
           collapsable={true}
+          toolbarItems={[
+            <ToolbarButton
+              key="1"
+              icon="️⚙️"
+              label="+"
+              size="small"
+              disabled={true}
+              onClick={async () => {
+                // if (shapeSelected === null) {
+                //   return;
+                // }
+                // const newVector = await addVector(
+                //   updateImageDefinition,
+                //   shapeSelected,
+                //   "New Mutator"
+                // );
+                // setItemSelected(newVector);
+              }}
+            />,
+          ]}
           items={imageDefinition.controls.map((control) => (
             <SliderControl
               key={control.name}
