@@ -17,6 +17,7 @@ const MAX_MUTATION_VECTORS = 20;
 
 const compositionVertexShader = `
   uniform vec2 viewport;
+  uniform vec3 basePosition;
   uniform vec3 translate;
   uniform vec4 scale;
 
@@ -35,9 +36,9 @@ const compositionVertexShader = `
   ${mutationShader}
 
   void main() {
-    vec2 deform = mutatePoint(coordinates, int(mutation));
+    vec2 deform = mutatePoint(coordinates + translate.xy, int(mutation));
 
-    vec4 pos = viewportScale * vec4((deform + translate.xy) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deform + basePosition.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z, 1.0);
     vTextureCoord = aTextureCoord.xy;
   }
@@ -379,17 +380,22 @@ export const showComposition = (): {
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
           const mutation = gl.getUniformLocation(shaderProgram, "mutation");
+          const uBasePosition = gl.getUniformLocation(
+            shaderProgram,
+            "basePosition"
+          );
+          gl.uniform3f(
+            uBasePosition,
+            basePosition[0],
+            basePosition[1],
+            basePosition[2]
+          );
 
           elements.forEach((element) => {
             if (element.amount === 0) {
               return;
             }
-            gl.uniform3f(
-              translate,
-              basePosition[0] + element.x,
-              basePosition[1] + element.y,
-              basePosition[2] + element.z
-            );
+            gl.uniform3f(translate, element.x, element.y, element.z);
             gl.uniform1f(mutation, element.mutator);
             gl.drawElements(
               gl.TRIANGLES,

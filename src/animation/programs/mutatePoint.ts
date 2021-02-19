@@ -33,6 +33,14 @@ export const mutationShader = `
       return startValue + mutationValue;
     }
 
+    if (mutationType == 2) { // Translate
+      vec2 origin = mutation.yz;
+      return origin + vec2(
+        (startValue.x - origin.x) * mutationValue.x, 
+        (startValue.y - origin.y) * mutationValue.y
+      );
+    }
+
     return startValue;
   }
 `;
