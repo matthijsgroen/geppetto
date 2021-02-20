@@ -34,7 +34,8 @@ const MenuContainer = styled.div<{
 const MenuHeader = styled.div`
   color: ${({ theme }) => theme.colors.text};
   background-color: ${({ theme }) => theme.colors.background};
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 20px;
   font-weight: normal;
   margin: 0;
   padding: 0 1rem;
@@ -44,7 +45,10 @@ const MenuHeader = styled.div`
 
 const MenuTitle = styled.h1`
   color: ${({ theme }) => theme.colors.text};
-  font-size: 16px;
+  pointer-events: none;
+  cursor: default;
+  font-size: 14px;
+  line-height: 20px;
   font-weight: normal;
   margin: 0;
   padding: 0.75rem 0;
@@ -67,7 +71,6 @@ const CollapseButton = styled.button.attrs({ type: "button" })<{
 const Toolbar = styled.div`
   color: ${({ theme }) => theme.colors.text};
   background-color: ${({ theme }) => theme.colors.background};
-  font-size: 16px;
   font-weight: normal;
   margin: 0;
   padding: 0.1rem 0.5rem;

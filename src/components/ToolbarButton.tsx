@@ -1,10 +1,11 @@
 import React from "react";
 import styled, { css } from "styled-components";
 
-interface TabIconProps {
+interface ToolbarButtonProps {
   icon: string;
   label: string;
   size?: "medium" | "small";
+  hint?: string;
   active?: boolean;
   disabled?: boolean;
   onClick: () => void;
@@ -21,7 +22,7 @@ const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
   color: ${(props) =>
     props.isActive ? props.theme.colors.textSelected : props.theme.colors.text};
   opacity: ${(props) => (props.isDisabled ? "0.2" : "1")};
-  font-size: ${(props) => (props.size === "small" ? "0.75rem" : "1.5rem")};
+  font-size: ${(props) => (props.size === "small" ? "1rem" : "1.5rem")};
   ${(props) =>
     props.size === "medium"
       ? css`
@@ -46,17 +47,19 @@ const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
   outline: none;
 `;
 
-const ToolbarButton: React.FC<TabIconProps> = ({
+const ToolbarButton: React.FC<ToolbarButtonProps> = ({
   icon,
   label,
   size = "medium",
   disabled = false,
   active = false,
+  hint,
   onClick,
 }) => (
   <IconButton
     isDisabled={disabled}
     isActive={active}
+    title={hint}
     size={size}
     onClick={() => onClick && !disabled && onClick()}
   >

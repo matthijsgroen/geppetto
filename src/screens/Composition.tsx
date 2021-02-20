@@ -214,6 +214,38 @@ const Composition: React.FC<CompositionProps> = ({
 
   return (
     <ScreenLayout
+      tools={[
+        <ToolbarButton
+          key="move"
+          hint="Move mode"
+          icon="✋"
+          active={true}
+          label=""
+          onClick={() => {
+            // setMouseMode(MouseMode.Grab);
+          }}
+        />,
+        <ToolbarButton
+          key="setupStart"
+          icon="️⇤"
+          disabled={true}
+          // active={mouseMode === MouseMode.Aim}
+          label=""
+          onClick={() => {
+            // setMouseMode(MouseMode.Aim);
+          }}
+        />,
+        <ToolbarButton
+          key="setupEnd"
+          icon="️⇥"
+          disabled={true}
+          // active={mouseMode === MouseMode.Aim}
+          label=""
+          onClick={() => {
+            // setMouseMode(MouseMode.Aim);
+          }}
+        />,
+      ]}
       menus={[
         <Menu
           title="Composition"
@@ -223,6 +255,7 @@ const Composition: React.FC<CompositionProps> = ({
           toolbarItems={[
             <ToolbarButton
               key="1"
+              hint="Add mutator"
               icon="⚪️"
               label="+"
               size="small"
@@ -241,6 +274,7 @@ const Composition: React.FC<CompositionProps> = ({
             />,
             <ToolbarButton
               key="2"
+              hint="Add folder"
               icon="📁"
               label="+"
               size="small"
@@ -254,6 +288,7 @@ const Composition: React.FC<CompositionProps> = ({
             />,
             <ToolbarButton
               key="remove"
+              hint="Remove item"
               icon="🗑"
               size="small"
               disabled={
@@ -273,6 +308,7 @@ const Composition: React.FC<CompositionProps> = ({
             />,
             <ToolbarButton
               key="3"
+              hint="Move item up"
               icon="⬆"
               disabled={!canMoveUp(layerSelected, imageDefinition)}
               label=""
@@ -286,6 +322,7 @@ const Composition: React.FC<CompositionProps> = ({
             />,
             <ToolbarButton
               key="4"
+              hint="Move item down"
               icon="⬇"
               disabled={!canMoveDown(layerSelected, imageDefinition)}
               label=""
@@ -393,22 +430,36 @@ const Composition: React.FC<CompositionProps> = ({
               }}
             />,
           ]}
-          items={imageDefinition.controls.map((control) => (
+          items={[
             <SliderControl
-              key={control.name}
-              title={control.name}
-              value={controlValues[control.name] || 0}
+              key={"dummy"}
+              title={"DummyControl"}
+              value={0}
               min={0}
               max={1}
               step={0.01}
-              onChange={(newValue) => {
-                setControlValues((controlValues) => ({
-                  ...controlValues,
-                  [control.name]: newValue,
-                }));
+              onChange={() => {
+                //
               }}
-            />
-          ))}
+            />,
+
+            ...imageDefinition.controls.map((control) => (
+              <SliderControl
+                key={control.name}
+                title={control.name}
+                value={controlValues[control.name] || 0}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(newValue) => {
+                  setControlValues((controlValues) => ({
+                    ...controlValues,
+                    [control.name]: newValue,
+                  }));
+                }}
+              />
+            )),
+          ]}
         />,
       ]}
       main={

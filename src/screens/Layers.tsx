@@ -171,6 +171,7 @@ const Layers: React.FC<LayersProps> = ({
           toolbarItems={[
             <ToolbarButton
               key="addLayer"
+              hint="Add layer"
               icon="📄"
               label="+"
               size="small"
@@ -184,6 +185,7 @@ const Layers: React.FC<LayersProps> = ({
             />,
             <ToolbarButton
               key="addFolder"
+              hint="Add folder"
               icon="📁"
               label="+"
               size="small"
@@ -197,6 +199,7 @@ const Layers: React.FC<LayersProps> = ({
             />,
             <ToolbarButton
               key="remove"
+              hint="Remove item"
               icon="🗑"
               size="small"
               disabled={!canDelete(layerSelected, imageDefinition)}
@@ -213,6 +216,7 @@ const Layers: React.FC<LayersProps> = ({
             />,
             <ToolbarButton
               key="moveUp"
+              hint="Move item down"
               icon="⬆"
               size="small"
               disabled={!canMoveUp(layerSelected, imageDefinition)}
@@ -226,6 +230,7 @@ const Layers: React.FC<LayersProps> = ({
             />,
             <ToolbarButton
               key="moveDown"
+              hint="Move item up"
               icon="⬇"
               size="small"
               disabled={!canMoveDown(layerSelected, imageDefinition)}
@@ -264,6 +269,7 @@ const Layers: React.FC<LayersProps> = ({
       tools={[
         <ToolbarButton
           key="addPoints"
+          hint="Add points mode"
           icon="✏️"
           disabled={!shapeSelected || shapeSelected.type === "folder"}
           active={mouseMode === MouseMode.Aim}
@@ -274,6 +280,7 @@ const Layers: React.FC<LayersProps> = ({
         />,
         <ToolbarButton
           key="move"
+          hint="Move mode"
           icon="✋"
           active={mouseMode === MouseMode.Grab}
           label=""
@@ -284,6 +291,7 @@ const Layers: React.FC<LayersProps> = ({
         <ToolbarSeperator key="sep1" />,
         <ToolbarButton
           key="delete"
+          hint="Remove selected point"
           icon="🗑"
           label=""
           disabled={!activeCoord}
