@@ -23,7 +23,6 @@ export const mutationShader = `
     }
     int mutationIndex = int(uMutationTree[treeIndex]);
     if (mutationIndex == 0) {
-      // TODO, iterate higher into tree until treeIndex == 0
       return startValue;
     }
     vec4 mutation = uMutationVectors[mutationIndex - 1];

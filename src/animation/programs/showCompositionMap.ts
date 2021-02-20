@@ -112,7 +112,7 @@ export const showCompositionMap = (): {
         if (existingBranch) {
           existingBranch.push({
             mutator: index + 1,
-            shape: parents
+            shape: [...parents]
               .reverse()
               .find((e) => isShapeDefinition(e)) as ShapeDefinition,
           });
@@ -120,7 +120,7 @@ export const showCompositionMap = (): {
           treeInfo.push([
             {
               mutator: index + 1,
-              shape: parents
+              shape: [...parents]
                 .reverse()
                 .find((e) => isShapeDefinition(e)) as ShapeDefinition,
             },
