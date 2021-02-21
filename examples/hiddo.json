@@ -293,5 +293,28 @@
       ]
     }
   ],
-  "controls": []
+  "controls": [
+    {
+      "name": "Left eye",
+      "type": "slider",
+      "min": {
+        "leftEye": [0, 0],
+        "rightPupil": [-1, 0]
+      },
+      "max": {
+        "leftEye": [3, 0],
+        "rightPupil": [4, 0]
+      }
+    },
+    {
+      "name": "Mouth",
+      "type": "slider",
+      "min": {
+        "mouth": [1, 0.2]
+      },
+      "max": {
+        "mouth": [1, 1]
+      }
+    }
+  ]
 }

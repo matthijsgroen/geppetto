@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import MenuItem from "src/components/MenuItem";
 import { defaultValueForVector } from "src/lib/vertices";
-import { isMutationVector, visit } from "src/lib/visit";
+import { isControlDefinition, isMutationVector, visit } from "src/lib/visit";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -109,6 +109,11 @@ const Composition: React.FC<CompositionProps> = ({
   const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
     null
   );
+  const [controlMode, setControlmode] = useState<null | {
+    control: string;
+    mode: "start" | "end";
+  }>(null);
+
   const [vectorValues, setVectorValues] = useState<Keyframe>({});
 
   const setItemSelected = useCallback(
@@ -140,11 +145,12 @@ const Composition: React.FC<CompositionProps> = ({
       ? null
       : getVector(imageDefinition, layerSelected.name);
 
-  const controlSelected =
-    layerSelected === null || layerSelected.type !== "control"
-      ? null
-      : imageDefinition.controls.find((c) => c.name === layerSelected.name) ||
-        null;
+  const controlSelected = controlMode
+    ? imageDefinition.controls.find((c) => c.name === controlMode.control)
+    : layerSelected === null || layerSelected.type !== "control"
+    ? null
+    : imageDefinition.controls.find((c) => c.name === layerSelected.name) ||
+      null;
 
   useEffect(() => {
     let updatedValues = false;
@@ -229,30 +235,38 @@ const Composition: React.FC<CompositionProps> = ({
           key="move"
           hint="Move mode"
           icon="✋"
-          active={true}
+          active={controlMode === null}
           label=""
           onClick={() => {
-            // setMouseMode(MouseMode.Grab);
+            setControlmode(null);
           }}
         />,
         <ToolbarButton
           key="setupStart"
           icon="️⇤"
-          disabled={true}
-          // active={mouseMode === MouseMode.Aim}
+          disabled={!controlSelected}
+          active={!!(controlMode && controlMode.mode === "start")}
           label=""
           onClick={() => {
-            // setMouseMode(MouseMode.Aim);
+            if (controlSelected) {
+              setControlmode({ control: controlSelected.name, mode: "start" });
+              const values = controlSelected.min;
+              setVectorValues((v) => ({ ...v, ...values }));
+            }
           }}
         />,
         <ToolbarButton
           key="setupEnd"
           icon="️⇥"
-          disabled={true}
-          // active={mouseMode === MouseMode.Aim}
+          disabled={!controlSelected}
+          active={!!(controlMode && controlMode.mode === "end")}
           label=""
           onClick={() => {
-            // setMouseMode(MouseMode.Aim);
+            if (controlSelected) {
+              setControlmode({ control: controlSelected.name, mode: "end" });
+              const values = controlSelected.max;
+              setVectorValues((v) => ({ ...v, ...values }));
+            }
           }}
         />,
       ]}
@@ -472,12 +486,14 @@ const Composition: React.FC<CompositionProps> = ({
               label={e.name}
               selected={
                 !!(
-                  layerSelected &&
-                  layerSelected.type === "control" &&
-                  layerSelected.name === e.name
+                  (layerSelected &&
+                    layerSelected.type === "control" &&
+                    layerSelected.name === e.name) ||
+                  (controlMode && controlMode.control === e.name)
                 )
               }
               onClick={() => {
+                setControlmode(null);
                 setItemSelected(e);
               }}
               allowRename={true}
@@ -508,7 +524,10 @@ const Composition: React.FC<CompositionProps> = ({
           <VectorInfoPanel
             key="info"
             vectorSelected={vectorSelected}
+            image={imageDefinition}
             updateImageDefinition={updateImageDefinition}
+            activeControl={controlMode ? controlMode.control : undefined}
+            controlPosition={controlMode ? controlMode.mode : undefined}
             vectorValue={
               vectorValues[vectorSelected.name] ||
               defaultValueForVector(vectorSelected.type)
@@ -518,6 +537,35 @@ const Composition: React.FC<CompositionProps> = ({
                 ...data,
                 [vectorSelected.name]: newValue,
               }));
+              if (controlMode) {
+                updateImageDefinition((state) =>
+                  visit(state, (item) => {
+                    if (
+                      isControlDefinition(item) &&
+                      item.name === controlMode.control
+                    ) {
+                      const positionKey =
+                        controlMode.mode === "start" ? "min" : "max";
+                      const previousValue =
+                        item[positionKey][vectorSelected.name];
+                      if (previousValue === undefined) {
+                        return undefined;
+                      }
+
+                      return {
+                        ...item,
+                        ...{
+                          [positionKey]: {
+                            ...item[positionKey],
+                            [vectorSelected.name]: newValue,
+                          },
+                        },
+                      };
+                    }
+                    return undefined;
+                  })
+                );
+              }
             }}
           />
         ) : controlSelected ? (
