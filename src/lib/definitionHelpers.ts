@@ -276,6 +276,15 @@ const move = (
       return result;
     }
     const lastAdded = result[result.length - 1];
+    if (
+      lastAdded &&
+      lastAdded.type === "folder" &&
+      !moveDown &&
+      lastAdded.items[lastAdded.items.length - 1].name === item.name &&
+      item.type === "layer"
+    ) {
+      return result;
+    }
 
     if (item.type === "vector") {
       const vectorIndex = shape.mutationVectors.findIndex(
