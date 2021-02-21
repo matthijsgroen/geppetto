@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
+import MenuItem from "src/components/MenuItem";
 import { defaultValueForVector } from "src/lib/vertices";
 import { isMutationVector, visit } from "src/lib/visit";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import ShapeList from "../components/ShapeList";
-import SliderControl from "../components/SliderControl";
 import ToolbarButton from "../components/ToolbarButton";
 import {
+  addControl,
   addFolder,
   addVector,
   canDelete,
@@ -16,15 +17,18 @@ import {
   getLayerNames,
   getShape,
   getVector,
+  makeControlName,
   makeLayerName,
   makeVectorName,
   moveDown,
   moveUp,
   removeItem,
+  renameControl,
   renameLayer,
   renameVector,
 } from "../lib/definitionHelpers";
 import {
+  ControlDefinition,
   ImageDefinition,
   ItemSelection,
   Keyframe,
@@ -42,8 +46,6 @@ interface CompositionProps {
     mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ): void;
 }
-
-type ControlValues = Record<string, number>;
 
 // const mergeElement = (
 //   a: ElementData,
@@ -106,11 +108,10 @@ const Composition: React.FC<CompositionProps> = ({
   const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
     null
   );
-  const [controlValues, setControlValues] = useState<ControlValues>({});
   const [vectorValues, setVectorValues] = useState<Keyframe>({});
 
   const setItemSelected = useCallback(
-    (item: ShapeDefinition | MutationVector | null) => {
+    (item: ShapeDefinition | MutationVector | ControlDefinition | null) => {
       setLayerSelected(
         item === null
           ? null
@@ -119,6 +120,8 @@ const Composition: React.FC<CompositionProps> = ({
               type:
                 item.type === "folder" || item.type === "sprite"
                   ? "layer"
+                  : item.type === "slider"
+                  ? "control"
                   : "vector",
             }
       );
@@ -293,6 +296,7 @@ const Composition: React.FC<CompositionProps> = ({
               size="small"
               disabled={
                 !!(shapeSelected && shapeSelected.type === "sprite") ||
+                !!(layerSelected && layerSelected.type === "control") ||
                 !canDelete(layerSelected, imageDefinition)
               }
               label=""
@@ -310,21 +314,27 @@ const Composition: React.FC<CompositionProps> = ({
               key="3"
               hint="Move item up"
               icon="⬆"
-              disabled={!canMoveUp(layerSelected, imageDefinition)}
+              disabled={
+                !!(layerSelected && layerSelected.type === "control") ||
+                !canMoveUp(layerSelected, imageDefinition)
+              }
               label=""
               size="small"
               onClick={() => {
                 if (layerSelected === null) {
                   return;
                 }
-                updateImageDefinition((state) => moveUp(layerSelected, state));
+                updateImageDefinition((state) => moveUp(state, layerSelected));
               }}
             />,
             <ToolbarButton
               key="4"
               hint="Move item down"
               icon="⬇"
-              disabled={!canMoveDown(layerSelected, imageDefinition)}
+              disabled={
+                !!(layerSelected && layerSelected.type === "control") ||
+                !canMoveDown(layerSelected, imageDefinition)
+              }
               label=""
               size="small"
               onClick={() => {
@@ -332,7 +342,7 @@ const Composition: React.FC<CompositionProps> = ({
                   return;
                 }
                 updateImageDefinition((state) =>
-                  moveDown(layerSelected, state)
+                  moveDown(state, layerSelected)
                 );
               }}
             />,
@@ -375,6 +385,112 @@ const Composition: React.FC<CompositionProps> = ({
             />
           }
         />,
+        <Menu
+          title="Controls"
+          key="controls"
+          collapsable={true}
+          size="minimal"
+          toolbarItems={[
+            <ToolbarButton
+              key="1"
+              icon="️⚙️"
+              label="+"
+              size="small"
+              onClick={async () => {
+                const newControl = await addControl(
+                  updateImageDefinition,
+                  "New Control"
+                );
+                setItemSelected(newControl);
+              }}
+            />,
+            <ToolbarButton
+              key="remove"
+              hint="Remove item"
+              icon="🗑"
+              size="small"
+              disabled={!(layerSelected && layerSelected.type === "control")}
+              label=""
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                setItemSelected(null);
+                updateImageDefinition((state) =>
+                  removeItem(state, layerSelected)
+                );
+              }}
+            />,
+            <ToolbarButton
+              key="3"
+              hint="Move item up"
+              icon="⬆"
+              disabled={
+                !!(layerSelected && layerSelected.type !== "control") ||
+                !canMoveUp(layerSelected, imageDefinition)
+              }
+              label=""
+              size="small"
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                updateImageDefinition((state) => moveUp(state, layerSelected));
+              }}
+            />,
+            <ToolbarButton
+              key="4"
+              hint="Move item down"
+              icon="⬇"
+              disabled={
+                !!(layerSelected && layerSelected.type !== "control") ||
+                !canMoveDown(layerSelected, imageDefinition)
+              }
+              label=""
+              size="small"
+              onClick={() => {
+                if (layerSelected === null) {
+                  return;
+                }
+                updateImageDefinition((state) =>
+                  moveDown(state, layerSelected)
+                );
+              }}
+            />,
+          ]}
+          items={imageDefinition.controls.map((e) => (
+            <MenuItem
+              key={e.name}
+              icon="⚙️"
+              label={e.name}
+              selected={
+                !!(
+                  layerSelected &&
+                  layerSelected.type === "control" &&
+                  layerSelected.name === e.name
+                )
+              }
+              onClick={() => {
+                setItemSelected(e);
+              }}
+              allowRename={true}
+              onRename={(newName) => {
+                const controlName = makeControlName(
+                  imageDefinition,
+                  newName,
+                  layerSelected ? layerSelected.name : null
+                );
+                updateImageDefinition((state) =>
+                  renameControl(state, e.name, controlName)
+                );
+                setLayerSelected({
+                  name: controlName,
+                  type: "control",
+                });
+              }}
+            />
+          ))}
+        />,
         shapeSelected ? (
           <LayerInfoPanel
             key="info"
@@ -406,61 +522,6 @@ const Composition: React.FC<CompositionProps> = ({
             items={[]}
           />
         ),
-        <Menu
-          title="Controls"
-          key="controls"
-          collapsable={true}
-          toolbarItems={[
-            <ToolbarButton
-              key="1"
-              icon="️⚙️"
-              label="+"
-              size="small"
-              disabled={true}
-              onClick={async () => {
-                // if (shapeSelected === null) {
-                //   return;
-                // }
-                // const newVector = await addVector(
-                //   updateImageDefinition,
-                //   shapeSelected,
-                //   "New Mutator"
-                // );
-                // setItemSelected(newVector);
-              }}
-            />,
-          ]}
-          items={[
-            <SliderControl
-              key={"dummy"}
-              title={"DummyControl"}
-              value={0}
-              min={0}
-              max={1}
-              step={0.01}
-              onChange={() => {
-                //
-              }}
-            />,
-
-            ...imageDefinition.controls.map((control) => (
-              <SliderControl
-                key={control.name}
-                title={control.name}
-                value={controlValues[control.name] || 0}
-                min={0}
-                max={1}
-                step={0.01}
-                onChange={(newValue) => {
-                  setControlValues((controlValues) => ({
-                    ...controlValues,
-                    [control.name]: newValue,
-                  }));
-                }}
-              />
-            )),
-          ]}
-        />,
       ]}
       main={
         <MouseControl

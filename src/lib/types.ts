@@ -51,7 +51,7 @@ export type ShapeDefinition = FolderDefinition | SpriteDefinition;
 
 export type ItemSelection = {
   name: string;
-  type: "layer" | "vector";
+  type: "layer" | "vector" | "control";
 };
 
 export type Keyframe = Record<string, Vec2>;

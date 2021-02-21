@@ -1,4 +1,5 @@
 import {
+  ControlDefinition,
   FolderDefinition,
   ImageDefinition,
   ItemSelection,
@@ -7,7 +8,12 @@ import {
   SpriteDefinition,
   Vec2,
 } from "./types";
-import { isMutationVector, isShapeDefinition, visit } from "./visit";
+import {
+  isControlDefinition,
+  isMutationVector,
+  isShapeDefinition,
+  visit,
+} from "./visit";
 
 export const newDefinition = (): ImageDefinition => ({
   shapes: [],
@@ -68,6 +74,17 @@ export const makeVectorName = (
   previousName: string | null = null
 ): string =>
   makeItemName(getVectorNames(image.shapes), intendedName, previousName);
+
+export const makeControlName = (
+  image: ImageDefinition,
+  intendedName: string,
+  previousName: string | null = null
+): string =>
+  makeItemName(
+    image.controls.map((c) => c.name),
+    intendedName,
+    previousName
+  );
 
 export const addLayer = (
   mutator: (
@@ -150,6 +167,31 @@ export const addVector = (
     });
   });
 
+export const addControl = (
+  mutator: (
+    mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
+  ) => void,
+  defaultName: string
+): Promise<ControlDefinition> =>
+  new Promise((resolve) => {
+    mutator((image) => {
+      const newName = makeControlName(image, defaultName);
+      const newControl: ControlDefinition = {
+        name: newName,
+        type: "slider",
+        min: {},
+        max: {},
+      };
+
+      resolve(newControl);
+
+      return {
+        ...image,
+        controls: [newControl].concat(image.controls),
+      };
+    });
+  });
+
 export const canMoveUp = (
   selectedItem: ItemSelection | null,
   image: ImageDefinition
@@ -163,6 +205,10 @@ export const canMoveUp = (
   if (selectedItem.type === "vector") {
     const topMutationVector = image.shapes[0].mutationVectors[0];
     return !(topMutationVector && topMutationVector.name === selectedItem.name);
+  }
+  if (selectedItem.type === "control") {
+    const index = image.controls.findIndex((e) => e.name === selectedItem.name);
+    return index > 0;
   }
   return false;
 };
@@ -196,6 +242,10 @@ export const canMoveDown = (
     return !(
       bottomMutationVector && bottomMutationVector.name === selectedItem.name
     );
+  }
+  if (selectedItem.type === "control") {
+    const index = image.controls.findIndex((e) => e.name === selectedItem.name);
+    return index < image.controls.length - 1;
   }
 
   return false;
@@ -413,21 +463,43 @@ const move = (
     return result.concat(shape);
   }, [] as ShapeDefinition[]);
 
+const moveControl = (
+  moveUp: boolean,
+  item: ItemSelection,
+  controls: ControlDefinition[]
+): ControlDefinition[] => {
+  const index = controls.findIndex((c) => c.name === item.name);
+  if (index === -1) {
+    return controls;
+  }
+  return controls.map((c, i, l) =>
+    i === index && moveUp
+      ? l[i + 1]
+      : i === index + 1 && moveUp
+      ? l[index]
+      : i === index && !moveUp
+      ? l[i - 1]
+      : i === index - 1 && !moveUp
+      ? l[index]
+      : c
+  );
+};
+
 export const moveDown = (
-  selectedItem: ItemSelection,
-  image: ImageDefinition
-): ImageDefinition => ({
-  ...image,
-  shapes: move(true, selectedItem, image.shapes),
-});
+  image: ImageDefinition,
+  selectedItem: ItemSelection
+): ImageDefinition =>
+  selectedItem.type === "control"
+    ? { ...image, controls: moveControl(true, selectedItem, image.controls) }
+    : { ...image, shapes: move(true, selectedItem, image.shapes) };
 
 export const moveUp = (
-  selectedItem: ItemSelection,
-  image: ImageDefinition
-): ImageDefinition => ({
-  ...image,
-  shapes: move(false, selectedItem, image.shapes),
-});
+  image: ImageDefinition,
+  selectedItem: ItemSelection
+): ImageDefinition =>
+  selectedItem.type === "control"
+    ? { ...image, controls: moveControl(false, selectedItem, image.controls) }
+    : { ...image, shapes: move(false, selectedItem, image.shapes) };
 
 export const renameLayer = (
   image: ImageDefinition,
@@ -447,6 +519,17 @@ export const renameVector = (
 ): ImageDefinition =>
   visit(image, (item) =>
     isMutationVector(item) && item.name === currentName
+      ? { ...item, name: newName }
+      : undefined
+  );
+
+export const renameControl = (
+  image: ImageDefinition,
+  currentName: string,
+  newName: string
+): ImageDefinition =>
+  visit(image, (item) =>
+    isControlDefinition(item) && item.name === currentName
       ? { ...item, name: newName }
       : undefined
   );
@@ -571,6 +654,7 @@ export const removeItem = (
 ): ImageDefinition =>
   visit(image, (item) =>
     ((selectedItem.type === "layer" && isShapeDefinition(item)) ||
+      (selectedItem.type === "control" && isControlDefinition(item)) ||
       (selectedItem.type === "vector" && isMutationVector(item))) &&
     item.name === selectedItem.name
       ? false

@@ -225,7 +225,7 @@ const Layers: React.FC<LayersProps> = ({
                 if (layerSelected === null) {
                   return;
                 }
-                updateImageDefinition((state) => moveUp(layerSelected, state));
+                updateImageDefinition((state) => moveUp(state, layerSelected));
               }}
             />,
             <ToolbarButton
@@ -240,7 +240,7 @@ const Layers: React.FC<LayersProps> = ({
                   return;
                 }
                 updateImageDefinition((state) =>
-                  moveDown(layerSelected, state)
+                  moveDown(state, layerSelected)
                 );
               }}
             />,

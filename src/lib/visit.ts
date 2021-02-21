@@ -1,9 +1,14 @@
-import { ShapeDefinition, MutationVector, ImageDefinition } from "./types";
+import {
+  ShapeDefinition,
+  MutationVector,
+  ImageDefinition,
+  ControlDefinition,
+} from "./types";
 
 export type Visitor = (
-  item: ShapeDefinition | MutationVector,
+  item: ShapeDefinition | MutationVector | ControlDefinition,
   parents: (ShapeDefinition | MutationVector)[]
-) => ShapeDefinition | MutationVector | false | undefined;
+) => ShapeDefinition | MutationVector | ControlDefinition | false | undefined;
 
 interface ItemWithType {
   type: string;
@@ -12,6 +17,10 @@ interface ItemWithType {
 export const isShapeDefinition = (
   item: ItemWithType
 ): item is ShapeDefinition => item.type === "folder" || item.type === "sprite";
+
+export const isControlDefinition = (
+  item: ItemWithType
+): item is ControlDefinition => item.type === "slider";
 
 export const isMutationVector = (item: ItemWithType): item is MutationVector =>
   item.type === "deform" ||
@@ -75,6 +84,23 @@ export const visitShapes = (
     return result.concat(updatedChildSprites);
   }, [] as ShapeDefinition[]);
 
+export const visitControls = (
+  controls: ControlDefinition[],
+  visitor: Visitor
+): ControlDefinition[] =>
+  controls.reduce((result, item) => {
+    const visited = visitor(item, []);
+    if (visited === false) {
+      return result;
+    }
+    const newNode =
+      (visited && !isControlDefinition(visited)) || visited === undefined
+        ? item
+        : visited;
+
+    return result.concat(newNode);
+  }, [] as ControlDefinition[]);
+
 export const visit = (
   imageDefinition: ImageDefinition,
   visitor: Visitor
@@ -82,5 +108,6 @@ export const visit = (
   return {
     ...imageDefinition,
     shapes: visitShapes(imageDefinition.shapes, visitor),
+    controls: visitControls(imageDefinition.controls, visitor),
   };
 };
