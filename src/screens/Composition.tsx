@@ -36,6 +36,7 @@ import {
   ShapeDefinition,
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
+import ControlInfoPanel from "./ControlInfoPanel";
 import LayerInfoPanel from "./LayerInfoPanel";
 import VectorInfoPanel from "./VectorInfoPanel";
 
@@ -138,6 +139,12 @@ const Composition: React.FC<CompositionProps> = ({
     layerSelected === null || layerSelected.type !== "vector"
       ? null
       : getVector(imageDefinition, layerSelected.name);
+
+  const controlSelected =
+    layerSelected === null || layerSelected.type !== "control"
+      ? null
+      : imageDefinition.controls.find((c) => c.name === layerSelected.name) ||
+        null;
 
   useEffect(() => {
     let updatedValues = false;
@@ -512,6 +519,12 @@ const Composition: React.FC<CompositionProps> = ({
                 [vectorSelected.name]: newValue,
               }));
             }}
+          />
+        ) : controlSelected ? (
+          <ControlInfoPanel
+            key="info"
+            controlSelected={controlSelected}
+            updateImageDefinition={updateImageDefinition}
           />
         ) : (
           <Menu

@@ -415,8 +415,8 @@ const move = (
       }
     }
 
+    const next = list[index + 1];
     if (shape.name === item.name && item.type === "layer" && moveDown) {
-      const next = list[index + 1];
       if (next) {
         if (next.type === "sprite") {
           return result.concat(next, shape);
@@ -428,7 +428,6 @@ const move = (
         }
       }
     }
-    const next = list[index + 1];
     if (next && next.name === item.name && item.type === "layer" && !moveDown) {
       if (shape.type === "sprite") {
         return result.concat(next, shape);
