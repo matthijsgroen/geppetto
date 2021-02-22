@@ -191,7 +191,7 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
               />,
             ]
           : []),
-        ...(activeControl !== null
+        ...(activeControl
           ? [
               <Control key="controlSet">
                 {!controlValue && (

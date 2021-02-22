@@ -23,6 +23,7 @@ const displayShapes = (
   ) => void,
   showMutationVectors: boolean,
   showPoints: boolean,
+  showSetMutationVectors: string[],
   indent = 0
 ): React.ReactElement[] =>
   shapes.reduce(
@@ -75,7 +76,11 @@ const displayShapes = (
                           )
                         }
                         icon={iconForType(vector.type)}
-                        label={vector.name}
+                        label={
+                          showSetMutationVectors.includes(vector.name)
+                            ? `${vector.name} - set`
+                            : vector.name
+                        }
                         name={vector.name}
                         allowRename
                         indent={indent + 1}
@@ -138,7 +143,11 @@ const displayShapes = (
                           )
                         }
                         icon={iconForType(vector.type)}
-                        label={vector.name}
+                        label={
+                          showSetMutationVectors.includes(vector.name)
+                            ? `${vector.name} - set`
+                            : vector.name
+                        }
                         name={vector.name}
                         allowRename
                         indent={indent + 1}
@@ -166,6 +175,7 @@ const displayShapes = (
                 onRename,
                 showMutationVectors,
                 showPoints,
+                showSetMutationVectors,
                 indent + 1
               )
             ),
@@ -176,6 +186,7 @@ interface ShapeListProps {
   shapes: ShapeDefinition[];
   layerSelected: ItemSelection | null;
   showMutationVectors?: boolean;
+  showSetMutationVectors?: string[];
   showPoints?: boolean;
   setItemSelected: (item: ShapeDefinition | MutationVector | null) => void;
   onRename?: (
@@ -189,6 +200,7 @@ const ShapeList: React.FC<ShapeListProps> = ({
   layerSelected,
   showMutationVectors = false,
   showPoints = false,
+  showSetMutationVectors = [],
   setItemSelected,
   onRename = () => {
     /* noop */
@@ -201,7 +213,8 @@ const ShapeList: React.FC<ShapeListProps> = ({
       setItemSelected,
       onRename,
       showMutationVectors,
-      showPoints
+      showPoints,
+      showSetMutationVectors
     )}
   </>
 );

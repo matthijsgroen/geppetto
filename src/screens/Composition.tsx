@@ -95,6 +95,21 @@ interface CompositionProps {
 //     {} as Keyframe
 //   );
 
+type ControlMode = {
+  control: string;
+  mode: "start" | "end";
+};
+
+const getSetVectorNames = (
+  imageDefinition: ImageDefinition,
+  mode: ControlMode
+): string[] => {
+  const control = imageDefinition.controls.find((c) => c.name === mode.control);
+  if (control === undefined) return [];
+  const key = mode.mode === "start" ? "min" : "max";
+  return Object.keys(control[key]);
+};
+
 const Composition: React.FC<CompositionProps> = ({
   texture,
   imageDefinition,
@@ -109,10 +124,7 @@ const Composition: React.FC<CompositionProps> = ({
   const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
     null
   );
-  const [controlMode, setControlmode] = useState<null | {
-    control: string;
-    mode: "start" | "end";
-  }>(null);
+  const [controlMode, setControlmode] = useState<null | ControlMode>(null);
 
   const [vectorValues, setVectorValues] = useState<Keyframe>({});
 
@@ -151,6 +163,14 @@ const Composition: React.FC<CompositionProps> = ({
     ? null
     : imageDefinition.controls.find((c) => c.name === layerSelected.name) ||
       null;
+
+  useEffect(() => {
+    if (controlMode && controlSelected) {
+      const key = controlMode.mode === "start" ? "min" : "max";
+      const values = controlSelected[key];
+      setVectorValues((v) => ({ ...v, ...values }));
+    }
+  }, [controlMode]);
 
   useEffect(() => {
     let updatedValues = false;
@@ -250,8 +270,6 @@ const Composition: React.FC<CompositionProps> = ({
           onClick={() => {
             if (controlSelected) {
               setControlmode({ control: controlSelected.name, mode: "start" });
-              const values = controlSelected.min;
-              setVectorValues((v) => ({ ...v, ...values }));
             }
           }}
         />,
@@ -264,8 +282,6 @@ const Composition: React.FC<CompositionProps> = ({
           onClick={() => {
             if (controlSelected) {
               setControlmode({ control: controlSelected.name, mode: "end" });
-              const values = controlSelected.max;
-              setVectorValues((v) => ({ ...v, ...values }));
             }
           }}
         />,
@@ -374,6 +390,11 @@ const Composition: React.FC<CompositionProps> = ({
               layerSelected={layerSelected}
               setItemSelected={setItemSelected}
               showMutationVectors={true}
+              showSetMutationVectors={
+                controlMode
+                  ? getSetVectorNames(imageDefinition, controlMode)
+                  : []
+              }
               onRename={(oldName, newName, item) => {
                 if (item.type === "folder" || item.type === "sprite") {
                   const layerName = makeLayerName(
@@ -493,7 +514,11 @@ const Composition: React.FC<CompositionProps> = ({
                 )
               }
               onClick={() => {
-                setControlmode(null);
+                setControlmode((previousMode) =>
+                  previousMode === null
+                    ? null
+                    : { ...previousMode, control: e.name }
+                );
                 setItemSelected(e);
               }}
               allowRename={true}
