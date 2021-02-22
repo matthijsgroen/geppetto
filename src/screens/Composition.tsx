@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import MenuItem from "src/components/MenuItem";
-import { defaultValueForVector } from "src/lib/vertices";
+import { defaultValueForVector, mixVec2 } from "src/lib/vertices";
 import { isControlDefinition, isMutationVector, visit } from "src/lib/visit";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
@@ -48,53 +48,6 @@ interface CompositionProps {
   ): void;
 }
 
-// const mergeElement = (
-//   a: ElementData,
-//   b: ElementData | undefined,
-//   mix: number
-// ): ElementData =>
-//   b === undefined
-//     ? a
-//     : {
-//         deformations: Object.entries(a.deformations || {}).reduce(
-//           (result, [key, value]) => ({
-//             ...result,
-//             [key]: mergeVec2(value, result[key], mix),
-//           }),
-//           b.deformations || {}
-//         ),
-//         translate: mergeVec2(a.translate, b.translate, mix),
-//       };
-
-// const mergeKeyframes = (a: Keyframe, b: Keyframe, mix: number): Keyframe =>
-//   Object.entries(a).reduce(
-//     (result, [key, value]) => ({
-//       ...result,
-//       [key]: mergeElement(value, b[key], mix),
-//     }),
-//     {} as Keyframe
-//   );
-
-// const createKeyframe = (
-//   controlValues: ControlValues,
-//   imageDefinition: ImageDefinition
-// ) =>
-//   imageDefinition.controls.reduce(
-//     (result, control) => ({
-//       ...result,
-//       ...mergeKeyframes(
-//         mergeKeyframes(
-//           control.min,
-//           control.max,
-//           controlValues[control.name] || 0
-//         ),
-//         result,
-//         0.5
-//       ),
-//     }),
-//     {} as Keyframe
-//   );
-
 type ControlMode = {
   control: string;
   mode: "start" | "end";
@@ -125,8 +78,10 @@ const Composition: React.FC<CompositionProps> = ({
     null
   );
   const [controlMode, setControlmode] = useState<null | ControlMode>(null);
-
   const [vectorValues, setVectorValues] = useState<Keyframe>({});
+  const [controlValues, setControlValues] = useState<{ [key: string]: number }>(
+    {}
+  );
 
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | ControlDefinition | null) => {
@@ -146,6 +101,26 @@ const Composition: React.FC<CompositionProps> = ({
     },
     [setLayerSelected]
   );
+
+  useEffect(() => {
+    const updatedVectorValues = { ...vectorValues };
+    Object.entries(controlValues).forEach(([key, value]) => {
+      const control = imageDefinition.controls.find((c) => c.name === key);
+      if (!control) return;
+      const keys = Object.keys(control.min)
+        .concat(Object.keys(control.max))
+        .filter((e, i, l) => i === l.indexOf(e));
+
+      keys.forEach((vectorKey) => {
+        const min = control.min[vectorKey] || updatedVectorValues[vectorKey];
+        const max = control.max[vectorKey] || updatedVectorValues[vectorKey];
+        if (min !== undefined && max !== undefined) {
+          updatedVectorValues[vectorKey] = mixVec2(min, max, value);
+        }
+      });
+    });
+    setVectorValues(updatedVectorValues);
+  }, [controlValues]);
 
   const mouseMode = MouseMode.Grab;
   const shapeSelected =
@@ -597,7 +572,13 @@ const Composition: React.FC<CompositionProps> = ({
           <ControlInfoPanel
             key="info"
             controlSelected={controlSelected}
-            updateImageDefinition={updateImageDefinition}
+            value={controlValues[controlSelected.name] || 0}
+            onChange={(newValue) => {
+              setControlValues((values) => ({
+                ...values,
+                [controlSelected.name]: newValue,
+              }));
+            }}
           />
         ) : (
           <Menu

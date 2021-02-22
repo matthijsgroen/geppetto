@@ -227,13 +227,53 @@
         {
           "name": "hair",
           "type": "sprite",
-          "mutationVectors": [],
+          "mutationVectors": [
+            {
+              "type": "deform",
+              "origin": [-38, -178],
+              "name": "Hair front",
+              "radius": 22
+            },
+            {
+              "type": "deform",
+              "origin": [66, -189],
+              "name": "Hair back",
+              "radius": 33
+            }
+          ],
           "points": [
             [417, 599],
             [299, 597],
             [295, 441],
             [384, 444],
-            [409, 501]
+            [409, 501],
+            [302, 529],
+            [313, 525],
+            [305, 538],
+            [314, 535],
+            [305, 543],
+            [313, 546],
+            [306, 548],
+            [312, 554],
+            [304, 556],
+            [312, 562],
+            [303, 564],
+            [313, 573],
+            [303, 580],
+            [314, 583],
+            [303, 592],
+            [316, 591],
+            [392, 588],
+            [393, 574],
+            [393, 551],
+            [395, 535],
+            [408, 514],
+            [412, 536],
+            [412, 553],
+            [416, 565],
+            [416, 580],
+            [391, 522],
+            [387, 510]
           ],
           "translate": [12, -219]
         },
@@ -295,6 +335,18 @@
   ],
   "controls": [
     {
+      "name": "Hair",
+      "type": "slider",
+      "min": {
+        "Hair front": [-9, 0],
+        "Hair back": [-15, 0]
+      },
+      "max": {
+        "Hair back": [15, 0],
+        "Hair front": [16, 0]
+      }
+    },
+    {
       "name": "Eyes",
       "type": "slider",
       "min": {
@@ -304,6 +356,34 @@
       "max": {
         "leftPupil": [3, 0],
         "rightPupil": [4, 0]
+      }
+    },
+    {
+      "name": "Eyebrows",
+      "type": "slider",
+      "min": {
+        "deform1": [0, -6],
+        "deform0": [0, -7]
+      },
+      "max": {
+        "deform0": [0, 4],
+        "deform1": [0, 4]
+      }
+    },
+    {
+      "name": "Arms",
+      "type": "slider",
+      "min": {
+        "leftTopRotation": [0.436332312998583, 0],
+        "leftBottomRotation": [0, 0],
+        "rightTopRotation": [0.575958653158129, 0],
+        "rightBottomRotation": [-0.174532925199433, 0]
+      },
+      "max": {
+        "leftTopRotation": [-2.32128790515246, 0],
+        "leftBottomRotation": [1.43116998663535, 0],
+        "rightTopRotation": [-2.51327412287183, 0],
+        "rightBottomRotation": [1.67551608191456, 0]
       }
     },
     {

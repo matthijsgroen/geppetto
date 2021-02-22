@@ -7,19 +7,14 @@ export const verticesFromPoints = (points: number[][]): number[] =>
     [] as number[]
   );
 
-export const merge = (a: number, b: number, mix: number): number =>
-  a * (1 - mix) + mix * b;
+export const mix = (a: number, b: number, factor: number): number =>
+  a * (1 - factor) + factor * b;
 
-export const mergeVec2 = (
+export const mixVec2 = (
   a: Vec2 = [0, 0],
   b: Vec2 = [0, 0],
-  mix: number
-): Vec2 => [merge(a[0], b[0], mix), merge(a[1], b[1], mix)] as Vec2;
-
-export const vector2X = (x: number, vec: Vec2 = [0, 0]): Vec2 => [x, vec[1]];
-export const vector2Y = (y: number, vec: Vec2 = [0, 0]): Vec2 => [vec[0], y];
-export const getX = (vec: Vec2 = [0, 0]): number => vec[0];
-export const getY = (vec: Vec2 = [0, 0]): number => vec[1];
+  factor: number
+): Vec2 => [mix(a[0], b[0], factor), mix(a[1], b[1], factor)] as Vec2;
 
 export const defaultValueForVector = (type: MutationVector["type"]): Vec2 =>
   type === "stretch" ? [1, 1] : [0, 0];

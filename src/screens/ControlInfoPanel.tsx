@@ -1,18 +1,18 @@
 import React from "react";
 import Menu from "src/components/Menu";
 import SliderControl from "src/components/SliderControl";
-import { ControlDefinition, ImageDefinition } from "src/lib/types";
+import { ControlDefinition } from "src/lib/types";
 
 interface ControlInfoPanelProps {
   controlSelected: ControlDefinition;
-  updateImageDefinition(
-    mutation: (oldState: ImageDefinition) => ImageDefinition
-  ): void;
+  value: number;
+  onChange?(newValue: number): void;
 }
 
 const ControlInfoPanel: React.FC<ControlInfoPanelProps> = ({
   controlSelected,
-  //   updateImageDefinition,
+  value,
+  onChange,
 }) => (
   <Menu
     title={`⚙️ ${controlSelected.name}`}
@@ -22,13 +22,11 @@ const ControlInfoPanel: React.FC<ControlInfoPanelProps> = ({
       <SliderControl
         key="control"
         title={"Control"}
-        value={0}
+        value={value}
         min={0}
         max={1}
         step={0.01}
-        onChange={() => {
-          // test
-        }}
+        onChange={(newValue) => onChange && onChange(newValue)}
       />,
     ]}
   />
