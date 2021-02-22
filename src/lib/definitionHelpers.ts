@@ -15,6 +15,33 @@ import {
   visit,
 } from "./visit";
 
+const renameKey = <T extends Record<string, unknown>>(
+  object: T,
+  currentName: string,
+  newName: string
+): T =>
+  Object.keys(object).includes(currentName)
+    ? Object.entries(object).reduce(
+        (result, [key, value]) =>
+          key === currentName
+            ? { ...result, [newName]: value }
+            : { ...result, [key]: value },
+        {} as T
+      )
+    : object;
+
+const omitKeys = <T extends Record<string, unknown>>(
+  object: T,
+  keys: string[]
+): T =>
+  Object.keys(object).some((k) => keys.includes(k))
+    ? Object.entries(object).reduce(
+        (result, [key, value]) =>
+          keys.includes(key) ? result : { ...result, [key]: value },
+        {} as T
+      )
+    : object;
+
 export const newDefinition = (): ImageDefinition => ({
   shapes: [],
   controls: [],
@@ -525,11 +552,19 @@ export const renameVector = (
   currentName: string,
   newName: string
 ): ImageDefinition =>
-  visit(image, (item) =>
-    isMutationVector(item) && item.name === currentName
-      ? { ...item, name: newName }
-      : undefined
-  );
+  visit(image, (item) => {
+    if (isMutationVector(item) && item.name === currentName) {
+      return { ...item, name: newName };
+    }
+    if (isControlDefinition(item)) {
+      return {
+        ...item,
+        min: renameKey(item.min, currentName, newName),
+        max: renameKey(item.max, currentName, newName),
+      };
+    }
+    return undefined;
+  });
 
 export const renameControl = (
   image: ImageDefinition,
@@ -659,8 +694,10 @@ export const canDelete = (
 export const removeItem = (
   image: ImageDefinition,
   selectedItem: ItemSelection
-): ImageDefinition =>
-  visit(image, (item) =>
+): ImageDefinition => {
+  const vectorsBefore = getVectorNames(image.shapes);
+
+  const result = visit(image, (item) =>
     ((selectedItem.type === "layer" && isShapeDefinition(item)) ||
       (selectedItem.type === "control" && isControlDefinition(item)) ||
       (selectedItem.type === "vector" && isMutationVector(item))) &&
@@ -668,3 +705,20 @@ export const removeItem = (
       ? false
       : undefined
   );
+
+  const vectorsKept = getVectorNames(result.shapes);
+  const vectorsRemoved = vectorsBefore.filter((e) => !vectorsKept.includes(e));
+  if (vectorsRemoved.length === 0) {
+    return result;
+  }
+  return visit(image, (item) => {
+    if (isControlDefinition(item)) {
+      return {
+        ...item,
+        min: omitKeys(item.min, vectorsRemoved),
+        max: omitKeys(item.max, vectorsRemoved),
+      };
+    }
+    return undefined;
+  });
+};

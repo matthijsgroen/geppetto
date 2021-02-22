@@ -134,7 +134,7 @@
               "type": "sprite",
               "mutationVectors": [
                 {
-                  "name": "leftEye",
+                  "name": "leftPupil",
                   "type": "translate",
                   "origin": [-22, -210]
                 }
@@ -295,14 +295,14 @@
   ],
   "controls": [
     {
-      "name": "Left eye",
+      "name": "Eyes",
       "type": "slider",
       "min": {
-        "leftEye": [0, 0],
+        "leftPupil": [0, 0],
         "rightPupil": [-1, 0]
       },
       "max": {
-        "leftEye": [3, 0],
+        "leftPupil": [3, 0],
         "rightPupil": [4, 0]
       }
     },
