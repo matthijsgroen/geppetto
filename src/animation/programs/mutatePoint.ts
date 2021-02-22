@@ -36,7 +36,7 @@ export const mutationShader = `
       result = startValue + mutationValue;
     }
 
-    if (mutationType == 2) { // Translate
+    if (mutationType == 2) { // Stretch
       result = origin + vec2(
         (startValue.x - origin.x) * mutationValue.x, 
         (startValue.y - origin.y) * mutationValue.y
