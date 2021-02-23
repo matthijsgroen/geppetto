@@ -74,6 +74,10 @@ const Composition: React.FC<CompositionProps> = ({
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
     false
   );
+  const [mouseMoveDelta, setMouseMoveDelta] = useState<[number, number]>([
+    0,
+    0,
+  ]);
   const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
     null
   );
@@ -181,6 +185,7 @@ const Composition: React.FC<CompositionProps> = ({
     const elementX = event.pageX - canvasPos.left;
     const elementY = event.pageY - canvasPos.top;
     setIsMouseDown([elementX, elementY]);
+    setMouseMoveDelta([0, 0]);
   };
 
   const mouseMove = (event: React.MouseEvent) => {
@@ -188,14 +193,67 @@ const Composition: React.FC<CompositionProps> = ({
       const canvasPos = event.currentTarget.getBoundingClientRect();
       const elementX = event.pageX - canvasPos.left;
       const elementY = event.pageY - canvasPos.top;
-      setIsMouseDown([elementX, elementY]);
+
       const deltaX = elementX - isMouseDown[0];
       const deltaY = elementY - isMouseDown[1];
+      setMouseMoveDelta([deltaX, deltaY]);
 
+      if ((shapeSelected || vectorSelected) && event.shiftKey) {
+        updateImageDefinition((image) =>
+          visit(image, (item, parents) => {
+            if (
+              shapeSelected &&
+              item.type === "sprite" &&
+              ((shapeSelected.type === "sprite" &&
+                item.name === shapeSelected.name) ||
+                (shapeSelected.type === "folder" &&
+                  parents.find(
+                    (e) => e.type === "folder" && e.name === shapeSelected.name
+                  )))
+            ) {
+              return {
+                ...item,
+                translate: [
+                  Math.round(
+                    item.translate[0] + (deltaX - mouseMoveDelta[0]) / zoom
+                  ),
+                  Math.round(
+                    item.translate[1] + (deltaY - mouseMoveDelta[1]) / zoom
+                  ),
+                ],
+              };
+            }
+            if (
+              isMutationVector(item) &&
+              ((vectorSelected && item.name === vectorSelected.name) ||
+                (shapeSelected &&
+                  parents.find((e) => e.name === shapeSelected.name)))
+            ) {
+              return {
+                ...item,
+                origin: [
+                  Math.round(
+                    item.origin[0] + (deltaX - mouseMoveDelta[0]) / zoom
+                  ),
+                  Math.round(
+                    item.origin[1] + (deltaY - mouseMoveDelta[1]) / zoom
+                  ),
+                ],
+              };
+            }
+
+            return undefined;
+          })
+        );
+        return;
+      }
       const newPanX = Math.min(
         1.0,
         Math.max(
-          panX + ((deltaX / canvasPos.width) * window.devicePixelRatio) / zoom,
+          panX +
+            (((deltaX - mouseMoveDelta[0]) / canvasPos.width) *
+              window.devicePixelRatio) /
+              zoom,
           -1.0
         )
       );
@@ -205,7 +263,9 @@ const Composition: React.FC<CompositionProps> = ({
         1.0,
         Math.max(
           panY +
-            ((deltaY / canvasPos.height) * window.devicePixelRatio * -1.0) /
+            (((deltaY - mouseMoveDelta[1]) / canvasPos.height) *
+              window.devicePixelRatio *
+              -1.0) /
               zoom,
           -1.0
         )

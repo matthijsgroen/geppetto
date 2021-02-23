@@ -22,7 +22,7 @@
               "mutationVectors": [
                 {
                   "type": "rotate",
-                  "origin": [-2, 20],
+                  "origin": [-3, 21],
                   "name": "rightBottomRotation"
                 }
               ],
@@ -145,7 +145,7 @@
                 [12, 45],
                 [23, 35]
               ],
-              "translate": [-24, -221]
+              "translate": [-23, -221]
             },
             {
               "name": "eyeSocket",
@@ -230,13 +230,13 @@
           "mutationVectors": [
             {
               "type": "deform",
-              "origin": [-38, -178],
+              "origin": [-34, -176],
               "name": "Hair front",
               "radius": 22
             },
             {
               "type": "deform",
-              "origin": [66, -189],
+              "origin": [65, -180],
               "name": "Hair back",
               "radius": 33
             }
@@ -264,8 +264,6 @@
             [303, 592],
             [316, 591],
             [392, 588],
-            [393, 574],
-            [393, 551],
             [395, 535],
             [408, 514],
             [412, 536],
@@ -273,7 +271,9 @@
             [416, 565],
             [416, 580],
             [391, 522],
-            [387, 510]
+            [387, 510],
+            [374, 547],
+            [374, 582]
           ],
           "translate": [12, -219]
         },
