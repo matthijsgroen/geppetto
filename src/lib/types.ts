@@ -65,5 +65,6 @@ export type ControlDefinition = {
 
 export type ImageDefinition = {
   shapes: ShapeDefinition[];
+  defaultFrame?: Keyframe;
   controls: ControlDefinition[];
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import { ImageDefinition, Keyframe } from "../lib/types";
@@ -26,7 +26,17 @@ const Composition: React.FC<CompositionProps> = ({
     0,
     0,
   ]);
-  const [vectorValues] = useState<Keyframe>({});
+  const [vectorValues, setVectorValues] = useState<Keyframe>({});
+
+  useEffect(() => {
+    const newVectorValues = {
+      ...vectorValues,
+      ...imageDefinition.defaultFrame,
+    };
+    if (JSON.stringify(vectorValues) !== JSON.stringify(newVectorValues)) {
+      setVectorValues(newVectorValues);
+    }
+  }, [imageDefinition]);
 
   const mouseMode = MouseMode.Grab;
   const mouseDown = (event: React.MouseEvent) => {

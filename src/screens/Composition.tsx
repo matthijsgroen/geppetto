@@ -152,18 +152,17 @@ const Composition: React.FC<CompositionProps> = ({
   }, [controlMode]);
 
   useEffect(() => {
-    let updatedValues = false;
     const newVectorValues = {
       ...vectorValues,
+      ...imageDefinition.defaultFrame,
     };
     visit(imageDefinition, (item) => {
       if (isMutationVector(item) && newVectorValues[item.name] === undefined) {
-        updatedValues = true;
         newVectorValues[item.name] = defaultValueForVector(item.type);
       }
       return undefined;
     });
-    if (updatedValues) {
+    if (JSON.stringify(vectorValues) !== JSON.stringify(newVectorValues)) {
       setVectorValues(newVectorValues);
     }
 
@@ -625,6 +624,14 @@ const Composition: React.FC<CompositionProps> = ({
                     return undefined;
                   })
                 );
+              } else {
+                updateImageDefinition((state) => ({
+                  ...state,
+                  defaultFrame: {
+                    ...state.defaultFrame,
+                    [vectorSelected.name]: newValue,
+                  },
+                }));
               }
             }}
           />
