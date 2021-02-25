@@ -5,6 +5,7 @@ import TabIcon from "./components/TabIcon";
 import IconBar from "./components/IconBar";
 import Layers from "./screens/Layers";
 import Composition from "./screens/Composition";
+import Animation from "./screens/Animation";
 
 import { ImageDefinition } from "./lib/types";
 import { newDefinition } from "./lib/definitionHelpers";
@@ -25,6 +26,7 @@ const defaultTheme: DefaultTheme = {
 enum MenuItems {
   Layers,
   Composition,
+  Animation,
 }
 
 const updateWindowTitle = (
@@ -122,6 +124,13 @@ const App: React.FC = () => {
           onClick={() => setActiveItem(MenuItems.Composition)}
           key="composition"
         />,
+        <TabIcon
+          icon="🏃‍♂️"
+          title="Animation"
+          active={activeItem === MenuItems.Animation}
+          onClick={() => setActiveItem(MenuItems.Animation)}
+          key="animation"
+        />,
       ]}
     />
   );
@@ -133,8 +142,14 @@ const App: React.FC = () => {
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
       />
-    ) : (
+    ) : activeItem === MenuItems.Composition ? (
       <Composition
+        texture={image}
+        imageDefinition={imageDefinition}
+        updateImageDefinition={setImageDefinition}
+      />
+    ) : (
+      <Animation
         texture={image}
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
