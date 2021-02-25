@@ -272,10 +272,7 @@ async function saveFile(browserWindow, useFilePath) {
     filePath = result.filePath;
   }
 
-  await writeFile(
-    filePath,
-    JSON.stringify(JSON.parse(status.activeContents), null, 2)
-  );
+  await writeFile(filePath, JSON.stringify(JSON.parse(status.activeContents)));
   app.addRecentDocument(filePath);
   status.filePath = filePath;
   status.fileContents = status.activeContents;
