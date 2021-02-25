@@ -119,6 +119,7 @@ export const showComposition = (): {
     const uMutationVectors = gl.getUniformLocation(program, "uMutationVectors");
     const vectorSettings: number[] = Array(MAX_MUTATION_VECTORS * 4).fill(0);
 
+    // TODO: This model does not allow further forking, so it should be changed.
     const treeInfo: { mutator: number; shape: ShapeDefinition }[][] = [];
 
     visitShapes(shapes, (item, parents) => {

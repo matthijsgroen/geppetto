@@ -10,6 +10,7 @@ export const vectorTypeMapping = {
 };
 
 export const mutationShader = `
+  #define PI_FRAC 0.017453292519943295
   uniform float mutation; 
 
   // x = type, yz = origin, a = radius
@@ -44,7 +45,8 @@ export const mutationShader = `
     }
 
     if (mutationType == 3) { // Rotation
-      mat2 entityRotationMatrix = mat2(cos(mutationValue.x), sin(mutationValue.x), -sin(mutationValue.x), cos(mutationValue.x));
+      float rotation = mutationValue.x * PI_FRAC;
+      mat2 entityRotationMatrix = mat2(cos(rotation), sin(rotation), -sin(rotation), cos(rotation));
       result = (startValue - origin) * entityRotationMatrix + origin;
     }
 

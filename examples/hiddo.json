@@ -374,16 +374,16 @@
       "name": "Arms",
       "type": "slider",
       "min": {
-        "leftTopRotation": [0.436332312998583, 0],
-        "leftBottomRotation": [0, 0],
-        "rightTopRotation": [0.575958653158129, 0],
-        "rightBottomRotation": [-0.174532925199433, 0]
+        "leftTopRotation": [24, 0],
+        "leftBottomRotation": [-16, 0],
+        "rightTopRotation": [33, 0],
+        "rightBottomRotation": [-11, 0]
       },
       "max": {
-        "leftTopRotation": [-2.32128790515246, 0],
-        "leftBottomRotation": [1.43116998663535, 0],
-        "rightTopRotation": [-2.51327412287183, 0],
-        "rightBottomRotation": [1.67551608191456, 0]
+        "leftTopRotation": [-144, 0],
+        "leftBottomRotation": [110, 0],
+        "rightTopRotation": [-146, 0],
+        "rightBottomRotation": [101, 0]
       }
     },
     {

@@ -182,9 +182,9 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                 title={"value"}
                 value={activeValue[0]}
                 showValue={true}
-                min={-Math.PI * 2}
-                max={Math.PI * 2}
-                step={Math.PI / 180}
+                min={-360}
+                max={360}
+                step={0}
                 onChange={(newValue) => {
                   updateVectorValue([newValue, 0]);
                 }}
