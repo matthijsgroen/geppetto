@@ -45,10 +45,6 @@ const App: React.FC = () => {
   const [textureFileName, setTextureFilename] = useState<string | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
 
-  // useEffect(() => {
-  //   loadImage(texture).then((image) => setImage(image));
-  // }, []);
-
   useEffect(() => {
     const animationFileContentsLoaded = (
       _event: Electron.IpcRendererEvent,

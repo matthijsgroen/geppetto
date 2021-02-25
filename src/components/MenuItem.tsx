@@ -19,6 +19,9 @@ const Item = styled.div<{
 }>`
   background: ${({ selected, theme }) =>
     selected ? theme.colors.backgroundSelected : "none"};
+  box-sizing: border-box;
+  min-width: 100%;
+  width: max-content;
   padding-left: calc(0.25rem + ${(props) => props.indent * 1.5}rem);
   padding-right: 0.25rem;
   padding-top: 0.1rem;
@@ -27,6 +30,7 @@ const Item = styled.div<{
     selected ? theme.colors.textSelected : theme.colors.text};
   font-size: 1rem;
   font-weight: normal;
+  white-space: nowrap;
   ${({ renaming }) =>
     renaming &&
     css`

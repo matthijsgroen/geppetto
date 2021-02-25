@@ -4,6 +4,7 @@ import styled from "styled-components";
 const MenuContainer = styled.aside`
   flex: 0 0 250px;
   height: 100%;
+  width: 250px;
   display: flex;
   flex-direction: column;
 `;
@@ -16,8 +17,7 @@ const MainContainer = styled.div`
 `;
 
 const Canvas = styled.div`
-  flex: 1 1 100%;
-  height: 100%;
+  flex: 1 1 auto;
 `;
 
 const ToolBar = styled.div`

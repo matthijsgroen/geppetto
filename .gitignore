@@ -13,6 +13,8 @@
 /dist
 /src/data
 
+/images
+
 # misc
 .DS_Store
 .env.local

@@ -206,6 +206,15 @@ function createWindow() {
     loadTexture.enabled = true;
   });
 
+  win.on("show", () => {
+    const item = menu.getMenuItemById("fileSave");
+    item.enabled = status.changed;
+    const itemAs = menu.getMenuItemById("fileSaveAs");
+    itemAs.enabled = true;
+    const loadTexture = menu.getMenuItemById("loadTexture");
+    loadTexture.enabled = true;
+  });
+
   win.webContents.on("ipc-message", (_event, channel, data) => {
     if (channel === "animation-file-contents-changed") {
       status.changed = status.fileContents !== data;
@@ -272,6 +281,7 @@ async function saveFile(browserWindow, useFilePath) {
   status.fileContents = status.activeContents;
   status.changed = false;
   status.window.setDocumentEdited(status.changed);
+  status.window.setRepresentedFilename(filePath);
 
   const item = menu.getMenuItemById("fileSave");
   item.enabled = status.changed;
@@ -279,13 +289,11 @@ async function saveFile(browserWindow, useFilePath) {
   const itemAs = menu.getMenuItemById("fileSaveAs");
   itemAs.enabled = true;
 
-  if (!useFilePath) {
-    browserWindow.webContents.send(
-      "animation-file-name-change",
-      filePath,
-      path.basename(filePath)
-    );
-  }
+  browserWindow.webContents.send(
+    "animation-file-name-change",
+    filePath,
+    path.basename(filePath)
+  );
   return true;
 }
 

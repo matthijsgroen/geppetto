@@ -27,7 +27,7 @@ const MenuContainer = styled.div<{
   padding: 0 2px;
   flex: ${({ size }) =>
     size === "large" ? 2 : size === "minimal" ? "0 0 auto" : 1};
-  overflow-y: auto;
+  overflow: auto;
   max-height: ${({ collapsed }) => (collapsed ? "0" : "100vh")};
 `;
 

@@ -1,13 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { WebGLRenderer, webGLScene } from "../lib/webgl";
 
+const HEIGHT_PIXEL_FIX = 4;
+
 const startWebGL = async (
   node: HTMLCanvasElement,
   renderers: WebGLRenderer[]
 ): Promise<() => void> => {
   const rect = node.getBoundingClientRect();
   node.width = rect.width * window.devicePixelRatio;
-  node.height = rect.height * window.devicePixelRatio;
+  node.height = (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
 
   const api = await webGLScene(node, renderers);
   api.render();
@@ -15,10 +17,15 @@ const startWebGL = async (
   const onResize = () => {
     clearTimeout(debounce);
     debounce = setTimeout(() => {
-      const rect = node.getBoundingClientRect();
-      node.width = rect.width * window.devicePixelRatio;
-      node.height = rect.height * window.devicePixelRatio;
-      api.render();
+      node.width = 0;
+      node.height = 0;
+      setTimeout(() => {
+        const rect = node.getBoundingClientRect();
+        node.width = rect.width * window.devicePixelRatio;
+        node.height =
+          (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
+        api.render();
+      });
     }, 50);
   };
   window.addEventListener("resize", onResize);
