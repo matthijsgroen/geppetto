@@ -1,4 +1,5 @@
 import React from "react";
+import { ToolBar } from "src/components/ToolBar";
 import styled from "styled-components";
 
 const MenuContainer = styled.aside`
@@ -20,14 +21,6 @@ const Canvas = styled.div`
   flex: 1 1 auto;
 `;
 
-const ToolBar = styled.div`
-  flex: 0;
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
-  padding: 0 0.2rem;
-  display: flex;
-  flex-direction: row;
-`;
-
 const hasItems = (tools?: React.ReactElement | React.ReactElement[]): boolean =>
   !!tools && ("length" in tools ? tools.length > 0 : true);
 
@@ -35,14 +28,21 @@ interface ScreenLayoutProps {
   menus?: React.ReactElement | React.ReactElement[];
   tools?: React.ReactElement | React.ReactElement[];
   main?: React.ReactElement;
+  bottom?: React.ReactElement;
 }
 
-const ScreenLayout: React.FC<ScreenLayoutProps> = ({ menus, tools, main }) => (
+const ScreenLayout: React.FC<ScreenLayoutProps> = ({
+  menus,
+  tools,
+  main,
+  bottom,
+}) => (
   <>
     {hasItems(menus) && <MenuContainer>{menus}</MenuContainer>}
     <MainContainer>
       {hasItems(tools) && <ToolBar>{tools}</ToolBar>}
       <Canvas>{main}</Canvas>
+      {bottom}
     </MainContainer>
   </>
 );

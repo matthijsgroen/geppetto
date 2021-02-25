@@ -1,13 +1,32 @@
 import React, { useEffect, useRef } from "react";
 import { WebGLRenderer, webGLScene } from "../lib/webgl";
+import styled from "styled-components";
 
 const HEIGHT_PIXEL_FIX = 4;
 
+const CanvasContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+
+  canvas {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100% !important;
+    height: 100% !important;
+  }
+`;
+
 const startWebGL = async (
   node: HTMLCanvasElement,
+  container: HTMLDivElement,
   renderers: WebGLRenderer[]
 ): Promise<() => void> => {
-  const rect = node.getBoundingClientRect();
+  const rect = container.getBoundingClientRect();
   node.width = rect.width * window.devicePixelRatio;
   node.height = (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
 
@@ -17,15 +36,10 @@ const startWebGL = async (
   const onResize = () => {
     clearTimeout(debounce);
     debounce = setTimeout(() => {
-      node.width = 0;
-      node.height = 0;
-      setTimeout(() => {
-        const rect = node.getBoundingClientRect();
-        node.width = rect.width * window.devicePixelRatio;
-        node.height =
-          (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
-        api.render();
-      });
+      const rect = container.getBoundingClientRect();
+      node.width = rect.width * window.devicePixelRatio;
+      node.height = (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
+      api.render();
     }, 50);
   };
   window.addEventListener("resize", onResize);
@@ -49,13 +63,19 @@ export interface TextureMapCanvasProps {
 }
 
 const WebGLCanvas: React.FC<TextureMapCanvasProps> = ({ renderers }) => {
-  const ref = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (ref && ref.current) {
-      const node = ref.current;
+    if (
+      canvasRef &&
+      canvasRef.current &&
+      containerRef &&
+      containerRef.current
+    ) {
+      const node = canvasRef.current;
       let cleanup: () => void;
 
-      startWebGL(node, renderers).then((result) => {
+      startWebGL(node, containerRef.current, renderers).then((result) => {
         cleanup = result;
       });
       return () => {
@@ -65,7 +85,11 @@ const WebGLCanvas: React.FC<TextureMapCanvasProps> = ({ renderers }) => {
     }
   }, []);
 
-  return <canvas ref={ref} style={{ width: "100%", height: "100%" }} />;
+  return (
+    <CanvasContainer ref={containerRef}>
+      <canvas ref={canvasRef} />
+    </CanvasContainer>
+  );
 };
 
 export default WebGLCanvas;

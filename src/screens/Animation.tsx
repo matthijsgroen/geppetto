@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { TimeContainer } from "src/components/TimeContainer";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import { ImageDefinition, Keyframe } from "../lib/types";
@@ -113,6 +114,7 @@ const Composition: React.FC<CompositionProps> = ({
           />
         </MouseControl>
       }
+      bottom={<TimeContainer />}
     />
   );
 };
