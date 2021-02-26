@@ -287,7 +287,7 @@ export const showCompositionMap = (): {
               // if (element.amount > 0) {
               gl.uniform3f(translate, element.x, element.y, element.z);
               gl.uniform1f(mutation, element.mutator);
-              gl.drawArrays(initgl.LINE_STRIP, element.start, element.amount);
+              gl.drawArrays(gl.LINE_STRIP, element.start, element.amount);
             }
           });
         },
