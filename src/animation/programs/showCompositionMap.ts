@@ -113,7 +113,6 @@ export const showCompositionMap = (): {
       shapeVectorInfo,
     ] = createMutationTree(shapes);
     assignMutatorToElements(shapes, elements, treeData, shapeVectorInfo);
-
     mutators = newMutators;
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));

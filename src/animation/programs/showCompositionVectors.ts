@@ -5,23 +5,25 @@ import {
   Keyframe,
   MutationVector,
   ShapeDefinition,
-  Vec2,
 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
-import { MAX_MUTATION_VECTORS } from "./mutatePoint";
+import {
+  assignMutatorToVectors,
+  createMutationTree,
+  MAX_MUTATION_VECTORS,
+  mutationShader,
+} from "./mutatePoint";
 
 const compositionVertexShader = `
-  attribute vec4 coordinates;
-  attribute vec4 color;
-
   varying mediump vec4 vColor;
 
   uniform vec2 viewport;
   uniform vec3 translate;
+  uniform vec3 basePosition;
   uniform vec4 scale;
 
-  uniform vec3 uMutationVectors[16];
-  uniform vec2 uMutationValues[16];
+  attribute vec2 coordinates;
+  attribute vec4 color;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -30,26 +32,26 @@ const compositionVertexShader = `
     -1, +1, 0, 1
   );
 
+  ${mutationShader}
+
   void main() {
-    vec2 deform = coordinates.xy;
+    vec2 deform = mutatePoint(translate.xy, int(mutation));
 
+    vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
 
-
-    vec4 pos = viewportScale * vec4((deform.xy + translate.xy) * scale.x, translate.z, 1.0);
-
-    vec4 spec = vec4(-1.0, -1.0, 1.0, 1.0) * coordinates.a * viewportScale;
-    int pointIndex = int(coordinates.z);
+    vec4 spec = vec4(-1.0, -1.0, 1.0, 1.0) * coordinates.y * viewportScale;
+    int pointIndex = int(coordinates.x);
     if (pointIndex == 1) {
-      spec = vec4(1.0, -1.0, 1.0, 1.0) * coordinates.a * viewportScale;
+      spec = vec4(1.0, -1.0, 1.0, 1.0) * coordinates.y * viewportScale;
     }
     if (pointIndex == 2) {
-      spec = vec4(-1.0, 1.0, 1.0, 1.0) * coordinates.a * viewportScale;
+      spec = vec4(-1.0, 1.0, 1.0, 1.0) * coordinates.y * viewportScale;
     }
     if (pointIndex == 3) {
-      spec = vec4(1.0, 1.0, 1.0, 1.0) * coordinates.a * viewportScale;
+      spec = vec4(1.0, 1.0, 1.0, 1.0) * coordinates.y * viewportScale;
     }
     vec2 size = spec.xy;
-    if (coordinates.a > 0.0) {
+    if (coordinates.y > 0.0) {
       size *= scale.y;
     }
 
@@ -93,7 +95,7 @@ export const showCompositionVectors = (): {
   setLayerSelected(layer: null | ItemSelection): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 8;
+  const stride = 6;
 
   let shapes: ShapeDefinition[] | null = null;
 
@@ -102,26 +104,29 @@ export const showCompositionVectors = (): {
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
   let program: WebGLProgram | null = null;
-
   let vectorsSelected: string[] = [];
-
   let vectorValues: Keyframe = {};
-  const mutators: string[] = [];
+
   let vectors: {
     name: string;
-    mutator: number;
-    boundToLayer: string;
-    origin: Vec2;
     start: number;
     amount: number;
+    mutator: number;
+    boundToLayer: string;
+    x: number;
+    y: number;
+    z: number;
   }[] = [];
+  let mutators: string[] = [];
   let zoom = 1.0;
   let pan = [0, 0];
+  let scale = 1.0;
 
   const populateShapes = () => {
-    if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
+    if (!shapes || !gl || !indexBuffer || !vertexBuffer || !program) return;
     const vertices: number[] = [];
     const indices: number[] = [];
+    gl.useProgram(program);
 
     vectors = [];
     visitShapes(shapes, (shape) => {
@@ -135,16 +140,18 @@ export const showCompositionVectors = (): {
           name: vector.name,
           mutator: 0,
           boundToLayer: shape.name,
-          origin: vector.origin,
+          x: vector.origin[0],
+          y: vector.origin[1],
+          z: 0.00001,
           start,
           amount: 6,
         });
         const offset = vertices.length / stride;
         const color = colorMapping[vector.type];
-        vertices.push(...vector.origin, 0, -10, ...color, 1);
-        vertices.push(...vector.origin, 1, -10, ...color, 1);
-        vertices.push(...vector.origin, 2, -10, ...color, 1);
-        vertices.push(...vector.origin, 3, -10, ...color, 1);
+        vertices.push(0, -10, ...color, 1);
+        vertices.push(1, -10, ...color, 1);
+        vertices.push(2, -10, ...color, 1);
+        vertices.push(3, -10, ...color, 1);
 
         indices.push(
           offset,
@@ -161,16 +168,18 @@ export const showCompositionVectors = (): {
             name: vector.name,
             mutator: 0,
             boundToLayer: shape.name,
-            origin: vector.origin,
+            x: vector.origin[0],
+            y: vector.origin[1],
+            z: 0.00001,
             start,
             amount: 6,
           });
           const offset = vertices.length / stride;
           const color = colorMapping[vector.type];
-          vertices.push(...vector.origin, 0, vector.radius, ...color, 0.2);
-          vertices.push(...vector.origin, 1, vector.radius, ...color, 0.2);
-          vertices.push(...vector.origin, 2, vector.radius, ...color, 0.2);
-          vertices.push(...vector.origin, 3, vector.radius, ...color, 0.2);
+          vertices.push(0, vector.radius, ...color, 0.2);
+          vertices.push(1, vector.radius, ...color, 0.2);
+          vertices.push(2, vector.radius, ...color, 0.2);
+          vertices.push(3, vector.radius, ...color, 0.2);
 
           indices.push(
             offset,
@@ -185,6 +194,21 @@ export const showCompositionVectors = (): {
       return undefined;
     });
 
+    const [
+      newMutators,
+      vectorSettings,
+      treeData,
+      shapeVectorInfo,
+    ] = createMutationTree(shapes);
+    assignMutatorToVectors(shapes, vectors, treeData, shapeVectorInfo);
+    mutators = newMutators;
+
+    const uMutationVectors = gl.getUniformLocation(program, "uMutationVectors");
+    gl.uniform4fv(uMutationVectors, vectorSettings);
+
+    const uMutationTree = gl.getUniformLocation(program, "uMutationTree");
+    gl.uniform1fv(uMutationTree, treeData);
+
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
@@ -197,6 +221,10 @@ export const showCompositionVectors = (): {
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
+
+  let cWidth = 0;
+  let cHeight = 0;
+  let basePosition = [0, 0, 0.1];
 
   return {
     setImage(image: HTMLImageElement) {
@@ -297,7 +325,7 @@ export const showCompositionVectors = (): {
           const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
             coord,
-            4,
+            2,
             gl.FLOAT,
             false,
             stride * Float32Array.BYTES_PER_ELEMENT,
@@ -312,22 +340,34 @@ export const showCompositionVectors = (): {
             gl.FLOAT,
             false,
             stride * Float32Array.BYTES_PER_ELEMENT,
-            /* offset */ 4 * Float32Array.BYTES_PER_ELEMENT
+            /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
           );
           gl.enableVertexAttribArray(colors);
 
           const [canvasWidth, canvasHeight] = getSize();
-          const landscape = img.width / canvasWidth > img.height / canvasHeight;
+          if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
+            const landscape =
+              img.width / canvasWidth > img.height / canvasHeight;
 
-          const scale = landscape
-            ? canvasWidth / img.width
-            : canvasHeight / img.height;
+            scale = landscape
+              ? canvasWidth / img.width
+              : canvasHeight / img.height;
 
-          gl.uniform2f(
-            gl.getUniformLocation(shaderProgram, "viewport"),
-            canvasWidth,
-            canvasHeight
-          );
+            gl.uniform2f(
+              gl.getUniformLocation(shaderProgram, "viewport"),
+              canvasWidth,
+              canvasHeight
+            );
+
+            basePosition = [
+              canvasWidth / 2 / scale,
+              canvasHeight / 2 / scale,
+              0.1,
+            ];
+
+            cWidth = canvasWidth;
+            cHeight = canvasHeight;
+          }
 
           gl.uniform4f(
             gl.getUniformLocation(shaderProgram, "scale"),
@@ -337,29 +377,23 @@ export const showCompositionVectors = (): {
             pan[1]
           );
 
-          const basePosition = [
-            canvasWidth / 2 / scale,
-            canvasHeight / 2 / scale,
-            0.1,
-          ];
-
-          const calculatedElements = vectors.map((element, index) => {
-            return {
-              ...element,
-              x: basePosition[0],
-              y: basePosition[1],
-              z: index * 0.001,
-            };
-          });
-
-          calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
-
           const translate = gl.getUniformLocation(shaderProgram, "translate");
+          const uBasePosition = gl.getUniformLocation(
+            shaderProgram,
+            "basePosition"
+          );
+          gl.uniform3f(
+            uBasePosition,
+            basePosition[0],
+            basePosition[1],
+            basePosition[2]
+          );
+          const mutation = gl.getUniformLocation(shaderProgram, "mutation");
 
-          calculatedElements.forEach((element) => {
+          vectors.forEach((element) => {
             if (vectorsSelected.includes(element.name)) {
               gl.uniform3f(translate, element.x, element.y, element.z);
-
+              gl.uniform1f(mutation, element.mutator);
               gl.drawElements(
                 gl.TRIANGLES,
                 element.amount,

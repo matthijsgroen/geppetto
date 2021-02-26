@@ -249,3 +249,43 @@ export const assignMutatorToElements = (
     }
   });
 };
+
+export const assignMutatorToVectors = (
+  shapes: ShapeDefinition[],
+  elements: Element[],
+  treeData: Float32Array,
+  shapeVectorInfo: ShapeMutatorInfo[]
+): void => {
+  const parentIndex: { [name: string]: string[] } = {};
+  visitShapes(shapes, (item, parents) => {
+    if (isMutationVector(item)) {
+      const parentNames = parents
+        .filter((p) => isShapeDefinition(p))
+        .map((e) => e.name)
+        .reverse();
+      parentIndex[item.name] = parentNames;
+    }
+    return undefined;
+  });
+
+  elements.forEach((element) => {
+    const node = shapeVectorInfo.find((e) => e.mutatorName === element.name);
+    if (node) {
+      const mutationNodeIndex = treeData.findIndex((e) => e === node.mutator);
+      element.mutator = mutationNodeIndex;
+    } else {
+      const parentNames = parentIndex[element.name];
+      parentNames.find((p) => {
+        const node = shapeVectorInfo.find((e) => e.mutatorName === p);
+        if (node) {
+          const mutationNodeIndex = treeData.findIndex(
+            (e) => e === node.mutator
+          );
+          element.mutator = mutationNodeIndex;
+          return true;
+        }
+        return false;
+      });
+    }
+  });
+};
