@@ -711,7 +711,11 @@ export const removeItem = (
   if (vectorsRemoved.length === 0) {
     return result;
   }
-  return visit(image, (item) => {
+  const tree: ImageDefinition = {
+    ...result,
+    defaultFrame: omitKeys(result.defaultFrame || {}, vectorsRemoved),
+  };
+  return visit(tree, (item) => {
     if (isControlDefinition(item)) {
       return {
         ...item,
