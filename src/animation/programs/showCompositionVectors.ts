@@ -2,16 +2,20 @@ import { vectorNamesFromShape } from "src/lib/definitionHelpers";
 import { isShapeDefinition, visitShapes } from "src/lib/visit";
 import {
   ItemSelection,
+  Keyframe,
   MutationVector,
   ShapeDefinition,
   Vec2,
 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
+import { MAX_MUTATION_VECTORS } from "./mutatePoint";
 
 const compositionVertexShader = `
-  attribute vec3 coordinates;
+  attribute vec4 coordinates;
   attribute vec4 color;
+
   varying mediump vec4 vColor;
+
   uniform vec2 viewport;
   uniform vec3 translate;
   uniform vec4 scale;
@@ -29,22 +33,28 @@ const compositionVertexShader = `
   void main() {
     vec2 deform = coordinates.xy;
 
-    for(int i = 0; i < 16; i++) {
-      vec3 position = uMutationVectors[i];
-      if (position.z > 0.0) {
-        float effect = 1.0 - clamp(distance(coordinates.xy, position.xy), 0.0, position.z) / position.z;
 
-        deform = deform + uMutationValues[i] * effect;
-      }
+
+    vec4 pos = viewportScale * vec4((deform.xy + translate.xy) * scale.x, translate.z, 1.0);
+
+    vec4 spec = vec4(-1.0, -1.0, 1.0, 1.0) * coordinates.a * viewportScale;
+    int pointIndex = int(coordinates.z);
+    if (pointIndex == 1) {
+      spec = vec4(1.0, -1.0, 1.0, 1.0) * coordinates.a * viewportScale;
+    }
+    if (pointIndex == 2) {
+      spec = vec4(-1.0, 1.0, 1.0, 1.0) * coordinates.a * viewportScale;
+    }
+    if (pointIndex == 3) {
+      spec = vec4(1.0, 1.0, 1.0, 1.0) * coordinates.a * viewportScale;
+    }
+    vec2 size = spec.xy;
+    if (coordinates.a > 0.0) {
+      size *= scale.y;
     }
 
-    vec4 pos = viewportScale * vec4((deform + translate.xy) * scale.x, translate.z, 1.0);
-    gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z - 1.0, 1.0);
-    if (color.a == 1.0) {
-      gl_PointSize = coordinates.z * scale.x;
-    } else {
-      gl_PointSize = coordinates.z * scale.x * scale.y;
-    }
+    gl_Position = vec4(((pos.xy + scale.ba) * scale.y) + size, pos.z - 1.0, 1.0);
+
     vColor = color;
   }
 `;
@@ -54,19 +64,7 @@ const compositionFragmentShader = `
   varying mediump vec4 vColor;
 
   void main(void) {
-    lowp vec2 pos = gl_PointCoord - vec2(0.5, 0.5);
-		lowp float distSquared = dot(pos, pos);
-
-		if (distSquared < 0.15) {
-      gl_FragColor = vec4(vColor.rgb * vColor.a, vColor.a);
-    } else {
-      if (distSquared < 0.25) {
-        gl_FragColor = vec4(vColor.rgb * vColor.a * 0.5, vColor.a);
-      } else {
-        gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-      }
-		}
-
+    gl_FragColor = vec4(vColor.rgb * vColor.a, vColor.a);
   }
 `;
 
@@ -89,12 +87,13 @@ const colorMapping: Record<VectorTypes, Color> = {
 export const showCompositionVectors = (): {
   setImage(image: HTMLImageElement): void;
   setShapes(s: ShapeDefinition[]): void;
+  setVectorValues(v: Keyframe): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   setLayerSelected(layer: null | ItemSelection): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 7;
+  const stride = 8;
 
   let shapes: ShapeDefinition[] | null = null;
 
@@ -102,10 +101,15 @@ export const showCompositionVectors = (): {
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
+  let program: WebGLProgram | null = null;
+
   let vectorsSelected: string[] = [];
 
+  let vectorValues: Keyframe = {};
+  const mutators: string[] = [];
   let vectors: {
     name: string;
+    mutator: number;
     boundToLayer: string;
     origin: Vec2;
     start: number;
@@ -117,30 +121,70 @@ export const showCompositionVectors = (): {
   const populateShapes = () => {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
     const vertices: number[] = [];
+    const indices: number[] = [];
+
     vectors = [];
     visitShapes(shapes, (shape) => {
       if (!isShapeDefinition(shape)) {
         return undefined;
       }
+
       shape.mutationVectors.forEach((vector) => {
+        const start = indices.length;
         vectors.push({
           name: vector.name,
+          mutator: 0,
           boundToLayer: shape.name,
           origin: vector.origin,
-          start: vertices.length / stride,
-          amount: vector.type === "deform" ? 2 : 1,
+          start,
+          amount: 6,
+          // amount: (vector.type === "deform" ? 2 : 1) * 6,
         });
+        const offset = vertices.length / stride;
         const color = colorMapping[vector.type];
-        vertices.push(...vector.origin, 8, ...color, 1);
+        vertices.push(...vector.origin, 0, -10, ...color, 1);
+        vertices.push(...vector.origin, 1, -10, ...color, 1);
+        vertices.push(...vector.origin, 2, -10, ...color, 1);
+        vertices.push(...vector.origin, 3, -10, ...color, 1);
+
+        indices.push(
+          offset,
+          offset + 1,
+          offset + 2,
+          offset + 1,
+          offset + 2,
+          offset + 3
+        );
+
         if (vector.type === "deform") {
-          vertices.push(...vector.origin, vector.radius * 2, ...color, 0.2);
+          const start = indices.length;
+          vectors.push({
+            name: vector.name,
+            mutator: 0,
+            boundToLayer: shape.name,
+            origin: vector.origin,
+            start,
+            amount: 6,
+          });
+          const offset = vertices.length / stride;
+          const color = colorMapping[vector.type];
+          vertices.push(...vector.origin, 0, vector.radius, ...color, 0.2);
+          vertices.push(...vector.origin, 1, vector.radius, ...color, 0.2);
+          vertices.push(...vector.origin, 2, vector.radius, ...color, 0.2);
+          vertices.push(...vector.origin, 3, vector.radius, ...color, 0.2);
+
+          indices.push(
+            offset,
+            offset + 1,
+            offset + 2,
+            offset + 1,
+            offset + 2,
+            offset + 3
+          );
         }
       });
       return undefined;
     });
-    const indices = Array(vertices.length / stride)
-      .fill(0)
-      .map((_, i) => i);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -162,6 +206,21 @@ export const showCompositionVectors = (): {
     setShapes(s: ShapeDefinition[]) {
       shapes = s;
       populateShapes();
+    },
+    setVectorValues(v) {
+      vectorValues = v;
+      if (mutators.length === 0 || !program || !gl) return;
+      gl.useProgram(program);
+
+      const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
+      const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
+      Object.entries(vectorValues).forEach(([key, value]) => {
+        const index = mutators.indexOf(key);
+        if (index === -1) return;
+        mutationValues[index * 2] = value[0];
+        mutationValues[index * 2 + 1] = value[1];
+      });
+      gl.uniform2fv(uMutationValues, mutationValues);
     },
     setZoom(newZoom) {
       zoom = newZoom;
@@ -224,6 +283,7 @@ export const showCompositionVectors = (): {
         compositionVertexShader,
         compositionFragmentShader
       );
+      program = shaderProgram;
 
       return {
         render() {
@@ -238,7 +298,7 @@ export const showCompositionVectors = (): {
           const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
             coord,
-            3,
+            4,
             gl.FLOAT,
             false,
             stride * Float32Array.BYTES_PER_ELEMENT,
@@ -253,7 +313,7 @@ export const showCompositionVectors = (): {
             gl.FLOAT,
             false,
             stride * Float32Array.BYTES_PER_ELEMENT,
-            /* offset */ 3 * Float32Array.BYTES_PER_ELEMENT
+            /* offset */ 4 * Float32Array.BYTES_PER_ELEMENT
           );
           gl.enableVertexAttribArray(colors);
 
@@ -289,26 +349,24 @@ export const showCompositionVectors = (): {
               ...element,
               x: basePosition[0],
               y: basePosition[1],
-              z: index * 0.0001,
+              z: index * 0.001,
             };
           });
 
           calculatedElements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
-          const mutationValues = gl.getUniformLocation(
-            shaderProgram,
-            "uMutationValues"
-          );
 
           calculatedElements.forEach((element) => {
             if (vectorsSelected.includes(element.name)) {
               gl.uniform3f(translate, element.x, element.y, element.z);
 
-              const mutationVectorValues: number[] = Array(16 * 2).fill(0);
-
-              gl.uniform2fv(mutationValues, mutationVectorValues);
-              gl.drawArrays(initgl.POINTS, element.start, element.amount);
+              gl.drawElements(
+                gl.TRIANGLES,
+                element.amount,
+                gl.UNSIGNED_SHORT,
+                element.start * 2
+              );
             }
           });
         },
