@@ -138,7 +138,6 @@ export const showCompositionVectors = (): {
           origin: vector.origin,
           start,
           amount: 6,
-          // amount: (vector.type === "deform" ? 2 : 1) * 6,
         });
         const offset = vertices.length / stride;
         const color = colorMapping[vector.type];

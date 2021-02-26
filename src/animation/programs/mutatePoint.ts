@@ -149,27 +149,23 @@ const placeItemsInTree = (
   });
 };
 
+type ShapeMutatorInfo = {
+  shapeName: string;
+  mutatorName: string;
+  mutator: number;
+};
+
 export const createMutationTree = (
-  shapes: ShapeDefinition[],
-  elements: Element[]
-): [string[], Float32Array, Float32Array] => {
+  shapes: ShapeDefinition[]
+): [string[], Float32Array, Float32Array, ShapeMutatorInfo[]] => {
   const vectorSettings = new Float32Array(MAX_MUTATION_VECTORS * 4).fill(0);
   const mutators: string[] = [];
 
   const treeInfo: TreeConstruct[] = [];
 
-  const shapeVectorInfo: { name: string; mutator: number }[] = [];
-
-  const parentIndex: { [name: string]: string[] } = {};
+  const shapeVectorInfo: ShapeMutatorInfo[] = [];
 
   visitShapes(shapes, (item, parents) => {
-    if (isShapeDefinition(item)) {
-      const parentNames = parents
-        .filter((p) => isShapeDefinition(p))
-        .map((e) => e.name)
-        .reverse();
-      parentIndex[item.name] = parentNames;
-    }
     if (isMutationVector(item)) {
       const index = mutators.length;
       mutators.push(item.name);
@@ -199,7 +195,8 @@ export const createMutationTree = (
         treeInfo.push(newNode);
       }
       shapeVectorInfo.unshift({
-        name: newNode.shape.name,
+        shapeName: newNode.shape.name,
+        mutatorName: item.name,
         mutator: newNode.mutator,
       });
     }
@@ -210,15 +207,36 @@ export const createMutationTree = (
 
   placeItemsInTree(treeInfo, treeData, 1);
 
+  return [mutators, vectorSettings, treeData, shapeVectorInfo];
+};
+
+export const assignMutatorToElements = (
+  shapes: ShapeDefinition[],
+  elements: Element[],
+  treeData: Float32Array,
+  shapeVectorInfo: ShapeMutatorInfo[]
+): void => {
+  const parentIndex: { [name: string]: string[] } = {};
+  visitShapes(shapes, (item, parents) => {
+    if (isShapeDefinition(item)) {
+      const parentNames = parents
+        .filter((p) => isShapeDefinition(p))
+        .map((e) => e.name)
+        .reverse();
+      parentIndex[item.name] = parentNames;
+    }
+    return undefined;
+  });
+
   elements.forEach((element) => {
-    const node = shapeVectorInfo.find((e) => e.name === element.name);
+    const node = shapeVectorInfo.find((e) => e.shapeName === element.name);
     if (node) {
       const mutationNodeIndex = treeData.findIndex((e) => e === node.mutator);
       element.mutator = mutationNodeIndex;
     } else {
       const parentNames = parentIndex[element.name];
       parentNames.find((p) => {
-        const node = shapeVectorInfo.find((e) => e.name === p);
+        const node = shapeVectorInfo.find((e) => e.shapeName === p);
         if (node) {
           const mutationNodeIndex = treeData.findIndex(
             (e) => e === node.mutator
@@ -230,6 +248,4 @@ export const createMutationTree = (
       });
     }
   });
-
-  return [mutators, vectorSettings, treeData];
 };

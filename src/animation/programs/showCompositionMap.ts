@@ -2,6 +2,7 @@ import { ItemSelection, Keyframe, ShapeDefinition } from "../../lib/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
+  assignMutatorToElements,
   createMutationTree,
   MAX_MUTATION_VECTORS,
   mutationShader,
@@ -105,10 +106,14 @@ export const showCompositionMap = (): {
       vertices.push(...list);
     });
 
-    const [newMutators, vectorSettings, treeData] = createMutationTree(
-      shapes,
-      elements
-    );
+    const [
+      newMutators,
+      vectorSettings,
+      treeData,
+      shapeVectorInfo,
+    ] = createMutationTree(shapes);
+    assignMutatorToElements(shapes, elements, treeData, shapeVectorInfo);
+
     mutators = newMutators;
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));

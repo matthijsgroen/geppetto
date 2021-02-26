@@ -2,6 +2,7 @@ import Delaunator from "delaunator";
 import { Keyframe, ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
+  assignMutatorToElements,
   createMutationTree,
   MAX_MUTATION_VECTORS,
   mutationShader,
@@ -133,10 +134,14 @@ export const showComposition = (): {
         indices.push(index + offset);
       });
     });
-    const [newMutators, vectorSettings, treeData] = createMutationTree(
-      shapes,
-      elements
-    );
+    const [
+      newMutators,
+      vectorSettings,
+      treeData,
+      shapeVectorInfo,
+    ] = createMutationTree(shapes);
+    assignMutatorToElements(shapes, elements, treeData, shapeVectorInfo);
+
     mutators = newMutators;
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));
