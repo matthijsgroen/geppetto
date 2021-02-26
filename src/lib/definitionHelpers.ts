@@ -307,7 +307,7 @@ const move = (
       lastAdded &&
       lastAdded.type === "folder" &&
       !moveDown &&
-      lastAdded.items[lastAdded.items.length - 1].name === item.name &&
+      lastAdded.items[lastAdded.items.length - 1].name === shape.name &&
       item.type === "layer"
     ) {
       return result;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TimeContainer } from "src/components/TimeContainer";
+import { maxZoomFactor } from "src/lib/webgl";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import { ImageDefinition, Keyframe } from "../lib/types";
@@ -90,7 +91,10 @@ const Composition: React.FC<CompositionProps> = ({
   };
 
   const mouseWheel = (delta: number) => {
-    const z = Math.min(4.0, Math.max(0.1, zoom - delta / 100));
+    const z = Math.min(
+      maxZoomFactor(texture),
+      Math.max(0.1, zoom - delta / 100)
+    );
     setZoom(z);
   };
 

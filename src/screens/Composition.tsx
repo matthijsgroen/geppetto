@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import MenuItem from "src/components/MenuItem";
 import { defaultValueForVector, mixVec2 } from "src/lib/vertices";
 import { isControlDefinition, isMutationVector, visit } from "src/lib/visit";
+import { maxZoomFactor } from "src/lib/webgl";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -152,9 +153,15 @@ const Composition: React.FC<CompositionProps> = ({
   }, [controlMode]);
 
   useEffect(() => {
+    let controlValues: Keyframe = {};
+    if (controlMode && controlSelected) {
+      const key = controlMode.mode === "start" ? "min" : "max";
+      controlValues = controlSelected[key];
+    }
     const newVectorValues = {
       ...vectorValues,
       ...imageDefinition.defaultFrame,
+      ...controlValues,
     };
     visit(imageDefinition, (item) => {
       if (isMutationVector(item) && newVectorValues[item.name] === undefined) {
@@ -278,7 +285,10 @@ const Composition: React.FC<CompositionProps> = ({
   };
 
   const mouseWheel = (delta: number) => {
-    const z = Math.min(4.0, Math.max(0.1, zoom - delta / 100));
+    const z = Math.min(
+      maxZoomFactor(texture),
+      Math.max(0.1, zoom - delta / 100)
+    );
     setZoom(z);
   };
 

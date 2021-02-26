@@ -27,7 +27,7 @@ import {
   MutationVector,
   ShapeDefinition,
 } from "../lib/types";
-import { getTextureCoordinate } from "../lib/webgl";
+import { getTextureCoordinate, maxZoomFactor } from "../lib/webgl";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface LayersProps {
@@ -139,9 +139,13 @@ const Layers: React.FC<LayersProps> = ({
         const closePoint = shape.points.find((p) => {
           const dx = p[0] - coord[0];
           const dy = p[1] - coord[1];
+          const zf = maxZoomFactor(texture);
 
           return (
-            dx > -6 / zoom && dx < 6 / zoom && dy > -6 / zoom && dy < 6 / zoom
+            dx > -zf / zoom &&
+            dx < zf / zoom &&
+            dy > -zf / zoom &&
+            dy < zf / zoom
           );
         });
 
@@ -159,7 +163,10 @@ const Layers: React.FC<LayersProps> = ({
   };
 
   const mouseWheel = (delta: number) => {
-    const z = Math.min(4.0, Math.max(0.1, zoom - delta / 100));
+    const z = Math.min(
+      maxZoomFactor(texture),
+      Math.max(0.1, zoom - delta / 100)
+    );
     setZoom(z);
   };
 
