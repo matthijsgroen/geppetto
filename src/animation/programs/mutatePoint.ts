@@ -1,4 +1,4 @@
-import { ShapeDefinition } from "src/lib/types";
+import { MutationVector, ShapeDefinition } from "src/lib/types";
 import {
   isMutationVector,
   isShapeDefinition,
@@ -87,6 +87,68 @@ export interface Element {
   mutator: number;
 }
 
+type TreeConstruct = {
+  mutator: number;
+  mutationVector: MutationVector;
+  shape: ShapeDefinition;
+  children: TreeConstruct[];
+};
+
+const childrenOf = (node: number): [number, number] => [node * 2, node * 2 + 1];
+
+const findNodeInTree = (
+  tree: TreeConstruct[],
+  parents: ShapeDefinition[]
+): TreeConstruct | undefined => {
+  if (tree.length === 0) return undefined;
+
+  const [head, ...tail] = parents;
+  if (!head) return undefined;
+
+  const node = tree.find((e) => parents.includes(e.shape));
+  if (node) {
+    const child = findNodeInTree(node.children, parents);
+    if (child) {
+      return child;
+    } else {
+      const child = findNodeInTree(node.children, tail);
+      return child ? child : node;
+    }
+  }
+  return undefined;
+};
+
+const getNodeIndices = (toDescent: number, current: number): number[] => {
+  if (toDescent === 0) {
+    return [current];
+  }
+  const [left, right] = childrenOf(current);
+  return ([] as number[]).concat(
+    getNodeIndices(toDescent - 1, left),
+    getNodeIndices(toDescent - 1, right)
+  );
+};
+
+const placeItemsInTree = (
+  tree: TreeConstruct[],
+  binaryTree: Float32Array,
+  currentNode: number
+) => {
+  if (tree.length === 0) {
+    return;
+  }
+  let level = 1;
+  while (Math.pow(2, level) < tree.length) {
+    level++;
+  }
+  const nodeIndices = getNodeIndices(level, currentNode);
+  tree.forEach((item, index) => {
+    const node = nodeIndices[index];
+    binaryTree[node] = item.mutator;
+    placeItemsInTree(item.children, binaryTree, node);
+  });
+};
+
 export const createMutationTree = (
   shapes: ShapeDefinition[],
   elements: Element[]
@@ -94,9 +156,20 @@ export const createMutationTree = (
   const vectorSettings = new Float32Array(MAX_MUTATION_VECTORS * 4).fill(0);
   const mutators: string[] = [];
 
-  const treeInfo: { mutator: number; shape: ShapeDefinition }[][] = [];
+  const treeInfo: TreeConstruct[] = [];
+
+  const shapeVectorInfo: { name: string; mutator: number }[] = [];
+
+  const parentIndex: { [name: string]: string[] } = {};
 
   visitShapes(shapes, (item, parents) => {
+    if (isShapeDefinition(item)) {
+      const parentNames = parents
+        .filter((p) => isShapeDefinition(p))
+        .map((e) => e.name)
+        .reverse();
+      parentIndex[item.name] = parentNames;
+    }
     if (isMutationVector(item)) {
       const index = mutators.length;
       mutators.push(item.name);
@@ -106,68 +179,56 @@ export const createMutationTree = (
       if (item.type === "deform") {
         vectorSettings[index * 4 + 3] = item.radius;
       }
+      const mutatorParents = parents.filter((p) =>
+        isShapeDefinition(p)
+      ) as ShapeDefinition[];
 
-      const existingBranch = treeInfo.find((branch) =>
-        branch.find((node) => parents.includes(node.shape))
-      );
+      const existingBranch = findNodeInTree(treeInfo, mutatorParents);
+      const newNode = {
+        mutator: index + 1,
+        mutationVector: item,
+        shape: [...parents]
+          .reverse()
+          .find((e) => isShapeDefinition(e)) as ShapeDefinition,
+        children: [],
+      };
+
       if (existingBranch) {
-        existingBranch.push({
-          mutator: index + 1,
-          shape: [...parents]
-            .reverse()
-            .find((e) => isShapeDefinition(e)) as ShapeDefinition,
-        });
+        existingBranch.children.push(newNode);
       } else {
-        treeInfo.push([
-          {
-            mutator: index + 1,
-            shape: [...parents]
-              .reverse()
-              .find((e) => isShapeDefinition(e)) as ShapeDefinition,
-          },
-        ]);
+        treeInfo.push(newNode);
       }
+      shapeVectorInfo.unshift({
+        name: newNode.shape.name,
+        mutator: newNode.mutator,
+      });
     }
     return undefined;
   });
 
-  let level = 1;
-  while (Math.pow(2, level) < treeInfo.length) {
-    level++;
-  }
-
-  const childrenOf = (node: number): [number, number] => [
-    node * 2,
-    node * 2 + 1,
-  ];
-
   const treeData = new Float32Array(MAX_TREE_SIZE).fill(0);
-  const startElement = Math.pow(2, level);
 
-  if (mutators.length >= MAX_MUTATION_VECTORS) {
-    throw new Error("More vectors than shader permits");
-  }
+  placeItemsInTree(treeInfo, treeData, 1);
 
-  treeInfo.forEach((vectors, index) => {
-    let nodeIndex = startElement + index;
-    vectors.forEach((item, branchIndex) => {
-      if (branchIndex > 0) {
-        nodeIndex = childrenOf(nodeIndex)[0];
-      }
-      treeData[nodeIndex] = item.mutator;
-      elements.forEach((e) => {
-        if (
-          (e.name === item.shape.name ||
-            (item.shape.type === "folder" &&
-              item.shape.items.find(
-                (c) => c.type === "sprite" && c.name === e.name
-              ))) &&
-          e.mutator < nodeIndex
-        ) {
-          e.mutator = nodeIndex;
+  elements.forEach((element) => {
+    const node = shapeVectorInfo.find((e) => e.name === element.name);
+    if (node) {
+      const mutationNodeIndex = treeData.findIndex((e) => e === node.mutator);
+      element.mutator = mutationNodeIndex;
+    } else {
+      const parentNames = parentIndex[element.name];
+      parentNames.find((p) => {
+        const node = shapeVectorInfo.find((e) => e.name === p);
+        if (node) {
+          const mutationNodeIndex = treeData.findIndex(
+            (e) => e === node.mutator
+          );
+          element.mutator = mutationNodeIndex;
+          return true;
         }
+        return false;
       });
-    });
+    }
   });
 
   return [mutators, vectorSettings, treeData];
