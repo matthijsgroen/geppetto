@@ -16,6 +16,8 @@ import {
 
 const compositionVertexShader = `
   varying mediump vec4 vColor;
+  varying mediump vec3 vCircle;
+  varying mediump vec2 vViewport;
 
   uniform vec2 viewport;
   uniform vec3 translate;
@@ -39,33 +41,53 @@ const compositionVertexShader = `
 
     vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
 
-    vec4 spec = vec4(-1.0, -1.0, 1.0, 1.0) * coordinates.y * viewportScale;
     int pointIndex = int(coordinates.x);
+    float radius = abs(coordinates.y) * 2.0;
+
+    // if (pointIndex == 0) {
+    vec4 spec = vec4(vec2(-1.0, -1.0) * radius, 1.0, 1.0) * viewportScale;
+    // }
+
     if (pointIndex == 1) {
-      spec = vec4(1.0, -1.0, 1.0, 1.0) * coordinates.y * viewportScale;
+      spec = vec4(vec2(1.0, -1.0) * radius, 1.0, 1.0) * viewportScale;
     }
+
     if (pointIndex == 2) {
-      spec = vec4(-1.0, 1.0, 1.0, 1.0) * coordinates.y * viewportScale;
+      spec = vec4(vec2(-1.0, 1.0) * radius, 1.0, 1.0) * viewportScale;
     }
+
     if (pointIndex == 3) {
-      spec = vec4(1.0, 1.0, 1.0, 1.0) * coordinates.y * viewportScale;
+      spec = vec4(vec2(1.0, 1.0) * radius, 1.0, 1.0) * viewportScale;
     }
+
     vec2 size = spec.xy;
     if (coordinates.y > 0.0) {
       size *= scale.y;
     }
 
-    gl_Position = vec4(((pos.xy + scale.ba) * scale.y) + size, pos.z - 1.0, 1.0);
+    vec2 center = (pos.xy + scale.ba) * scale.y;
+
+    gl_Position = vec4(center + size, pos.z - 1.0, 1.0);
+
+    vCircle = vec3(center, min(abs(size.y), abs(size.x)));
 
     vColor = color;
+    vViewport = viewport;
   }
 `;
 
 const compositionFragmentShader = `
   precision mediump float;
   varying mediump vec4 vColor;
+  varying mediump vec3 vCircle;
+  varying mediump vec2 vViewport;
 
   void main(void) {
+    vec2 screenPos = ((gl_FragCoord.xy / (vViewport / 2.0)) - 1.0);
+    float dist = distance(vCircle.xy, screenPos);
+
+    if (dist > vCircle.z) discard;
+
     gl_FragColor = vec4(vColor.rgb * vColor.a, vColor.a);
   }
 `;
@@ -134,7 +156,7 @@ export const showCompositionVectors = (): {
         return undefined;
       }
 
-      shape.mutationVectors.forEach((vector) => {
+      shape.mutationVectors.forEach((vector, i) => {
         const start = indices.length;
         vectors.push({
           name: vector.name,
@@ -142,7 +164,7 @@ export const showCompositionVectors = (): {
           boundToLayer: shape.name,
           x: vector.origin[0],
           y: vector.origin[1],
-          z: 0.00001,
+          z: 0.00001 * i,
           start,
           amount: 6,
         });
@@ -170,7 +192,7 @@ export const showCompositionVectors = (): {
             boundToLayer: shape.name,
             x: vector.origin[0],
             y: vector.origin[1],
-            z: 0.00001,
+            z: 0.2 + 0.00001 * i,
             start,
             amount: 6,
           });

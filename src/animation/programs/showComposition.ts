@@ -123,7 +123,7 @@ export const showComposition = (): {
         mutator: 0,
         x: itemOffset[0],
         y: itemOffset[1],
-        z: itemOffset[2] * 0.001,
+        z: -0.5 + itemOffset[2] * 0.001,
       });
       const offset = vertices.length / stride;
       shape.points.forEach(([x, y]) => {
