@@ -35,6 +35,8 @@ const Label = styled.div`
 
 const FloatHeader = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
+  border-bottom: 2px solid
+    ${({ theme }) => theme.colors.itemContainerBackground};
   line-height: 2rem;
   position: sticky;
   top: 0px;
@@ -44,29 +46,45 @@ const FloatHeader = styled.div`
 
 const TimeHeader = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
+  border-bottom: 2px solid
+    ${({ theme }) => theme.colors.itemContainerBackground};
   line-height: 2rem;
   position: sticky;
+  z-index: 1;
   top: 0px;
+`;
+
+const FrameDot = styled.div<{ pos: number }>`
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-left: -0.6rem;
+  border-radius: 50%;
+  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  border: 1px solid ${({ theme }) => theme.colors.backgroundSelected};
+  position: absolute;
+  top: 0px;
+  left: ${(props) => props.pos * 100}%;
 `;
 
 const TimeLine = styled.div`
   width: 1200px;
-  height: 1em;
-  border-bottom: 1px solid red;
+  height: 1.5rem;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.background};
+  position: relative;
 `;
 
 export const TimeContainer: React.FC = () => {
   const timelines = [
-    { name: "Foo" },
-    { name: "Bar" },
-    { name: "Baz" },
-    { name: "Qux" },
-    { name: "Quuz" },
-    { name: "Lorem" },
-    { name: "Ipsum" },
-    { name: "Dolor" },
-    { name: "Sit" },
-    { name: "Amed" },
+    { name: "Foo", keyframes: [0.5] },
+    { name: "Bar", keyframes: [0.2, 0.6] },
+    { name: "Baz", keyframes: [] },
+    { name: "Qux", keyframes: [] },
+    { name: "Quuz", keyframes: [] },
+    { name: "Lorem", keyframes: [] },
+    { name: "Ipsum", keyframes: [] },
+    { name: "Dolor", keyframes: [] },
+    { name: "Sit", keyframes: [] },
+    { name: "Amed", keyframes: [] },
   ];
 
   return (
@@ -101,7 +119,11 @@ export const TimeContainer: React.FC = () => {
           {timelines.map((t, i) => (
             <React.Fragment key={i}>
               <Label>{t.name}</Label>
-              <TimeLine></TimeLine>
+              <TimeLine>
+                {t.keyframes.map((v, i) => (
+                  <FrameDot pos={v} key={i} />
+                ))}
+              </TimeLine>
             </React.Fragment>
           ))}
         </TimeLineContainer>
