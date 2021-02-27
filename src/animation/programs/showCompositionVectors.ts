@@ -42,7 +42,7 @@ const compositionVertexShader = `
     vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
 
     int pointIndex = int(coordinates.x);
-    float radius = abs(coordinates.y) * 2.0;
+    float radius = abs(coordinates.y);
 
     // if (pointIndex == 0) {
     vec4 spec = vec4(vec2(-1.0, -1.0) * radius, 1.0, 1.0) * viewportScale;
