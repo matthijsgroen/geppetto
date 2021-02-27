@@ -33,7 +33,7 @@ const updateWindowTitle = (
   animFile: string | null,
   textureFile: string | null
 ) => {
-  document.title = `${animFile ? animFile : "Untitled"} - ${
+  document.title = `${animFile ? animFile : "Untitled"} — ${
     textureFile ? textureFile : "No texture"
   }`;
 };
