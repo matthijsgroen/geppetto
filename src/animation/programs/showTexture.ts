@@ -24,9 +24,16 @@ const textureFragmentShader = `
     highp vec2 coord = vTextureCoord.xy / uTextureDimensions;
     mediump vec4 texelColor = texture2D(uSampler, coord);
 
-    lowp vec4 baseColor = vec4(backgroundColor, 1.0);
+    int xRow = int(mod(gl_FragCoord.x / 20.0, 2.0));
+    int yRow = int(mod(gl_FragCoord.y / 20.0, 2.0));
+    vec3 baseColor = backgroundColor;
+    if (xRow == 1 && yRow == 1 || xRow == 0 && yRow == 0) {
+      baseColor *= 0.9;
+    }
 
-    gl_FragColor = baseColor * (1.0-texelColor.a) + vec4(texelColor.rgb * texelColor.a, texelColor.a);
+    lowp vec4 backColor = vec4(baseColor, 1.0);
+
+    gl_FragColor = backColor * (1.0-texelColor.a) + vec4(texelColor.rgb * texelColor.a, texelColor.a);
   }
 `;
 
