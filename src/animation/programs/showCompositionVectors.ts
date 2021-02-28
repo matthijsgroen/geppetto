@@ -16,7 +16,7 @@ import {
 
 const compositionVertexShader = `
   varying mediump vec4 vColor;
-  varying mediump vec3 vCircle;
+  varying mediump vec4 vCircle;
   varying mediump vec2 vViewport;
 
   uniform vec2 viewport;
@@ -45,22 +45,22 @@ const compositionVertexShader = `
     float radius = abs(coordinates.y);
 
     // if (pointIndex == 0) {
-    vec4 spec = vec4(vec2(-1.0, -1.0) * radius, 1.0, 1.0) * viewportScale;
+    vec2 spec = vec2(-1.0, -1.0);
     // }
 
     if (pointIndex == 1) {
-      spec = vec4(vec2(1.0, -1.0) * radius, 1.0, 1.0) * viewportScale;
+      spec = vec2(1.0, -1.0);
     }
 
     if (pointIndex == 2) {
-      spec = vec4(vec2(-1.0, 1.0) * radius, 1.0, 1.0) * viewportScale;
+      spec = vec2(-1.0, 1.0);
     }
 
     if (pointIndex == 3) {
-      spec = vec4(vec2(1.0, 1.0) * radius, 1.0, 1.0) * viewportScale;
+      spec = vec2(1.0, 1.0);
     }
 
-    vec2 size = spec.xy;
+    vec2 size = (vec4(spec.xy * radius * scale.x, 1.0, 1.0) * viewportScale).xy;
     if (coordinates.y > 0.0) {
       size *= scale.y;
     }
@@ -69,7 +69,7 @@ const compositionVertexShader = `
 
     gl_Position = vec4(center + size, pos.z - 1.0, 1.0);
 
-    vCircle = vec3(center, min(abs(size.y), abs(size.x)));
+    vCircle = vec4(center, abs(size.x), abs(size.y));
 
     vColor = color;
     vViewport = viewport;
@@ -79,16 +79,26 @@ const compositionVertexShader = `
 const compositionFragmentShader = `
   precision mediump float;
   varying mediump vec4 vColor;
-  varying mediump vec3 vCircle;
+  varying mediump vec4 vCircle;
   varying mediump vec2 vViewport;
 
   void main(void) {
     vec2 screenPos = ((gl_FragCoord.xy / (vViewport / 2.0)) - 1.0);
-    float dist = distance(vCircle.xy, screenPos);
 
-    if (dist > vCircle.z) discard;
+    float distX = abs(vCircle.x - screenPos.x) / vCircle.z;
+    if (distX > 1.0 || distX < -1.0) discard;
+    float distY = abs(vCircle.y - screenPos.y) / vCircle.a;
+    if (distY > 1.0 || distY < -1.0) discard;
+
+    vec2 quadPos = vec2(distX, distY);
+    float distSquared = dot(quadPos, quadPos);
+
+    if (distSquared > 1.0) discard;
 
     gl_FragColor = vec4(vColor.rgb * vColor.a, vColor.a);
+    // if (distSquared > 1.0) {
+    //   gl_FragColor = vColor.aaaa;
+    // }
   }
 `;
 
@@ -170,10 +180,10 @@ export const showCompositionVectors = (): {
         });
         const offset = vertices.length / stride;
         const color = colorMapping[vector.type];
-        vertices.push(0, -10, ...color, 1);
-        vertices.push(1, -10, ...color, 1);
-        vertices.push(2, -10, ...color, 1);
-        vertices.push(3, -10, ...color, 1);
+        vertices.push(0, -5, ...color, 1);
+        vertices.push(1, -5, ...color, 1);
+        vertices.push(2, -5, ...color, 1);
+        vertices.push(3, -5, ...color, 1);
 
         indices.push(
           offset,
