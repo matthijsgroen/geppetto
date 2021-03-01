@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { ToolBar } from "src/components/ToolBar";
 import ToolbarButton from "./ToolbarButton";
+import ToolbarSeperator from "./ToolbarSeperator";
 
 const MainSection = styled.section`
   flex: 0 0 200px;
@@ -66,30 +67,39 @@ const FrameDot = styled.div<{ pos: number }>`
   left: ${(props) => props.pos * 100}%;
 `;
 
-const TimeLine = styled.div`
-  width: 1200px;
+const TimeLine = styled.div<{ scale: number; length: number }>`
+  width: ${(props) => Math.round((props.length / 1000.0) * props.scale)}px;
   height: 1.5rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.background};
+  background: ${({ theme }) => theme.colors.background};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.backgroundSecondary};
   position: relative;
 `;
 
 export const TimeContainer: React.FC = () => {
   const timelines = [
-    { name: "Foo", keyframes: [0.5] },
-    { name: "Bar", keyframes: [0.2, 0.6] },
-    { name: "Baz", keyframes: [] },
-    { name: "Qux", keyframes: [] },
-    { name: "Quuz", keyframes: [] },
-    { name: "Lorem", keyframes: [] },
-    { name: "Ipsum", keyframes: [] },
-    { name: "Dolor", keyframes: [] },
-    { name: "Sit", keyframes: [] },
-    { name: "Amed", keyframes: [] },
+    { name: "Foo", keyframes: [0.5], length: 4000 },
+    { name: "Bar", keyframes: [0.2, 0.6], length: 8000 },
+    { name: "Baz", keyframes: [], length: 0 },
+    { name: "Qux", keyframes: [], length: 0 },
+    { name: "Quuz", keyframes: [], length: 0 },
+    { name: "Lorem", keyframes: [], length: 0 },
+    { name: "Ipsum", keyframes: [], length: 0 },
+    { name: "Dolor", keyframes: [], length: 0 },
+    { name: "Sit", keyframes: [], length: 0 },
+    { name: "Amed", keyframes: [], length: 0 },
   ];
 
   return (
     <MainSection>
       <ToolBar>
+        <ToolbarButton
+          icon="️⏱+"
+          label=""
+          onClick={() => {
+            /* oink */
+          }}
+        />
+        <ToolbarSeperator />
         <ToolbarButton
           icon="️⏮"
           label=""
@@ -111,6 +121,13 @@ export const TimeContainer: React.FC = () => {
             /* oink */
           }}
         />
+        <ToolbarButton
+          icon="🔍"
+          label=""
+          onClick={() => {
+            /* oink */
+          }}
+        />
       </ToolBar>
       <TimeLineOuterContainer>
         <TimeLineContainer>
@@ -119,7 +136,7 @@ export const TimeContainer: React.FC = () => {
           {timelines.map((t, i) => (
             <React.Fragment key={i}>
               <Label>{t.name}</Label>
-              <TimeLine>
+              <TimeLine scale={100} length={t.length}>
                 {t.keyframes.map((v, i) => (
                   <FrameDot pos={v} key={i} />
                 ))}

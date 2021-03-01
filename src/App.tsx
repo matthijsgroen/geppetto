@@ -7,7 +7,7 @@ import Layers from "./screens/Layers";
 import Composition from "./screens/Composition";
 import Animation from "./screens/Animation";
 
-import { ImageDefinition } from "./lib/types";
+import { ImageDefinition, ShapeDefinition } from "./lib/types";
 import { newDefinition } from "./lib/definitionHelpers";
 import { loadImage } from "./lib/webgl";
 import { ipcRenderer } from "electron";
@@ -37,6 +37,13 @@ const updateWindowTitle = (
     textureFile ? textureFile : "No texture"
   }`;
 };
+
+const hasShapes = (shapes: ShapeDefinition[]): boolean =>
+  shapes.some(
+    (s) =>
+      (s.type === "sprite" && s.points.length > 2) ||
+      (s.type === "folder" && hasShapes(s.items))
+  );
 
 const App: React.FC = () => {
   const [activeItem, setActiveItem] = useState(MenuItems.Layers);
@@ -107,6 +114,12 @@ const App: React.FC = () => {
     updateWindowTitle(baseFileName, textureFileName);
   }, [baseFileName, textureFileName]);
 
+  const compositionEnabled =
+    textureFileName !== null && hasShapes(imageDefinition.shapes);
+
+  const animationEnabled =
+    compositionEnabled && imageDefinition.controls.length > 0;
+
   const icons = (
     <IconBar
       topIcons={[
@@ -120,15 +133,19 @@ const App: React.FC = () => {
         <TabIcon
           icon="🤷🏼"
           title="Composition"
+          disabled={!compositionEnabled}
           active={activeItem === MenuItems.Composition}
-          onClick={() => setActiveItem(MenuItems.Composition)}
+          onClick={() =>
+            compositionEnabled && setActiveItem(MenuItems.Composition)
+          }
           key="composition"
         />,
         <TabIcon
           icon="🏃‍♂️"
           title="Animation"
+          disabled={!animationEnabled}
           active={activeItem === MenuItems.Animation}
-          onClick={() => setActiveItem(MenuItems.Animation)}
+          onClick={() => animationEnabled && setActiveItem(MenuItems.Animation)}
           key="animation"
         />,
       ]}

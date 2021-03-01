@@ -5,6 +5,7 @@ interface TabIconProps {
   icon: string;
   title: string;
   active?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }
 
@@ -32,15 +33,20 @@ const Icon = styled.button.attrs({ type: "button" })<IconProps>`
         ? props.theme.colors.textSelected
         : props.theme.colors.backgroundSecondary};
   outline: none;
+
+  &:disabled {
+    opacity: 0.3;
+  }
 `;
 
 const TabIcon: React.FC<TabIconProps> = ({
   icon,
   title,
   active = false,
+  disabled = false,
   onClick,
 }) => (
-  <Icon title={title} isActive={active} onClick={onClick}>
+  <Icon title={title} isActive={active} onClick={onClick} disabled={disabled}>
     {icon}
   </Icon>
 );
