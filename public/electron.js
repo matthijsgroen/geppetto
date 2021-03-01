@@ -6,6 +6,16 @@ const writeFile = util.promisify(require("fs").writeFile);
 const path = require("path");
 const isDev = require("electron-is-dev");
 
+/**
+ * type EditorWindow = {
+ *   window: BrowserWindow;
+ *   filePath: string;
+ *   fileContents: string;
+ *   changed: boolean;
+ * }
+ *
+ * windows: EditorWindow[]
+ */
 let windows = [];
 
 const isMac = process.platform === "darwin";

@@ -615,11 +615,6 @@ const Composition: React.FC<CompositionProps> = ({
                     ) {
                       const positionKey =
                         controlMode.mode === "start" ? "min" : "max";
-                      const previousValue =
-                        item[positionKey][vectorSelected.name];
-                      if (previousValue === undefined) {
-                        return undefined;
-                      }
 
                       return {
                         ...item,
