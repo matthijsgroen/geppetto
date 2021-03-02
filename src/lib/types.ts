@@ -59,12 +59,18 @@ export type Keyframe = Record<string, Vec2>;
 export type ControlDefinition = {
   name: string;
   type: "slider";
+  steps?: Keyframe[];
   min: Keyframe;
   max: Keyframe;
 };
 
+export type ControlValues = {
+  [key: string]: number;
+};
+
 export type ImageDefinition = {
   shapes: ShapeDefinition[];
-  defaultFrame?: Keyframe;
+  defaultFrame: Keyframe;
   controls: ControlDefinition[];
+  controlValues: ControlValues;
 };

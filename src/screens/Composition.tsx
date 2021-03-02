@@ -1,6 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import MenuItem from "src/components/MenuItem";
-import { defaultValueForVector, mixVec2 } from "src/lib/vertices";
+import {
+  combineKeyFrames,
+  defaultValueForVector,
+  mixVec2,
+} from "src/lib/vertices";
 import { isControlDefinition, isMutationVector, visit } from "src/lib/visit";
 import { maxZoomFactor } from "src/lib/webgl";
 import CompositionCanvas from "../animation/CompositionCanvas";
@@ -64,6 +68,19 @@ const getSetVectorNames = (
   return Object.keys(control[key]);
 };
 
+const getMutationVectorMapping = (
+  imageDefinition: ImageDefinition
+): Record<string, MutationVector> => {
+  const mapping: Record<string, MutationVector> = {};
+  visit(imageDefinition, (item) => {
+    if (isMutationVector(item)) {
+      mapping[item.name] = item;
+    }
+    return undefined;
+  });
+  return mapping;
+};
+
 const Composition: React.FC<CompositionProps> = ({
   texture,
   imageDefinition,
@@ -83,10 +100,10 @@ const Composition: React.FC<CompositionProps> = ({
     null
   );
   const [controlMode, setControlmode] = useState<null | ControlMode>(null);
-  const [vectorValues, setVectorValues] = useState<Keyframe>({});
-  const [controlValues, setControlValues] = useState<{ [key: string]: number }>(
-    {}
-  );
+  // const [vectorValues, setVectorValues] = useState<Keyframe>({});
+  // const [controlValues, setControlValues] = useState<{ [key: string]: number }>(
+  //   {}
+  // );
 
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | ControlDefinition | null) => {
@@ -107,25 +124,25 @@ const Composition: React.FC<CompositionProps> = ({
     [setLayerSelected]
   );
 
-  useEffect(() => {
-    const updatedVectorValues = { ...vectorValues };
-    Object.entries(controlValues).forEach(([key, value]) => {
-      const control = imageDefinition.controls.find((c) => c.name === key);
-      if (!control) return;
-      const keys = Object.keys(control.min)
-        .concat(Object.keys(control.max))
-        .filter((e, i, l) => i === l.indexOf(e));
+  // useEffect(() => {
+  //   const updatedVectorValues = { ...vectorValues };
+  //   Object.entries(controlValues).forEach(([key, value]) => {
+  //     const control = imageDefinition.controls.find((c) => c.name === key);
+  //     if (!control) return;
+  //     const keys = Object.keys(control.min)
+  //       .concat(Object.keys(control.max))
+  //       .filter((e, i, l) => i === l.indexOf(e));
 
-      keys.forEach((vectorKey) => {
-        const min = control.min[vectorKey] || updatedVectorValues[vectorKey];
-        const max = control.max[vectorKey] || updatedVectorValues[vectorKey];
-        if (min !== undefined && max !== undefined) {
-          updatedVectorValues[vectorKey] = mixVec2(min, max, value);
-        }
-      });
-    });
-    setVectorValues(updatedVectorValues);
-  }, [controlValues]);
+  //     keys.forEach((vectorKey) => {
+  //       const min = control.min[vectorKey] || updatedVectorValues[vectorKey];
+  //       const max = control.max[vectorKey] || updatedVectorValues[vectorKey];
+  //       if (min !== undefined && max !== undefined) {
+  //         updatedVectorValues[vectorKey] = mixVec2(min, max, value);
+  //       }
+  //     });
+  //   });
+  //   setVectorValues(updatedVectorValues);
+  // }, [controlValues]);
 
   const mouseMode = MouseMode.Grab;
   const shapeSelected =
@@ -144,35 +161,12 @@ const Composition: React.FC<CompositionProps> = ({
     : imageDefinition.controls.find((c) => c.name === layerSelected.name) ||
       null;
 
-  useEffect(() => {
-    if (controlMode && controlSelected) {
-      const key = controlMode.mode === "start" ? "min" : "max";
-      const values = controlSelected[key];
-      setVectorValues((v) => ({ ...v, ...values }));
-    }
-  }, [controlMode]);
+  const activeControlValues: Keyframe | null =
+    controlSelected && controlMode
+      ? controlSelected[controlMode.mode == "start" ? "min" : "max"]
+      : null;
 
   useEffect(() => {
-    let controlValues: Keyframe = {};
-    if (controlMode && controlSelected) {
-      const key = controlMode.mode === "start" ? "min" : "max";
-      controlValues = controlSelected[key];
-    }
-    const newVectorValues = {
-      ...vectorValues,
-      ...imageDefinition.defaultFrame,
-      ...controlValues,
-    };
-    visit(imageDefinition, (item) => {
-      if (isMutationVector(item) && newVectorValues[item.name] === undefined) {
-        newVectorValues[item.name] = defaultValueForVector(item.type);
-      }
-      return undefined;
-    });
-    if (JSON.stringify(vectorValues) !== JSON.stringify(newVectorValues)) {
-      setVectorValues(newVectorValues);
-    }
-
     if (!layerSelected) {
       return;
     }
@@ -185,6 +179,30 @@ const Composition: React.FC<CompositionProps> = ({
 
     // TODO: Add same path for vector
   }, [imageDefinition]);
+
+  const defaultFrameValues: Keyframe =
+    (imageDefinition && imageDefinition.defaultFrame) || {};
+
+  const vectorMapping = getMutationVectorMapping(imageDefinition);
+
+  const vectorValues: Keyframe = Object.entries(
+    imageDefinition.controlValues
+  ).reduce((result, [key, value]) => {
+    const control = imageDefinition.controls.find((c) => c.name === key);
+    if (!control) return result;
+    const keys = Object.keys(control.min)
+      .concat(Object.keys(control.max))
+      .filter((e, i, l) => i === l.indexOf(e));
+
+    const mixed = keys.reduce((result, vectorKey) => {
+      const min = control.min[vectorKey];
+      const max = control.max[vectorKey];
+      const vectorValue = mixVec2(min, max, value);
+      return { ...result, [vectorKey]: vectorValue };
+    }, {} as Keyframe);
+    console.log("mix", key, mixed, result);
+    return combineKeyFrames(result, mixed, vectorMapping);
+  }, defaultFrameValues);
 
   const mouseDown = (event: React.MouseEvent) => {
     const canvasPos = event.currentTarget.getBoundingClientRect();
@@ -314,6 +332,13 @@ const Composition: React.FC<CompositionProps> = ({
           onClick={() => {
             if (controlSelected) {
               setControlmode({ control: controlSelected.name, mode: "start" });
+              updateImageDefinition((state) => ({
+                ...state,
+                controlValues: {
+                  ...state.controlValues,
+                  [controlSelected.name]: 0,
+                },
+              }));
             }
           }}
         />,
@@ -326,6 +351,13 @@ const Composition: React.FC<CompositionProps> = ({
           onClick={() => {
             if (controlSelected) {
               setControlmode({ control: controlSelected.name, mode: "end" });
+              updateImageDefinition((state) => ({
+                ...state,
+                controlValues: {
+                  ...state.controlValues,
+                  [controlSelected.name]: 1,
+                },
+              }));
             }
           }}
         />,
@@ -598,14 +630,13 @@ const Composition: React.FC<CompositionProps> = ({
             activeControl={controlMode ? controlMode.control : undefined}
             controlPosition={controlMode ? controlMode.mode : undefined}
             vectorValue={
-              vectorValues[vectorSelected.name] ||
+              (activeControlValues
+                ? activeControlValues[vectorSelected.name]
+                : imageDefinition &&
+                  imageDefinition.defaultFrame[vectorSelected.name]) ||
               defaultValueForVector(vectorSelected.type)
             }
             updateVectorValue={(newValue) => {
-              setVectorValues((data) => ({
-                ...data,
-                [vectorSelected.name]: newValue,
-              }));
               if (controlMode) {
                 updateImageDefinition((state) =>
                   visit(state, (item) => {
@@ -615,7 +646,6 @@ const Composition: React.FC<CompositionProps> = ({
                     ) {
                       const positionKey =
                         controlMode.mode === "start" ? "min" : "max";
-
                       return {
                         ...item,
                         ...{
@@ -644,11 +674,14 @@ const Composition: React.FC<CompositionProps> = ({
           <ControlInfoPanel
             key="info"
             controlSelected={controlSelected}
-            value={controlValues[controlSelected.name] || 0}
+            value={imageDefinition.controlValues[controlSelected.name] || 0}
             onChange={(newValue) => {
-              setControlValues((values) => ({
-                ...values,
-                [controlSelected.name]: newValue,
+              updateImageDefinition((state) => ({
+                ...state,
+                controlValues: {
+                  ...state.controlValues,
+                  [controlSelected.name]: newValue,
+                },
               }));
             }}
           />

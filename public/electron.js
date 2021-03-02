@@ -136,6 +136,13 @@ const template = [
 
 const menu = Menu.buildFromTemplate(template);
 
+const newDefinition = {
+  controlValues: {},
+  controls: [],
+  defaultFrame: {},
+  shapes: [],
+};
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1280,
@@ -152,11 +159,6 @@ function createWindow() {
       ? "http://localhost:3000"
       : `file://${path.join(__dirname, "../build/index.html")}`
   );
-
-  const newDefinition = {
-    shapes: [],
-    controls: [],
-  };
 
   const status = {
     window: win,
@@ -346,7 +348,7 @@ async function loadFile(filePath) {
 
   const contents = await readFile(filePath, "utf8");
   try {
-    const parsed = JSON.parse(contents);
+    const parsed = { ...newDefinition, ...JSON.parse(contents) };
     app.addRecentDocument(filePath);
     const emptyWindow = windows.find((e) => e.filePath === null && !e.changed);
     if (emptyWindow) {

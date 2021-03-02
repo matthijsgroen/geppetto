@@ -1,5 +1,5 @@
 import Delaunator from "delaunator";
-import { MutationVector, Vec2 } from "./types";
+import { Keyframe, MutationVector, Vec2 } from "./types";
 
 export const verticesFromPoints = (points: number[][]): number[] =>
   Delaunator.from(points).triangles.reduce(
@@ -18,3 +18,32 @@ export const mixVec2 = (
 
 export const defaultValueForVector = (type: MutationVector["type"]): Vec2 =>
   type === "stretch" ? [1, 1] : [0, 0];
+
+export const vecAdd = (a: Vec2 = [0, 0], b: Vec2 = [0, 0]): Vec2 => [
+  a[0] + b[0],
+  a[1] + b[1],
+];
+
+export const vecMul = (a: Vec2 = [1, 1], b: Vec2 = [1, 1]): Vec2 => [
+  a[0] * b[0],
+  a[1] * b[1],
+];
+
+export const mergeMutationValue = (
+  a: Vec2 | undefined,
+  b: Vec2 | undefined,
+  type: MutationVector["type"]
+): Vec2 => (type === "stretch" ? vecMul(a, b) : vecAdd(a, b));
+
+export const combineKeyFrames = (
+  a: Keyframe,
+  b: Keyframe,
+  mutatorMapping: Record<string, MutationVector>
+): Keyframe =>
+  Object.entries(a).reduce<Keyframe>(
+    (result, [key, value]) => ({
+      ...result,
+      [key]: mergeMutationValue(result[key], value, mutatorMapping[key].type),
+    }),
+    b
+  );

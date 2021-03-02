@@ -43,8 +43,10 @@ const omitKeys = <T extends Record<string, unknown>>(
     : object;
 
 export const newDefinition = (): ImageDefinition => ({
-  shapes: [],
+  controlValues: {},
   controls: [],
+  defaultFrame: {},
+  shapes: [],
 });
 
 export const getLayerNames = (layers: ShapeDefinition[]): string[] =>
@@ -307,6 +309,7 @@ const move = (
       lastAdded &&
       lastAdded.type === "folder" &&
       !moveDown &&
+      lastAdded.items.length > 0 &&
       lastAdded.items[lastAdded.items.length - 1].name === shape.name &&
       item.type === "layer"
     ) {
