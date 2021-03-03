@@ -5,7 +5,7 @@ import NumberInputControl from "src/components/NumberInputControl";
 import SelectControl from "src/components/SelectControl";
 import SliderControl from "src/components/SliderControl";
 import Vect2InputControl from "src/components/Vec2InputControl";
-import { updateVectorData } from "src/lib/definitionHelpers";
+import { omitKeys, updateVectorData } from "src/lib/definitionHelpers";
 import { ImageDefinition, MutationVector, Vec2 } from "src/lib/types";
 import { defaultValueForVector } from "src/lib/vertices";
 import { isControlDefinition, visit } from "src/lib/visit";
@@ -19,7 +19,7 @@ interface VectorInfoPanelProps {
   vectorValue: Vec2;
   updateVectorValue(newValue: Vec2): void;
   activeControl?: string;
-  controlPosition?: "start" | "end";
+  controlPosition?: number;
 }
 
 type VectorTypes = MutationVector["type"];
@@ -62,11 +62,9 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
     ? image.controls.find((c) => c.name === activeControl) || null
     : null;
 
-  const controlUpdateKey = controlPosition === "start" ? "min" : "max";
-
   const controlValue =
-    activeControl && control
-      ? control[controlUpdateKey][vectorSelected.name]
+    activeControl && control && controlPosition !== undefined
+      ? control.steps[controlPosition][vectorSelected.name]
       : undefined;
 
   const activeValue = controlValue || vectorValue;
@@ -206,12 +204,14 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                           ) {
                             return {
                               ...item,
-                              ...{
-                                [controlUpdateKey]: {
-                                  ...item[controlUpdateKey],
-                                  [vectorSelected.name]: activeValue,
-                                },
-                              },
+                              steps: item.steps.map((step, index) =>
+                                index === controlPosition
+                                  ? {
+                                      ...step,
+                                      [vectorSelected.name]: activeValue,
+                                    }
+                                  : step
+                              ),
                             };
                           }
                         })
@@ -233,17 +233,11 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                           ) {
                             const updatedControl = {
                               ...item,
-                              ...{
-                                [controlUpdateKey]: Object.entries(
-                                  item[controlUpdateKey]
-                                ).reduce(
-                                  (result, [key, value]) =>
-                                    key !== vectorSelected.name
-                                      ? { ...result, [key]: value }
-                                      : result,
-                                  {}
-                                ),
-                              },
+                              steps: item.steps.map((step, index) =>
+                                index === controlPosition
+                                  ? omitKeys(step, [vectorSelected.name])
+                                  : step
+                              ),
                             };
                             return updatedControl;
                           }

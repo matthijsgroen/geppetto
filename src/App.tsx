@@ -61,7 +61,8 @@ const App: React.FC = () => {
       baseName: string,
       contents: string
     ) => {
-      setImageDefinition((JSON.parse(contents) as unknown) as ImageDefinition);
+      const image = (JSON.parse(contents) as unknown) as ImageDefinition;
+      setImageDefinition(image);
       setBaseFilename(baseName);
     };
     ipcRenderer.on(

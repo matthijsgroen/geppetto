@@ -55,7 +55,7 @@ interface CompositionProps {
 
 type ControlMode = {
   control: string;
-  mode: "start" | "end";
+  step: number;
 };
 
 const getSetVectorNames = (
@@ -64,8 +64,7 @@ const getSetVectorNames = (
 ): string[] => {
   const control = imageDefinition.controls.find((c) => c.name === mode.control);
   if (control === undefined) return [];
-  const key = mode.mode === "start" ? "min" : "max";
-  return Object.keys(control[key]);
+  return Object.keys(control.steps[mode.step]);
 };
 
 const getMutationVectorMapping = (
@@ -139,7 +138,7 @@ const Composition: React.FC<CompositionProps> = ({
 
   const activeControlValues: Keyframe | null =
     controlSelected && controlMode
-      ? controlSelected[controlMode.mode == "start" ? "min" : "max"]
+      ? controlSelected.steps[controlMode.step]
       : null;
 
   useEffect(() => {
@@ -166,17 +165,22 @@ const Composition: React.FC<CompositionProps> = ({
   ).reduce((result, [key, value]) => {
     const control = imageDefinition.controls.find((c) => c.name === key);
     if (!control) return result;
-    const keys = Object.keys(control.min)
-      .concat(Object.keys(control.max))
-      .filter((e, i, l) => i === l.indexOf(e));
+    const keys = control.steps.reduce<string[]>(
+      (result, step) =>
+        result.concat(Object.keys(step).filter((e) => !result.includes(e))),
+      [] as string[]
+    );
+    const startStep = Math.floor(value);
+    const endStep = Math.ceil(value);
+    const mixValue = value - startStep;
 
     const mixed = keys.reduce((result, vectorKey) => {
-      const min = control.min[vectorKey];
-      const max = control.max[vectorKey];
-      const vectorValue = mixVec2(min, max, value);
+      const min = control.steps[startStep][vectorKey];
+      const max = control.steps[endStep][vectorKey];
+
+      const vectorValue = mixVec2(min, max, mixValue);
       return { ...result, [vectorKey]: vectorValue };
     }, {} as Keyframe);
-    console.log("mix", key, mixed, result);
     return combineKeyFrames(result, mixed, vectorMapping);
   }, defaultFrameValues);
 
@@ -303,11 +307,11 @@ const Composition: React.FC<CompositionProps> = ({
           key="setupStart"
           icon="️⇤"
           disabled={!controlSelected}
-          active={!!(controlMode && controlMode.mode === "start")}
+          active={!!(controlMode && controlMode.step === 0)}
           label=""
           onClick={() => {
             if (controlSelected) {
-              setControlmode({ control: controlSelected.name, mode: "start" });
+              setControlmode({ control: controlSelected.name, step: 0 });
               updateImageDefinition((state) => ({
                 ...state,
                 controlValues: {
@@ -322,11 +326,11 @@ const Composition: React.FC<CompositionProps> = ({
           key="setupEnd"
           icon="️⇥"
           disabled={!controlSelected}
-          active={!!(controlMode && controlMode.mode === "end")}
+          active={!!(controlMode && controlMode.step === 1)}
           label=""
           onClick={() => {
             if (controlSelected) {
-              setControlmode({ control: controlSelected.name, mode: "end" });
+              setControlmode({ control: controlSelected.name, step: 1 });
               updateImageDefinition((state) => ({
                 ...state,
                 controlValues: {
@@ -604,7 +608,7 @@ const Composition: React.FC<CompositionProps> = ({
             image={imageDefinition}
             updateImageDefinition={updateImageDefinition}
             activeControl={controlMode ? controlMode.control : undefined}
-            controlPosition={controlMode ? controlMode.mode : undefined}
+            controlPosition={controlMode ? controlMode.step : undefined}
             vectorValue={
               (activeControlValues
                 ? activeControlValues[vectorSelected.name]
@@ -620,16 +624,13 @@ const Composition: React.FC<CompositionProps> = ({
                       isControlDefinition(item) &&
                       item.name === controlMode.control
                     ) {
-                      const positionKey =
-                        controlMode.mode === "start" ? "min" : "max";
                       return {
                         ...item,
-                        ...{
-                          [positionKey]: {
-                            ...item[positionKey],
-                            [vectorSelected.name]: newValue,
-                          },
-                        },
+                        steps: item.steps.map((step, index) =>
+                          index === controlMode.step
+                            ? { ...step, [vectorSelected.name]: newValue }
+                            : step
+                        ),
                       };
                     }
                     return undefined;

@@ -30,7 +30,7 @@ const renameKey = <T extends Record<string, unknown>>(
       )
     : object;
 
-const omitKeys = <T extends Record<string, unknown>>(
+export const omitKeys = <T extends Record<string, unknown>>(
   object: T,
   keys: string[]
 ): T =>
@@ -208,8 +208,7 @@ export const addControl = (
       const newControl: ControlDefinition = {
         name: newName,
         type: "slider",
-        min: {},
-        max: {},
+        steps: [{}, {}],
       };
 
       resolve(newControl);
@@ -562,8 +561,9 @@ export const renameVector = (
     if (isControlDefinition(item)) {
       return {
         ...item,
-        min: renameKey(item.min, currentName, newName),
-        max: renameKey(item.max, currentName, newName),
+        steps: (item.steps || []).map((frame) =>
+          renameKey(frame, currentName, newName)
+        ),
       };
     }
     return undefined;
@@ -722,8 +722,9 @@ export const removeItem = (
     if (isControlDefinition(item)) {
       return {
         ...item,
-        min: omitKeys(item.min, vectorsRemoved),
-        max: omitKeys(item.max, vectorsRemoved),
+        steps: (item.steps || []).map((frame) =>
+          omitKeys(frame, vectorsRemoved)
+        ),
       };
     }
     return undefined;
