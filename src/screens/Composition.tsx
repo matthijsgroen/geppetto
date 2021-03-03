@@ -100,10 +100,6 @@ const Composition: React.FC<CompositionProps> = ({
     null
   );
   const [controlMode, setControlmode] = useState<null | ControlMode>(null);
-  // const [vectorValues, setVectorValues] = useState<Keyframe>({});
-  // const [controlValues, setControlValues] = useState<{ [key: string]: number }>(
-  //   {}
-  // );
 
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | ControlDefinition | null) => {
@@ -123,26 +119,6 @@ const Composition: React.FC<CompositionProps> = ({
     },
     [setLayerSelected]
   );
-
-  // useEffect(() => {
-  //   const updatedVectorValues = { ...vectorValues };
-  //   Object.entries(controlValues).forEach(([key, value]) => {
-  //     const control = imageDefinition.controls.find((c) => c.name === key);
-  //     if (!control) return;
-  //     const keys = Object.keys(control.min)
-  //       .concat(Object.keys(control.max))
-  //       .filter((e, i, l) => i === l.indexOf(e));
-
-  //     keys.forEach((vectorKey) => {
-  //       const min = control.min[vectorKey] || updatedVectorValues[vectorKey];
-  //       const max = control.max[vectorKey] || updatedVectorValues[vectorKey];
-  //       if (min !== undefined && max !== undefined) {
-  //         updatedVectorValues[vectorKey] = mixVec2(min, max, value);
-  //       }
-  //     });
-  //   });
-  //   setVectorValues(updatedVectorValues);
-  // }, [controlValues]);
 
   const mouseMode = MouseMode.Grab;
   const shapeSelected =
