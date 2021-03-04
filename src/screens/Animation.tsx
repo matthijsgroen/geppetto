@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Menu from "src/components/Menu";
+import SliderControl from "src/components/SliderControl";
 import { TimeContainer } from "src/components/TimeContainer";
 import { maxZoomFactor } from "src/lib/webgl";
 import CompositionCanvas from "../animation/CompositionCanvas";
@@ -118,6 +120,27 @@ const Composition: React.FC<CompositionProps> = ({
           />
         </MouseControl>
       }
+      menus={[
+        <Menu
+          title="Composition"
+          key="layers"
+          collapsable={true}
+          size={"large"}
+          items={imageDefinition.controls.map((control, i) => (
+            <SliderControl
+              key={`control${i}`}
+              title={control.name}
+              value={imageDefinition.controlValues[control.name]}
+              min={0}
+              max={control.steps.length - 1}
+              step={0.01 * (control.steps.length - 1)}
+              onChange={(newValue) => {
+                /* noop */
+              }}
+            />
+          ))}
+        />,
+      ]}
       bottom={<TimeContainer />}
     />
   );

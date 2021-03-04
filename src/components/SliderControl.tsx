@@ -2,7 +2,10 @@ import React from "react";
 import styled from "styled-components";
 import { Control, ControlLabel } from "./Control";
 
-const Slider = styled.input.attrs({ type: "range" })``;
+const Slider = styled.input.attrs({ type: "range" })`
+  width: 100px;
+`;
+
 const Value = styled.p`
   font-size: 0.7rem;
   text-align: right;
@@ -30,7 +33,7 @@ const SliderControl: React.FC<SliderControlProps> = ({
   onChange,
 }) => (
   <Control>
-    {title && <ControlLabel>{title}</ControlLabel>}
+    {title && <ControlLabel title={title}>{title}</ControlLabel>}
     <div>
       {showValue && <Value>{Math.round(value * 10e3) / 10e3}</Value>}
       <Slider

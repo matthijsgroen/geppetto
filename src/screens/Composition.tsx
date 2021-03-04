@@ -175,8 +175,12 @@ const Composition: React.FC<CompositionProps> = ({
     const mixValue = value - startStep;
 
     const mixed = keys.reduce((result, vectorKey) => {
-      const min = control.steps[startStep][vectorKey];
-      const max = control.steps[endStep][vectorKey];
+      const min =
+        control.steps[startStep][vectorKey] ||
+        defaultValueForVector(vectorMapping[vectorKey].type);
+      const max =
+        control.steps[endStep][vectorKey] ||
+        defaultValueForVector(vectorMapping[vectorKey].type);
 
       const vectorValue = mixVec2(min, max, mixValue);
       return { ...result, [vectorKey]: vectorValue };
@@ -322,20 +326,62 @@ const Composition: React.FC<CompositionProps> = ({
             }
           }}
         />,
+        ...(controlSelected && controlSelected.steps.length > 2
+          ? new Array(controlSelected.steps.length - 2)
+              .fill(null)
+              .map((_e, i) => (
+                <ToolbarButton
+                  key={`setupStep${i + 1}`}
+                  icon={`${i + 1}`}
+                  disabled={!controlSelected}
+                  active={
+                    !!(
+                      controlMode &&
+                      controlSelected &&
+                      controlMode.step === i + 1
+                    )
+                  }
+                  label=""
+                  onClick={() => {
+                    if (controlSelected) {
+                      const step = i + 1;
+                      setControlmode({
+                        control: controlSelected.name,
+                        step: step,
+                      });
+                      updateImageDefinition((state) => ({
+                        ...state,
+                        controlValues: {
+                          ...state.controlValues,
+                          [controlSelected.name]: step,
+                        },
+                      }));
+                    }
+                  }}
+                />
+              ))
+          : []),
         <ToolbarButton
           key="setupEnd"
           icon="️⇥"
           disabled={!controlSelected}
-          active={!!(controlMode && controlMode.step === 1)}
+          active={
+            !!(
+              controlMode &&
+              controlSelected &&
+              controlMode.step === controlSelected.steps.length - 1
+            )
+          }
           label=""
           onClick={() => {
             if (controlSelected) {
-              setControlmode({ control: controlSelected.name, step: 1 });
+              const lastStep = controlSelected.steps.length - 1;
+              setControlmode({ control: controlSelected.name, step: lastStep });
               updateImageDefinition((state) => ({
                 ...state,
                 controlValues: {
                   ...state.controlValues,
-                  [controlSelected.name]: 1,
+                  [controlSelected.name]: lastStep,
                 },
               }));
             }
@@ -652,6 +698,7 @@ const Composition: React.FC<CompositionProps> = ({
             key="info"
             controlSelected={controlSelected}
             value={imageDefinition.controlValues[controlSelected.name] || 0}
+            updateImageDefinition={updateImageDefinition}
             onChange={(newValue) => {
               updateImageDefinition((state) => ({
                 ...state,

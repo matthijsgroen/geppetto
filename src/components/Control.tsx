@@ -12,4 +12,6 @@ export const ControlLabel = styled.p`
   padding: 0 1rem;
   margin: 0;
   flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
