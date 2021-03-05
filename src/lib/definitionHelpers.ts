@@ -554,20 +554,26 @@ export const renameVector = (
   currentName: string,
   newName: string
 ): ImageDefinition =>
-  visit(image, (item) => {
-    if (isMutationVector(item) && item.name === currentName) {
-      return { ...item, name: newName };
+  visit(
+    {
+      ...image,
+      defaultFrame: renameKey(image.defaultFrame, currentName, newName),
+    },
+    (item) => {
+      if (isMutationVector(item) && item.name === currentName) {
+        return { ...item, name: newName };
+      }
+      if (isControlDefinition(item)) {
+        return {
+          ...item,
+          steps: (item.steps || []).map((frame) =>
+            renameKey(frame, currentName, newName)
+          ),
+        };
+      }
+      return undefined;
     }
-    if (isControlDefinition(item)) {
-      return {
-        ...item,
-        steps: (item.steps || []).map((frame) =>
-          renameKey(frame, currentName, newName)
-        ),
-      };
-    }
-    return undefined;
-  });
+  );
 
 export const renameControl = (
   image: ImageDefinition,
