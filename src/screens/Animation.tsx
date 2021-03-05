@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import AnimationCanvas from "src/animation/AnimationCanvas";
 import Menu from "src/components/Menu";
 import SliderControl from "src/components/SliderControl";
 import { TimeContainer } from "src/components/TimeContainer";
 import { maxZoomFactor } from "src/lib/webgl";
-import CompositionCanvas from "../animation/CompositionCanvas";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import { ImageDefinition, Keyframe } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
@@ -110,10 +110,10 @@ const Composition: React.FC<CompositionProps> = ({
           onMouseUp={mouseUp}
           onWheel={mouseWheel}
         >
-          <CompositionCanvas
+          <AnimationCanvas
             image={texture}
-            shapes={imageDefinition.shapes}
-            vectorValues={vectorValues}
+            imageDefinition={imageDefinition}
+            // vectorValues={vectorValues}
             zoom={zoom}
             panX={panX}
             panY={panY}
