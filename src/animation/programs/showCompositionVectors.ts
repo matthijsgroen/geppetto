@@ -63,6 +63,8 @@ const compositionVertexShader = `
     vec2 size = (vec4(spec.xy * radius * scale.x, 1.0, 1.0) * viewportScale).xy;
     if (coordinates.y > 0.0) {
       size *= scale.y;
+    } else {
+      size *= -coordinates.y;
     }
 
     vec2 center = (pos.xy + scale.ba) * scale.y;
@@ -180,10 +182,10 @@ export const showCompositionVectors = (): {
         });
         const offset = vertices.length / stride;
         const color = colorMapping[vector.type];
-        vertices.push(0, -5, ...color, 1);
-        vertices.push(1, -5, ...color, 1);
-        vertices.push(2, -5, ...color, 1);
-        vertices.push(3, -5, ...color, 1);
+        vertices.push(0, -3, ...color, 1);
+        vertices.push(1, -3, ...color, 1);
+        vertices.push(2, -3, ...color, 1);
+        vertices.push(3, -3, ...color, 1);
 
         indices.push(
           offset,
