@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import AnimationCanvas from "src/animation/AnimationCanvas";
 import Menu from "src/components/Menu";
 import SliderControl from "src/components/SliderControl";
 import { TimeContainer } from "src/components/TimeContainer";
 import { maxZoomFactor } from "src/lib/webgl";
 import MouseControl, { MouseMode } from "../components/MouseControl";
-import { ImageDefinition, Keyframe } from "../lib/types";
+import { ControlValues, ImageDefinition } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface CompositionProps {
@@ -30,17 +30,9 @@ const Composition: React.FC<CompositionProps> = ({
     0,
     0,
   ]);
-  const [vectorValues, setVectorValues] = useState<Keyframe>({});
-
-  useEffect(() => {
-    const newVectorValues = {
-      ...vectorValues,
-      ...imageDefinition.defaultFrame,
-    };
-    if (JSON.stringify(vectorValues) !== JSON.stringify(newVectorValues)) {
-      setVectorValues(newVectorValues);
-    }
-  }, [imageDefinition]);
+  const [controlValues, setControlValues] = useState<ControlValues>(
+    () => imageDefinition.controlValues
+  );
 
   const mouseMode = MouseMode.Grab;
   const mouseDown = (event: React.MouseEvent) => {
@@ -113,7 +105,7 @@ const Composition: React.FC<CompositionProps> = ({
           <AnimationCanvas
             image={texture}
             imageDefinition={imageDefinition}
-            // vectorValues={vectorValues}
+            controlValues={controlValues}
             zoom={zoom}
             panX={panX}
             panY={panY}
@@ -130,12 +122,15 @@ const Composition: React.FC<CompositionProps> = ({
             <SliderControl
               key={`control${i}`}
               title={control.name}
-              value={imageDefinition.controlValues[control.name]}
+              value={controlValues[control.name]}
               min={0}
               max={control.steps.length - 1}
               step={0.01 * (control.steps.length - 1)}
               onChange={(newValue) => {
-                /* noop */
+                setControlValues((state) => ({
+                  ...state,
+                  [control.name]: newValue,
+                }));
               }}
             />
           ))}

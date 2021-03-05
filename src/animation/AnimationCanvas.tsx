@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo } from "react";
-import { ImageDefinition } from "../lib/types";
-import { showComposition } from "./programs/showComposition";
+import { ControlValues, ImageDefinition } from "../lib/types";
+import { showAnimation } from "./programs/showAnimation";
 import WebGLCanvas from "./WebGLCanvas";
 
 export interface TextureMapCanvasProps {
   image: HTMLImageElement | null;
   imageDefinition: ImageDefinition;
+  controlValues: ControlValues;
   zoom: number;
   panX: number;
   panY: number;
@@ -18,25 +19,21 @@ const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
   panX,
   panY,
 }) => {
-  const composition = useMemo(() => showComposition(), []);
-  const renderers = [composition.renderer];
+  const animation = useMemo(() => showAnimation(), []);
+  const renderers = [animation.renderer];
 
   useEffect(() => {
     if (image) {
-      composition.setImage(image);
+      animation.setImage(image);
     }
   }, [image]);
 
   useEffect(() => {
-    composition.setShapes(imageDefinition.shapes);
-  }, [imageDefinition.shapes]);
+    animation.setImageDefinition(imageDefinition);
+  }, [imageDefinition]);
 
-  useEffect(() => {
-    composition.setVectorValues(imageDefinition.defaultFrame);
-  }, [imageDefinition.defaultFrame]);
-
-  composition.setZoom(zoom);
-  composition.setPan(panX, panY);
+  animation.setZoom(zoom);
+  animation.setPan(panX, panY);
 
   return <WebGLCanvas renderers={renderers} />;
 };
