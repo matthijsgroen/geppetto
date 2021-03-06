@@ -5,6 +5,7 @@ import styled from "styled-components";
 const MenuContainer = styled.aside`
   grid-area: a;
   height: 100%;
+  overflow-y: hidden;
   display: flex;
   flex-direction: column;
 `;
