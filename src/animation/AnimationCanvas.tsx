@@ -15,6 +15,7 @@ export interface TextureMapCanvasProps {
 const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
   image,
   imageDefinition,
+  controlValues,
   zoom,
   panX,
   panY,
@@ -32,6 +33,7 @@ const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
     animation.setImageDefinition(imageDefinition);
   }, [imageDefinition]);
 
+  animation.setControlValues(controlValues);
   animation.setZoom(zoom);
   animation.setPan(panX, panY);
 

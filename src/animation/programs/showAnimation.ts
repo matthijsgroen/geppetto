@@ -1,12 +1,13 @@
 import Delaunator from "delaunator";
-import { ImageDefinition } from "../../lib/types";
+import { ControlValues, ImageDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
   assignMutatorToElements,
   createMutationTree,
+  MAX_CONTROLS,
   MAX_MUTATION_VECTORS,
+  mutationControlShader,
   mutationShader,
-  mutationValueShader,
 } from "./mutatePoint";
 import { flattenShapes, getAnchor } from "./utils";
 
@@ -28,7 +29,7 @@ const animationVertexShader = `
     -1, +1, 0, 1
   );
 
-  ${mutationValueShader}
+  ${mutationControlShader}
   ${mutationShader}
 
   void main() {
@@ -58,6 +59,7 @@ const animationFragmentShader = `
 export const showAnimation = (): {
   setImage(image: HTMLImageElement): void;
   setImageDefinition(imageDefinition: ImageDefinition): void;
+  setControlValues(controlValues: ControlValues): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
@@ -65,6 +67,7 @@ export const showAnimation = (): {
   const stride = 4;
 
   let imageDefinition: ImageDefinition | null = null;
+  let controlValues: ControlValues | null = null;
 
   let gl: WebGLRenderingContext | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
@@ -83,6 +86,7 @@ export const showAnimation = (): {
     z: number;
   }[] = [];
   let mutators: string[] = [];
+  let controls: string[] = [];
   let zoom = 1.0;
   let scale = 1.0;
   let pan = [0, 0];
@@ -150,6 +154,7 @@ export const showAnimation = (): {
     );
 
     mutators = newMutators;
+    controls = imageDefinition.controls.map((e) => e.name);
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
@@ -182,6 +187,22 @@ export const showAnimation = (): {
     gl.uniform2fv(uMutationValues, mutationValues);
   };
 
+  const assignControlValues = () => {
+    if (!imageDefinition || !gl || !program || !controlValues) return;
+    gl.useProgram(program);
+
+    // Set control values to uniforms
+
+    const uControlValues = gl.getUniformLocation(program, "uControlValues");
+    const contrValues = new Float32Array(MAX_CONTROLS).fill(0);
+    Object.entries(controlValues).forEach(([key, value]) => {
+      const index = controls.indexOf(key);
+      if (index === -1) return;
+      contrValues[index] = value;
+    });
+    gl.uniform1fv(uControlValues, contrValues);
+  };
+
   let cWidth = 0;
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
@@ -194,6 +215,10 @@ export const showAnimation = (): {
     setImageDefinition(imgDef) {
       imageDefinition = imgDef;
       populateShapes();
+    },
+    setControlValues(ctrlValues) {
+      controlValues = ctrlValues;
+      assignControlValues();
     },
     setZoom(newZoom) {
       zoom = newZoom;
@@ -229,6 +254,7 @@ export const showAnimation = (): {
       );
       setImageTexture();
       populateShapes();
+      assignControlValues();
 
       return {
         render() {

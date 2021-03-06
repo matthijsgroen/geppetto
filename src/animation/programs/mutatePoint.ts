@@ -8,6 +8,7 @@ import {
 export const MAX_MUTATION_VECTORS = 20;
 export const MAX_TREE_LEVELS = 7;
 export const MAX_TREE_SIZE = Math.pow(2, MAX_TREE_LEVELS);
+export const MAX_CONTROLS = 20;
 
 export const vectorTypeMapping = {
   translate: 1,
@@ -15,6 +16,15 @@ export const vectorTypeMapping = {
   rotate: 3,
   deform: 4,
 };
+
+export const mutationControlShader = `
+  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
+  uniform float [${MAX_CONTROLS}];
+
+  vec2 getMutationValue(int mutationIndex) {
+    return uMutationValues[mutationIndex];
+  }
+`;
 
 export const mutationValueShader = `
   uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
