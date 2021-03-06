@@ -270,6 +270,11 @@ export const showAnimation = (): {
       mutationValueIndices.push(...items);
     });
 
+    // console.log(mutationControlData);
+    // console.log(controlMutationValues);
+    // console.log(mutationValueIndices);
+    // console.log(controlMutationIndices);
+
     const uControlMutationValues = gl.getUniformLocation(
       program,
       "uControlMutationValues"
@@ -295,72 +300,27 @@ export const showAnimation = (): {
       mutationValueIndicesArray[i * 3 + 1] = v[1];
       mutationValueIndicesArray[i * 3 + 2] = v[2];
     });
-    gl.uniform2fv(uMutationValueIndices, mutationValueIndicesArray);
+    gl.uniform3fv(uMutationValueIndices, mutationValueIndicesArray);
 
     const uControlMutationIndices = gl.getUniformLocation(
       program,
       "uControlMutationIndices"
     );
     const controlMutationIndicesArray = new Float32Array(
-      MAX_MUTATION_VECTORS * MAX_CONTROLS * 3
+      MAX_MUTATION_VECTORS * 2
     ).fill(0);
     controlMutationIndices.forEach((v, i) => {
       controlMutationIndicesArray[i * 2] = v[0];
       controlMutationIndicesArray[i * 2 + 1] = v[1];
     });
     gl.uniform2fv(uControlMutationIndices, controlMutationIndicesArray);
-
-    // console.log(mutationControlData);
-    // console.log(controlMutationValues);
-    // console.log(mutationValueIndices);
-    // console.log(controlMutationIndices);
-
-    // console.log(imageDefinition);
-
-    // const baseMutationValues: Vec2[] = []; // DONE
-    // const controlValues: number[] = []; // DONE
-
-    // const controlMutationValues: Vec2[] = []; // DONE
-
-    // const mutationValueIndices: Vec3[] = []; // DONE
-    // Vec3 = [start controlMutationValues, controlValueIndex, stepType]
-
-    // const controlMutationIndices: Vec2[] = [];
-    // index == mutationIndex
-    // Vec2 = [start mutationValueIndices, length mutationValueIndices]
-
-    // const getMutationValue = (index: number, mutationType: number) => {
-    //   let baseValue: Vec2 = baseMutationValues[index];
-    //   const controlMutations: Vec2 = controlMutationIndices[index];
-    //   for (let a = 0; a < controlMutations[1]; a++) {
-    //     const valueIndices: Vec3 =
-    //       mutationValueIndices[controlMutations[0] + a];
-    //     const [start, valueIndex, step] = valueIndices;
-    //     const controlValue = controlValues[valueIndex];
-
-    //     const startIndex = Math.floor(start + controlValue);
-    //     let mutationValue = controlMutationValues[startIndex];
-    //     if (step === 0) {
-    //       const endIndex = Math.ceil(start + controlValue);
-    //       const mix = controlValue - Math.floor(controlValue);
-    //       const mixValue = controlMutationValues[endIndex];
-    //       mutationValue = mixVec2(mutationValue, mixValue, mix);
-    //     }
-
-    //     if (mutationType == 4) {
-    //       baseValue = vecMul(baseValue, mutationValue);
-    //     } else {
-    //       baseValue = vecAdd(baseValue, mutationValue);
-    //     }
-    //   }
-
-    //   return baseValue;
-    // };
   };
 
   const assignControlValues = () => {
     if (!imageDefinition || !gl || !program || !controlValues) return;
     gl.useProgram(program);
+
+    controls = imageDefinition.controls.map((e) => e.name);
 
     // Set control values to uniforms
 

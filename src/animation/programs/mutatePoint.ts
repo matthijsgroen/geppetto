@@ -27,7 +27,37 @@ export const mutationControlShader = `
 
   vec2 getMutationValue(int mutationIndex, int mutationType) {
     vec2 result = uMutationValues[mutationIndex];
+    vec2 controlMutations = uControlMutationIndices[mutationIndex];
+    int start = int(controlMutations.x);
+    int steps = int(controlMutations.y);
+    if (steps == 0) {
+      return result;
+    }
+    for(int i = 0; i < ${MAX_CONTROLS}; i++) {
+      if (i < steps) {
+        vec3 valueIndices = uMutationValueIndices[start + i];
+        // x = offset
+        // y = control value index
+        // z = stepType
+        float controlValue = uControlValues[int(valueIndices.y)];
 
+        int startIndex = int(floor(valueIndices.x + controlValue));
+        int endIndex = int(ceil(valueIndices.x + controlValue));
+        float mixFactor = controlValue - floor(controlValue);
+
+        vec2 mutAValue = uControlMutationValues[startIndex];
+        vec2 mutBValue = uControlMutationValues[endIndex];
+        vec2 mutValue = mix(mutAValue, mutBValue, mixFactor);
+
+        if (mutationType == 2) { // Stretch
+          result *= mutValue;
+        } else {
+          result += mutValue;
+        }
+      } else {
+        return result;
+      }
+    }
 
     return result;
   }

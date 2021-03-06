@@ -31,6 +31,7 @@ const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
 
   useEffect(() => {
     animation.setImageDefinition(imageDefinition);
+    animation.setControlValues(controlValues);
   }, [imageDefinition]);
 
   animation.setControlValues(controlValues);
