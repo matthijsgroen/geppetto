@@ -64,7 +64,8 @@ const getSetVectorNames = (
 ): string[] => {
   const control = imageDefinition.controls.find((c) => c.name === mode.control);
   if (control === undefined) return [];
-  return Object.keys(control.steps[mode.step]);
+  const f = Math.min(control.steps.length - 1, mode.step);
+  return Object.keys(control.steps[f]);
 };
 
 const getMutationVectorMapping = (
@@ -136,9 +137,25 @@ const Composition: React.FC<CompositionProps> = ({
     : imageDefinition.controls.find((c) => c.name === layerSelected.name) ||
       null;
 
+  const controlModeStep =
+    controlSelected && controlMode
+      ? Math.min(controlSelected.steps.length - 1, controlMode.step)
+      : 0;
+
+  if (
+    controlSelected &&
+    controlMode &&
+    controlMode.step > controlSelected.steps.length - 1
+  ) {
+    setControlmode({
+      control: controlSelected.name,
+      step: controlSelected.steps.length - 1,
+    });
+  }
+
   const activeControlValues: Keyframe | null =
     controlSelected && controlMode
-      ? controlSelected.steps[controlMode.step]
+      ? controlSelected.steps[controlModeStep]
       : null;
 
   useEffect(() => {
@@ -311,7 +328,7 @@ const Composition: React.FC<CompositionProps> = ({
           key="setupStart"
           icon="️⇤"
           disabled={!controlSelected}
-          active={!!(controlMode && controlMode.step === 0)}
+          active={!!(controlMode && controlModeStep === 0)}
           label=""
           onClick={() => {
             if (controlSelected) {
@@ -338,7 +355,7 @@ const Composition: React.FC<CompositionProps> = ({
                     !!(
                       controlMode &&
                       controlSelected &&
-                      controlMode.step === i + 1
+                      controlModeStep === i + 1
                     )
                   }
                   label=""
@@ -369,7 +386,7 @@ const Composition: React.FC<CompositionProps> = ({
             !!(
               controlMode &&
               controlSelected &&
-              controlMode.step === controlSelected.steps.length - 1
+              controlModeStep === controlSelected.steps.length - 1
             )
           }
           label=""
@@ -654,7 +671,7 @@ const Composition: React.FC<CompositionProps> = ({
             image={imageDefinition}
             updateImageDefinition={updateImageDefinition}
             activeControl={controlMode ? controlMode.control : undefined}
-            controlPosition={controlMode ? controlMode.step : undefined}
+            controlPosition={controlMode ? controlModeStep : undefined}
             vectorValue={
               (activeControlValues
                 ? activeControlValues[vectorSelected.name]
@@ -673,7 +690,7 @@ const Composition: React.FC<CompositionProps> = ({
                       return {
                         ...item,
                         steps: item.steps.map((step, index) =>
-                          index === controlMode.step
+                          index === controlModeStep
                             ? { ...step, [vectorSelected.name]: newValue }
                             : step
                         ),

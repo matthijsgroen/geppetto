@@ -40,25 +40,41 @@ const ControlInfoPanel: React.FC<ControlInfoPanelProps> = ({
         options={createOptions(20)}
         onChange={(selected) => {
           updateImageDefinition((image) =>
-            visit(image, (node) => {
-              if (
-                isControlDefinition(node) &&
-                node.name === controlSelected.name
-              ) {
-                if (node.steps.length < selected.value) {
-                  return {
-                    ...node,
-                    steps: node.steps.concat(
-                      new Array(selected.value - node.steps.length).fill(
-                        {} as Keyframe
-                      )
-                    ),
-                  };
+            visit(
+              {
+                ...image,
+                controlValues: {
+                  ...image.controlValues,
+                  [controlSelected.name]: Math.min(
+                    image.controlValues[controlSelected.name],
+                    selected.value - 1
+                  ),
+                },
+              },
+              (node) => {
+                if (
+                  isControlDefinition(node) &&
+                  node.name === controlSelected.name
+                ) {
+                  if (node.steps.length < selected.value) {
+                    return {
+                      ...node,
+                      steps: node.steps.concat(
+                        new Array(selected.value - node.steps.length).fill(
+                          {} as Keyframe
+                        )
+                      ),
+                    };
+                  } else {
+                    return {
+                      ...node,
+                      steps: node.steps.slice(0, selected.value),
+                    };
+                  }
                 }
+                return undefined;
               }
-
-              return undefined;
-            })
+            )
           );
         }}
       />,
