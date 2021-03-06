@@ -1,5 +1,10 @@
 import Delaunator from "delaunator";
-import { ControlValues, ImageDefinition } from "../../lib/types";
+import {
+  ControlDefinition,
+  ControlValues,
+  ImageDefinition,
+  Vec2,
+} from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
   assignMutatorToElements,
@@ -185,6 +190,94 @@ export const showAnimation = (): {
       mutationValues[index * 2 + 1] = value[1];
     });
     gl.uniform2fv(uMutationValues, mutationValues);
+
+    type ControlData = {
+      name: string;
+      controlIndex: number;
+      values: Vec2[];
+    };
+
+    type MutationControl = {
+      [key: number]: {
+        controls: ControlData[];
+      };
+    };
+
+    const mutationControlData: MutationControl = imageDefinition.controls.reduce<MutationControl>(
+      (result: MutationControl, control: ControlDefinition) => {
+        const controlMutations = control.steps.reduce<string[]>(
+          (result, frame) =>
+            result.concat(
+              Object.keys(frame).filter((name) => !result.includes(name))
+            ),
+          []
+        );
+        controlMutations.forEach((mutation) => {
+          const index = mutators.indexOf(mutation);
+          const controlData: ControlData = {
+            name: control.name,
+            controlIndex:
+              imageDefinition?.controls.findIndex(
+                (c) => c.name === control.name
+              ) || 0,
+            values: control.steps.map((k) => k[mutation]),
+          };
+          result = {
+            ...result,
+            [index]: {
+              controls: ((result[index] || {}).controls || []).concat(
+                controlData
+              ),
+            },
+          };
+        });
+        return result;
+      },
+      {}
+    );
+    console.log(mutationControlData);
+
+    // console.log(imageDefinition);
+
+    // const baseMutationValues: Vec2[] = []; // DONE
+    // const controlValues: number[] = []; // DONE
+
+    // const controlMutationValues: Vec2[] = [];
+
+    // const mutationValueIndices: Vec3[] = [];
+    // Vec3 = [start controlMutationValues, controlValueIndex, stepType]
+
+    // const controlMutationIndices: Vec2[] = [];
+    // index == mutationIndex
+    // Vec2 = [start mutationValueIndices, length mutationValueIndices]
+
+    // const getMutationValue = (index: number, mutationType: number) => {
+    //   let baseValue: Vec2 = baseMutationValues[index];
+    //   const controlMutations: Vec2 = controlMutationIndices[index];
+    //   for (let a = 0; a < controlMutations[1]; a++) {
+    //     const valueIndices: Vec3 =
+    //       mutationValueIndices[controlMutations[0] + a];
+    //     const [start, valueIndex, step] = valueIndices;
+    //     const controlValue = controlValues[valueIndex];
+
+    //     const startIndex = Math.floor(start + controlValue);
+    //     let mutationValue = controlMutationValues[startIndex];
+    //     if (step === 0) {
+    //       const endIndex = Math.ceil(start + controlValue);
+    //       const mix = controlValue - Math.floor(controlValue);
+    //       const mixValue = controlMutationValues[endIndex];
+    //       mutationValue = mixVec2(mutationValue, mixValue, mix);
+    //     }
+
+    //     if (mutationType == 4) {
+    //       baseValue = vecMul(baseValue, mutationValue);
+    //     } else {
+    //       baseValue = vecAdd(baseValue, mutationValue);
+    //     }
+    //   }
+
+    //   return baseValue;
+    // };
   };
 
   const assignControlValues = () => {

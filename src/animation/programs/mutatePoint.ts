@@ -18,18 +18,23 @@ export const vectorTypeMapping = {
 };
 
 export const mutationControlShader = `
-  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
-  uniform float [${MAX_CONTROLS}];
+  uniform vec2 uControlMutationValues[${MAX_TREE_SIZE}];
+  uniform float uControlValues[${MAX_CONTROLS}];
 
-  vec2 getMutationValue(int mutationIndex) {
-    return uMutationValues[mutationIndex];
+  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
+
+  vec2 getMutationValue(int mutationIndex, int mutationType) {
+    vec2 result = uMutationValues[mutationIndex];
+
+
+    return result;
   }
 `;
 
 export const mutationValueShader = `
   uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
 
-  vec2 getMutationValue(int mutationIndex) {
+  vec2 getMutationValue(int mutationIndex, int mutationType) {
     return uMutationValues[mutationIndex];
   }
 `;
@@ -51,8 +56,9 @@ export const mutationShader = `
       return startValue;
     }
     vec4 mutation = uMutationVectors[mutationIndex - 1];
-    vec2 mutationValue = getMutationValue(mutationIndex - 1);
     int mutationType = int(mutation.x);
+
+    vec2 mutationValue = getMutationValue(mutationIndex - 1, mutationType);
     vec2 origin = mutation.yz;
 
     vec2 result = startValue;
