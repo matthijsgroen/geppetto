@@ -19,8 +19,10 @@ export const vectorTypeMapping = {
 
 export const mutationControlShader = `
   uniform vec2 uControlMutationValues[${MAX_TREE_SIZE}];
-  uniform float uControlValues[${MAX_CONTROLS}];
+  uniform vec3 uMutationValueIndices[${MAX_MUTATION_VECTORS * MAX_CONTROLS}];
+  uniform vec2 uControlMutationIndices[${MAX_MUTATION_VECTORS}];
 
+  uniform float uControlValues[${MAX_CONTROLS}];
   uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
 
   vec2 getMutationValue(int mutationIndex, int mutationType) {
