@@ -32,8 +32,7 @@
     "lint": "eslint src/**/*.ts{,x}",
     "test": "craco test",
     "preelectron-pack": "yarn build",
-    "electron-pack": "electron-builder build --mac --win --linux deb --c.extraMetadata.main=build/electron.js",
-    "release": "yarn build && yarn build-electron && yarn package"
+    "electron-pack": "electron-builder build --mac --win --linux deb --c.extraMetadata.main=build/electron.js"
   },
   "build": {
     "appId": "com.example.electron-cra",

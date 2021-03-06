@@ -1,11 +1,12 @@
 import Delaunator from "delaunator";
-import { ImageDefinition, Keyframe, ShapeDefinition } from "../../lib/types";
+import { ImageDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
   assignMutatorToElements,
   createMutationTree,
   MAX_MUTATION_VECTORS,
   mutationShader,
+  mutationValueShader,
 } from "./mutatePoint";
 import { flattenShapes, getAnchor } from "./utils";
 
@@ -27,6 +28,7 @@ const animationVertexShader = `
     -1, +1, 0, 1
   );
 
+  ${mutationValueShader}
   ${mutationShader}
 
   void main() {
@@ -62,7 +64,7 @@ export const showAnimation = (): {
 } => {
   const stride = 4;
 
-  let shapes: ShapeDefinition[] | null = null;
+  let imageDefinition: ImageDefinition | null = null;
 
   let gl: WebGLRenderingContext | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
@@ -71,7 +73,6 @@ export const showAnimation = (): {
   let texture: WebGLTexture | null = null;
   let program: WebGLProgram | null = null;
 
-  let vectorValues: Keyframe = {};
   let elements: {
     name: string;
     start: number;
@@ -102,13 +103,15 @@ export const showAnimation = (): {
   };
 
   const populateShapes = () => {
-    if (!shapes || !gl || !indexBuffer || !vertexBuffer || !program) return;
+    if (!imageDefinition || !gl || !indexBuffer || !vertexBuffer || !program)
+      return;
+    gl.useProgram(program);
+
     const vertices: number[] = [];
     const indices: number[] = [];
     elements = [];
 
-    gl.useProgram(program);
-    const sprites = flattenShapes(shapes);
+    const sprites = flattenShapes(imageDefinition.shapes);
     sprites.forEach((shape, index) => {
       const anchor = getAnchor(shape);
       const shapeIndices = Delaunator.from(shape.points).triangles;
@@ -138,8 +141,13 @@ export const showAnimation = (): {
       vectorSettings,
       treeData,
       shapeVectorInfo,
-    ] = createMutationTree(shapes);
-    assignMutatorToElements(shapes, elements, treeData, shapeVectorInfo);
+    ] = createMutationTree(imageDefinition.shapes);
+    assignMutatorToElements(
+      imageDefinition.shapes,
+      elements,
+      treeData,
+      shapeVectorInfo
+    );
 
     mutators = newMutators;
 
@@ -162,6 +170,16 @@ export const showAnimation = (): {
       gl.STATIC_DRAW
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+    const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
+    const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
+    Object.entries(imageDefinition.defaultFrame).forEach(([key, value]) => {
+      const index = mutators.indexOf(key);
+      if (index === -1) return;
+      mutationValues[index * 2] = value[0];
+      mutationValues[index * 2 + 1] = value[1];
+    });
+    gl.uniform2fv(uMutationValues, mutationValues);
   };
 
   let cWidth = 0;
@@ -173,23 +191,9 @@ export const showAnimation = (): {
       img = image;
       setImageTexture();
     },
-    setImageDefinition(imageDefinition) {
-      shapes = imageDefinition.shapes;
+    setImageDefinition(imgDef) {
+      imageDefinition = imgDef;
       populateShapes();
-
-      vectorValues = imageDefinition.defaultFrame;
-      if (mutators.length === 0 || !program || !gl) return;
-      gl.useProgram(program);
-
-      const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
-      const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
-      Object.entries(vectorValues).forEach(([key, value]) => {
-        const index = mutators.indexOf(key);
-        if (index === -1) return;
-        mutationValues[index * 2] = value[0];
-        mutationValues[index * 2 + 1] = value[1];
-      });
-      gl.uniform2fv(uMutationValues, mutationValues);
     },
     setZoom(newZoom) {
       zoom = newZoom;
@@ -228,7 +232,7 @@ export const showAnimation = (): {
 
       return {
         render() {
-          if (!img || !shapes) {
+          if (!img || !imageDefinition) {
             return;
           }
           const gl = initgl;

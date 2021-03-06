@@ -12,6 +12,7 @@ import {
   createMutationTree,
   MAX_MUTATION_VECTORS,
   mutationShader,
+  mutationValueShader,
 } from "./mutatePoint";
 
 const compositionVertexShader = `
@@ -34,6 +35,7 @@ const compositionVertexShader = `
     -1, +1, 0, 1
   );
 
+  ${mutationValueShader}
   ${mutationShader}
 
   void main() {

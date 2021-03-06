@@ -16,13 +16,20 @@ export const vectorTypeMapping = {
   deform: 4,
 };
 
+export const mutationValueShader = `
+  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
+
+  vec2 getMutationValue(int mutationIndex) {
+    return uMutationValues[mutationIndex];
+  }
+`;
+
 export const mutationShader = `
   #define PI_FRAC 0.017453292519943295
   uniform float mutation; 
 
   // x = type, yz = origin, a = radius
   uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];
-  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
   uniform float uMutationTree[${MAX_TREE_SIZE}];
 
   vec2 mutateOnce(vec2 startValue, int treeIndex) {
@@ -34,7 +41,7 @@ export const mutationShader = `
       return startValue;
     }
     vec4 mutation = uMutationVectors[mutationIndex - 1];
-    vec2 mutationValue = uMutationValues[mutationIndex - 1];
+    vec2 mutationValue = getMutationValue(mutationIndex - 1);
     int mutationType = int(mutation.x);
     vec2 origin = mutation.yz;
 
