@@ -12,6 +12,7 @@ import {
   createMutationTree,
   MAX_CONTROLS,
   MAX_MUTATION_VECTORS,
+  MAX_TREE_SIZE,
   mutationControlShader,
   mutationShader,
 } from "./mutatePoint";
@@ -207,8 +208,14 @@ export const showAnimation = (): {
     };
 
     const controlMutationValues: Vec2[] = [];
+    // Vec2 mutation values
+
     const mutationValueIndices: Vec3[] = [];
+    // Vec3 = [start controlMutationValues, controlValueIndex, stepType]
+
     const controlMutationIndices: Vec2[] = [];
+    // index == mutationIndex
+    // Vec2 = [start mutationValueIndices, length mutationValueIndices]
 
     const mutationControlData: MutationControl = imageDefinition.controls.reduce<MutationControl>(
       (result: MutationControl, control: ControlDefinition) => {
@@ -262,6 +269,46 @@ export const showAnimation = (): {
       ];
       mutationValueIndices.push(...items);
     });
+
+    const uControlMutationValues = gl.getUniformLocation(
+      program,
+      "uControlMutationValues"
+    );
+    const controlMutationValuesArray = new Float32Array(MAX_TREE_SIZE * 2).fill(
+      0
+    );
+    controlMutationValues.forEach((v, i) => {
+      controlMutationValuesArray[i * 2] = v[0];
+      controlMutationValuesArray[i * 2 + 1] = v[1];
+    });
+    gl.uniform2fv(uControlMutationValues, controlMutationValuesArray);
+
+    const uMutationValueIndices = gl.getUniformLocation(
+      program,
+      "uMutationValueIndices"
+    );
+    const mutationValueIndicesArray = new Float32Array(
+      MAX_MUTATION_VECTORS * MAX_CONTROLS * 3
+    ).fill(0);
+    mutationValueIndices.forEach((v, i) => {
+      mutationValueIndicesArray[i * 3] = v[0];
+      mutationValueIndicesArray[i * 3 + 1] = v[1];
+      mutationValueIndicesArray[i * 3 + 2] = v[2];
+    });
+    gl.uniform2fv(uMutationValueIndices, mutationValueIndicesArray);
+
+    const uControlMutationIndices = gl.getUniformLocation(
+      program,
+      "uControlMutationIndices"
+    );
+    const controlMutationIndicesArray = new Float32Array(
+      MAX_MUTATION_VECTORS * MAX_CONTROLS * 3
+    ).fill(0);
+    controlMutationIndices.forEach((v, i) => {
+      controlMutationIndicesArray[i * 2] = v[0];
+      controlMutationIndicesArray[i * 2 + 1] = v[1];
+    });
+    gl.uniform2fv(uControlMutationIndices, controlMutationIndicesArray);
 
     // console.log(mutationControlData);
     // console.log(controlMutationValues);
