@@ -137,6 +137,7 @@ const template = [
 const menu = Menu.buildFromTemplate(template);
 
 const newDefinition = {
+  animations: [],
   controlValues: {},
   controls: [],
   defaultFrame: {},

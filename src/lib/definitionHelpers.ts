@@ -43,6 +43,7 @@ export const omitKeys = <T extends Record<string, unknown>>(
     : object;
 
 export const newDefinition = (): ImageDefinition => ({
+  animations: [],
   controlValues: {},
   controls: [],
   defaultFrame: {},

@@ -66,9 +66,21 @@ export type ControlValues = {
   [key: string]: number;
 };
 
+export type AnimationFrame = {
+  controlValues: ControlValues;
+  time: number;
+};
+
+export type Animation = {
+  name: string;
+  looping: boolean;
+  keyFrames: AnimationFrame[];
+};
+
 export type ImageDefinition = {
   shapes: ShapeDefinition[];
   defaultFrame: Keyframe;
   controls: ControlDefinition[];
   controlValues: ControlValues;
+  animations: Animation[];
 };
