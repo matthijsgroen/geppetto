@@ -62,9 +62,9 @@ const compositionVertexShader = `
       spec = vec2(1.0, 1.0);
     }
 
-    vec2 size = (vec4(spec.xy * radius * scale.x, 1.0, 1.0) * viewportScale).xy;
+    vec2 size = (vec4(spec.xy * radius, 1.0, 1.0) * viewportScale).xy;
     if (coordinates.y > 0.0) {
-      size *= scale.y;
+      size *= scale.y * scale.x;
     } else {
       size *= -coordinates.y;
     }
