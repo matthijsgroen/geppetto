@@ -142,11 +142,9 @@ const TimeLine = styled.div<{
         _isActive ? theme.colors.backgroundSelected : theme.colors.background},
       ${({ theme, _isActive }) =>
           _isActive ? theme.colors.backgroundSelected : theme.colors.background}
-        ${(props) => props._scale * Math.round(props._length / 1000.0)}px,
-      transparent
-        ${(props) => props._scale * Math.round(props._length / 1000.0) + 1}px,
-      transparent
-        ${(props) => props._scale * Math.round(props._maxLength / 1000.0)}px
+        ${(props) => props._scale * (props._length / 1000.0)}px,
+      transparent ${(props) => props._scale * (props._length / 1000.0) + 1}px,
+      transparent ${(props) => props._scale * (props._maxLength / 1000.0)}px
     );
 `;
 
@@ -154,6 +152,8 @@ enum MouseMode {
   Default,
   AddKeyframe,
 }
+
+const EXTRA_SECONDS = 5;
 
 export const TimeContainer: React.VFC<{
   imageDefinition: ImageDefinition;
@@ -235,6 +235,12 @@ export const TimeContainer: React.VFC<{
             );
           }}
         />
+        <ToolbarSeperator />
+        <p>
+          {Math.floor(maxLength / 60e3)}:
+          {`00${Math.floor((maxLength % 60e3) / 1000)}`.slice(-2)}.
+          {`000${Math.floor(maxLength % 1e3)}`.slice(-3)}
+        </p>
       </ToolBar>
       <MovingLineContainer
         onMouseMove={(event) => {
@@ -245,6 +251,26 @@ export const TimeContainer: React.VFC<{
         onMouseLeave={() => {
           setMousePos(-1);
         }}
+        onClick={() => {
+          if (activeAnimation && mouseMode === MouseMode.AddKeyframe) {
+            const time = Math.round(mousePos / 10) * 10;
+            updateImageDefinition((image) => ({
+              ...image,
+              animations: image.animations.map((e) =>
+                e.name === activeAnimation
+                  ? {
+                      ...e,
+                      keyframes: e.keyframes.concat({
+                        time,
+                        controlValues: {},
+                      }),
+                    }
+                  : e
+              ),
+            }));
+            setMouseMode(MouseMode.Default);
+          }
+        }}
       >
         {mousePos > 0 && imageDefinition.animations.length > 0 && (
           <MovingLine at={mousePos} scale={scale} />
@@ -252,9 +278,12 @@ export const TimeContainer: React.VFC<{
         <TimeLineOuterContainer>
           <TimeLineContainer>
             <FloatHeader>&nbsp;</FloatHeader>
-            <TimeHeader _scale={scale} _maxLength={maxLength}>
+            <TimeHeader
+              _scale={scale}
+              _maxLength={maxLength + EXTRA_SECONDS * 1000}
+            >
               <TimeScale>
-                {new Array(Math.floor(maxLength / 1000 + 10))
+                {new Array(Math.floor(maxLength / 1000 + EXTRA_SECONDS))
                   .fill(null)
                   .map((_e, i) => (
                     <TimeDot
@@ -269,11 +298,12 @@ export const TimeContainer: React.VFC<{
             {imageDefinition.animations.map((t, i) => (
               <React.Fragment key={i}>
                 <Label
-                  onClick={() =>
+                  onClick={(e) => {
                     setActiveAnimation((activeAnimation) =>
                       activeAnimation === t.name ? null : t.name
-                    )
-                  }
+                    );
+                    e.stopPropagation();
+                  }}
                   _isActive={activeAnimation === t.name}
                 >
                   {t.name}
@@ -282,10 +312,13 @@ export const TimeContainer: React.VFC<{
                   _scale={scale}
                   _length={Math.max(0, ...t.keyframes.map((f) => f.time))}
                   _isActive={activeAnimation === t.name}
-                  _maxLength={maxLength}
+                  _maxLength={maxLength + EXTRA_SECONDS * 1000}
                 >
                   {t.keyframes.map((f, i) => (
-                    <FrameDot _pos={f.time / maxLength} key={i} />
+                    <FrameDot
+                      _pos={f.time / (maxLength + EXTRA_SECONDS * 1000)}
+                      key={i}
+                    />
                   ))}
                 </TimeLine>
               </React.Fragment>
