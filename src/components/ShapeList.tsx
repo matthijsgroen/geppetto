@@ -81,6 +81,10 @@ const displayShapes = (
                             ? `${vector.name} - set`
                             : vector.name
                         }
+                        dimmed={
+                          showSetMutationVectors.length > 0 &&
+                          !showSetMutationVectors.includes(vector.name)
+                        }
                         name={vector.name}
                         allowRename
                         indent={indent + 1}
@@ -147,6 +151,10 @@ const displayShapes = (
                           showSetMutationVectors.includes(vector.name)
                             ? `${vector.name} - set`
                             : vector.name
+                        }
+                        dimmed={
+                          showSetMutationVectors.length > 0 &&
+                          !showSetMutationVectors.includes(vector.name)
                         }
                         name={vector.name}
                         allowRename

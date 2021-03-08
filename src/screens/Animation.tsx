@@ -114,7 +114,7 @@ const Composition: React.FC<CompositionProps> = ({
       }
       menus={[
         <Menu
-          title="Composition"
+          title="Animation"
           key="layers"
           collapsable={true}
           size={"large"}

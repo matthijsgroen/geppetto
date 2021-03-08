@@ -75,55 +75,59 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
       collapsable={true}
       size="minimal"
       items={[
-        <SelectControl
-          key={"type"}
-          title={"Type"}
-          value={vectorSelected.type}
-          options={[
-            {
-              name: "Deformation",
-              id: "deform",
-              value: "deform" as VectorTypes,
-            },
-            {
-              name: "Translation",
-              id: "translate",
-              value: "translate" as VectorTypes,
-            },
-            {
-              name: "Rotation",
-              id: "rotate",
-              value: "rotate" as VectorTypes,
-            },
-            {
-              name: "Stretch",
-              id: "stretch",
-              value: "stretch" as VectorTypes,
-            },
-          ]}
-          onChange={(newValue) => {
-            updateImageDefinition((state) =>
-              updateVectorData(state, vectorSelected.name, (vector) =>
-                createVector(vector.name, vector.origin, newValue.value)
-              )
-            );
-            updateVectorValue(defaultValueForVector(newValue.value));
-          }}
-        />,
-        <Vect2InputControl
-          key={"origin"}
-          title={"origin"}
-          value={vectorSelected.origin}
-          onChange={(newValue) => {
-            updateImageDefinition((state) =>
-              updateVectorData(state, vectorSelected.name, (vector) => ({
-                ...vector,
-                origin: newValue,
-              }))
-            );
-          }}
-        />,
-        ...(vectorSelected.type === "deform"
+        ...(!activeControl
+          ? [
+              <SelectControl
+                key={"type"}
+                title={"Type"}
+                value={vectorSelected.type}
+                options={[
+                  {
+                    name: "Deformation",
+                    id: "deform",
+                    value: "deform" as VectorTypes,
+                  },
+                  {
+                    name: "Translation",
+                    id: "translate",
+                    value: "translate" as VectorTypes,
+                  },
+                  {
+                    name: "Rotation",
+                    id: "rotate",
+                    value: "rotate" as VectorTypes,
+                  },
+                  {
+                    name: "Stretch",
+                    id: "stretch",
+                    value: "stretch" as VectorTypes,
+                  },
+                ]}
+                onChange={(newValue) => {
+                  updateImageDefinition((state) =>
+                    updateVectorData(state, vectorSelected.name, (vector) =>
+                      createVector(vector.name, vector.origin, newValue.value)
+                    )
+                  );
+                  updateVectorValue(defaultValueForVector(newValue.value));
+                }}
+              />,
+              <Vect2InputControl
+                key={"origin"}
+                title={"origin"}
+                value={vectorSelected.origin}
+                onChange={(newValue) => {
+                  updateImageDefinition((state) =>
+                    updateVectorData(state, vectorSelected.name, (vector) => ({
+                      ...vector,
+                      origin: newValue,
+                    }))
+                  );
+                }}
+              />,
+            ]
+          : []),
+        ...(vectorSelected.type === "deform" && !activeValue
           ? [
               <NumberInputControl
                 key={"radius"}
@@ -138,6 +142,10 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                   );
                 }}
               />,
+            ]
+          : []),
+        ...(vectorSelected.type === "deform"
+          ? [
               <Vect2InputControl
                 key={"value"}
                 title={"value"}

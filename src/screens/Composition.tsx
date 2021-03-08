@@ -321,7 +321,13 @@ const Composition: React.FC<CompositionProps> = ({
           active={controlMode === null}
           label=""
           onClick={() => {
-            setControlmode(null);
+            if (controlMode !== null) {
+              setControlmode(null);
+              setLayerSelected({
+                name: controlMode.control,
+                type: "control",
+              });
+            }
           }}
         />,
         <ToolbarButton

@@ -7,6 +7,7 @@ interface MenuItemProps {
   icon?: React.ReactNode;
   allowRename?: boolean;
   selected?: boolean;
+  dimmed?: boolean;
   indent?: number;
   onClick?(e: React.MouseEvent): void;
   onRename?(newName: string): void;
@@ -14,6 +15,7 @@ interface MenuItemProps {
 
 const Item = styled.div<{
   selected: boolean;
+  dimmed: boolean;
   indent: number;
   renaming: boolean;
 }>`
@@ -28,6 +30,7 @@ const Item = styled.div<{
   padding-bottom: 0.1rem;
   color: ${({ selected, theme }) =>
     selected ? theme.colors.textSelected : theme.colors.text};
+  opacity: ${({ selected, dimmed }) => (selected ? 1 : dimmed ? 0.3 : 1.0)};
   font-size: 1rem;
   font-weight: normal;
   white-space: nowrap;
@@ -58,7 +61,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
   name = label,
   icon,
   allowRename = false,
-  selected,
+  selected = false,
+  dimmed = false,
   indent = 0,
   onClick,
   onRename,
@@ -69,7 +73,8 @@ const MenuItem: React.FC<MenuItemProps> = ({
   return (
     <Item
       onClick={onClick}
-      selected={!!selected}
+      selected={selected}
+      dimmed={dimmed}
       indent={indent}
       renaming={isRenaming}
       onDoubleClick={() => {
