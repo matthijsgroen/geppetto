@@ -16,6 +16,7 @@ const defaultTheme: DefaultTheme = {
   colors: {
     background: "#333",
     backgroundSecondary: "#444",
+    backgroundDestructive: "#911",
     itemContainerBackground: "#111",
     text: "#999",
     backgroundSelected: "#666",

@@ -1,4 +1,5 @@
 import React from "react";
+import Button, { ButtonType } from "src/components/Button";
 import { Control } from "src/components/Control";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
@@ -201,8 +202,7 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
           ? [
               <Control key="controlSet">
                 {!controlValue && (
-                  <button
-                    type="button"
+                  <Button
                     onClick={() => {
                       updateImageDefinition((state) =>
                         visit(state, (item) => {
@@ -218,6 +218,13 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                                       ...step,
                                       [vectorSelected.name]: activeValue,
                                     }
+                                  : step[vectorSelected.name] === undefined
+                                  ? {
+                                      ...step,
+                                      [vectorSelected.name]: defaultValueForVector(
+                                        vectorSelected.type
+                                      ),
+                                    }
                                   : step
                               ),
                             };
@@ -226,12 +233,12 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                       );
                     }}
                   >
-                    Set Value
-                  </button>
+                    Add mutation to control
+                  </Button>
                 )}
                 {controlValue && (
-                  <button
-                    type="button"
+                  <Button
+                    buttonType={ButtonType.Destructive}
                     onClick={() => {
                       updateImageDefinition((state) =>
                         visit(state, (item) => {
@@ -241,10 +248,8 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                           ) {
                             const updatedControl = {
                               ...item,
-                              steps: item.steps.map((step, index) =>
-                                index === controlPosition
-                                  ? omitKeys(step, [vectorSelected.name])
-                                  : step
+                              steps: item.steps.map((step) =>
+                                omitKeys(step, [vectorSelected.name])
                               ),
                             };
                             return updatedControl;
@@ -254,8 +259,8 @@ const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
                       );
                     }}
                   >
-                    Unset Value
-                  </button>
+                    Remove mutation from control
+                  </Button>
                 )}
               </Control>,
             ]
