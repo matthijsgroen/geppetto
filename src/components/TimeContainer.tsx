@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToolBar } from "src/components/ToolBar";
 import ToolbarButton from "./ToolbarButton";
@@ -150,25 +150,17 @@ const TimeLine = styled.div<{
     );
 `;
 
+enum MouseMode {
+  Default,
+  AddKeyframe,
+}
+
 export const TimeContainer: React.VFC<{
   imageDefinition: ImageDefinition;
   updateImageDefinition(
     mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ): void;
 }> = ({ imageDefinition, updateImageDefinition }) => {
-  // const timelines = [
-  //   { name: "Foo", keyframes: [2000] },
-  //   { name: "Bar", keyframes: [1500, 6000] },
-  //   { name: "Baz", keyframes: [] },
-  //   { name: "Qux", keyframes: [] },
-  //   { name: "Quuz", keyframes: [] },
-  //   { name: "Lorem", keyframes: [] },
-  //   { name: "Ipsum", keyframes: [] },
-  //   { name: "Dolor", keyframes: [] },
-  //   { name: "Sit", keyframes: [] },
-  //   { name: "Amed", keyframes: [] },
-  // ];
-
   const maxLength = imageDefinition.animations.reduce<number>(
     (result, e) =>
       Math.max(Math.max(0, ...e.keyframes.map((f) => f.time)), result),
@@ -177,6 +169,13 @@ export const TimeContainer: React.VFC<{
   const [scale, setScale] = useState(100);
   const [mousePos, setMousePos] = useState(-1);
   const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
+  const [mouseMode, setMouseMode] = useState<MouseMode>(MouseMode.Default);
+
+  useEffect(() => {
+    if (activeAnimation === null) {
+      setMouseMode(MouseMode.Default);
+    }
+  }, [activeAnimation]);
 
   return (
     <MainSection>
@@ -222,24 +221,18 @@ export const TimeContainer: React.VFC<{
         />
         <ToolbarSeperator />
         <ToolbarButton
-          key="select"
-          icon="✋"
-          hint="Select mode"
-          // active={mouseMode === MouseMode.Grab}
-          label=""
-          onClick={() => {
-            // setMouseMode(MouseMode.Grab);
-          }}
-        />
-        <ToolbarButton
           key="addPoints"
           icon="✏️"
           hint="Add keyframe mode"
           disabled={!activeAnimation}
-          // active={mouseMode === MouseMode.Aim}
+          active={mouseMode === MouseMode.AddKeyframe}
           label=""
           onClick={() => {
-            // setMouseMode(MouseMode.Aim);
+            setMouseMode((mode) =>
+              mode === MouseMode.AddKeyframe
+                ? MouseMode.Default
+                : MouseMode.AddKeyframe
+            );
           }}
         />
       </ToolBar>
@@ -261,7 +254,7 @@ export const TimeContainer: React.VFC<{
             <FloatHeader>&nbsp;</FloatHeader>
             <TimeHeader _scale={scale} _maxLength={maxLength}>
               <TimeScale>
-                {new Array(Math.floor(Math.max(maxLength / 1000, 10)))
+                {new Array(Math.floor(maxLength / 1000 + 10))
                   .fill(null)
                   .map((_e, i) => (
                     <TimeDot
