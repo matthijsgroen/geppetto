@@ -65,6 +65,7 @@ const template = [
         },
       },
       {
+        label: "Open Recent",
         role: "recentdocuments",
         submenu: [
           {

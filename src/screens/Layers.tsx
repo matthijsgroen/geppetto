@@ -275,6 +275,16 @@ const Layers: React.FC<LayersProps> = ({
       }
       tools={[
         <ToolbarButton
+          key="move"
+          hint="Move mode"
+          icon="✋"
+          active={mouseMode === MouseMode.Grab}
+          label=""
+          onClick={() => {
+            setMouseMode(MouseMode.Grab);
+          }}
+        />,
+        <ToolbarButton
           key="addPoints"
           hint="Add points mode"
           icon="✏️"
@@ -283,16 +293,6 @@ const Layers: React.FC<LayersProps> = ({
           label=""
           onClick={() => {
             setMouseMode(MouseMode.Aim);
-          }}
-        />,
-        <ToolbarButton
-          key="move"
-          hint="Move mode"
-          icon="✋"
-          active={mouseMode === MouseMode.Grab}
-          label=""
-          onClick={() => {
-            setMouseMode(MouseMode.Grab);
           }}
         />,
         <ToolbarSeperator key="sep1" />,

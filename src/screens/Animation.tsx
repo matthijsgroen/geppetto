@@ -16,9 +16,10 @@ interface CompositionProps {
   ): void;
 }
 
-const Composition: React.FC<CompositionProps> = ({
+const Animation: React.FC<CompositionProps> = ({
   texture,
   imageDefinition,
+  updateImageDefinition,
 }) => {
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0.0);
@@ -136,9 +137,14 @@ const Composition: React.FC<CompositionProps> = ({
           ))}
         />,
       ]}
-      bottom={<TimeContainer />}
+      bottom={
+        <TimeContainer
+          imageDefinition={imageDefinition}
+          updateImageDefinition={updateImageDefinition}
+        />
+      }
     />
   );
 };
 
-export default Composition;
+export default Animation;

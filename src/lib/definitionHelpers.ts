@@ -91,6 +91,17 @@ const makeItemName = (
   return makeName();
 };
 
+export const makeAnimationName = (
+  image: ImageDefinition,
+  intendedName: string,
+  previousName: string | null = null
+): string =>
+  makeItemName(
+    image.animations.map((a) => a.name),
+    intendedName,
+    previousName
+  );
+
 export const makeLayerName = (
   image: ImageDefinition,
   intendedName: string,

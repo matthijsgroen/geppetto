@@ -74,7 +74,7 @@ export type AnimationFrame = {
 export type Animation = {
   name: string;
   looping: boolean;
-  keyFrames: AnimationFrame[];
+  keyframes: AnimationFrame[];
 };
 
 export type ImageDefinition = {
