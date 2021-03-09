@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import MenuItem from "src/components/MenuItem";
 import {
   combineKeyFrames,
@@ -48,9 +54,7 @@ import VectorInfoPanel from "./VectorInfoPanel";
 interface CompositionProps {
   imageDefinition: ImageDefinition;
   texture: HTMLImageElement | null;
-  updateImageDefinition(
-    mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
-  ): void;
+  updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
 }
 
 type ControlMode = {
@@ -81,7 +85,7 @@ const getMutationVectorMapping = (
   return mapping;
 };
 
-const Composition: React.FC<CompositionProps> = ({
+const Composition: React.VFC<CompositionProps> = ({
   texture,
   imageDefinition,
   updateImageDefinition,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import AnimationCanvas from "src/animation/AnimationCanvas";
 import Menu from "src/components/Menu";
 import SliderControl from "src/components/SliderControl";
@@ -11,12 +11,10 @@ import ScreenLayout from "../templates/ScreenLayout";
 interface CompositionProps {
   imageDefinition: ImageDefinition;
   texture: HTMLImageElement | null;
-  updateImageDefinition(
-    mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
-  ): void;
+  updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
 }
 
-const Animation: React.FC<CompositionProps> = ({
+const Animation: React.VFC<CompositionProps> = ({
   texture,
   imageDefinition,
   updateImageDefinition,
@@ -34,6 +32,10 @@ const Animation: React.FC<CompositionProps> = ({
   const [controlValues, setControlValues] = useState<ControlValues>(
     () => imageDefinition.controlValues
   );
+  const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
+    null
+  );
+  const [selectedFrame, setSelectedFrame] = useState<number | null>(null);
 
   const mouseMode = MouseMode.Grab;
   const mouseDown = (event: React.MouseEvent) => {
@@ -139,6 +141,10 @@ const Animation: React.FC<CompositionProps> = ({
       ]}
       bottom={
         <TimeContainer
+          selectedAnimation={selectedAnimation}
+          updateSelectedAnimation={setSelectedAnimation}
+          selectedFrame={selectedFrame}
+          updateSelectedFrame={setSelectedFrame}
           imageDefinition={imageDefinition}
           updateImageDefinition={updateImageDefinition}
         />

@@ -11,7 +11,7 @@ interface SliderControlProps {
   onChange(newValue: Vec2): void;
 }
 
-const Vect2InputControl: React.FC<SliderControlProps> = ({
+const Vect2InputControl: React.VFC<SliderControlProps> = ({
   title,
   value,
   disabled = false,

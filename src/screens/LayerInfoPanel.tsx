@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import Menu from "src/components/Menu";
 import Vect2InputControl from "src/components/Vec2InputControl";
 import { updateSpriteData } from "src/lib/definitionHelpers";
@@ -6,12 +6,10 @@ import { ImageDefinition, ShapeDefinition } from "src/lib/types";
 
 interface LayerInfoPanelProps {
   shapeSelected: ShapeDefinition;
-  updateImageDefinition(
-    mutation: (oldState: ImageDefinition) => ImageDefinition
-  ): void;
+  updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
 }
 
-const LayerInfoPanel: React.FC<LayerInfoPanelProps> = ({
+const LayerInfoPanel: React.VFC<LayerInfoPanelProps> = ({
   shapeSelected,
   updateImageDefinition,
 }) => (

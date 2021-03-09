@@ -19,7 +19,7 @@ const Spacer = styled.div`
   height: 100%;
 `;
 
-const IconBar: React.FC<IconBarProps> = ({ topIcons, bottomIcons }) => (
+const IconBar: React.VFC<IconBarProps> = ({ topIcons, bottomIcons }) => (
   <IconContainer>
     {topIcons}
     <Spacer />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ToolBar } from "src/components/ToolBar";
 import ToolbarButton from "./ToolbarButton";
@@ -119,13 +119,18 @@ const TimeDot = styled.div`
   text-align: right;
 `;
 
-const FrameDot = styled.div<{ _pos: number }>`
+const FrameDot = styled.div<{ _pos: number; selected?: boolean }>`
   width: 1.2rem;
   height: 1.2rem;
   margin-left: -0.6rem;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
-  border: 1px solid ${({ theme }) => theme.colors.backgroundSelected};
+  background-color: ${({ theme, selected }) =>
+    selected
+      ? theme.colors.backgroundSelected
+      : theme.colors.backgroundSecondary};
+  border: 1px solid
+    ${({ theme, selected }) =>
+      selected ? theme.colors.textSelected : theme.colors.backgroundSelected};
   position: absolute;
   top: 0px;
   left: ${(props) => props._pos * 100}%;
@@ -169,10 +174,19 @@ const EXTRA_SECONDS = 5;
 
 export const TimeContainer: React.VFC<{
   imageDefinition: ImageDefinition;
-  updateImageDefinition(
-    mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
-  ): void;
-}> = ({ imageDefinition, updateImageDefinition }) => {
+  updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
+  selectedAnimation: string | null;
+  updateSelectedAnimation: Dispatch<SetStateAction<string | null>>;
+  selectedFrame: number | null;
+  updateSelectedFrame: Dispatch<SetStateAction<number | null>>;
+}> = ({
+  imageDefinition,
+  updateImageDefinition,
+  selectedAnimation,
+  updateSelectedAnimation,
+  selectedFrame,
+  updateSelectedFrame,
+}) => {
   const maxLength = imageDefinition.animations.reduce<number>(
     (result, e) =>
       Math.max(Math.max(0, ...e.keyframes.map((f) => f.time)), result),
@@ -180,9 +194,6 @@ export const TimeContainer: React.VFC<{
   );
   const [scale, setScale] = useState(100);
   const [mousePos, setMousePos] = useState(-1);
-  const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
-    null
-  );
   const [mouseMode, setMouseMode] = useState<MouseMode>(MouseMode.Default);
 
   useEffect(() => {
@@ -307,7 +318,7 @@ export const TimeContainer: React.VFC<{
               <React.Fragment key={i}>
                 <Label
                   onClick={(e) => {
-                    setSelectedAnimation((activeAnimation) =>
+                    updateSelectedAnimation((activeAnimation) =>
                       activeAnimation === t.name ? null : t.name
                     );
                     e.stopPropagation();
@@ -345,7 +356,7 @@ export const TimeContainer: React.VFC<{
                             (e) => e.name !== t.name
                           ),
                         }));
-                        setSelectedAnimation(null);
+                        updateSelectedAnimation(null);
                         e.stopPropagation();
                       }}
                     >
@@ -363,8 +374,19 @@ export const TimeContainer: React.VFC<{
                 >
                   {t.keyframes.map((f, i) => (
                     <FrameDot
+                      selected={
+                        selectedAnimation === t.name && selectedFrame === f.time
+                      }
                       _pos={f.time / (maxLength + EXTRA_SECONDS * 1000)}
                       key={i}
+                      onClick={() => {
+                        updateSelectedFrame((time) =>
+                          time === f.time && t.name === selectedAnimation
+                            ? null
+                            : f.time
+                        );
+                        updateSelectedAnimation(t.name);
+                      }}
                     />
                   ))}
                 </TimeLine>

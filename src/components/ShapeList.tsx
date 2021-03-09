@@ -203,7 +203,7 @@ interface ShapeListProps {
     item: ShapeDefinition | MutationVector
   ) => void;
 }
-const ShapeList: React.FC<ShapeListProps> = ({
+const ShapeList: React.VFC<ShapeListProps> = ({
   shapes,
   layerSelected,
   showMutationVectors = false,

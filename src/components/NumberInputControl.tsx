@@ -18,7 +18,7 @@ interface SliderControlProps {
   onChange(newValue: number): void;
 }
 
-const NumberInputControl: React.FC<SliderControlProps> = ({
+const NumberInputControl: React.VFC<SliderControlProps> = ({
   title,
   value,
   disabled = false,

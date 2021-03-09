@@ -39,7 +39,7 @@ const Icon = styled.button.attrs({ type: "button" })<IconProps>`
   }
 `;
 
-const TabIcon: React.FC<TabIconProps> = ({
+const TabIcon: React.VFC<TabIconProps> = ({
   icon,
   title,
   active = false,

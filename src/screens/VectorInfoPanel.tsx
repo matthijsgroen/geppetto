@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import Button, { ButtonType } from "src/components/Button";
 import { Control } from "src/components/Control";
 import Menu from "src/components/Menu";
@@ -13,9 +13,7 @@ import { isControlDefinition, visit } from "src/lib/visit";
 
 interface VectorInfoPanelProps {
   vectorSelected: MutationVector;
-  updateImageDefinition(
-    mutation: (oldState: ImageDefinition) => ImageDefinition
-  ): void;
+  updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
   image: ImageDefinition;
   vectorValue: Vec2;
   updateVectorValue(newValue: Vec2): void;
@@ -50,7 +48,7 @@ const iconForType = (type: VectorTypes): string =>
     translate: "🟢",
   } as Record<VectorTypes, string>)[type]);
 
-const VectorInfoPanel: React.FC<VectorInfoPanelProps> = ({
+const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
   vectorSelected,
   updateImageDefinition,
   image,

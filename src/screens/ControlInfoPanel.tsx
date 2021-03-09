@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import Menu from "src/components/Menu";
 import SelectControl, { Option } from "src/components/SelectControl";
 import SliderControl from "src/components/SliderControl";
@@ -8,9 +8,7 @@ import { isControlDefinition, visit } from "src/lib/visit";
 interface ControlInfoPanelProps {
   controlSelected: ControlDefinition;
   value: number;
-  updateImageDefinition(
-    mutation: (oldState: ImageDefinition) => ImageDefinition
-  ): void;
+  updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
   onChange?(newValue: number): void;
 }
 
@@ -22,7 +20,7 @@ const createOptions = (amount: number): Option<number>[] =>
         ({ name: `${i + 1}`, id: `${i + 1}`, value: i + 1 } as Option<number>)
     );
 
-const ControlInfoPanel: React.FC<ControlInfoPanelProps> = ({
+const ControlInfoPanel: React.VFC<ControlInfoPanelProps> = ({
   controlSelected,
   value,
   onChange,

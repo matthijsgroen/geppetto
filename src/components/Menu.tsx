@@ -84,7 +84,7 @@ const Toolbar = styled.div`
 const hasItems = (items: React.ReactElement | React.ReactElement[]): boolean =>
   Array.isArray(items) ? items.length > 0 : !!items;
 
-const Menu: React.FC<MenuProps> = ({
+const Menu: React.VFC<MenuProps> = ({
   title,
   items,
   size = "default",

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import TextureMapCanvas from "../animation/TextureMapCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -33,12 +39,10 @@ import ScreenLayout from "../templates/ScreenLayout";
 interface LayersProps {
   imageDefinition: ImageDefinition;
   texture: HTMLImageElement | null;
-  updateImageDefinition(
-    mutator: (previousImageDefinition: ImageDefinition) => ImageDefinition
-  ): void;
+  updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
 }
 
-const Layers: React.FC<LayersProps> = ({
+const Layers: React.VFC<LayersProps> = ({
   texture,
   imageDefinition,
   updateImageDefinition,

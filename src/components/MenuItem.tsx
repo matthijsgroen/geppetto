@@ -56,7 +56,7 @@ const RenameInput = styled.input.attrs({
   border: 1px solid ${({ theme }) => theme.colors.textSelected};
 `;
 
-const MenuItem: React.FC<MenuItemProps> = ({
+const MenuItem: React.VFC<MenuItemProps> = ({
   label,
   name = label,
   icon,

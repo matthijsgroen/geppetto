@@ -23,7 +23,7 @@ interface SliderControlProps {
   onChange(newValue: number): void;
 }
 
-const SliderControl: React.FC<SliderControlProps> = ({
+const SliderControl: React.VFC<SliderControlProps> = ({
   title,
   min,
   max,
