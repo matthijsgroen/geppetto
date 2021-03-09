@@ -1,4 +1,6 @@
-# Getting Started with WebGL Animator
+# Geppetto
+
+Geppetto is a studio tool to define WebGL Animations.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
