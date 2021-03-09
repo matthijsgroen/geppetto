@@ -22,6 +22,7 @@ interface SliderControlProps {
   step: number;
   selected?: boolean;
   onChange(newValue: number): void;
+  onSelect?(): void;
 }
 
 const SliderControl: React.VFC<SliderControlProps> = ({
@@ -33,10 +34,11 @@ const SliderControl: React.VFC<SliderControlProps> = ({
   selected = false,
   showValue = false,
   onChange,
+  onSelect,
 }) => (
   <Control selected={selected}>
     {title && (
-      <ControlLabel selected={selected} title={title}>
+      <ControlLabel selected={selected} title={title} onClick={onSelect}>
         {title}
       </ControlLabel>
     )}

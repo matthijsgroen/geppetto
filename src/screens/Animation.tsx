@@ -3,6 +3,7 @@ import AnimationCanvas from "src/animation/AnimationCanvas";
 import Menu from "src/components/Menu";
 import SliderControl from "src/components/SliderControl";
 import { TimeContainer } from "src/components/TimeContainer";
+import { omitKeys } from "src/lib/definitionHelpers";
 import { maxZoomFactor } from "src/lib/webgl";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import { ControlValues, ImageDefinition } from "../lib/types";
@@ -29,13 +30,50 @@ const Animation: React.VFC<CompositionProps> = ({
     0,
     0,
   ]);
-  const [controlValues, setControlValues] = useState<ControlValues>(
-    () => imageDefinition.controlValues
-  );
+
+  const controlValues = imageDefinition.controlValues;
+  const setControlValues = (
+    mutation: (current: ControlValues) => ControlValues
+  ) => {
+    updateImageDefinition((image) => ({
+      ...image,
+      controlValues: mutation(image.controlValues),
+    }));
+  };
+
   const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
     null
   );
   const [selectedFrame, setSelectedFrame] = useState<number | null>(null);
+
+  const frameControlValues =
+    selectedAnimation && selectedFrame
+      ? imageDefinition.animations
+          .find((e) => e.name === selectedAnimation)
+          ?.keyframes.find((f) => f.time === selectedFrame)?.controlValues ||
+        null
+      : null;
+
+  const frameControlKeys = Object.keys(frameControlValues || {});
+  const setFrameControlValues = (
+    mutation: (current: ControlValues) => ControlValues
+  ) => {
+    updateImageDefinition((image) => ({
+      ...image,
+      animations: image.animations.map((a) =>
+        a.name === selectedAnimation
+          ? {
+              ...a,
+              keyframes: a.keyframes.map((f) =>
+                f.time === selectedFrame
+                  ? { ...f, controlValues: mutation(f.controlValues) }
+                  : f
+              ),
+            }
+          : a
+      ),
+    }));
+  };
 
   const mouseMode = MouseMode.Grab;
   const mouseDown = (event: React.MouseEvent) => {
@@ -108,7 +146,7 @@ const Animation: React.VFC<CompositionProps> = ({
           <AnimationCanvas
             image={texture}
             imageDefinition={imageDefinition}
-            controlValues={controlValues}
+            controlValues={{ ...controlValues, ...frameControlValues }}
             zoom={zoom}
             panX={panX}
             panY={panY}
@@ -125,15 +163,37 @@ const Animation: React.VFC<CompositionProps> = ({
             <SliderControl
               key={`control${i}`}
               title={control.name}
-              value={controlValues[control.name]}
+              value={
+                frameControlValues && frameControlKeys.includes(control.name)
+                  ? frameControlValues[control.name]
+                  : controlValues[control.name]
+              }
               min={0}
+              selected={frameControlKeys.includes(control.name)}
               max={control.steps.length - 1}
               step={0.01 * (control.steps.length - 1)}
+              onSelect={() => {
+                if (frameControlKeys.includes(control.name)) {
+                  setFrameControlValues((f) => omitKeys(f, [control.name]));
+                } else {
+                  setFrameControlValues((f) => ({
+                    ...f,
+                    [control.name]: controlValues[control.name],
+                  }));
+                }
+              }}
               onChange={(newValue) => {
-                setControlValues((state) => ({
-                  ...state,
-                  [control.name]: newValue,
-                }));
+                if (frameControlKeys.includes(control.name)) {
+                  setFrameControlValues((f) => ({
+                    ...f,
+                    [control.name]: newValue,
+                  }));
+                } else {
+                  setControlValues((state) => ({
+                    ...state,
+                    [control.name]: newValue,
+                  }));
+                }
               }}
             />
           ))}
