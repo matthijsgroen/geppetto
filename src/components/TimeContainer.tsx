@@ -59,6 +59,20 @@ const Label = styled.div<{ _isActive?: boolean }>`
   position: sticky;
   left: 0px;
   z-index: 1;
+  display: grid;
+  grid-template-columns: 26px 1fr repeat(2, 26px);
+`;
+
+const TimelineButton = styled.button.attrs({ type: "button" })<{
+  dimmed?: boolean;
+}>`
+  font-size: 1.2rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  opacity: ${({ dimmed }) => (dimmed === true ? "0.3" : "1.0")};
+  line-height: 1.3;
 `;
 
 const FloatHeader = styled.div`
@@ -138,10 +152,8 @@ const TimeLine = styled.div<{
     ),
     linear-gradient(
       90deg,
-      ${({ theme, _isActive }) =>
-        _isActive ? theme.colors.backgroundSelected : theme.colors.background},
-      ${({ theme, _isActive }) =>
-          _isActive ? theme.colors.backgroundSelected : theme.colors.background}
+      ${({ theme }) => theme.colors.background},
+      ${({ theme }) => theme.colors.background}
         ${(props) => props._scale * (props._length / 1000.0)}px,
       transparent ${(props) => props._scale * (props._length / 1000.0) + 1}px,
       transparent ${(props) => props._scale * (props._maxLength / 1000.0)}px
@@ -168,14 +180,16 @@ export const TimeContainer: React.VFC<{
   );
   const [scale, setScale] = useState(100);
   const [mousePos, setMousePos] = useState(-1);
-  const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
+  const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
+    null
+  );
   const [mouseMode, setMouseMode] = useState<MouseMode>(MouseMode.Default);
 
   useEffect(() => {
-    if (activeAnimation === null) {
+    if (selectedAnimation === null) {
       setMouseMode(MouseMode.Default);
     }
-  }, [activeAnimation]);
+  }, [selectedAnimation]);
 
   return (
     <MainSection>
@@ -185,10 +199,11 @@ export const TimeContainer: React.VFC<{
           label="+"
           hint="Add animation"
           onClick={() => {
+            const newName = makeAnimationName(imageDefinition, "New Animation");
             updateImageDefinition((image) => ({
               ...image,
               animations: image.animations.concat({
-                name: makeAnimationName(image, "New Animation"),
+                name: newName,
                 looping: false,
                 keyframes: [],
               }),
@@ -196,13 +211,6 @@ export const TimeContainer: React.VFC<{
           }}
         />
         <ToolbarSeperator />
-        <ToolbarButton
-          icon="▶️"
-          label=""
-          onClick={() => {
-            /* oink */
-          }}
-        />
         <ToolbarButton
           icon="🔍"
           label="-"
@@ -224,7 +232,7 @@ export const TimeContainer: React.VFC<{
           key="addPoints"
           icon="✏️"
           hint="Add keyframe mode"
-          disabled={!activeAnimation}
+          disabled={!selectedAnimation}
           active={mouseMode === MouseMode.AddKeyframe}
           label=""
           onClick={() => {
@@ -252,12 +260,12 @@ export const TimeContainer: React.VFC<{
           setMousePos(-1);
         }}
         onClick={() => {
-          if (activeAnimation && mouseMode === MouseMode.AddKeyframe) {
+          if (selectedAnimation && mouseMode === MouseMode.AddKeyframe) {
             const time = Math.round(mousePos / 10) * 10;
             updateImageDefinition((image) => ({
               ...image,
               animations: image.animations.map((e) =>
-                e.name === activeAnimation
+                e.name === selectedAnimation
                   ? {
                       ...e,
                       keyframes: e.keyframes.concat({
@@ -299,19 +307,58 @@ export const TimeContainer: React.VFC<{
               <React.Fragment key={i}>
                 <Label
                   onClick={(e) => {
-                    setActiveAnimation((activeAnimation) =>
+                    setSelectedAnimation((activeAnimation) =>
                       activeAnimation === t.name ? null : t.name
                     );
                     e.stopPropagation();
                   }}
-                  _isActive={activeAnimation === t.name}
+                  _isActive={selectedAnimation === t.name}
                 >
-                  {t.name}
+                  <TimelineButton
+                    onClick={() => {
+                      // no-op
+                    }}
+                  >
+                    ▶️
+                  </TimelineButton>
+                  <span>{t.name}</span>
+                  <TimelineButton
+                    dimmed={!t.looping}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      updateImageDefinition((image) => ({
+                        ...image,
+                        animations: image.animations.map((e) =>
+                          e.name === t.name ? { ...e, looping: !e.looping } : e
+                        ),
+                      }));
+                    }}
+                  >
+                    🔁
+                  </TimelineButton>
+                  {selectedAnimation === t.name ? (
+                    <TimelineButton
+                      onClick={(e) => {
+                        updateImageDefinition((image) => ({
+                          ...image,
+                          animations: image.animations.filter(
+                            (e) => e.name !== t.name
+                          ),
+                        }));
+                        setSelectedAnimation(null);
+                        e.stopPropagation();
+                      }}
+                    >
+                      🗑
+                    </TimelineButton>
+                  ) : (
+                    <span />
+                  )}
                 </Label>
                 <TimeLine
                   _scale={scale}
                   _length={Math.max(0, ...t.keyframes.map((f) => f.time))}
-                  _isActive={activeAnimation === t.name}
+                  _isActive={selectedAnimation === t.name}
                   _maxLength={maxLength + EXTRA_SECONDS * 1000}
                 >
                   {t.keyframes.map((f, i) => (
