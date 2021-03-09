@@ -1,6 +1,6 @@
 {
-  "name": "animation",
-  "productName": "WebGL Animator",
+  "name": "geppetto",
+  "productName": "Geppetto",
   "description": "Create awesome WebGL Animations.",
   "author": "Matthijs Groen <matthijs.groen@gmail.com>",
   "main": "public/electron.js",
