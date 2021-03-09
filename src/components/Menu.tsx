@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { Toolbar } from "./Toolbar";
 
 interface MenuProps {
   title: string;
@@ -66,19 +67,6 @@ const CollapseButton = styled.button.attrs({ type: "button" })<{
   border: none;
   transform: rotate(${({ collapsed }) => (collapsed ? "0" : "180")}deg);
   flex: 0;
-`;
-
-const Toolbar = styled.div`
-  color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.background};
-  font-weight: normal;
-  margin: 0;
-  padding: 0.1rem 0.5rem;
-  display: flex;
-  flex-direction: row;
-  > * + * {
-    margin-left: 0.25rem;
-  }
 `;
 
 const hasItems = (items: React.ReactElement | React.ReactElement[]): boolean =>

@@ -1,5 +1,5 @@
 import React from "react";
-import { ToolBar } from "src/components/ToolBar";
+import { Toolbar } from "src/components/Toolbar";
 import styled from "styled-components";
 
 const MenuContainer = styled.aside`
@@ -54,7 +54,7 @@ const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   <Main>
     {hasItems(menus) && <MenuContainer>{menus}</MenuContainer>}
     <CanvasContainer>
-      {hasItems(tools) && <ToolBar>{tools}</ToolBar>}
+      {hasItems(tools) && <Toolbar>{tools}</Toolbar>}
       <Canvas>{main}</Canvas>
     </CanvasContainer>
     <Footer>{bottom}</Footer>

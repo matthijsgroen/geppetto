@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
-import { ToolBar } from "src/components/ToolBar";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarSeperator from "./ToolbarSeperator";
 import { ImageDefinition } from "src/lib/types";
 import { makeAnimationName } from "src/lib/definitionHelpers";
+import { Toolbar } from "./Toolbar";
 
 const MainSection = styled.section`
   flex: 0 0 200px;
@@ -15,7 +15,7 @@ const MainSection = styled.section`
 `;
 
 const MovingLineContainer = styled.div`
-  height: calc(200px - 42px);
+  height: 200px;
   position: relative;
   overflow: hidden;
 `;
@@ -26,7 +26,7 @@ const MovingLine = styled.div.attrs<{ at: number; scale: number }>((props) => ({
   },
 }))<{ at: number; scale: number }>`
   position: absolute;
-  height: calc(200px - 42px);
+  height: 200px;
   border-left: 2px solid white;
   z-index: 4;
   pointer-events: none;
@@ -34,7 +34,7 @@ const MovingLine = styled.div.attrs<{ at: number; scale: number }>((props) => ({
 
 const TimeLineOuterContainer = styled.div`
   width: calc(100vw - 42px);
-  height: calc(200px - 42px);
+  height: 200px;
 
   overflow: auto;
 `;
@@ -60,7 +60,7 @@ const Label = styled.div<{ _isActive?: boolean }>`
   left: 0px;
   z-index: 1;
   display: grid;
-  grid-template-columns: 26px 1fr repeat(2, 26px);
+  grid-template-columns: 26px 1fr 26px;
 `;
 
 const TimelineButton = styled.button.attrs({ type: "button" })<{
@@ -202,65 +202,14 @@ export const TimeContainer: React.VFC<{
     }
   }, [selectedAnimation]);
 
+  /* <p>
+    {Math.floor(maxLength / 60e3)}:
+    {`00${Math.floor((maxLength % 60e3) / 1000)}`.slice(-2)}.
+    {`000${Math.floor(maxLength % 1e3)}`.slice(-3)}
+  </p> */
+
   return (
     <MainSection>
-      <ToolBar>
-        <ToolbarButton
-          icon="️⏱"
-          label="+"
-          hint="Add animation"
-          onClick={() => {
-            const newName = makeAnimationName(imageDefinition, "New Animation");
-            updateImageDefinition((image) => ({
-              ...image,
-              animations: image.animations.concat({
-                name: newName,
-                looping: false,
-                keyframes: [],
-              }),
-            }));
-          }}
-        />
-        <ToolbarSeperator />
-        <ToolbarButton
-          icon="🔍"
-          label="-"
-          hint="Zoom out"
-          onClick={() => {
-            setScale((scale) => scale / 1.1);
-          }}
-        />
-        <ToolbarButton
-          icon="🔍"
-          label="+"
-          hint="Zoom in"
-          onClick={() => {
-            setScale((scale) => scale * 1.1);
-          }}
-        />
-        <ToolbarSeperator />
-        <ToolbarButton
-          key="addPoints"
-          icon="✏️"
-          hint="Add keyframe mode"
-          disabled={!selectedAnimation}
-          active={mouseMode === MouseMode.AddKeyframe}
-          label=""
-          onClick={() => {
-            setMouseMode((mode) =>
-              mode === MouseMode.AddKeyframe
-                ? MouseMode.Default
-                : MouseMode.AddKeyframe
-            );
-          }}
-        />
-        <ToolbarSeperator />
-        <p>
-          {Math.floor(maxLength / 60e3)}:
-          {`00${Math.floor((maxLength % 60e3) / 1000)}`.slice(-2)}.
-          {`000${Math.floor(maxLength % 1e3)}`.slice(-3)}
-        </p>
-      </ToolBar>
       <MovingLineContainer
         onMouseMove={(event) => {
           const lineX = event.pageX - 42 - 250;
@@ -288,6 +237,7 @@ export const TimeContainer: React.VFC<{
               ),
             }));
             setMouseMode(MouseMode.Default);
+            updateSelectedFrame(time);
           }
         }}
       >
@@ -296,7 +246,102 @@ export const TimeContainer: React.VFC<{
         )}
         <TimeLineOuterContainer>
           <TimeLineContainer>
-            <FloatHeader>&nbsp;</FloatHeader>
+            <FloatHeader>
+              <Toolbar>
+                <ToolbarButton
+                  icon="️⏱"
+                  size={"small"}
+                  label="+"
+                  hint="Add animation"
+                  onClick={() => {
+                    const newName = makeAnimationName(
+                      imageDefinition,
+                      "New Animation"
+                    );
+                    updateImageDefinition((image) => ({
+                      ...image,
+                      animations: image.animations.concat({
+                        name: newName,
+                        looping: false,
+                        keyframes: [],
+                      }),
+                    }));
+                  }}
+                />
+                <ToolbarSeperator />
+                <ToolbarButton
+                  size="small"
+                  icon="🔍"
+                  label="-"
+                  hint="Zoom out"
+                  onClick={() => {
+                    setScale((scale) => scale / 1.1);
+                  }}
+                />
+                <ToolbarButton
+                  size="small"
+                  icon="🔍"
+                  label="+"
+                  hint="Zoom in"
+                  onClick={() => {
+                    setScale((scale) => scale * 1.1);
+                  }}
+                />
+                <ToolbarSeperator />
+                <ToolbarButton
+                  size="small"
+                  key="addPoints"
+                  icon="✏️"
+                  hint="Add keyframe mode"
+                  disabled={!selectedAnimation}
+                  active={mouseMode === MouseMode.AddKeyframe}
+                  label=""
+                  onClick={() => {
+                    setMouseMode((mode) =>
+                      mode === MouseMode.AddKeyframe
+                        ? MouseMode.Default
+                        : MouseMode.AddKeyframe
+                    );
+                  }}
+                />
+                <ToolbarButton
+                  size="small"
+                  key="remove"
+                  icon="🗑"
+                  hint="Remove timeline/frame"
+                  label=""
+                  disabled={!selectedAnimation}
+                  onClick={() => {
+                    if (!selectedAnimation) return;
+                    if (selectedFrame) {
+                      updateImageDefinition((image) => ({
+                        ...image,
+                        animations: image.animations.map((e) =>
+                          e.name === selectedAnimation
+                            ? {
+                                ...e,
+                                keyframes: e.keyframes.filter(
+                                  (f) => f.time !== selectedFrame
+                                ),
+                              }
+                            : e
+                        ),
+                      }));
+                      updateSelectedFrame(null);
+                    } else {
+                      updateImageDefinition((image) => ({
+                        ...image,
+                        animations: image.animations.filter(
+                          (e) => e.name !== selectedAnimation
+                        ),
+                      }));
+                      updateSelectedAnimation(null);
+                      updateSelectedFrame(null);
+                    }
+                  }}
+                />
+              </Toolbar>
+            </FloatHeader>
             <TimeHeader
               _scale={scale}
               _maxLength={maxLength + EXTRA_SECONDS * 1000}
@@ -347,24 +392,6 @@ export const TimeContainer: React.VFC<{
                   >
                     🔁
                   </TimelineButton>
-                  {selectedAnimation === t.name ? (
-                    <TimelineButton
-                      onClick={(e) => {
-                        updateImageDefinition((image) => ({
-                          ...image,
-                          animations: image.animations.filter(
-                            (e) => e.name !== t.name
-                          ),
-                        }));
-                        updateSelectedAnimation(null);
-                        e.stopPropagation();
-                      }}
-                    >
-                      🗑
-                    </TimelineButton>
-                  ) : (
-                    <span />
-                  )}
                 </Label>
                 <TimeLine
                   _scale={scale}

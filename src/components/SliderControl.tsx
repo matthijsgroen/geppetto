@@ -20,6 +20,7 @@ interface SliderControlProps {
   min: number;
   max: number;
   step: number;
+  selected?: boolean;
   onChange(newValue: number): void;
 }
 
@@ -29,11 +30,16 @@ const SliderControl: React.VFC<SliderControlProps> = ({
   max,
   step,
   value,
+  selected = false,
   showValue = false,
   onChange,
 }) => (
-  <Control>
-    {title && <ControlLabel title={title}>{title}</ControlLabel>}
+  <Control selected={selected}>
+    {title && (
+      <ControlLabel selected={selected} title={title}>
+        {title}
+      </ControlLabel>
+    )}
     <div>
       {showValue && <Value>{Math.round(value * 10e3) / 10e3}</Value>}
       <Slider
