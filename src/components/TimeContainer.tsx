@@ -5,6 +5,7 @@ import ToolbarSeperator from "./ToolbarSeperator";
 import { ImageDefinition } from "src/lib/types";
 import { makeAnimationName } from "src/lib/definitionHelpers";
 import { Toolbar } from "./Toolbar";
+import RenameableLabel from "./RenameableLabel";
 
 const MainSection = styled.section`
   flex: 0 0 200px;
@@ -41,14 +42,15 @@ const TimeLineOuterContainer = styled.div`
 
 const TimeLineContainer = styled.div`
   display: grid;
+  width: min-content;
   grid-template-columns: 250px 1fr;
   color: ${({ theme }) => theme.colors.text};
 `;
 
 const Label = styled.div<{ _isActive?: boolean }>`
-  border-right: 2px solid
+  border-right: 1px solid
     ${({ theme, _isActive }) =>
-      _isActive ? theme.colors.textSelected : theme.colors.backgroundSelected};
+      _isActive ? theme.colors.textSelected : theme.colors.backgroundSecondary};
   background-color: ${({ theme, _isActive }) =>
     _isActive
       ? theme.colors.backgroundSelected
@@ -90,6 +92,7 @@ const TimeHeader = styled.div<{
   _scale: number;
   _maxLength: number;
 }>`
+  border-top: 1px solid ${({ theme }) => theme.colors.backgroundSecondary};
   background-color: ${({ theme }) => theme.colors.background};
   background-image: repeating-linear-gradient(
     90deg,
@@ -371,13 +374,35 @@ export const TimeContainer: React.VFC<{
                   _isActive={selectedAnimation === t.name}
                 >
                   <TimelineButton
-                    onClick={() => {
-                      // no-op
+                    onClick={(e) => {
+                      e.stopPropagation();
                     }}
                   >
                     ▶️
                   </TimelineButton>
-                  <span>{t.name}</span>
+                  <RenameableLabel
+                    label={t.name}
+                    allowRename={true}
+                    onRename={(newName) => {
+                      const finalName = makeAnimationName(
+                        imageDefinition,
+                        newName,
+                        t.name
+                      );
+                      updateImageDefinition((image) => ({
+                        ...image,
+                        animations: image.animations.map((e) =>
+                          e.name === t.name
+                            ? {
+                                ...e,
+                                name: finalName,
+                              }
+                            : e
+                        ),
+                      }));
+                      updateSelectedAnimation(finalName);
+                    }}
+                  />
                   <TimelineButton
                     dimmed={!t.looping}
                     onClick={(e) => {

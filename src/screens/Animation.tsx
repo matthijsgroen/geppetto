@@ -1,12 +1,13 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import AnimationCanvas from "src/animation/AnimationCanvas";
 import Menu from "src/components/Menu";
+import NumberInputControl from "src/components/NumberInputControl";
 import SliderControl from "src/components/SliderControl";
 import { TimeContainer } from "src/components/TimeContainer";
 import { omitKeys } from "src/lib/definitionHelpers";
 import { maxZoomFactor } from "src/lib/webgl";
 import MouseControl, { MouseMode } from "../components/MouseControl";
-import { ControlValues, ImageDefinition } from "../lib/types";
+import { AnimationFrame, ControlValues, ImageDefinition } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface CompositionProps {
@@ -46,17 +47,16 @@ const Animation: React.VFC<CompositionProps> = ({
   );
   const [selectedFrame, setSelectedFrame] = useState<number | null>(null);
 
-  const frameControlValues =
+  const activeFrame =
     selectedAnimation && selectedFrame
       ? imageDefinition.animations
           .find((e) => e.name === selectedAnimation)
-          ?.keyframes.find((f) => f.time === selectedFrame)?.controlValues ||
-        null
+          ?.keyframes.find((f) => f.time === selectedFrame) || null
       : null;
 
-  const frameControlKeys = Object.keys(frameControlValues || {});
-  const setFrameControlValues = (
-    mutation: (current: ControlValues) => ControlValues
+  const frameControlKeys = Object.keys(activeFrame?.controlValues || {});
+  const updateFrame = (
+    mutation: (current: AnimationFrame) => AnimationFrame
   ) => {
     updateImageDefinition((image) => ({
       ...image,
@@ -65,15 +65,17 @@ const Animation: React.VFC<CompositionProps> = ({
           ? {
               ...a,
               keyframes: a.keyframes.map((f) =>
-                f.time === selectedFrame
-                  ? { ...f, controlValues: mutation(f.controlValues) }
-                  : f
+                f === activeFrame ? mutation(f) : f
               ),
             }
           : a
       ),
     }));
   };
+
+  const setFrameControlValues = (
+    mutation: (current: ControlValues) => ControlValues
+  ) => updateFrame((f) => ({ ...f, controlValues: mutation(f.controlValues) }));
 
   const mouseMode = MouseMode.Grab;
   const mouseDown = (event: React.MouseEvent) => {
@@ -146,7 +148,7 @@ const Animation: React.VFC<CompositionProps> = ({
           <AnimationCanvas
             image={texture}
             imageDefinition={imageDefinition}
-            controlValues={{ ...controlValues, ...frameControlValues }}
+            controlValues={{ ...controlValues, ...activeFrame?.controlValues }}
             zoom={zoom}
             panX={panX}
             panY={panY}
@@ -164,8 +166,8 @@ const Animation: React.VFC<CompositionProps> = ({
               key={`control${i}`}
               title={control.name}
               value={
-                frameControlValues && frameControlKeys.includes(control.name)
-                  ? frameControlValues[control.name]
+                activeFrame && frameControlKeys.includes(control.name)
+                  ? activeFrame.controlValues[control.name]
                   : controlValues[control.name]
               }
               min={0}
@@ -197,6 +199,27 @@ const Animation: React.VFC<CompositionProps> = ({
               }}
             />
           ))}
+        />,
+        <Menu
+          title={"Frame Info"}
+          key="info"
+          collapsable={true}
+          size="minimal"
+          items={
+            activeFrame
+              ? [
+                  <NumberInputControl
+                    key={"time"}
+                    title={"time"}
+                    value={activeFrame.time}
+                    onChange={(newValue) => {
+                      updateFrame((f) => ({ ...f, time: newValue }));
+                      setSelectedFrame(newValue);
+                    }}
+                  />,
+                ]
+              : []
+          }
         />,
       ]}
       bottom={
