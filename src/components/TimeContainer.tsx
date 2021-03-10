@@ -36,7 +36,6 @@ const MovingLine = styled.div.attrs<{ at: number; scale: number }>((props) => ({
 const TimeLineOuterContainer = styled.div`
   width: calc(100vw - 42px);
   height: 200px;
-
   overflow: auto;
 `;
 
@@ -316,7 +315,7 @@ export const TimeContainer: React.VFC<{
                   disabled={!selectedAnimation}
                   onClick={() => {
                     if (!selectedAnimation) return;
-                    if (selectedFrame) {
+                    if (selectedFrame !== null) {
                       updateImageDefinition((image) => ({
                         ...image,
                         animations: image.animations.map((e) =>

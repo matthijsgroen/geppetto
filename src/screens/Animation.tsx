@@ -48,7 +48,7 @@ const Animation: React.VFC<CompositionProps> = ({
   const [selectedFrame, setSelectedFrame] = useState<number | null>(null);
 
   const activeFrame =
-    selectedAnimation && selectedFrame
+    selectedAnimation && selectedFrame !== null
       ? imageDefinition.animations
           .find((e) => e.name === selectedAnimation)
           ?.keyframes.find((f) => f.time === selectedFrame) || null
@@ -213,7 +213,10 @@ const Animation: React.VFC<CompositionProps> = ({
                     title={"time"}
                     value={activeFrame.time}
                     onChange={(newValue) => {
-                      updateFrame((f) => ({ ...f, time: newValue }));
+                      updateFrame((f) => ({
+                        ...f,
+                        time: Math.max(newValue, 0),
+                      }));
                       setSelectedFrame(newValue);
                     }}
                   />,
