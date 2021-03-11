@@ -42,6 +42,7 @@ const TimeLineOuterContainer = styled.div`
 const TimeLineContainer = styled.div`
   display: grid;
   width: min-content;
+  min-width: 100%;
   grid-template-columns: 250px 1fr;
   color: ${({ theme }) => theme.colors.text};
 `;
