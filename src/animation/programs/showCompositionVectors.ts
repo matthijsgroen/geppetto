@@ -19,6 +19,7 @@ const compositionVertexShader = `
   varying mediump vec4 vColor;
   varying mediump vec4 vCircle;
   varying mediump vec2 vViewport;
+  uniform float mutation; 
 
   uniform vec2 viewport;
   uniform vec3 translate;

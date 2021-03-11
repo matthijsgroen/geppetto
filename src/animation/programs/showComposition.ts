@@ -15,6 +15,7 @@ const compositionVertexShader = `
   uniform vec3 basePosition;
   uniform vec3 translate;
   uniform vec4 scale;
+  uniform float mutation; 
 
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;

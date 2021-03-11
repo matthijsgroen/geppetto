@@ -73,7 +73,6 @@ export const mutationValueShader = `
 
 export const mutationShader = `
   #define PI_FRAC 0.017453292519943295
-  uniform float mutation; 
 
   // x = type, yz = origin, a = radius
   uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];

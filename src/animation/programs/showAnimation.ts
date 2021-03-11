@@ -26,6 +26,7 @@ const animationVertexShader = `
 
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;
+  attribute float mutation;
 
   varying lowp vec2 vTextureCoord;
 
@@ -71,7 +72,7 @@ export const showAnimation = (): {
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 4;
+  const stride = 5;
 
   let imageDefinition: ImageDefinition | null = null;
   let controlValues: ControlValues | null = null;
@@ -91,6 +92,8 @@ export const showAnimation = (): {
     x: number;
     y: number;
     z: number;
+    offset: number;
+    length: number;
   }[] = [];
   let mutators: string[] = [];
   let controls: string[] = [];
@@ -129,6 +132,8 @@ export const showAnimation = (): {
       const start = indices.length;
 
       const itemOffset = [...shape.translate, index * 0.1];
+      const offset = vertices.length / stride;
+
       elements.push({
         name: shape.name,
         start,
@@ -137,10 +142,12 @@ export const showAnimation = (): {
         x: itemOffset[0],
         y: itemOffset[1],
         z: -0.5 + itemOffset[2] * 0.001,
+        offset,
+        length: shape.points.length,
       });
-      const offset = vertices.length / stride;
+
       shape.points.forEach(([x, y]) => {
-        vertices.push(x - anchor[0], y - anchor[1], x, y);
+        vertices.push(x - anchor[0], y - anchor[1], x, y, 0);
       });
 
       shapeIndices.forEach((index) => {
@@ -159,6 +166,11 @@ export const showAnimation = (): {
       treeData,
       shapeVectorInfo
     );
+    elements.forEach((element) => {
+      for (let i = 0; i < element.length; i++) {
+        vertices[(i + element.offset) * stride + 4] = element.mutator;
+      }
+    });
 
     mutators = newMutators;
     controls = imageDefinition.controls.map((e) => e.name);
@@ -418,6 +430,17 @@ export const showAnimation = (): {
           );
           gl.enableVertexAttribArray(texCoord);
 
+          const mut = gl.getAttribLocation(shaderProgram, "mutation");
+          gl.vertexAttribPointer(
+            mut,
+            1,
+            gl.FLOAT,
+            false,
+            Float32Array.BYTES_PER_ELEMENT * stride,
+            /* offset */ 4 * Float32Array.BYTES_PER_ELEMENT
+          );
+          gl.enableVertexAttribArray(mut);
+
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
             const landscape =
@@ -459,7 +482,6 @@ export const showAnimation = (): {
           gl.bindTexture(gl.TEXTURE_2D, texture);
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
-          const mutation = gl.getUniformLocation(shaderProgram, "mutation");
           const uBasePosition = gl.getUniformLocation(
             shaderProgram,
             "basePosition"
@@ -476,7 +498,6 @@ export const showAnimation = (): {
               return;
             }
             gl.uniform3f(translate, element.x, element.y, element.z);
-            gl.uniform1f(mutation, element.mutator);
             gl.drawElements(
               gl.TRIANGLES,
               element.amount,
