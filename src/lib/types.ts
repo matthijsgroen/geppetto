@@ -62,6 +62,15 @@ export type ControlDefinition = {
   steps: Keyframe[];
 };
 
+export type PlayStatus = Record<
+  string,
+  {
+    playing: boolean;
+    startAt: number;
+    startedAt: number;
+  }
+>;
+
 export type ControlValues = {
   [key: string]: number;
 };

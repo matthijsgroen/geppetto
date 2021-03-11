@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from "react";
-import { ControlValues, ImageDefinition } from "../lib/types";
+import React, { useEffect, useMemo, useState } from "react";
+import { ControlValues, ImageDefinition, PlayStatus } from "../lib/types";
 import { showAnimation } from "./programs/showAnimation";
 import WebGLCanvas from "./WebGLCanvas";
 
@@ -7,6 +7,7 @@ export interface TextureMapCanvasProps {
   image: HTMLImageElement | null;
   imageDefinition: ImageDefinition;
   controlValues: ControlValues;
+  playStatus?: PlayStatus;
   zoom: number;
   panX: number;
   panY: number;
@@ -16,6 +17,7 @@ const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
   image,
   imageDefinition,
   controlValues,
+  playStatus = {},
   zoom,
   panX,
   panY,
@@ -33,6 +35,10 @@ const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
     animation.setImageDefinition(imageDefinition);
     animation.setControlValues(controlValues);
   }, [imageDefinition]);
+
+  useEffect(() => {
+    animation.setPlayStatus(playStatus);
+  }, [playStatus]);
 
   animation.setControlValues(controlValues);
   animation.setZoom(zoom);

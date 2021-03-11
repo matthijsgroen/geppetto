@@ -7,7 +7,12 @@ import { TimeContainer } from "src/components/TimeContainer";
 import { omitKeys } from "src/lib/definitionHelpers";
 import { maxZoomFactor } from "src/lib/webgl";
 import MouseControl, { MouseMode } from "../components/MouseControl";
-import { AnimationFrame, ControlValues, ImageDefinition } from "../lib/types";
+import {
+  AnimationFrame,
+  ControlValues,
+  ImageDefinition,
+  PlayStatus,
+} from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
 interface CompositionProps {
@@ -47,6 +52,8 @@ const Animation: React.VFC<CompositionProps> = ({
   );
   const [selectedFrame, setSelectedFrame] = useState<number | null>(null);
 
+  const [playStatus, setPlayStatus] = useState<PlayStatus>({});
+
   const activeFrame =
     selectedAnimation && selectedFrame !== null
       ? imageDefinition.animations
@@ -64,9 +71,9 @@ const Animation: React.VFC<CompositionProps> = ({
         a.name === selectedAnimation
           ? {
               ...a,
-              keyframes: a.keyframes.map((f) =>
-                f === activeFrame ? mutation(f) : f
-              ),
+              keyframes: a.keyframes
+                .map((f) => (f === activeFrame ? mutation(f) : f))
+                .sort((a, b) => a.time - b.time),
             }
           : a
       ),
@@ -149,6 +156,7 @@ const Animation: React.VFC<CompositionProps> = ({
             image={texture}
             imageDefinition={imageDefinition}
             controlValues={{ ...controlValues, ...activeFrame?.controlValues }}
+            playStatus={playStatus}
             zoom={zoom}
             panX={panX}
             panY={panY}
@@ -233,6 +241,8 @@ const Animation: React.VFC<CompositionProps> = ({
           updateSelectedFrame={setSelectedFrame}
           imageDefinition={imageDefinition}
           updateImageDefinition={updateImageDefinition}
+          playStatus={playStatus}
+          updatePlayStatus={setPlayStatus}
         />
       }
     />

@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled from "styled-components";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarSeperator from "./ToolbarSeperator";
-import { ImageDefinition } from "src/lib/types";
+import { ImageDefinition, PlayStatus } from "src/lib/types";
 import { makeAnimationName } from "src/lib/definitionHelpers";
 import { Toolbar } from "./Toolbar";
 import RenameableLabel from "./RenameableLabel";
@@ -182,6 +182,8 @@ export const TimeContainer: React.VFC<{
   updateSelectedAnimation: Dispatch<SetStateAction<string | null>>;
   selectedFrame: number | null;
   updateSelectedFrame: Dispatch<SetStateAction<number | null>>;
+  playStatus: PlayStatus;
+  updatePlayStatus: Dispatch<SetStateAction<PlayStatus>>;
 }> = ({
   imageDefinition,
   updateImageDefinition,
@@ -189,6 +191,8 @@ export const TimeContainer: React.VFC<{
   updateSelectedAnimation,
   selectedFrame,
   updateSelectedFrame,
+  playStatus,
+  updatePlayStatus,
 }) => {
   const maxLength = imageDefinition.animations.reduce<number>(
     (result, e) =>
@@ -231,10 +235,12 @@ export const TimeContainer: React.VFC<{
                 e.name === selectedAnimation
                   ? {
                       ...e,
-                      keyframes: e.keyframes.concat({
-                        time,
-                        controlValues: {},
-                      }),
+                      keyframes: e.keyframes
+                        .concat({
+                          time,
+                          controlValues: {},
+                        })
+                        .sort((a, b) => a.time - b.time),
                     }
                   : e
               ),
@@ -376,9 +382,30 @@ export const TimeContainer: React.VFC<{
                   <TimelineButton
                     onClick={(e) => {
                       e.stopPropagation();
+                      if (playStatus[t.name] && playStatus[t.name].playing) {
+                        updatePlayStatus((status) => ({
+                          ...status,
+                          [t.name]: {
+                            playing: false,
+                            startAt: 0,
+                            startedAt: 0,
+                          },
+                        }));
+                      } else {
+                        updatePlayStatus((status) => ({
+                          ...status,
+                          [t.name]: {
+                            playing: true,
+                            startAt: 0,
+                            startedAt: +new Date(),
+                          },
+                        }));
+                      }
                     }}
                   >
-                    ▶️
+                    {playStatus[t.name] && playStatus[t.name].playing
+                      ? "⏹"
+                      : "▶️"}
                   </TimelineButton>
                   <RenameableLabel
                     label={t.name}

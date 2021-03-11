@@ -1,8 +1,10 @@
 import Delaunator from "delaunator";
 import {
+  AnimationFrame,
   ControlDefinition,
   ControlValues,
   ImageDefinition,
+  PlayStatus,
   Vec2,
   Vec3,
 } from "../../lib/types";
@@ -69,6 +71,7 @@ export const showAnimation = (): {
   setImage(image: HTMLImageElement): void;
   setImageDefinition(imageDefinition: ImageDefinition): void;
   setControlValues(controlValues: ControlValues): void;
+  setPlayStatus(playStatus: PlayStatus): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
@@ -77,6 +80,14 @@ export const showAnimation = (): {
 
   let imageDefinition: ImageDefinition | null = null;
   let controlValues: ControlValues | null = null;
+  let playStatus: PlayStatus = {};
+  const playKeyframes: Record<
+    string,
+    {
+      startedAt: number;
+      controlValues: ControlValues;
+    }
+  > = {};
 
   let gl: WebGLRenderingContext | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
@@ -329,6 +340,7 @@ export const showAnimation = (): {
     gl.uniform2fv(uControlMutationIndices, controlMutationIndicesArray);
   };
 
+  const contrValues = new Float32Array(MAX_CONTROLS).fill(0);
   const assignControlValues = () => {
     if (!imageDefinition || !gl || !program || !controlValues) return;
     gl.useProgram(program);
@@ -338,7 +350,7 @@ export const showAnimation = (): {
     // Set control values to uniforms
 
     const uControlValues = gl.getUniformLocation(program, "uControlValues");
-    const contrValues = new Float32Array(MAX_CONTROLS).fill(0);
+    contrValues.fill(0);
     Object.entries(controlValues).forEach(([key, value]) => {
       const index = controls.indexOf(key);
       if (index === -1) return;
@@ -363,6 +375,9 @@ export const showAnimation = (): {
     setControlValues(ctrlValues) {
       controlValues = ctrlValues;
       assignControlValues();
+    },
+    setPlayStatus(status) {
+      playStatus = status;
     },
     setZoom(newZoom) {
       zoom = newZoom;
@@ -503,6 +518,89 @@ export const showAnimation = (): {
             basePosition[1],
             basePosition[2]
           );
+
+          const controls = imageDefinition.controls.map((e) => e.name);
+
+          // Set control values to uniforms
+
+          const uControlValues = gl.getUniformLocation(
+            shaderProgram,
+            "uControlValues"
+          );
+          // contrValues.fill(0);
+          // Object.entries(imageDefinition.controlValues).forEach(
+          //   ([key, value]) => {
+          //     const index = controls.indexOf(key);
+          //     if (index === -1) return;
+          //     contrValues[index] = value;
+          //   }
+          // );
+          const now = +new Date();
+
+          imageDefinition.animations.forEach((animation) => {
+            const status = playStatus[animation.name];
+            if (!status || !status.playing) {
+              return;
+            }
+            const animLength = Math.max(
+              ...animation.keyframes.map((e) => e.time)
+            );
+            let momentInAnimation = now - status.startedAt + status.startAt;
+            if (momentInAnimation > animLength && !animation.looping) {
+              return;
+            }
+            momentInAnimation %= animLength;
+            // [1 , 4,  6,  32 ,64]
+            let startFrame: AnimationFrame | null = null;
+            let endFrame: AnimationFrame | null = null;
+
+            for (const frame of animation.keyframes) {
+              if (frame.time <= momentInAnimation) {
+                startFrame = frame;
+              }
+              if (frame.time >= momentInAnimation) {
+                endFrame = frame;
+                break;
+              }
+            }
+            if (!endFrame) return;
+
+            if (startFrame === null) {
+              let startValues = playKeyframes[animation.name];
+
+              if (!startValues || startValues.startedAt !== status.startedAt) {
+                const controlValues: ControlValues = {};
+                for (const key of Object.keys(endFrame.controlValues)) {
+                  const value = contrValues[controls.indexOf(key)];
+                  controlValues[key] = value;
+                }
+
+                startValues = {
+                  startedAt: status.startedAt,
+                  controlValues,
+                };
+                playKeyframes[animation.name] = startValues;
+              }
+
+              startFrame = {
+                time: 0,
+                controlValues: startValues.controlValues,
+              };
+            }
+            const mix =
+              (momentInAnimation - startFrame.time) /
+              (endFrame.time - startFrame.time);
+
+            for (const k of Object.keys(startFrame.controlValues)) {
+              const v =
+                startFrame.controlValues[k] * (1 - mix) +
+                endFrame.controlValues[k] * mix;
+              const index = controls.indexOf(k);
+              contrValues[index] = v;
+            }
+          });
+
+          gl.uniform1fv(uControlValues, contrValues);
 
           elements.forEach((element) => {
             if (element.amount === 0) {
