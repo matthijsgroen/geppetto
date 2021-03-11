@@ -21,12 +21,13 @@ import { flattenShapes, getAnchor } from "./utils";
 const animationVertexShader = `
   uniform vec2 viewport;
   uniform vec3 basePosition;
-  uniform vec3 translate;
+  // uniform vec3 translate;
   uniform vec4 scale;
 
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;
   attribute float mutation;
+  attribute vec3 translate;
 
   varying lowp vec2 vTextureCoord;
 
@@ -72,7 +73,7 @@ export const showAnimation = (): {
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 5;
+  const stride = 8;
 
   let imageDefinition: ImageDefinition | null = null;
   let controlValues: ControlValues | null = null;
@@ -89,8 +90,6 @@ export const showAnimation = (): {
     start: number;
     amount: number;
     mutator: number;
-    x: number;
-    y: number;
     z: number;
     offset: number;
     length: number;
@@ -139,15 +138,22 @@ export const showAnimation = (): {
         start,
         amount: shapeIndices.length,
         mutator: 0,
-        x: itemOffset[0],
-        y: itemOffset[1],
         z: -0.5 + itemOffset[2] * 0.001,
         offset,
         length: shape.points.length,
       });
 
       shape.points.forEach(([x, y]) => {
-        vertices.push(x - anchor[0], y - anchor[1], x, y, 0);
+        vertices.push(
+          x - anchor[0],
+          y - anchor[1],
+          x,
+          y,
+          0,
+          itemOffset[0],
+          itemOffset[1],
+          -0.5 + itemOffset[2] * 0.001
+        );
       });
 
       shapeIndices.forEach((index) => {
@@ -281,11 +287,6 @@ export const showAnimation = (): {
       ];
       mutationValueIndices.push(...items);
     });
-
-    // console.log(mutationControlData);
-    // console.log(controlMutationValues);
-    // console.log(mutationValueIndices);
-    // console.log(controlMutationIndices);
 
     const uControlMutationValues = gl.getUniformLocation(
       program,
@@ -441,6 +442,17 @@ export const showAnimation = (): {
           );
           gl.enableVertexAttribArray(mut);
 
+          const translate = gl.getAttribLocation(shaderProgram, "translate");
+          gl.vertexAttribPointer(
+            translate,
+            3,
+            gl.FLOAT,
+            false,
+            Float32Array.BYTES_PER_ELEMENT * stride,
+            /* offset */ 5 * Float32Array.BYTES_PER_ELEMENT
+          );
+          gl.enableVertexAttribArray(translate);
+
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
             const landscape =
@@ -481,7 +493,6 @@ export const showAnimation = (): {
           gl.activeTexture(unit.unit);
           gl.bindTexture(gl.TEXTURE_2D, texture);
 
-          const translate = gl.getUniformLocation(shaderProgram, "translate");
           const uBasePosition = gl.getUniformLocation(
             shaderProgram,
             "basePosition"
@@ -497,7 +508,6 @@ export const showAnimation = (): {
             if (element.amount === 0) {
               return;
             }
-            gl.uniform3f(translate, element.x, element.y, element.z);
             gl.drawElements(
               gl.TRIANGLES,
               element.amount,
