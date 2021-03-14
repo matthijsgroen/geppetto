@@ -21,10 +21,18 @@ const CanvasContainer = styled.div`
   }
 `;
 
+const FPSIndicator = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
 const startWebGL = async (
   node: HTMLCanvasElement,
   container: HTMLDivElement,
-  renderers: WebGLRenderer[]
+  renderers: WebGLRenderer[],
+  debugRef: HTMLElement
 ): Promise<() => void> => {
   const rect = container.getBoundingClientRect();
   node.width = rect.width * window.devicePixelRatio;
@@ -44,9 +52,14 @@ const startWebGL = async (
   };
   window.addEventListener("resize", onResize);
   let renderLoop = true;
+  let slowest = 0;
   const render = () => {
     if (!renderLoop) return;
+    const st = +new Date();
     api.render();
+    const renderMs = +new Date() - st;
+    slowest = Math.max(slowest, renderMs);
+    debugRef.textContent = `Frame: ${renderMs}ms Slowest: ${slowest}`;
     window.requestAnimationFrame(render);
   };
   window.requestAnimationFrame(render);
@@ -65,19 +78,25 @@ export interface TextureMapCanvasProps {
 const WebGLCanvas: React.FC<TextureMapCanvasProps> = ({ renderers }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const debugRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (
       canvasRef &&
       canvasRef.current &&
       containerRef &&
-      containerRef.current
+      containerRef.current &&
+      debugRef &&
+      debugRef.current
     ) {
       const node = canvasRef.current;
       let cleanup: () => void;
 
-      startWebGL(node, containerRef.current, renderers).then((result) => {
-        cleanup = result;
-      });
+      startWebGL(node, containerRef.current, renderers, debugRef.current).then(
+        (result) => {
+          cleanup = result;
+        }
+      );
       return () => {
         // unmount
         cleanup && cleanup();
@@ -88,6 +107,7 @@ const WebGLCanvas: React.FC<TextureMapCanvasProps> = ({ renderers }) => {
   return (
     <CanvasContainer ref={containerRef}>
       <canvas ref={canvasRef} />
+      <FPSIndicator ref={debugRef} />
     </CanvasContainer>
   );
 };
