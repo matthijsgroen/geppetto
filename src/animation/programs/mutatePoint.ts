@@ -1,4 +1,4 @@
-import { MutationVector, ShapeDefinition } from "src/lib/types";
+import { MutationVector, ShapeDefinition, Vec4 } from "src/lib/types";
 import {
   isMutationVector,
   isShapeDefinition,
@@ -6,8 +6,6 @@ import {
 } from "src/lib/visit";
 
 export const MAX_MUTATION_VECTORS = 20;
-export const MAX_TREE_LEVELS = 7;
-export const MAX_TREE_SIZE = Math.pow(2, MAX_TREE_LEVELS);
 export const MAX_CONTROLS = 20;
 
 export const vectorTypeMapping = {
@@ -18,7 +16,7 @@ export const vectorTypeMapping = {
 };
 
 export const mutationControlShader = `
-  uniform vec2 uControlMutationValues[${MAX_TREE_SIZE}];
+  uniform vec2 uControlMutationValues[${MAX_MUTATION_VECTORS * MAX_CONTROLS}];
   uniform vec3 uMutationValueIndices[${MAX_MUTATION_VECTORS * MAX_CONTROLS}];
   uniform vec2 uControlMutationIndices[${MAX_MUTATION_VECTORS}];
 
@@ -76,20 +74,13 @@ export const mutationShader = `
 
   // x = type, yz = origin, a = radius
   uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];
-  uniform float uMutationTree[${MAX_TREE_SIZE}];
+  uniform float uMutationParent[${MAX_MUTATION_VECTORS}];
 
-  vec2 mutateOnce(vec2 startValue, int treeIndex) {
-    if (treeIndex == 0) {
-      return startValue;
-    }
-    int mutationIndex = int(uMutationTree[treeIndex]);
-    if (mutationIndex == 0) {
-      return startValue;
-    }
-    vec4 mutation = uMutationVectors[mutationIndex - 1];
+  vec2 mutateOnce(vec2 startValue, int mutationIndex) {
+    vec4 mutation = uMutationVectors[mutationIndex];
     int mutationType = int(mutation.x);
 
-    vec2 mutationValue = getMutationValue(mutationIndex - 1, mutationType);
+    vec2 mutationValue = getMutationValue(mutationIndex, mutationType);
     vec2 origin = mutation.yz;
 
     vec2 result = startValue;
@@ -120,226 +111,106 @@ export const mutationShader = `
   }
 
 
-  vec2 mutatePoint(vec2 startValue, int treeIndex) {
-    int currentNode = treeIndex;
+  vec2 mutatePoint(vec2 startValue, int mutationIndex) {
+    int currentNode = mutationIndex;
     vec2 result = startValue;
 
-    for(int i = 0; i < ${MAX_TREE_LEVELS}; i++) {
-        if (currentNode == 0) {
+    for(int i = 0; i < ${MAX_MUTATION_VECTORS}; i++) {
+        if (currentNode == -1) {
             return result;
         }
         result = mutateOnce(result, currentNode);
-        currentNode /= 2;
+        currentNode = int(uMutationParent[currentNode]);
     }
     return result;
   }
 
 `;
 
-export interface Element {
-  name: string;
-  mutator: number;
-}
+const mutatorToVec4 = (mutator: MutationVector): Vec4 => [
+  vectorTypeMapping[mutator.type],
+  mutator.origin[0],
+  mutator.origin[1],
+  mutator.type === "deform" ? mutator.radius : 0,
+];
 
-type TreeConstruct = {
-  mutator: number;
-  mutationVector: MutationVector;
-  shape: ShapeDefinition;
-  children: TreeConstruct[];
-};
-
-const childrenOf = (node: number): [number, number] => [node * 2, node * 2 + 1];
-
-const findNodeInTree = (
-  tree: TreeConstruct[],
-  parents: ShapeDefinition[]
-): TreeConstruct | undefined => {
-  if (tree.length === 0) return undefined;
-
-  const [head, ...tail] = parents;
-  if (!head) return undefined;
-
-  const node = tree.find((e) => parents.includes(e.shape));
-  if (node) {
-    const child = findNodeInTree(node.children, parents);
-    if (child) {
-      return child;
-    } else {
-      const child = findNodeInTree(node.children, tail);
-      return child ? child : node;
+const getParentMutation = (
+  parents: (ShapeDefinition | MutationVector)[],
+  self?: MutationVector
+): MutationVector | null => {
+  const parentShape = parents[parents.length - 1];
+  if (isShapeDefinition(parentShape)) {
+    const mutatorIndex = self ? parentShape.mutationVectors.indexOf(self) : -1;
+    if (mutatorIndex > 0) {
+      return parentShape.mutationVectors[mutatorIndex - 1];
+    }
+    for (let i = parents.length - (self ? 2 : 1); i >= 0; i--) {
+      const shape = parents[i];
+      if (
+        shape &&
+        isShapeDefinition(shape) &&
+        shape.mutationVectors.length > 0
+      ) {
+        return shape.mutationVectors[shape.mutationVectors.length - 1];
+      }
     }
   }
-  return undefined;
+  return null;
 };
 
-const getNodeIndices = (toDescent: number, current: number): number[] => {
-  if (toDescent === 0) {
-    return [current];
-  }
-  const [left, right] = childrenOf(current);
-  return ([] as number[]).concat(
-    getNodeIndices(toDescent - 1, left),
-    getNodeIndices(toDescent - 1, right)
-  );
-};
-
-const placeItemsInTree = (
-  tree: TreeConstruct[],
-  binaryTree: Float32Array,
-  currentNode: number
-) => {
-  if (tree.length === 0) {
-    return;
-  }
-  let level = 1;
-  while (Math.pow(2, level) < tree.length) {
-    level++;
-  }
-  const nodeIndices = getNodeIndices(level, currentNode);
-  tree.forEach((item, index) => {
-    const node = nodeIndices[index];
-    binaryTree[node] = item.mutator;
-    placeItemsInTree(item.children, binaryTree, node);
-  });
-};
-
-type ShapeMutatorInfo = {
-  shapeName: string;
-  mutatorName: string;
-  mutator: number;
-};
-
-export const createMutationTree = (
+export const createMutationList = (
   shapes: ShapeDefinition[]
-): [string[], Float32Array, Float32Array, ShapeMutatorInfo[]] => {
-  const vectorSettings = new Float32Array(MAX_MUTATION_VECTORS * 4).fill(0);
-  const mutators: string[] = [];
+): {
+  parentList: Float32Array;
+  vectorSettings: Vec4[];
+  shapeMutatorMapping: Record<string, number>;
+  mutatorMapping: Record<string, number>;
+} => {
+  const mutatorIndices: { name: string; index: number; parent: number }[] = [];
+  const mutators: Vec4[] = [];
 
-  const treeInfo: TreeConstruct[] = [];
-
-  const shapeVectorInfo: ShapeMutatorInfo[] = [];
+  const mutatorMapping: Record<string, number> = {};
 
   visitShapes(shapes, (item, parents) => {
     if (isMutationVector(item)) {
+      const value = mutatorToVec4(item);
       const index = mutators.length;
-      mutators.push(item.name);
-      vectorSettings[index * 4] = vectorTypeMapping[item.type];
-      vectorSettings[index * 4 + 1] = item.origin[0];
-      vectorSettings[index * 4 + 2] = item.origin[1];
-      if (item.type === "deform") {
-        vectorSettings[index * 4 + 3] = item.radius;
-      }
-      const mutatorParents = parents.filter((p) =>
-        isShapeDefinition(p)
-      ) as ShapeDefinition[];
+      mutators.push(value);
 
-      const existingBranch = findNodeInTree(treeInfo, mutatorParents);
-      const newNode = {
-        mutator: index + 1,
-        mutationVector: item,
-        shape: [...parents]
-          .reverse()
-          .find((e) => isShapeDefinition(e)) as ShapeDefinition,
-        children: [],
-      };
-
-      if (existingBranch) {
-        existingBranch.children.push(newNode);
-      } else {
-        treeInfo.push(newNode);
-      }
-      shapeVectorInfo.unshift({
-        shapeName: newNode.shape.name,
-        mutatorName: item.name,
-        mutator: newNode.mutator,
-      });
+      const parentMutation = getParentMutation(parents, item);
+      const mutatorIndex =
+        parentMutation === null
+          ? -1
+          : mutatorIndices.findIndex((e) => e.name === parentMutation.name);
+      mutatorIndices.push({ name: item.name, index, parent: mutatorIndex });
+      mutatorMapping[item.name] = mutatorIndex;
     }
     return undefined;
   });
 
-  const treeData = new Float32Array(MAX_TREE_SIZE).fill(0);
-
-  placeItemsInTree(treeInfo, treeData, 1);
-
-  return [mutators, vectorSettings, treeData, shapeVectorInfo];
-};
-
-export const assignMutatorToElements = (
-  shapes: ShapeDefinition[],
-  elements: Element[],
-  treeData: Float32Array,
-  shapeVectorInfo: ShapeMutatorInfo[]
-): void => {
-  const parentIndex: { [name: string]: string[] } = {};
+  const shapeMutatorMapping: Record<string, number> = {};
   visitShapes(shapes, (item, parents) => {
     if (isShapeDefinition(item)) {
-      const parentNames = parents
-        .filter((p) => isShapeDefinition(p))
-        .map((e) => e.name)
-        .reverse();
-      parentIndex[item.name] = parentNames;
+      const parentMutation = getParentMutation(parents.concat(item));
+      const mutatorIndex =
+        parentMutation === null
+          ? -1
+          : mutatorIndices.findIndex((e) => e.name === parentMutation.name);
+      shapeMutatorMapping[item.name] = mutatorIndex;
     }
     return undefined;
   });
 
-  elements.forEach((element) => {
-    const node = shapeVectorInfo.find((e) => e.shapeName === element.name);
-    if (node) {
-      const mutationNodeIndex = treeData.findIndex((e) => e === node.mutator);
-      element.mutator = mutationNodeIndex;
-    } else {
-      const parentNames = parentIndex[element.name];
-      parentNames.find((p) => {
-        const node = shapeVectorInfo.find((e) => e.shapeName === p);
-        if (node) {
-          const mutationNodeIndex = treeData.findIndex(
-            (e) => e === node.mutator
-          );
-          element.mutator = mutationNodeIndex;
-          return true;
-        }
-        return false;
-      });
-    }
-  });
-};
+  const parentList = new Float32Array(mutators.length);
 
-export const assignMutatorToVectors = (
-  shapes: ShapeDefinition[],
-  elements: Element[],
-  treeData: Float32Array,
-  shapeVectorInfo: ShapeMutatorInfo[]
-): void => {
-  const parentIndex: { [name: string]: string[] } = {};
-  visitShapes(shapes, (item, parents) => {
-    if (isMutationVector(item)) {
-      const parentNames = parents
-        .filter((p) => isShapeDefinition(p))
-        .map((e) => e.name)
-        .reverse();
-      parentIndex[item.name] = parentNames;
-    }
-    return undefined;
+  mutatorIndices.forEach((item, index) => {
+    parentList[index] = item.parent;
   });
 
-  elements.forEach((element) => {
-    const node = shapeVectorInfo.find((e) => e.mutatorName === element.name);
-    if (node) {
-      const mutationNodeIndex = treeData.findIndex((e) => e === node.mutator);
-      element.mutator = mutationNodeIndex;
-    } else {
-      const parentNames = parentIndex[element.name];
-      parentNames.find((p) => {
-        const node = shapeVectorInfo.find((e) => e.mutatorName === p);
-        if (node) {
-          const mutationNodeIndex = treeData.findIndex(
-            (e) => e === node.mutator
-          );
-          element.mutator = mutationNodeIndex;
-          return true;
-        }
-        return false;
-      });
-    }
-  });
+  return {
+    mutatorMapping,
+    parentList,
+    vectorSettings: mutators,
+    shapeMutatorMapping,
+  };
 };

@@ -1,5 +1,5 @@
 import Delaunator from "delaunator";
-import { Keyframe, MutationVector, Vec2 } from "./types";
+import { Keyframe, MutationVector, Vec2, Vec3, Vec4 } from "./types";
 
 export const verticesFromPoints = (points: number[][]): number[] =>
   Delaunator.from(points).triangles.reduce(
@@ -46,4 +46,10 @@ export const combineKeyFrames = (
       [key]: mergeMutationValue(result[key], value, mutatorMapping[key].type),
     }),
     b
+  );
+
+export const flatten = (vectors: Vec2[] | Vec3[] | Vec4[]): number[] =>
+  ((vectors as unknown) as number[][]).reduce<number[]>(
+    (result, vec) => result.concat(vec),
+    []
   );

@@ -1,4 +1,5 @@
 import { vectorNamesFromShape } from "src/lib/definitionHelpers";
+import { flatten } from "src/lib/vertices";
 import { isShapeDefinition, visitShapes } from "src/lib/visit";
 import {
   ItemSelection,
@@ -8,8 +9,7 @@ import {
 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
-  assignMutatorToVectors,
-  createMutationTree,
+  createMutationList,
   MAX_MUTATION_VECTORS,
   mutationShader,
   mutationValueShader,
@@ -231,20 +231,21 @@ export const showCompositionVectors = (): {
       return undefined;
     });
 
-    const [
-      newMutators,
-      vectorSettings,
-      treeData,
-      shapeVectorInfo,
-    ] = createMutationTree(shapes);
-    assignMutatorToVectors(shapes, vectors, treeData, shapeVectorInfo);
-    mutators = newMutators;
+    const { parentList, vectorSettings, mutatorMapping } = createMutationList(
+      shapes
+    );
+
+    vectors.forEach((vector) => {
+      vector.mutator = mutatorMapping[vector.name];
+    });
+
+    mutators = Object.keys(mutatorMapping);
 
     const uMutationVectors = gl.getUniformLocation(program, "uMutationVectors");
-    gl.uniform4fv(uMutationVectors, vectorSettings);
+    gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
 
-    const uMutationTree = gl.getUniformLocation(program, "uMutationTree");
-    gl.uniform1fv(uMutationTree, treeData);
+    const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
+    gl.uniform1fv(uMutationParent, parentList);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);

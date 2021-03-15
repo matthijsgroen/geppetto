@@ -48,8 +48,8 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
   }, [shapes]);
 
   useEffect(() => {
-    layer.setVectorValues(vectorValues);
     composition.setVectorValues(vectorValues);
+    layer.setVectorValues(vectorValues);
     vectorMap.setVectorValues(vectorValues);
   }, [vectorValues]);
 

@@ -1,9 +1,8 @@
 import { ItemSelection, Keyframe, ShapeDefinition } from "../../lib/types";
-import { verticesFromPoints } from "../../lib/vertices";
+import { flatten, verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
-  assignMutatorToElements,
-  createMutationTree,
+  createMutationList,
   MAX_MUTATION_VECTORS,
   mutationShader,
   mutationValueShader,
@@ -109,22 +108,26 @@ export const showCompositionMap = (): {
       vertices.push(...list);
     });
 
-    const [
-      newMutators,
+    const {
+      parentList,
       vectorSettings,
-      treeData,
-      shapeVectorInfo,
-    ] = createMutationTree(shapes);
-    assignMutatorToElements(shapes, elements, treeData, shapeVectorInfo);
-    mutators = newMutators;
+      mutatorMapping,
+      shapeMutatorMapping,
+    } = createMutationList(shapes);
+
+    elements.forEach((element) => {
+      element.mutator = shapeMutatorMapping[element.name];
+    });
+
+    mutators = Object.keys(mutatorMapping);
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
     const uMutationVectors = gl.getUniformLocation(program, "uMutationVectors");
-    gl.uniform4fv(uMutationVectors, vectorSettings);
+    gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
 
-    const uMutationTree = gl.getUniformLocation(program, "uMutationTree");
-    gl.uniform1fv(uMutationTree, treeData);
+    const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
+    gl.uniform1fv(uMutationParent, parentList);
 
     const indices = Array(vertices.length / stride)
       .fill(0)

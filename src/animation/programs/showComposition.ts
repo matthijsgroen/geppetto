@@ -1,9 +1,9 @@
 import Delaunator from "delaunator";
+import { flatten } from "src/lib/vertices";
 import { Keyframe, ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
-  assignMutatorToElements,
-  createMutationTree,
+  createMutationList,
   MAX_MUTATION_VECTORS,
   mutationShader,
   mutationValueShader,
@@ -137,23 +137,27 @@ export const showComposition = (): {
         indices.push(index + offset);
       });
     });
-    const [
-      newMutators,
-      vectorSettings,
-      treeData,
-      shapeVectorInfo,
-    ] = createMutationTree(shapes);
-    assignMutatorToElements(shapes, elements, treeData, shapeVectorInfo);
 
-    mutators = newMutators;
+    const {
+      parentList,
+      vectorSettings,
+      mutatorMapping,
+      shapeMutatorMapping,
+    } = createMutationList(shapes);
+
+    elements.forEach((element) => {
+      element.mutator = shapeMutatorMapping[element.name];
+    });
+
+    mutators = Object.keys(mutatorMapping);
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
     const uMutationVectors = gl.getUniformLocation(program, "uMutationVectors");
-    gl.uniform4fv(uMutationVectors, vectorSettings);
+    gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
 
-    const uMutationTree = gl.getUniformLocation(program, "uMutationTree");
-    gl.uniform1fv(uMutationTree, treeData);
+    const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
+    gl.uniform1fv(uMutationParent, parentList);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -230,6 +234,12 @@ export const showComposition = (): {
       );
       setImageTexture();
       populateShapes();
+      const translate = gl.getUniformLocation(shaderProgram, "translate");
+      const mutation = gl.getUniformLocation(shaderProgram, "mutation");
+      const uBasePosition = gl.getUniformLocation(
+        shaderProgram,
+        "basePosition"
+      );
 
       return {
         render() {
@@ -302,12 +312,6 @@ export const showComposition = (): {
           gl.activeTexture(unit.unit);
           gl.bindTexture(gl.TEXTURE_2D, texture);
 
-          const translate = gl.getUniformLocation(shaderProgram, "translate");
-          const mutation = gl.getUniformLocation(shaderProgram, "mutation");
-          const uBasePosition = gl.getUniformLocation(
-            shaderProgram,
-            "basePosition"
-          );
           gl.uniform3f(
             uBasePosition,
             basePosition[0],

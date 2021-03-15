@@ -1,4 +1,5 @@
 import Delaunator from "delaunator";
+import { flatten } from "src/lib/vertices";
 import {
   AnimationFrame,
   ControlDefinition,
@@ -10,11 +11,9 @@ import {
 } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
-  assignMutatorToElements,
-  createMutationTree,
+  createMutationList,
   MAX_CONTROLS,
   MAX_MUTATION_VECTORS,
-  MAX_TREE_SIZE,
   mutationControlShader,
   mutationShader,
 } from "./mutatePoint";
@@ -23,13 +22,12 @@ import { flattenShapes, getAnchor } from "./utils";
 const animationVertexShader = `
   uniform vec2 viewport;
   uniform vec3 basePosition;
-  // uniform vec3 translate;
+  uniform vec3 translate;
+  uniform float mutation;
   uniform vec4 scale;
 
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;
-  attribute float mutation;
-  attribute vec3 translate;
 
   varying lowp vec2 vTextureCoord;
 
@@ -76,7 +74,7 @@ export const showAnimation = (): {
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 8;
+  const stride = 4;
 
   let imageDefinition: ImageDefinition | null = null;
   let controlValues: ControlValues | null = null;
@@ -101,6 +99,8 @@ export const showAnimation = (): {
     start: number;
     amount: number;
     mutator: number;
+    x: number;
+    y: number;
     z: number;
     offset: number;
     length: number;
@@ -149,56 +149,43 @@ export const showAnimation = (): {
         start,
         amount: shapeIndices.length,
         mutator: 0,
+        x: itemOffset[0],
+        y: itemOffset[1],
         z: -0.5 + itemOffset[2] * 0.001,
         offset,
         length: shape.points.length,
       });
 
       shape.points.forEach(([x, y]) => {
-        vertices.push(
-          x - anchor[0],
-          y - anchor[1],
-          x,
-          y,
-          0,
-          itemOffset[0],
-          itemOffset[1],
-          -0.5 + itemOffset[2] * 0.001
-        );
+        vertices.push(x - anchor[0], y - anchor[1], x, y);
       });
 
       shapeIndices.forEach((index) => {
         indices.push(index + offset);
       });
     });
-    const [
-      newMutators,
+
+    const {
+      parentList,
       vectorSettings,
-      treeData,
-      shapeVectorInfo,
-    ] = createMutationTree(imageDefinition.shapes);
-    assignMutatorToElements(
-      imageDefinition.shapes,
-      elements,
-      treeData,
-      shapeVectorInfo
-    );
+      mutatorMapping,
+      shapeMutatorMapping,
+    } = createMutationList(imageDefinition.shapes);
+
     elements.forEach((element) => {
-      for (let i = 0; i < element.length; i++) {
-        vertices[(i + element.offset) * stride + 4] = element.mutator;
-      }
+      element.mutator = shapeMutatorMapping[element.name];
     });
 
-    mutators = newMutators;
+    mutators = Object.keys(mutatorMapping);
     controls = imageDefinition.controls.map((e) => e.name);
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
     const uMutationVectors = gl.getUniformLocation(program, "uMutationVectors");
-    gl.uniform4fv(uMutationVectors, vectorSettings);
+    gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
 
-    const uMutationTree = gl.getUniformLocation(program, "uMutationTree");
-    gl.uniform1fv(uMutationTree, treeData);
+    const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
+    gl.uniform1fv(uMutationParent, parentList);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -303,9 +290,9 @@ export const showAnimation = (): {
       program,
       "uControlMutationValues"
     );
-    const controlMutationValuesArray = new Float32Array(MAX_TREE_SIZE * 2).fill(
-      0
-    );
+    const controlMutationValuesArray = new Float32Array(
+      MAX_MUTATION_VECTORS * MAX_CONTROLS * 2
+    ).fill(0);
     controlMutationValues.forEach((v, i) => {
       controlMutationValuesArray[i * 2] = v[0];
       controlMutationValuesArray[i * 2 + 1] = v[1];
@@ -348,7 +335,6 @@ export const showAnimation = (): {
     controls = imageDefinition.controls.map((e) => e.name);
 
     // Set control values to uniforms
-
     const uControlValues = gl.getUniformLocation(program, "uControlValues");
     contrValues.fill(0);
     Object.entries(controlValues).forEach(([key, value]) => {
@@ -415,6 +401,12 @@ export const showAnimation = (): {
       populateShapes();
       assignControlValues();
 
+      const uBasePosition = gl.getUniformLocation(
+        shaderProgram,
+        "basePosition"
+      );
+      const translate = gl.getUniformLocation(shaderProgram, "translate");
+      const mutation = gl.getUniformLocation(shaderProgram, "mutation");
       return {
         render() {
           if (!img || !imageDefinition) {
@@ -445,28 +437,6 @@ export const showAnimation = (): {
             /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
           );
           gl.enableVertexAttribArray(texCoord);
-
-          const mut = gl.getAttribLocation(shaderProgram, "mutation");
-          gl.vertexAttribPointer(
-            mut,
-            1,
-            gl.FLOAT,
-            false,
-            Float32Array.BYTES_PER_ELEMENT * stride,
-            /* offset */ 4 * Float32Array.BYTES_PER_ELEMENT
-          );
-          gl.enableVertexAttribArray(mut);
-
-          const translate = gl.getAttribLocation(shaderProgram, "translate");
-          gl.vertexAttribPointer(
-            translate,
-            3,
-            gl.FLOAT,
-            false,
-            Float32Array.BYTES_PER_ELEMENT * stride,
-            /* offset */ 5 * Float32Array.BYTES_PER_ELEMENT
-          );
-          gl.enableVertexAttribArray(translate);
 
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
@@ -508,10 +478,6 @@ export const showAnimation = (): {
           gl.activeTexture(unit.unit);
           gl.bindTexture(gl.TEXTURE_2D, texture);
 
-          const uBasePosition = gl.getUniformLocation(
-            shaderProgram,
-            "basePosition"
-          );
           gl.uniform3f(
             uBasePosition,
             basePosition[0],
@@ -522,19 +488,10 @@ export const showAnimation = (): {
           const controls = imageDefinition.controls.map((e) => e.name);
 
           // Set control values to uniforms
-
           const uControlValues = gl.getUniformLocation(
             shaderProgram,
             "uControlValues"
           );
-          // contrValues.fill(0);
-          // Object.entries(imageDefinition.controlValues).forEach(
-          //   ([key, value]) => {
-          //     const index = controls.indexOf(key);
-          //     if (index === -1) return;
-          //     contrValues[index] = value;
-          //   }
-          // );
           const now = +new Date();
 
           imageDefinition.animations.forEach((animation) => {
@@ -606,6 +563,8 @@ export const showAnimation = (): {
             if (element.amount === 0) {
               return;
             }
+            gl.uniform3f(translate, element.x, element.y, element.z);
+            gl.uniform1f(mutation, element.mutator);
             gl.drawElements(
               gl.TRIANGLES,
               element.amount,
