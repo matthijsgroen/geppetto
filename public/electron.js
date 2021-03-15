@@ -12,6 +12,7 @@ const isDev = require("electron-is-dev");
  *   filePath: string;
  *   fileContents: string;
  *   changed: boolean;
+ *   showFPS: boolean;
  * }
  *
  * windows: EditorWindow[]
@@ -96,19 +97,34 @@ const template = [
       ...(isMac ? [] : [{ role: "quit" }]),
     ],
   },
-  ...(isDev
-    ? [
-        {
-          role: "viewMenu",
-          submenu: [
+  {
+    role: "viewMenu",
+    submenu: [
+      {
+        label: "Show FPS",
+        enabled: false,
+        type: "checkbox",
+        id: "showFPS",
+        click(_event, browserWindow) {
+          const status = windows.find((w) => w.window === browserWindow);
+          status.showFPS = !status.showFPS;
+
+          const showFPSMenuItem = menu.getMenuItemById("showFPS");
+          showFPSMenuItem.checked = status.showFPS;
+
+          browserWindow.webContents.send("show-fps", status.showFPS);
+        },
+      },
+      ...(isDev
+        ? [
+            { type: "separator" },
             { role: "reload" },
             { role: "forcereload" },
             { role: "toggledevtools" },
-            { type: "separator" },
-          ],
-        },
-      ]
-    : []),
+          ]
+        : []),
+    ],
+  },
   {
     role: "windowMenu",
     submenu: [
@@ -127,7 +143,7 @@ const template = [
         click: async () => {
           const { shell } = require("electron");
           await shell.openExternal(
-            "https://github.com/matthijsgroen/animation-builder/wiki"
+            "https://github.com/matthijsgroen/gepetto/wiki"
           );
         },
       },
@@ -136,6 +152,16 @@ const template = [
 ];
 
 const menu = Menu.buildFromTemplate(template);
+
+const windowMenuItems = ["fileSave", "fileSaveAs", "loadTexture", "showFPS"];
+
+const setItemsEnableState = (callback) => {
+  windowMenuItems.forEach((item) => {
+    const enabled = callback(item);
+    const menuItem = menu.getMenuItemById(item);
+    menuItem.enabled = enabled;
+  });
+};
 
 const newDefinition = {
   animations: [],
@@ -168,6 +194,7 @@ function createWindow() {
     fileContents: JSON.stringify(newDefinition),
     activeContents: "",
     changed: false,
+    showFPS: false,
   };
   windows.push(status);
 
@@ -196,39 +223,29 @@ function createWindow() {
 
   win.on("closed", () => {
     windows = windows.filter((w) => w.window !== win);
-    const item = menu.getMenuItemById("fileSave");
-    item.enabled = false;
-    const itemAs = menu.getMenuItemById("fileSaveAs");
-    itemAs.enabled = false;
-    const loadTexture = menu.getMenuItemById("loadTexture");
-    loadTexture.enabled = false;
+    setItemsEnableState(() => false);
   });
 
   win.on("hide", () => {
-    const item = menu.getMenuItemById("fileSave");
-    item.enabled = false;
-    const itemAs = menu.getMenuItemById("fileSaveAs");
-    itemAs.enabled = false;
-    const loadTexture = menu.getMenuItemById("loadTexture");
-    loadTexture.enabled = false;
+    setItemsEnableState(() => false);
   });
 
   win.on("focus", () => {
-    const item = menu.getMenuItemById("fileSave");
-    item.enabled = status.changed;
-    const itemAs = menu.getMenuItemById("fileSaveAs");
-    itemAs.enabled = true;
-    const loadTexture = menu.getMenuItemById("loadTexture");
-    loadTexture.enabled = true;
+    setItemsEnableState((item) =>
+      item === "fileSave" ? status.changed : true
+    );
+
+    const showFPSMenuItem = menu.getMenuItemById("showFPS");
+    showFPSMenuItem.checked = status.showFPS;
   });
 
   win.on("show", () => {
-    const item = menu.getMenuItemById("fileSave");
-    item.enabled = status.changed;
-    const itemAs = menu.getMenuItemById("fileSaveAs");
-    itemAs.enabled = true;
-    const loadTexture = menu.getMenuItemById("loadTexture");
-    loadTexture.enabled = true;
+    setItemsEnableState((item) =>
+      item === "fileSave" ? status.changed : true
+    );
+
+    const showFPSMenuItem = menu.getMenuItemById("showFPS");
+    showFPSMenuItem.checked = status.showFPS;
   });
 
   win.webContents.on("ipc-message", (_event, channel, data) => {

@@ -5,7 +5,7 @@ import { showCompositionMap } from "./programs/showCompositionMap";
 import { showCompositionVectors } from "./programs/showCompositionVectors";
 import WebGLCanvas from "./WebGLCanvas";
 
-export interface TextureMapCanvasProps {
+export interface CompositionCanvasProps {
   image: HTMLImageElement | null;
   shapes: ShapeDefinition[];
   vectorValues: Keyframe;
@@ -13,9 +13,10 @@ export interface TextureMapCanvasProps {
   panX: number;
   panY: number;
   activeLayer?: ItemSelection | null;
+  showFPS?: boolean;
 }
 
-const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
+const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
   image,
   shapes,
   vectorValues,
@@ -23,6 +24,7 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   panX,
   panY,
   activeLayer = null,
+  showFPS,
 }) => {
   const composition = useMemo(() => showComposition(), []);
   const layer = useMemo(() => showCompositionMap(), []);
@@ -65,7 +67,7 @@ const CompositionCanvas: React.FC<TextureMapCanvasProps> = ({
   vectorMap.setZoom(zoom);
   vectorMap.setPan(panX, panY);
 
-  return <WebGLCanvas renderers={renderers} />;
+  return <WebGLCanvas renderers={renderers} showFPS={showFPS} />;
 };
 
 export default CompositionCanvas;

@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { ControlValues, ImageDefinition, PlayStatus } from "../lib/types";
 import { showAnimation } from "./programs/showAnimation";
 import WebGLCanvas from "./WebGLCanvas";
 
-export interface TextureMapCanvasProps {
+export interface AnimationCanvasProps {
   image: HTMLImageElement | null;
   imageDefinition: ImageDefinition;
   controlValues: ControlValues;
@@ -11,9 +11,10 @@ export interface TextureMapCanvasProps {
   zoom: number;
   panX: number;
   panY: number;
+  showFPS?: boolean;
 }
 
-const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
+const AnimationCanvas: React.FC<AnimationCanvasProps> = ({
   image,
   imageDefinition,
   controlValues,
@@ -21,6 +22,7 @@ const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
   zoom,
   panX,
   panY,
+  showFPS,
 }) => {
   const animation = useMemo(() => showAnimation(), []);
   const renderers = [animation.renderer];
@@ -44,7 +46,7 @@ const AnimationCanvas: React.FC<TextureMapCanvasProps> = ({
   animation.setZoom(zoom);
   animation.setPan(panX, panY);
 
-  return <WebGLCanvas renderers={renderers} />;
+  return <WebGLCanvas renderers={renderers} showFPS={showFPS} />;
 };
 
 export default AnimationCanvas;

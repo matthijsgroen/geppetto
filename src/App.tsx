@@ -54,6 +54,7 @@ const App: React.FC = () => {
   const [baseFileName, setBaseFilename] = useState<string | null>(null);
   const [textureFileName, setTextureFilename] = useState<string | null>(null);
   const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [showFPS, setShowFPS] = useState<boolean>(false);
 
   useEffect(() => {
     const animationFileContentsLoaded = (
@@ -93,6 +94,11 @@ const App: React.FC = () => {
       loadImage(path).then((image) => setImage(image));
     };
     ipcRenderer.on("texture-file-loaded", textureFileLoaded);
+    const showFPSHandler = (
+      _event: Electron.IpcRendererEvent,
+      value: boolean
+    ) => setShowFPS(value);
+    ipcRenderer.on("show-fps", showFPSHandler);
 
     return () => {
       ipcRenderer.off(
@@ -102,6 +108,7 @@ const App: React.FC = () => {
       ipcRenderer.off("animation-file-new", animationFileNew);
       ipcRenderer.off("animation-file-name-change", animationFileNameChange);
       ipcRenderer.off("texture-file-loaded", textureFileLoaded);
+      ipcRenderer.off("show-fps", showFPSHandler);
     };
   }, []);
 
@@ -160,18 +167,21 @@ const App: React.FC = () => {
         texture={image}
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
+        showFPS={showFPS}
       />
     ) : activeItem === MenuItems.Composition ? (
       <Composition
         texture={image}
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
+        showFPS={showFPS}
       />
     ) : (
       <Animation
         texture={image}
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
+        showFPS={showFPS}
       />
     );
 

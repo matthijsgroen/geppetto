@@ -15,16 +15,18 @@ import {
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
-interface CompositionProps {
+interface AnimationProps {
   imageDefinition: ImageDefinition;
   texture: HTMLImageElement | null;
   updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
+  showFPS?: boolean;
 }
 
-const Animation: React.VFC<CompositionProps> = ({
+const Animation: React.VFC<AnimationProps> = ({
   texture,
   imageDefinition,
   updateImageDefinition,
+  showFPS,
 }) => {
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0.0);
@@ -160,6 +162,7 @@ const Animation: React.VFC<CompositionProps> = ({
             zoom={zoom}
             panX={panX}
             panY={panY}
+            showFPS={showFPS}
           />
         </MouseControl>
       }

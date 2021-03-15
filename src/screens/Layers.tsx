@@ -40,12 +40,14 @@ interface LayersProps {
   imageDefinition: ImageDefinition;
   texture: HTMLImageElement | null;
   updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
+  showFPS?: boolean;
 }
 
 const Layers: React.VFC<LayersProps> = ({
   texture,
   imageDefinition,
   updateImageDefinition,
+  showFPS,
 }) => {
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0.0);
@@ -333,6 +335,7 @@ const Layers: React.VFC<LayersProps> = ({
             panY={panY}
             activeLayer={layerSelected}
             activeCoord={activeCoord}
+            showFPS={showFPS}
           />
         </MouseControl>
       }

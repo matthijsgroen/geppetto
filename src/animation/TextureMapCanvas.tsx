@@ -14,6 +14,7 @@ export interface TextureMapCanvasProps {
   activeCoord?: Vec2 | null;
   activeLayer?: ItemSelection | null;
   onMouseMove?(coordinates: [number, number] | null): void;
+  showFPS?: boolean;
 }
 
 const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
@@ -24,6 +25,7 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   panY,
   activeLayer = null,
   activeCoord = null,
+  showFPS,
 }) => {
   const textureProgram = useMemo(() => showTexture(), []);
   const textureMapProgram = useMemo(() => showTextureMap(), []);
@@ -56,7 +58,7 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   pointsProgram.setLayerSelected(activeLayer ? activeLayer.name : null);
   pointsProgram.setActiveCoord(activeCoord);
 
-  return <WebGLCanvas renderers={renderers} />;
+  return <WebGLCanvas renderers={renderers} showFPS={showFPS} />;
 };
 
 export default TextureMapCanvas;

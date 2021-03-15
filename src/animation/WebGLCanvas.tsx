@@ -71,11 +71,15 @@ const startWebGL = async (
   };
 };
 
-export interface TextureMapCanvasProps {
+export interface WebGLCanvasProps {
   renderers: WebGLRenderer[];
+  showFPS?: boolean;
 }
 
-const WebGLCanvas: React.FC<TextureMapCanvasProps> = ({ renderers }) => {
+const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
+  renderers,
+  showFPS = false,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const debugRef = useRef<HTMLDivElement>(null);
@@ -107,7 +111,10 @@ const WebGLCanvas: React.FC<TextureMapCanvasProps> = ({ renderers }) => {
   return (
     <CanvasContainer ref={containerRef}>
       <canvas ref={canvasRef} />
-      <FPSIndicator ref={debugRef} />
+      <FPSIndicator
+        ref={debugRef}
+        style={{ display: showFPS ? "block" : "none" }}
+      />
     </CanvasContainer>
   );
 };

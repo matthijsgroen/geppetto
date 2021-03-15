@@ -55,6 +55,7 @@ interface CompositionProps {
   imageDefinition: ImageDefinition;
   texture: HTMLImageElement | null;
   updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
+  showFPS?: boolean;
 }
 
 type ControlMode = {
@@ -89,6 +90,7 @@ const Composition: React.VFC<CompositionProps> = ({
   texture,
   imageDefinition,
   updateImageDefinition,
+  showFPS,
 }) => {
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0.0);
@@ -762,6 +764,7 @@ const Composition: React.VFC<CompositionProps> = ({
             panX={panX}
             panY={panY}
             activeLayer={layerSelected}
+            showFPS={showFPS}
           />
         </MouseControl>
       }
