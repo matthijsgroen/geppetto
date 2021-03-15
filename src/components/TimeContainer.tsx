@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarSeperator from "./ToolbarSeperator";
 import { ImageDefinition, PlayStatus } from "src/lib/types";
@@ -137,6 +137,36 @@ const FrameDot = styled.div<{ _pos: number; selected?: boolean }>`
   position: absolute;
   top: 0px;
   left: ${(props) => props._pos * 100}%;
+`;
+
+const TimeLoopAnimation = keyframes`  
+  from { transform: translateX(0%); }
+  to { transform: translateX(100%); }
+`;
+
+const TimeLinePlayer = styled.div<{
+  max: number;
+  duration: number;
+  looping: boolean;
+}>`
+  position: absolute;
+  top: 0px;
+  z-index: 2;
+  width: ${({ max }) => 100 * max}%;
+
+  ::before {
+    height: 1.4rem;
+    border-left: 2px solid ${({ theme }) => theme.colors.backgroundSelected};
+    animation-name: ${TimeLoopAnimation};
+    animation-duration: ${({ duration }) => duration}ms;
+    animation-play-state: running;
+    animation-iteration-count: ${({ looping }) => (looping ? "infinite" : "1")};
+    animation-timing-function: linear;
+
+    display: block;
+    color: transparent;
+    content: "e";
+  }
 `;
 
 const TimeLine = styled.div<{
@@ -451,6 +481,16 @@ export const TimeContainer: React.VFC<{
                   _isActive={selectedAnimation === t.name}
                   _maxLength={maxLength + EXTRA_SECONDS * 1000}
                 >
+                  {playStatus[t.name] && playStatus[t.name].playing && (
+                    <TimeLinePlayer
+                      max={
+                        Math.max(0, ...t.keyframes.map((f) => f.time)) /
+                        (maxLength + EXTRA_SECONDS * 1000)
+                      }
+                      duration={Math.max(0, ...t.keyframes.map((f) => f.time))}
+                      looping={t.looping}
+                    />
+                  )}
                   {t.keyframes.map((f, i) => (
                     <FrameDot
                       selected={
