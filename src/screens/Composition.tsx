@@ -430,14 +430,17 @@ const Composition: React.VFC<CompositionProps> = ({
               icon="⚪️"
               label="+"
               size="small"
-              disabled={shapeSelected === null}
+              disabled={shapeSelected === null && vectorSelected === null}
               onClick={async () => {
-                if (shapeSelected === null) {
+                if (shapeSelected === null && vectorSelected === null) {
                   return;
                 }
+
                 const newVector = await addVector(
                   updateImageDefinition,
-                  shapeSelected,
+                  (shapeSelected || vectorSelected) as
+                    | ShapeDefinition
+                    | MutationVector,
                   "New Mutator"
                 );
                 setItemSelected(newVector);

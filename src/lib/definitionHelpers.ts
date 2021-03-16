@@ -230,7 +230,7 @@ export const addVector = (
   mutator: (
     mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ) => void,
-  parent: ShapeDefinition,
+  parent: ShapeDefinition | MutationVector,
   defaultName: string
 ): Promise<MutationVector> =>
   new Promise((resolve) => {
@@ -244,16 +244,34 @@ export const addVector = (
 
       resolve(newVector);
 
-      return visit(image, (item) =>
-        isShapeDefinition(item) && item.name === parent.name
-          ? {
+      return visit(image, (item) => {
+        if (isShapeDefinition(item)) {
+          if (isShapeDefinition(parent) && item.name === parent.name) {
+            return {
               ...item,
               mutationVectors: ([newVector] as MutationVector[]).concat(
                 item.mutationVectors || []
               ),
+            };
+          }
+          if (isMutationVector(parent)) {
+            const itemIndex = item.mutationVectors.findIndex(
+              (v) => v.name === parent.name
+            );
+            if (itemIndex !== -1) {
+              return {
+                ...item,
+                mutationVectors: [
+                  ...item.mutationVectors.slice(0, itemIndex + 1),
+                  newVector,
+                  ...item.mutationVectors.slice(itemIndex + 1),
+                ],
+              };
             }
-          : undefined
-      );
+          }
+        }
+        return undefined;
+      });
     });
   });
 
