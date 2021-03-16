@@ -40,7 +40,7 @@ const compositionVertexShader = `
   ${mutationShader}
 
   void main() {
-    vec2 deform = mutatePoint(translate.xy, int(mutation));
+    vec3 deform = mutatePoint(vec3(translate.xy, 1.0), int(mutation));
 
     vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
 
@@ -113,6 +113,7 @@ const orange = [238, 115, 0].map((v) => v / 256.0) as Color;
 const red = [230, 0, 0].map((v) => v / 256.0) as Color;
 const purple = [187, 0, 255].map((v) => v / 256.0) as Color;
 const green = [0, 180, 0].map((v) => v / 256.0) as Color;
+const white = [240, 240, 240].map((v) => v / 256.0) as Color;
 
 type VectorTypes = MutationVector["type"];
 
@@ -121,6 +122,7 @@ const colorMapping: Record<VectorTypes, Color> = {
   rotate: red,
   stretch: purple,
   translate: green,
+  opacity: white,
 };
 
 export const showCompositionVectors = (): {

@@ -30,6 +30,7 @@ const animationVertexShader = `
   attribute vec2 aTextureCoord;
 
   varying lowp vec2 vTextureCoord;
+  varying lowp float vOpacity;
 
   mat4 viewportScale = mat4(
     2.0 / viewport.x, 0, 0, 0,   
@@ -42,11 +43,12 @@ const animationVertexShader = `
   ${mutationShader}
 
   void main() {
-    vec2 deform = mutatePoint(coordinates + translate.xy, int(mutation));
+    vec3 deform = mutatePoint(vec3(coordinates + translate.xy, 1.0), int(mutation));
 
-    vec4 pos = viewportScale * vec4((deform + basePosition.xy) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z, 1.0);
     vTextureCoord = aTextureCoord.xy;
+    vOpacity = deform.z;
   }
 `;
 
@@ -54,6 +56,7 @@ const animationFragmentShader = `
   precision mediump float;
 
   varying mediump vec2 vTextureCoord;
+  varying mediump float vOpacity;
   uniform sampler2D uSampler;
   uniform mediump vec2 uTextureDimensions;
 
@@ -61,7 +64,7 @@ const animationFragmentShader = `
     highp vec2 coord = vTextureCoord.xy / uTextureDimensions;
     mediump vec4 texelColor = texture2D(uSampler, coord);
 
-    gl_FragColor = vec4(texelColor.rgb * texelColor.a, texelColor.a);
+    gl_FragColor = vec4(texelColor.rgb * texelColor.a * vOpacity, texelColor.a * vOpacity);
   }
 `;
 

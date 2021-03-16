@@ -37,6 +37,8 @@ const createVector = (
       return { type: "stretch", origin, name };
     case "translate":
       return { type: "translate", origin, name };
+    case "opacity":
+      return { type: "opacity", origin, name };
   }
 };
 
@@ -46,6 +48,7 @@ const iconForType = (type: VectorTypes): string =>
     rotate: "🔴",
     stretch: "🟣",
     translate: "🟢",
+    opacity: "⚪️",
   } as Record<VectorTypes, string>)[type]);
 
 const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
@@ -100,6 +103,11 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                     name: "Stretch",
                     id: "stretch",
                     value: "stretch" as VectorTypes,
+                  },
+                  {
+                    name: "Opacity",
+                    id: "opacity",
+                    value: "opacity" as VectorTypes,
                   },
                 ]}
                 onChange={(newValue) => {
@@ -190,6 +198,22 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 min={-360}
                 max={360}
                 step={0}
+                onChange={(newValue) => {
+                  updateVectorValue([newValue, 0]);
+                }}
+              />,
+            ]
+          : []),
+        ...(vectorSelected.type === "opacity"
+          ? [
+              <SliderControl
+                key={"value"}
+                title={"value"}
+                value={activeValue[0]}
+                showValue={true}
+                min={0}
+                max={1}
+                step={0.05}
                 onChange={(newValue) => {
                   updateVectorValue([newValue, 0]);
                 }}

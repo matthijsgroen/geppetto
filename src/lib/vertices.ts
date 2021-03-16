@@ -17,7 +17,7 @@ export const mixVec2 = (
 ): Vec2 => [mix(a[0], b[0], factor), mix(a[1], b[1], factor)] as Vec2;
 
 export const defaultValueForVector = (type: MutationVector["type"]): Vec2 =>
-  type === "stretch" ? [1, 1] : [0, 0];
+  type === "stretch" || type === "opacity" ? [1, 1] : [0, 0];
 
 export const vecAdd = (a: Vec2 = [0, 0], b: Vec2 = [0, 0]): Vec2 => [
   a[0] + b[0],
@@ -33,7 +33,8 @@ export const mergeMutationValue = (
   a: Vec2 | undefined,
   b: Vec2 | undefined,
   type: MutationVector["type"]
-): Vec2 => (type === "stretch" ? vecMul(a, b) : vecAdd(a, b));
+): Vec2 =>
+  type === "stretch" || type === "opacity" ? vecMul(a, b) : vecAdd(a, b);
 
 export const combineKeyFrames = (
   a: Keyframe,

@@ -27,11 +27,18 @@ export type RotationVector = {
   origin: Vec2;
 };
 
+export type OpacityVector = {
+  name: string;
+  type: "opacity";
+  origin: Vec2;
+};
+
 export type MutationVector =
   | TranslationVector
   | DeformationVector
   | StretchVector
-  | RotationVector;
+  | RotationVector
+  | OpacityVector;
 
 export type SpriteDefinition = {
   name: string;

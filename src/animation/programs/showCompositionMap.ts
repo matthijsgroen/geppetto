@@ -29,9 +29,9 @@ const compositionVertexShader = `
   ${mutationShader}
 
   void main() {
-    vec2 deform = mutatePoint(coordinates + translate.xy, int(mutation));
+    vec3 deform = mutatePoint(vec3(coordinates + translate.xy, 1.0), int(mutation));
 
-    vec4 pos = viewportScale * vec4((deform + basePosition.xy) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z - 1.0, 1.0);
   }
 `;

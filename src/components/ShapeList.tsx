@@ -10,6 +10,7 @@ const iconForType = (type: VectorTypes): string =>
     rotate: "🔴",
     stretch: "🟣",
     translate: "🟢",
+    opacity: "⚪️",
   } as Record<VectorTypes, string>)[type]);
 
 const displayShapes = (

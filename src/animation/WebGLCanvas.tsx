@@ -24,7 +24,7 @@ const CanvasContainer = styled.div`
 const FPSIndicator = styled.div`
   position: absolute;
   top: 0;
-  right: 0;
+  right: 10px;
   color: ${({ theme }) => theme.colors.text};
 `;
 
@@ -59,7 +59,7 @@ const startWebGL = async (
     api.render();
     const renderMs = +new Date() - st;
     slowest = Math.max(slowest, renderMs);
-    debugRef.textContent = `Frame: ${renderMs}ms Slowest: ${slowest}`;
+    debugRef.textContent = `Frame: ${renderMs}ms Slowest: ${slowest}ms`;
     window.requestAnimationFrame(render);
   };
   window.requestAnimationFrame(render);

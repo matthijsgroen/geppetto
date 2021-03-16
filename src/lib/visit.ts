@@ -26,7 +26,8 @@ export const isMutationVector = (item: ItemWithType): item is MutationVector =>
   item.type === "deform" ||
   item.type === "rotate" ||
   item.type === "translate" ||
-  item.type === "stretch";
+  item.type === "stretch" ||
+  item.type === "opacity";
 
 export const visitVectors = (
   vectors: MutationVector[],

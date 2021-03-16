@@ -13,6 +13,7 @@ export const vectorTypeMapping = {
   stretch: 2,
   rotate: 3,
   deform: 4,
+  opacity: 5,
 };
 
 export const mutationControlShader = `
@@ -47,7 +48,7 @@ export const mutationControlShader = `
         vec2 mutBValue = uControlMutationValues[endIndex];
         vec2 mutValue = mix(mutAValue, mutBValue, mixFactor);
 
-        if (mutationType == 2) { // Stretch
+        if (mutationType == 2 || mutationType == 5) { // Stretch & Opacity
           result *= mutValue;
         } else {
           result += mutValue;
@@ -76,44 +77,49 @@ export const mutationShader = `
   uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];
   uniform float uMutationParent[${MAX_MUTATION_VECTORS}];
 
-  vec2 mutateOnce(vec2 startValue, int mutationIndex) {
+  vec3 mutateOnce(vec3 startValue, int mutationIndex) {
     vec4 mutation = uMutationVectors[mutationIndex];
     int mutationType = int(mutation.x);
 
     vec2 mutationValue = getMutationValue(mutationIndex, mutationType);
     vec2 origin = mutation.yz;
 
-    vec2 result = startValue;
+    vec3 result = startValue;
 
     if (mutationType == 1) { // Translate
-      result = startValue + mutationValue;
+      result = vec3(startValue.xy + mutationValue, startValue.z);
     }
 
     if (mutationType == 2) { // Stretch
-      result = origin + vec2(
+      result = vec3(origin.xy + vec2(
         (startValue.x - origin.x) * mutationValue.x, 
         (startValue.y - origin.y) * mutationValue.y
-      );
+      ), startValue.z);
     }
 
     if (mutationType == 3) { // Rotation
       float rotation = mutationValue.x * PI_FRAC;
       mat2 entityRotationMatrix = mat2(cos(rotation), sin(rotation), -sin(rotation), cos(rotation));
-      result = (startValue - origin) * entityRotationMatrix + origin;
+      result = vec3((startValue.xy - origin) * entityRotationMatrix + origin, startValue.z);
     }
 
     if (mutationType == 4) { // Deform
-      float effect = 1.0 - clamp(distance(startValue, origin), 0.0, mutation.a) / mutation.a;	
-      result = startValue + mutationValue * effect;	
+      float effect = 1.0 - clamp(distance(startValue.xy, origin), 0.0, mutation.a) / mutation.a;	
+      result = vec3(startValue.xy + mutationValue * effect, startValue.z);	
+    }
+
+    if (mutationType == 5) { // Opacity
+      float opacity = mutationValue.x;
+      result = vec3(startValue.xy, startValue.z * opacity);	
     }
 
     return result;
   }
 
 
-  vec2 mutatePoint(vec2 startValue, int mutationIndex) {
+  vec3 mutatePoint(vec3 startValue, int mutationIndex) {
     int currentNode = mutationIndex;
-    vec2 result = startValue;
+    vec3 result = startValue;
 
     for(int i = 0; i < ${MAX_MUTATION_VECTORS}; i++) {
         if (currentNode == -1) {
