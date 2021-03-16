@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import AnimationCanvas from "src/animation/AnimationCanvas";
+import { ControlStyle } from "src/components/Control";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
 import SliderControl from "src/components/SliderControl";
@@ -64,6 +65,16 @@ const Animation: React.VFC<AnimationProps> = ({
       : null;
 
   const frameControlKeys = Object.keys(activeFrame?.controlValues || {});
+  const trackControlKeys = selectedAnimation
+    ? imageDefinition.animations
+        .find((e) => e.name === selectedAnimation)
+        ?.keyframes.reduce<string[]>(
+          (result, frame) => result.concat(Object.keys(frame.controlValues)),
+          []
+        )
+        .filter((e, i, l) => l.indexOf(e) === i) || null
+    : null;
+
   const updateFrame = (
     mutation: (current: AnimationFrame) => AnimationFrame
   ) => {
@@ -182,7 +193,13 @@ const Animation: React.VFC<AnimationProps> = ({
                   : controlValues[control.name]
               }
               min={0}
-              selected={frameControlKeys.includes(control.name)}
+              controlStyle={
+                frameControlKeys.includes(control.name)
+                  ? ControlStyle.Selected
+                  : trackControlKeys?.includes(control.name)
+                  ? ControlStyle.Highlighted
+                  : ControlStyle.Default
+              }
               max={control.steps.length - 1}
               step={0.01 * (control.steps.length - 1)}
               onSelect={() => {

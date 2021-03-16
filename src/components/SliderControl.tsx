@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Control, ControlLabel } from "./Control";
+import { Control, ControlLabel, ControlStyle } from "./Control";
 
 const Slider = styled.input.attrs({ type: "range" })`
   width: 100px;
@@ -20,7 +20,7 @@ interface SliderControlProps {
   min: number;
   max: number;
   step: number;
-  selected?: boolean;
+  controlStyle?: ControlStyle;
   onChange(newValue: number): void;
   onSelect?(): void;
 }
@@ -31,14 +31,18 @@ const SliderControl: React.VFC<SliderControlProps> = ({
   max,
   step,
   value,
-  selected = false,
+  controlStyle = ControlStyle.Default,
   showValue = false,
   onChange,
   onSelect,
 }) => (
-  <Control selected={selected}>
+  <Control controlStyle={controlStyle}>
     {title && (
-      <ControlLabel selected={selected} title={title} onClick={onSelect}>
+      <ControlLabel
+        controlStyle={controlStyle}
+        title={title}
+        onClick={onSelect}
+      >
         {title}
       </ControlLabel>
     )}
