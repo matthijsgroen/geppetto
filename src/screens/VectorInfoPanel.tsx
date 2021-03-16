@@ -126,7 +126,7 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
               />,
             ]
           : []),
-        ...(vectorSelected.type === "deform" && !activeValue
+        ...(vectorSelected.type === "deform" && !activeControl
           ? [
               <NumberInputControl
                 key={"radius"}
