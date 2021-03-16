@@ -127,11 +127,65 @@ export const makeControlName = (
     previousName
   );
 
+const addAfter = (
+  items: ShapeDefinition[],
+  item: ShapeDefinition,
+  after: number
+): ShapeDefinition[] => [
+  ...items.slice(0, after + 1),
+  item,
+  ...items.slice(after + 1),
+];
+
+const addSpriteDefinition = (
+  imageDefinition: ImageDefinition,
+  newShapeDefinition: ShapeDefinition,
+  after: string | null = null
+): ImageDefinition => {
+  if (after) {
+    let placed = false;
+    const result = visit(imageDefinition, (item) => {
+      if (isShapeDefinition(item) && item.type === "folder") {
+        if (item.name === after) {
+          placed = true;
+          return {
+            ...item,
+            items: [newShapeDefinition, ...item.items],
+          };
+        }
+
+        const itemIndex = item.items.findIndex((e) => e.name === after);
+        if (itemIndex > -1 && item.items[itemIndex].type === "sprite") {
+          placed = true;
+          return {
+            ...item,
+            items: addAfter(item.items, newShapeDefinition, itemIndex),
+          };
+        }
+      }
+      return undefined;
+    });
+    if (placed) return result;
+  }
+  const itemIndex = imageDefinition.shapes.findIndex((e) => e.name === after);
+
+  return {
+    ...imageDefinition,
+    shapes:
+      itemIndex === -1
+        ? ([newShapeDefinition] as ShapeDefinition[]).concat(
+            imageDefinition.shapes
+          )
+        : addAfter(imageDefinition.shapes, newShapeDefinition, itemIndex),
+  };
+};
+
 export const addLayer = (
   mutator: (
     mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ) => void,
-  defaultName: string
+  defaultName: string,
+  after: string | null = null
 ): Promise<SpriteDefinition> =>
   new Promise((resolve) => {
     mutator((image) => {
@@ -145,10 +199,7 @@ export const addLayer = (
       };
       resolve(newSprite);
 
-      return {
-        ...image,
-        shapes: ([newSprite] as ShapeDefinition[]).concat(image.shapes),
-      };
+      return addSpriteDefinition(image, newSprite, after);
     });
   });
 
@@ -156,7 +207,8 @@ export const addFolder = (
   mutator: (
     mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ) => void,
-  defaultName: string
+  defaultName: string,
+  after: string | null = null
 ): Promise<FolderDefinition> =>
   new Promise((resolve) => {
     mutator((image) => {
@@ -170,10 +222,7 @@ export const addFolder = (
 
       resolve(newFolder);
 
-      return {
-        ...image,
-        shapes: ([newFolder] as ShapeDefinition[]).concat(image.shapes),
-      };
+      return addSpriteDefinition(image, newFolder, after);
     });
   });
 

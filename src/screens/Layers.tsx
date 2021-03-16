@@ -191,7 +191,8 @@ const Layers: React.VFC<LayersProps> = ({
               onClick={async () => {
                 const newSprite = await addLayer(
                   updateImageDefinition,
-                  "New Layer"
+                  "New Layer",
+                  layerSelected?.name
                 );
                 setItemSelected(newSprite);
               }}
@@ -205,7 +206,8 @@ const Layers: React.VFC<LayersProps> = ({
               onClick={async () => {
                 const newFolder = await addFolder(
                   updateImageDefinition,
-                  "New Folder"
+                  "New Folder",
+                  layerSelected?.name
                 );
                 setItemSelected(newFolder);
               }}

@@ -452,7 +452,8 @@ const Composition: React.VFC<CompositionProps> = ({
               onClick={async () => {
                 const newFolder = await addFolder(
                   updateImageDefinition,
-                  "New Folder"
+                  "New Folder",
+                  shapeSelected?.name
                 );
                 setItemSelected(newFolder);
               }}
