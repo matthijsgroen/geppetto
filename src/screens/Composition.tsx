@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { ToolbarLabel } from "src/components/Control";
 import MenuItem from "src/components/MenuItem";
 import {
   combineKeyFrames,
@@ -319,104 +320,58 @@ const Composition: React.VFC<CompositionProps> = ({
 
   return (
     <ScreenLayout
-      tools={[
-        <ToolbarButton
-          key="move"
-          hint="Move mode"
-          icon="✋"
-          active={controlMode === null}
-          label=""
-          onClick={() => {
-            if (controlMode !== null) {
-              setControlmode(null);
-              setLayerSelected({
-                name: controlMode.control,
-                type: "control",
-              });
-            }
-          }}
-        />,
-        <ToolbarButton
-          key="setupStart"
-          icon="️⇤"
-          disabled={!controlSelected}
-          active={!!(controlMode && controlModeStep === 0)}
-          label=""
-          onClick={() => {
-            if (controlSelected) {
-              setControlmode({ control: controlSelected.name, step: 0 });
-              updateImageDefinition((state) => ({
-                ...state,
-                controlValues: {
-                  ...state.controlValues,
-                  [controlSelected.name]: 0,
-                },
-              }));
-            }
-          }}
-        />,
-        ...(controlSelected && controlSelected.steps.length > 2
-          ? new Array(controlSelected.steps.length - 2)
-              .fill(null)
-              .map((_e, i) => (
-                <ToolbarButton
-                  key={`setupStep${i + 1}`}
-                  icon={`${i + 1}`}
-                  disabled={!controlSelected}
-                  active={
-                    !!(
-                      controlMode &&
-                      controlSelected &&
-                      controlModeStep === i + 1
-                    )
-                  }
-                  label=""
-                  onClick={() => {
-                    if (controlSelected) {
-                      const step = i + 1;
-                      setControlmode({
-                        control: controlSelected.name,
-                        step: step,
-                      });
-                      updateImageDefinition((state) => ({
-                        ...state,
-                        controlValues: {
-                          ...state.controlValues,
-                          [controlSelected.name]: step,
-                        },
-                      }));
+      bottomTools={
+        controlSelected
+          ? ([
+              <ToolbarLabel>Setup control step:</ToolbarLabel>,
+              new Array(controlSelected.steps.length)
+                .fill(null)
+                .map((_e, step) => (
+                  <ToolbarButton
+                    key={`setupStep${step + 1}`}
+                    icon={`${step + 1}`}
+                    disabled={!controlSelected}
+                    active={
+                      !!(
+                        controlMode &&
+                        controlSelected &&
+                        controlModeStep === step
+                      )
                     }
-                  }}
-                />
-              ))
-          : []),
-        <ToolbarButton
-          key="setupEnd"
-          icon="️⇥"
-          disabled={!controlSelected}
-          active={
-            !!(
-              controlMode &&
-              controlSelected &&
-              controlModeStep === controlSelected.steps.length - 1
-            )
-          }
-          label=""
-          onClick={() => {
-            if (controlSelected) {
-              const lastStep = controlSelected.steps.length - 1;
-              setControlmode({ control: controlSelected.name, step: lastStep });
-              updateImageDefinition((state) => ({
-                ...state,
-                controlValues: {
-                  ...state.controlValues,
-                  [controlSelected.name]: lastStep,
-                },
-              }));
-            }
-          }}
-        />,
-      ]}
+                    label=""
+                    onClick={() => {
+                      if (controlSelected) {
+                        if (
+                          step === controlMode?.step &&
+                          controlMode.control === controlSelected.name
+                        ) {
+                          setControlmode(null);
+                          setLayerSelected({
+                            name: controlMode.control,
+                            type: "control",
+                          });
+                          return;
+                        }
+                        setControlmode({
+                          control: controlSelected.name,
+                          step,
+                        });
+                        updateImageDefinition((state) => ({
+                          ...state,
+                          controlValues: {
+                            ...state.controlValues,
+                            [controlSelected.name]: step,
+                          },
+                        }));
+                      }
+                    }}
+                  />
+                )),
+            ] as React.ReactElement[])
+          : ([
+              <ToolbarLabel>No control selected</ToolbarLabel>,
+            ] as React.ReactElement[])
+      }
       menus={[
         <Menu
           title="Composition"

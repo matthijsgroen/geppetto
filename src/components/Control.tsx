@@ -22,14 +22,17 @@ export const Control = styled.div<{ controlStyle?: ControlStyle }>`
   display: flex;
 `;
 
-export const ControlLabel = styled.p<{ controlStyle?: ControlStyle }>`
+export const ToolbarLabel = styled.p<{ controlStyle?: ControlStyle }>`
   color: ${({ theme, controlStyle }) =>
     controlStyle === ControlStyle.Selected
       ? theme.colors.textSelected
       : theme.colors.text};
   padding: 0 1rem;
-  margin: 0;
-  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+export const ControlLabel = styled(ToolbarLabel)`
+  margin: 0;
+  flex: 1;
 `;

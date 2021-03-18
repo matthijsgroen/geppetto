@@ -41,6 +41,7 @@ const hasItems = (tools?: React.ReactElement | React.ReactElement[]): boolean =>
 interface ScreenLayoutProps {
   menus?: React.ReactElement | React.ReactElement[];
   tools?: React.ReactElement | React.ReactElement[];
+  bottomTools?: React.ReactElement | React.ReactElement[];
   main?: React.ReactElement;
   bottom?: React.ReactElement;
 }
@@ -48,6 +49,7 @@ interface ScreenLayoutProps {
 const ScreenLayout: React.FC<ScreenLayoutProps> = ({
   menus,
   tools,
+  bottomTools,
   main,
   bottom,
 }) => (
@@ -56,6 +58,7 @@ const ScreenLayout: React.FC<ScreenLayoutProps> = ({
     <CanvasContainer>
       {hasItems(tools) && <Toolbar>{tools}</Toolbar>}
       <Canvas>{main}</Canvas>
+      {hasItems(bottomTools) && <Toolbar>{bottomTools}</Toolbar>}
     </CanvasContainer>
     <Footer>{bottom}</Footer>
   </Main>
