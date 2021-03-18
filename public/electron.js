@@ -226,7 +226,7 @@ function createWindow() {
     setItemsEnableState(() => false);
   });
 
-  win.on("hide", () => {
+  win.on("blur", () => {
     setItemsEnableState(() => false);
   });
 
@@ -240,12 +240,14 @@ function createWindow() {
   });
 
   win.on("show", () => {
-    setItemsEnableState((item) =>
-      item === "fileSave" ? status.changed : true
-    );
+    if (win.isFocused()) {
+      setItemsEnableState((item) =>
+        item === "fileSave" ? status.changed : true
+      );
 
-    const showFPSMenuItem = menu.getMenuItemById("showFPS");
-    showFPSMenuItem.checked = status.showFPS;
+      const showFPSMenuItem = menu.getMenuItemById("showFPS");
+      showFPSMenuItem.checked = status.showFPS;
+    }
   });
 
   win.webContents.on("ipc-message", (_event, channel, data) => {
