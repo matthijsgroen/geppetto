@@ -704,6 +704,21 @@ export const addPoint = (
   shapes: addRemovePointToShape(image.shapes, layer, point, "add"),
 });
 
+export const updatePoint = (
+  image: ImageDefinition,
+  layer: string,
+  point: Vec2,
+  newPoint: Vec2
+): ImageDefinition => ({
+  ...image,
+  shapes: addRemovePointToShape(
+    addRemovePointToShape(image.shapes, layer, point, "remove"),
+    layer,
+    newPoint,
+    "add"
+  ),
+});
+
 export const removePoint = (
   image: ImageDefinition,
   layer: string,

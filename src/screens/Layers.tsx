@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import Vec2InputControl from "src/components/Vec2InputControl";
 import TextureMapCanvas from "../animation/TextureMapCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -26,6 +27,7 @@ import {
   removeItem,
   removePoint,
   renameLayer,
+  updatePoint,
 } from "../lib/definitionHelpers";
 import {
   ImageDefinition,
@@ -178,9 +180,10 @@ const Layers: React.VFC<LayersProps> = ({
 
   return (
     <ScreenLayout
-      menus={
+      menus={[
         <Menu
           title="Layers"
+          size="large"
           toolbarItems={[
             <ToolbarButton
               key="addLayer"
@@ -279,8 +282,38 @@ const Layers: React.VFC<LayersProps> = ({
               }}
             />
           }
-        />
-      }
+        />,
+        <Menu
+          title={"Point Info"}
+          key="info"
+          collapsable={true}
+          size="minimal"
+          items={
+            activeCoord
+              ? [
+                  <Vec2InputControl
+                    key={"point"}
+                    title={"Point"}
+                    value={activeCoord}
+                    onChange={(newValue) => {
+                      if (layerSelected) {
+                        updateImageDefinition((state) =>
+                          updatePoint(
+                            state,
+                            layerSelected.name,
+                            activeCoord,
+                            newValue
+                          )
+                        );
+                        setActiveCoord(newValue);
+                      }
+                    }}
+                  />,
+                ]
+              : []
+          }
+        />,
+      ]}
       tools={[
         <ToolbarButton
           key="move"
