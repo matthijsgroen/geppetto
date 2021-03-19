@@ -323,7 +323,7 @@ const Composition: React.VFC<CompositionProps> = ({
       bottomTools={
         controlSelected
           ? ([
-              <ToolbarLabel>Setup control step:</ToolbarLabel>,
+              <ToolbarLabel key="stepLabel">Setup control step:</ToolbarLabel>,
               new Array(controlSelected.steps.length)
                 .fill(null)
                 .map((_e, step) => (
@@ -369,7 +369,7 @@ const Composition: React.VFC<CompositionProps> = ({
                 )),
             ] as React.ReactElement[])
           : ([
-              <ToolbarLabel>No control selected</ToolbarLabel>,
+              <ToolbarLabel key="stepLabel">No control selected</ToolbarLabel>,
             ] as React.ReactElement[])
       }
       menus={[

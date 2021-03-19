@@ -132,7 +132,11 @@ const Layers: React.VFC<LayersProps> = ({
   };
 
   const mouseUp = (event: React.MouseEvent) => {
-    if (mouseMode === MouseMode.Aim && texture && layerSelected) {
+    if (
+      (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
+      texture &&
+      layerSelected
+    ) {
       const canvasPos = event.currentTarget.getBoundingClientRect();
       const elementX = event.pageX - canvasPos.left;
       const elementY = event.pageY - canvasPos.top;
@@ -143,6 +147,7 @@ const Layers: React.VFC<LayersProps> = ({
         zoom,
         [elementX, elementY]
       );
+
       const shape = getShape(imageDefinition, layerSelected.name);
       if (shape && shape.type === "sprite") {
         const closePoint = shape.points.find((p) => {
@@ -158,13 +163,13 @@ const Layers: React.VFC<LayersProps> = ({
           );
         });
 
-        if (!closePoint) {
+        if (!closePoint && mouseMode === MouseMode.Aim) {
           updateImageDefinition((state) =>
             addPoint(state, layerSelected.name, coord)
           );
           setActiveCoord(coord);
         } else {
-          setActiveCoord(closePoint);
+          closePoint && setActiveCoord(closePoint);
         }
       }
     }
@@ -351,6 +356,17 @@ const Layers: React.VFC<LayersProps> = ({
           label=""
           onClick={() => {
             setMouseMode(MouseMode.Grab);
+          }}
+        />,
+        <ToolbarButton
+          key="selectPoints"
+          hint="Select point mode"
+          icon="️🔧"
+          disabled={!shapeSelected || shapeSelected.type === "folder"}
+          active={mouseMode === MouseMode.Normal}
+          label=""
+          onClick={() => {
+            setMouseMode(MouseMode.Normal);
           }}
         />,
         <ToolbarButton

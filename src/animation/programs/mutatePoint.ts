@@ -5,8 +5,9 @@ import {
   visitShapes,
 } from "src/lib/visit";
 
-export const MAX_MUTATION_VECTORS = 20;
+export const MAX_MUTATION_VECTORS = 60;
 export const MAX_CONTROLS = 20;
+export const MAX_MUTATION_CONTROL_VECTORS = 120;
 
 export const vectorTypeMapping = {
   translate: 1,
@@ -17,8 +18,8 @@ export const vectorTypeMapping = {
 };
 
 export const mutationControlShader = `
-  uniform vec2 uControlMutationValues[${MAX_MUTATION_VECTORS * MAX_CONTROLS}];
-  uniform vec3 uMutationValueIndices[${MAX_MUTATION_VECTORS * MAX_CONTROLS}];
+  uniform vec2 uControlMutationValues[${MAX_MUTATION_CONTROL_VECTORS}];
+  uniform vec3 uMutationValueIndices[${MAX_MUTATION_CONTROL_VECTORS}];
   uniform vec2 uControlMutationIndices[${MAX_MUTATION_VECTORS}];
 
   uniform float uControlValues[${MAX_CONTROLS}];

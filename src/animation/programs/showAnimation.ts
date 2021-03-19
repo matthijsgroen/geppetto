@@ -12,6 +12,7 @@ import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
   createMutationList,
   MAX_CONTROLS,
+  MAX_MUTATION_CONTROL_VECTORS,
   MAX_MUTATION_VECTORS,
   mutationControlShader,
   mutationShader,
@@ -321,7 +322,7 @@ export const showAnimation = (): {
       "uControlMutationValues"
     );
     const controlMutationValuesArray = new Float32Array(
-      MAX_MUTATION_VECTORS * MAX_CONTROLS * 2
+      MAX_MUTATION_CONTROL_VECTORS * 2
     ).fill(0);
     controlMutationValues.forEach((v, i) => {
       controlMutationValuesArray[i * 2] = v[0];
@@ -334,7 +335,7 @@ export const showAnimation = (): {
       "uMutationValueIndices"
     );
     const mutationValueIndicesArray = new Float32Array(
-      MAX_MUTATION_VECTORS * MAX_CONTROLS * 3
+      MAX_MUTATION_CONTROL_VECTORS * 3
     ).fill(0);
     mutationValueIndices.forEach((v, i) => {
       mutationValueIndicesArray[i * 3] = v[0];
