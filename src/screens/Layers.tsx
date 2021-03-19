@@ -235,9 +235,11 @@ const Layers: React.VFC<LayersProps> = ({
                 const newSprite = await addLayer(
                   updateImageDefinition,
                   layerSelected.name,
-                  layerSelected.name
+                  layerSelected.name,
+                  {
+                    points: ([] as Vec2[]).concat(shapeSelected.points),
+                  }
                 );
-                newSprite.points = ([] as Vec2[]).concat(shapeSelected.points);
                 setItemSelected(newSprite);
               }}
             />,

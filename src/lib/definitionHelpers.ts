@@ -185,17 +185,19 @@ export const addLayer = (
     mutation: (previousImageDefinition: ImageDefinition) => ImageDefinition
   ) => void,
   defaultName: string,
-  after: string | null = null
+  after: string | null = null,
+  data: Partial<SpriteDefinition> = {}
 ): Promise<SpriteDefinition> =>
   new Promise((resolve) => {
     mutator((image) => {
       const newName = makeLayerName(image, defaultName);
       const newSprite: SpriteDefinition = {
-        name: newName,
         type: "sprite",
         points: [],
         translate: [0, 0],
         mutationVectors: [],
+        ...data,
+        name: newName,
       };
       resolve(newSprite);
 
