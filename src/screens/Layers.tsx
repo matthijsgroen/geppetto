@@ -34,6 +34,7 @@ import {
   ItemSelection,
   MutationVector,
   ShapeDefinition,
+  Vec2,
 } from "../lib/types";
 import { getTextureCoordinate, maxZoomFactor } from "../lib/webgl";
 import ScreenLayout from "../templates/ScreenLayout";
@@ -182,6 +183,7 @@ const Layers: React.VFC<LayersProps> = ({
     <ScreenLayout
       menus={[
         <Menu
+          key="layers"
           title="Layers"
           size="large"
           toolbarItems={[
@@ -213,6 +215,30 @@ const Layers: React.VFC<LayersProps> = ({
                   layerSelected?.name
                 );
                 setItemSelected(newFolder);
+              }}
+            />,
+            <ToolbarButton
+              key="copy"
+              hint="Copy layer"
+              icon="📄"
+              size="small"
+              disabled={!(shapeSelected && shapeSelected.type === "sprite")}
+              label=""
+              onClick={async () => {
+                if (
+                  shapeSelected === null ||
+                  shapeSelected.type !== "sprite" ||
+                  layerSelected === null
+                ) {
+                  return;
+                }
+                const newSprite = await addLayer(
+                  updateImageDefinition,
+                  layerSelected.name,
+                  layerSelected.name
+                );
+                newSprite.points = ([] as Vec2[]).concat(shapeSelected.points);
+                setItemSelected(newSprite);
               }}
             />,
             <ToolbarButton
@@ -285,14 +311,14 @@ const Layers: React.VFC<LayersProps> = ({
         />,
         <Menu
           title={"Point Info"}
-          key="info"
+          key="pointInfo"
           collapsable={true}
           size="minimal"
           items={
             activeCoord
               ? [
                   <Vec2InputControl
-                    key={"point"}
+                    key={"editPoint"}
                     title={"Point"}
                     value={activeCoord}
                     onChange={(newValue) => {

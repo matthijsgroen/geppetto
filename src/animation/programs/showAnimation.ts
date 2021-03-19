@@ -1,5 +1,4 @@
-import Delaunator from "delaunator";
-import { flatten } from "src/lib/vertices";
+import { fileredTriangles, flatten } from "src/lib/vertices";
 import {
   AnimationFrame,
   ControlDefinition,
@@ -89,6 +88,7 @@ export const showAnimation = (): {
       controlValues: ControlValues;
     }
   > = {};
+  const controlAnimations: Record<string, Record<string, Vec2[]>> = {};
 
   let gl: WebGLRenderingContext | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
@@ -129,6 +129,33 @@ export const showAnimation = (): {
     );
   };
 
+  const populateAnimations = () => {
+    if (!imageDefinition) return;
+    imageDefinition.animations.forEach((animation) => {
+      const controlNames = animation.keyframes.reduce<string[]>(
+        (result, keyframe) =>
+          result.concat(
+            Object.keys(keyframe.controlValues).filter(
+              (n) => !result.includes(n)
+            )
+          ),
+        []
+      );
+
+      controlNames.forEach((name) => {
+        const frameValues: Vec2[] = [];
+        animation.keyframes.forEach((f) => {
+          frameValues.push([f.time, f.controlValues[name]]);
+        });
+
+        controlAnimations[animation.name] =
+          controlAnimations[animation.name] || [];
+
+        controlAnimations[animation.name][name] = frameValues;
+      });
+    });
+  };
+
   const populateShapes = () => {
     if (!imageDefinition || !gl || !indexBuffer || !vertexBuffer || !program)
       return;
@@ -141,7 +168,7 @@ export const showAnimation = (): {
     const sprites = flattenShapes(imageDefinition.shapes);
     sprites.forEach((shape, index) => {
       const anchor = getAnchor(shape);
-      const shapeIndices = Delaunator.from(shape.points).triangles;
+      const shapeIndices = fileredTriangles(shape.points);
       const start = indices.length;
 
       const itemOffset = [...shape.translate, index * 0.1];
@@ -360,6 +387,7 @@ export const showAnimation = (): {
     setImageDefinition(imgDef) {
       imageDefinition = imgDef;
       populateShapes();
+      populateAnimations();
     },
     setControlValues(ctrlValues) {
       controlValues = ctrlValues;
@@ -402,6 +430,7 @@ export const showAnimation = (): {
       );
       setImageTexture();
       populateShapes();
+      populateAnimations();
       assignControlValues();
 
       const uBasePosition = gl.getUniformLocation(

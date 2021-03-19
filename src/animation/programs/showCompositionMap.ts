@@ -60,7 +60,6 @@ export const showCompositionMap = (): {
   let gl: WebGLRenderingContext | null = null;
   let program: WebGLProgram | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
-  let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
   let layersSelected: string[] = [];
   let vectorValues: Keyframe = {};
@@ -80,7 +79,7 @@ export const showCompositionMap = (): {
   let scale = 1.0;
 
   const populateShapes = () => {
-    if (!shapes || !gl || !indexBuffer || !vertexBuffer || !program) return;
+    if (!shapes || !gl || !vertexBuffer || !program) return;
     const vertices: number[] = [];
     elements = [];
     mutators = [];
@@ -129,21 +128,9 @@ export const showCompositionMap = (): {
     const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
     gl.uniform1fv(uMutationParent, parentList);
 
-    const indices = Array(vertices.length / stride)
-      .fill(0)
-      .map((_, i) => i);
-
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(
-      gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array(indices),
-      gl.STATIC_DRAW
-    );
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
 
   let cWidth = 0;
@@ -217,7 +204,6 @@ export const showCompositionMap = (): {
       gl = initgl;
 
       vertexBuffer = gl.createBuffer();
-      indexBuffer = gl.createBuffer();
 
       const [shaderProgram, programCleanup] = createProgram(
         gl,
@@ -234,7 +220,6 @@ export const showCompositionMap = (): {
           const gl = initgl;
           gl.useProgram(shaderProgram);
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
           const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
@@ -297,14 +282,16 @@ export const showCompositionMap = (): {
               // if (element.amount > 0) {
               gl.uniform3f(translate, element.x, element.y, element.z);
               gl.uniform1f(mutation, element.mutator);
-              gl.drawArrays(gl.LINE_STRIP, element.start, element.amount);
+
+              for (let i = 0; i < element.amount; i += 3) {
+                gl.drawArrays(initgl.LINE_LOOP, element.start + i, 3);
+              }
             }
           });
         },
         cleanup() {
           const gl = initgl;
           gl.deleteBuffer(vertexBuffer);
-          gl.deleteBuffer(indexBuffer);
           programCleanup();
         },
       };

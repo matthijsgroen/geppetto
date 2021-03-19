@@ -1,5 +1,4 @@
-import Delaunator from "delaunator";
-import { flatten } from "src/lib/vertices";
+import { fileredTriangles, flatten } from "src/lib/vertices";
 import { Keyframe, ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
@@ -118,7 +117,7 @@ export const showComposition = (): {
     const sprites = flattenShapes(shapes);
     sprites.forEach((shape, index) => {
       const anchor = getAnchor(shape);
-      const shapeIndices = Delaunator.from(shape.points).triangles;
+      const shapeIndices = fileredTriangles(shape.points);
       const start = indices.length;
 
       const itemOffset = [...shape.translate, index * 0.1];
