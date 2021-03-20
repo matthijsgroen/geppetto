@@ -89,7 +89,7 @@ export const showAnimation = (): {
       controlValues: ControlValues;
     }
   > = {};
-  const controlAnimations: Record<string, Record<string, Vec2[]>> = {};
+  const controlAnimations: Record<string, Record<string, Float32Array>> = {};
 
   let gl: WebGLRenderingContext | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
@@ -146,13 +146,17 @@ export const showAnimation = (): {
       controlNames.forEach((name) => {
         const frameValues: Vec2[] = [];
         animation.keyframes.forEach((f) => {
-          frameValues.push([f.time, f.controlValues[name]]);
+          if (f.controlValues[name] !== undefined) {
+            frameValues.push([f.time, f.controlValues[name]]);
+          }
         });
 
         controlAnimations[animation.name] =
           controlAnimations[animation.name] || [];
 
-        controlAnimations[animation.name][name] = frameValues;
+        controlAnimations[animation.name][name] = new Float32Array(
+          flatten(frameValues)
+        );
       });
     });
   };
