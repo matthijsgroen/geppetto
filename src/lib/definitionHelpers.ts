@@ -833,3 +833,56 @@ export const removeItem = (
     return undefined;
   });
 };
+
+export const countResources = (
+  imageDefinition: ImageDefinition
+): { base: number; mutators: number; controls: number; total: number } => {
+  /**
+   * Fixed uniforms:
+   * uniform vec2 viewport;
+   * uniform vec3 basePosition;
+   * uniform vec3 translate;
+   * uniform float mutation;
+   * uniform vec4 scale;
+   * uniform mediump vec2 uTextureDimensions;
+   */
+  const BASE_COST = 6;
+
+  /**
+   * Each mutator costs:
+   *  - 1 vec4 for storage
+   *  - 1 float for parent referencce
+   *  - 1 vec2 for base value
+   */
+  const MUTATOR_COST = 3;
+
+  /**
+   * uniform vec2 uControlMutationValues[${MAX_MUTATION_CONTROL_VECTORS}]; // values of all steps
+   * uniform vec3 uMutationValueIndices[${MAX_MUTATION_CONTROL_VECTORS}]; // for each control points to value, and steps
+   * uniform vec2 uControlMutationIndices[${MAX_MUTATION_VECTORS}]; // mutationIndex points to 'controls using this mutation'
+   * uniform float uControlValues[${MAX_CONTROLS}];
+   */
+
+  let mutatorCount = 0;
+  let controlCount = 0;
+  let controlCost = 0;
+  visit(imageDefinition, (item) => {
+    if (isMutationVector(item)) {
+      mutatorCount++;
+    }
+    if (isControlDefinition(item)) {
+      controlCount++; // cost of uControlValues
+      const stepCount = item.steps.length; // cost of uControlMutationValues (when multiplied by mutatorCount)
+      const mutatorCount = Object.keys(item.steps[0]).length; // cost of uControlMutationIndices and uMutationValueIndices
+      controlCost += stepCount * mutatorCount + mutatorCount * 2;
+    }
+    return undefined;
+  });
+
+  return {
+    base: BASE_COST,
+    mutators: MUTATOR_COST * mutatorCount,
+    controls: controlCost + controlCount,
+    total: BASE_COST + MUTATOR_COST * mutatorCount + controlCount + controlCost,
+  };
+};

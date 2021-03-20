@@ -3,10 +3,12 @@ import React, {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
-import { ToolbarLabel } from "src/components/Control";
 import MenuItem from "src/components/MenuItem";
+import { ToolbarLabel, ToolbarSpacer } from "src/components/Toolbar";
+import ToolbarMeter from "src/components/ToolbarMeter";
 import {
   combineKeyFrames,
   defaultValueForVector,
@@ -26,6 +28,7 @@ import {
   canDelete,
   canMoveDown,
   canMoveUp,
+  countResources,
   getLayerNames,
   getShape,
   getVector,
@@ -51,6 +54,8 @@ import ScreenLayout from "../templates/ScreenLayout";
 import ControlInfoPanel from "./ControlInfoPanel";
 import LayerInfoPanel from "./LayerInfoPanel";
 import VectorInfoPanel from "./VectorInfoPanel";
+
+const MAX_UNIFORM_VERTEX_LIMIT = 512; // Current limit on mobile phones
 
 interface CompositionProps {
   imageDefinition: ImageDefinition;
@@ -107,6 +112,11 @@ const Composition: React.VFC<CompositionProps> = ({
     null
   );
   const [controlMode, setControlmode] = useState<null | ControlMode>(null);
+
+  const maxResourceCount = useMemo(() => {
+    const resources = countResources(imageDefinition);
+    return resources.total;
+  }, [imageDefinition]);
 
   const setItemSelected = useCallback(
     (item: ShapeDefinition | MutationVector | ControlDefinition | null) => {
@@ -320,58 +330,66 @@ const Composition: React.VFC<CompositionProps> = ({
 
   return (
     <ScreenLayout
-      bottomTools={
-        controlSelected
-          ? ([
-              <ToolbarLabel key="stepLabel">Setup control step:</ToolbarLabel>,
-              new Array(controlSelected.steps.length)
-                .fill(null)
-                .map((_e, step) => (
-                  <ToolbarButton
-                    key={`setupStep${step + 1}`}
-                    icon={`${step + 1}`}
-                    disabled={!controlSelected}
-                    active={
-                      !!(
-                        controlMode &&
-                        controlSelected &&
-                        controlModeStep === step
-                      )
-                    }
-                    label=""
-                    onClick={() => {
-                      if (controlSelected) {
-                        if (
-                          step === controlMode?.step &&
-                          controlMode.control === controlSelected.name
-                        ) {
-                          setControlmode(null);
-                          setLayerSelected({
-                            name: controlMode.control,
-                            type: "control",
-                          });
-                          return;
-                        }
-                        setControlmode({
-                          control: controlSelected.name,
-                          step,
+      bottomTools={[
+        <ToolbarLabel key="stepLabel">
+          {controlSelected ? "Setup control step:" : "No control selected"}
+        </ToolbarLabel>,
+        ...(controlSelected
+          ? new Array(controlSelected.steps.length)
+              .fill(null)
+              .map((_e, step) => (
+                <ToolbarButton
+                  key={`setupStep${step + 1}`}
+                  icon={`${step + 1}`}
+                  disabled={!controlSelected}
+                  active={
+                    !!(
+                      controlMode &&
+                      controlSelected &&
+                      controlModeStep === step
+                    )
+                  }
+                  label=""
+                  onClick={() => {
+                    if (controlSelected) {
+                      if (
+                        step === controlMode?.step &&
+                        controlMode.control === controlSelected.name
+                      ) {
+                        setControlmode(null);
+                        setLayerSelected({
+                          name: controlMode.control,
+                          type: "control",
                         });
-                        updateImageDefinition((state) => ({
-                          ...state,
-                          controlValues: {
-                            ...state.controlValues,
-                            [controlSelected.name]: step,
-                          },
-                        }));
+                        return;
                       }
-                    }}
-                  />
-                )),
-            ] as React.ReactElement[])
-          : ([
-              <ToolbarLabel key="stepLabel">No control selected</ToolbarLabel>,
-            ] as React.ReactElement[])
-      }
+                      setControlmode({
+                        control: controlSelected.name,
+                        step,
+                      });
+                      updateImageDefinition((state) => ({
+                        ...state,
+                        controlValues: {
+                          ...state.controlValues,
+                          [controlSelected.name]: step,
+                        },
+                      }));
+                    }
+                  }}
+                />
+              ))
+          : ([] as React.ReactElement[])),
+        <ToolbarSpacer key="sep1" />,
+        <ToolbarLabel key="resLabel">Resources:</ToolbarLabel>,
+        <ToolbarMeter
+          key="meter"
+          optimum={MAX_UNIFORM_VERTEX_LIMIT * 0.2}
+          low={MAX_UNIFORM_VERTEX_LIMIT * 0.5}
+          high={MAX_UNIFORM_VERTEX_LIMIT * 0.8}
+          max={MAX_UNIFORM_VERTEX_LIMIT}
+          value={maxResourceCount}
+        />,
+      ]}
       menus={[
         <Menu
           title="Composition"

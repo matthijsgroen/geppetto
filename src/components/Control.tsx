@@ -1,10 +1,6 @@
 import styled from "styled-components";
-
-export enum ControlStyle {
-  Default,
-  Selected,
-  Highlighted,
-}
+import { ControlStyle, ToolbarLabel } from "./Toolbar";
+export { ControlStyle } from "./Toolbar";
 
 export const Control = styled.div<{ controlStyle?: ControlStyle }>`
   color: ${({ theme, controlStyle }) =>
@@ -20,16 +16,6 @@ export const Control = styled.div<{ controlStyle?: ControlStyle }>`
   padding: 0.5rem 0;
   border-bottom: 1px solid ${({ theme }) => theme.colors.text};
   display: flex;
-`;
-
-export const ToolbarLabel = styled.p<{ controlStyle?: ControlStyle }>`
-  color: ${({ theme, controlStyle }) =>
-    controlStyle === ControlStyle.Selected
-      ? theme.colors.textSelected
-      : theme.colors.text};
-  padding: 0 1rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
 `;
 
 export const ControlLabel = styled(ToolbarLabel)`
