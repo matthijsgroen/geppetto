@@ -6,6 +6,7 @@ export type TranslationVector = {
   name: string;
   type: "translate";
   origin: Vec2;
+  radius: number;
 };
 
 export type DeformationVector = {

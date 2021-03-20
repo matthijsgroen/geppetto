@@ -201,7 +201,10 @@ export const showCompositionVectors = (): {
           offset + 3
         );
 
-        if (vector.type === "deform") {
+        if (
+          vector.type === "deform" ||
+          (vector.type === "translate" && vector.radius !== -1)
+        ) {
           const start = indices.length;
           vectors.push({
             name: vector.name,

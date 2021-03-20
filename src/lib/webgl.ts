@@ -24,6 +24,9 @@ export const compileShader = (
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+    source.split("\n").forEach((line, index) => {
+      console.log(index + 1, line);
+    });
     throw new Error(gl.getShaderInfoLog(shader) as string);
   }
   return shader;

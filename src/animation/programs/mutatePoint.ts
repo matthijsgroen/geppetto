@@ -84,11 +84,14 @@ export const mutationShader = `
 
     vec2 mutationValue = getMutationValue(mutationIndex, mutationType);
     vec2 origin = mutation.yz;
-
     vec3 result = startValue;
 
     if (mutationType == 1) { // Translate
-      result = vec3(startValue.xy + mutationValue, startValue.z);
+      float effect = 1.0;
+      if (mutation.a > 0.0 && distance(startValue.xy, origin) > mutation.a) {
+        effect = 0.0;
+      }
+      result = vec3(startValue.xy + mutationValue * effect, startValue.z);
     }
 
     if (mutationType == 2) { // Stretch
@@ -117,7 +120,6 @@ export const mutationShader = `
     return result;
   }
 
-
   vec3 mutatePoint(vec3 startValue, int mutationIndex) {
     int currentNode = mutationIndex;
     vec3 result = startValue;
@@ -138,7 +140,9 @@ const mutatorToVec4 = (mutator: MutationVector): Vec4 => [
   vectorTypeMapping[mutator.type],
   mutator.origin[0],
   mutator.origin[1],
-  mutator.type === "deform" ? mutator.radius : 0,
+  mutator.type === "deform" || mutator.type === "translate"
+    ? mutator.radius
+    : -1,
 ];
 
 const getParentMutation = (

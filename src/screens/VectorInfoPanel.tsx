@@ -5,6 +5,7 @@ import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
 import SelectControl from "src/components/SelectControl";
 import SliderControl from "src/components/SliderControl";
+import ToggleInputControl from "src/components/ToggleControl";
 import Vect2InputControl from "src/components/Vec2InputControl";
 import { omitKeys, updateVectorData } from "src/lib/definitionHelpers";
 import { ImageDefinition, MutationVector, Vec2 } from "src/lib/types";
@@ -36,7 +37,7 @@ const createVector = (
     case "stretch":
       return { type: "stretch", origin, name };
     case "translate":
-      return { type: "translate", origin, name };
+      return { type: "translate", origin, name, radius: -1 };
     case "opacity":
       return { type: "opacity", origin, name };
   }
@@ -172,6 +173,40 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 step={0.05}
                 onChange={(newValue) => {
                   updateVectorValue(newValue);
+                }}
+              />,
+            ]
+          : []),
+        ...(vectorSelected.type === "translate" && !activeControl
+          ? [
+              <ToggleInputControl
+                key={"radiusToggle"}
+                title={"use radius"}
+                value={vectorSelected.radius !== -1}
+                onChange={(newValue) => {
+                  updateImageDefinition((state) =>
+                    updateVectorData(state, vectorSelected.name, (vector) => ({
+                      ...vector,
+                      radius: newValue ? 1 : -1,
+                    }))
+                  );
+                }}
+              />,
+            ]
+          : []),
+        ...(vectorSelected.type === "translate" && vectorSelected.radius !== -1
+          ? [
+              <NumberInputControl
+                key={"radius"}
+                title={"radius"}
+                value={vectorSelected.radius}
+                onChange={(newValue) => {
+                  updateImageDefinition((state) =>
+                    updateVectorData(state, vectorSelected.name, (vector) => ({
+                      ...vector,
+                      radius: newValue,
+                    }))
+                  );
                 }}
               />,
             ]

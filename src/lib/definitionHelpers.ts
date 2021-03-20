@@ -242,6 +242,7 @@ export const addVector = (
         name: newName,
         type: "translate",
         origin: [0, 0],
+        radius: -1,
       };
 
       resolve(newVector);
