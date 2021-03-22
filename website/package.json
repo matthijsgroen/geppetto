@@ -1,0 +1,20 @@
+{
+  "name": "website",
+  "version": "1.0.0",
+  "description": "Geppetto website",
+  "main": "../docs/index.html",
+  "author": "Matthijs Groen",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "parcel serve ./src/index.html",
+    "build": "parcel build ./src/index.html --no-content-hash"
+  },
+  "devDependencies": {
+    "@parcel/transformer-image": "2.0.0-beta.2",
+    "parcel": "^2.0.0-beta.2"
+  },
+  "dependencies": {
+    "geppetto-player": "^0.0.1-alpha.0"
+  }
+}

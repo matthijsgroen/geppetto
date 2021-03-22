@@ -15,6 +15,9 @@
 
 /images
 
+# Not yet ready for prime time...
+/docs
+
 # misc
 .DS_Store
 .env.local
