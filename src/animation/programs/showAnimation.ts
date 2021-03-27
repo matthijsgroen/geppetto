@@ -106,8 +106,6 @@ export const showAnimation = (): {
     x: number;
     y: number;
     z: number;
-    offset: number;
-    length: number;
   }[] = [];
   let mutators: string[] = [];
   let controls: string[] = [];
@@ -174,21 +172,17 @@ export const showAnimation = (): {
     sprites.forEach((shape, index) => {
       const anchor = getAnchor(shape);
       const shapeIndices = fileredTriangles(shape.points);
-      const start = indices.length;
-
       const itemOffset = [...shape.translate, index * 0.1];
       const offset = vertices.length / stride;
 
       elements.push({
         name: shape.name,
-        start,
+        start: indices.length * 2,
         amount: shapeIndices.length,
         mutator: 0,
         x: itemOffset[0],
         y: itemOffset[1],
         z: -0.5 + itemOffset[2] * 0.001,
-        offset,
-        length: shape.points.length,
       });
 
       shape.points.forEach(([x, y]) => {
@@ -442,8 +436,17 @@ export const showAnimation = (): {
         shaderProgram,
         "basePosition"
       );
-      const translate = gl.getUniformLocation(shaderProgram, "translate");
-      const mutation = gl.getUniformLocation(shaderProgram, "mutation");
+      const uTranslate = gl.getUniformLocation(shaderProgram, "translate");
+      const uMutation = gl.getUniformLocation(shaderProgram, "mutation");
+      const uViewport = gl.getUniformLocation(shaderProgram, "viewport");
+      const uTextureDimensions = gl.getUniformLocation(
+        shaderProgram,
+        "uTextureDimensions"
+      );
+      const uScale = gl.getUniformLocation(shaderProgram, "scale");
+      const aCoord = gl.getAttribLocation(shaderProgram, "coordinates");
+      const aTexCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+
       return {
         render() {
           if (!img || !imageDefinition) {
@@ -454,26 +457,24 @@ export const showAnimation = (): {
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-          const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
-            coord,
+            aCoord,
             2,
             gl.FLOAT,
             false,
             Float32Array.BYTES_PER_ELEMENT * stride,
             /* offset */ 0
           );
-          gl.enableVertexAttribArray(coord);
-          const texCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+          gl.enableVertexAttribArray(aCoord);
           gl.vertexAttribPointer(
-            texCoord,
+            aTexCoord,
             2,
             gl.FLOAT,
             false,
             Float32Array.BYTES_PER_ELEMENT * stride,
             /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
           );
-          gl.enableVertexAttribArray(texCoord);
+          gl.enableVertexAttribArray(aTexCoord);
 
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
@@ -484,17 +485,9 @@ export const showAnimation = (): {
               ? canvasWidth / img.width
               : canvasHeight / img.height;
 
-            gl.uniform2f(
-              gl.getUniformLocation(shaderProgram, "viewport"),
-              canvasWidth,
-              canvasHeight
-            );
+            gl.uniform2f(uViewport, canvasWidth, canvasHeight);
+            gl.uniform2f(uTextureDimensions, img.width, img.height);
 
-            gl.uniform2f(
-              gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
-              img.width,
-              img.height
-            );
             basePosition = [
               canvasWidth / 2 / scale,
               canvasHeight / 2 / scale,
@@ -504,17 +497,9 @@ export const showAnimation = (): {
             cHeight = canvasHeight;
           }
 
-          gl.uniform4f(
-            gl.getUniformLocation(shaderProgram, "scale"),
-            scale,
-            zoom,
-            pan[0],
-            pan[1]
-          );
-
+          gl.uniform4f(uScale, scale, zoom, pan[0], pan[1]);
           gl.activeTexture(unit.unit);
           gl.bindTexture(gl.TEXTURE_2D, texture);
-
           gl.uniform3f(
             uBasePosition,
             basePosition[0],
@@ -600,13 +585,13 @@ export const showAnimation = (): {
             if (element.amount === 0) {
               return;
             }
-            gl.uniform3f(translate, element.x, element.y, element.z);
-            gl.uniform1f(mutation, element.mutator);
+            gl.uniform3f(uTranslate, element.x, element.y, element.z);
+            gl.uniform1f(uMutation, element.mutator);
             gl.drawElements(
               gl.TRIANGLES,
               element.amount,
               gl.UNSIGNED_SHORT,
-              element.start * 2
+              element.start
             );
           });
         },
