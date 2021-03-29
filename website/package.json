@@ -8,7 +8,7 @@
   "private": true,
   "scripts": {
     "start": "parcel serve ./src/index.html",
-    "build": "parcel build ./src/index.html --no-content-hash"
+    "build": "parcel build ./src/index.html --no-content-hash --public-url /geppetto/"
   },
   "devDependencies": {
     "@parcel/transformer-image": "2.0.0-beta.2",
