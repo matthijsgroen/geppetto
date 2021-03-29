@@ -2636,6 +2636,11 @@ define-property@^2.0.2:
     is-descriptor "^1.0.2"
     isobject "^3.0.1"
 
+delaunator@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-4.0.1.tgz#3d779687f57919a7a418f8ab947d3bddb6846957"
+  integrity sha512-WNPWi1IRKZfCt/qIDMfERkDp93+iZEmOxN2yy4Jg+Xhv8SLk2UTqqbe1sfiipn0and9QrE914/ihdx82Y/Giag==
+
 delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
@@ -3178,10 +3183,12 @@ gensync@^1.0.0-beta.2:
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
 
-geppetto-player@^0.0.1-alpha.0:
-  version "0.0.1-alpha.0"
-  resolved "https://registry.yarnpkg.com/geppetto-player/-/geppetto-player-0.0.1-alpha.0.tgz#36fda22a633ad4abd290a6e98a997bbf0f21e9ae"
-  integrity sha512-qQKLfcnv6XS3MiPpffvey1tH5eLkI/+BGDJh30ARU43rZYUYJa+vBIU+sJwDGzqljX6sXmiQH91w7iG/68/hRg==
+geppetto-player@^1.0.0-alpha.1:
+  version "1.0.0-alpha.1"
+  resolved "https://registry.yarnpkg.com/geppetto-player/-/geppetto-player-1.0.0-alpha.1.tgz#9fb3037633256511b06a612e11ab5a7622cbaed2"
+  integrity sha512-ys9pBcJ7VglU5LynMPZ+M6y3Hc9A21a+GFwjXByP8YodYN7LNHpP5jpgR/N0C+MgtM/aJhsqDp/CJ2SboIO9Rw==
+  dependencies:
+    delaunator "^4.0.1"
 
 get-intrinsic@^1.0.2, get-intrinsic@^1.1.1:
   version "1.1.1"
