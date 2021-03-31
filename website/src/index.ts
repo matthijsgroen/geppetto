@@ -1,6 +1,8 @@
 import { setupWebGL, prepareAnimation } from "geppetto-player";
-import image from "url:./assets/landscape.png";
-import animation from "./assets/landscape.json";
+import backgroundImage from "url:./assets/landscape.png";
+import backgroundAnimationData from "./assets/landscape.json";
+import characterImage from "url:./assets/body-texture.png";
+import characterAnimationData from "./assets/Body.json";
 
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
 
@@ -15,19 +17,36 @@ const loadTexture = async (url: string): Promise<HTMLImageElement> =>
   });
 
 const start = async () => {
-  const img = await loadTexture(image);
-  const preparedAnimation = prepareAnimation(animation);
-  const backgroundAnimation = player.addAnimation(preparedAnimation, img, 0, {
+  const bgTexture = await loadTexture(backgroundImage);
+  const preppedBgAnim = prepareAnimation(backgroundAnimationData);
+  const bgAnimationControl = player.addAnimation(preppedBgAnim, bgTexture, 0, {
     zoom: 2.0,
   });
+
+  const charTexture = await loadTexture(characterImage);
+  const preppedCharAnim = prepareAnimation(characterAnimationData);
+  const charAnimationControls = player.addAnimation(
+    preppedCharAnim,
+    charTexture,
+    1,
+    {
+      zoom: 2.4,
+      panX: -0.3,
+      panY: 0.1,
+      zIndex: 2,
+    }
+  );
 
   const box = canvas.getBoundingClientRect();
   canvas.width = box.width * window.devicePixelRatio;
   canvas.height = box.height * window.devicePixelRatio;
 
-  backgroundAnimation.startTrack("Waterrad");
-  backgroundAnimation.startTrack("Waterrad2");
-  backgroundAnimation.startTrack("Rook");
+  bgAnimationControl.startTrack("Waterrad");
+  bgAnimationControl.startTrack("Waterrad2");
+  bgAnimationControl.startTrack("Rook");
+
+  charAnimationControls.startTrack("Eye blink");
+  charAnimationControls.startTrack("Talking");
 
   const [smokeButton, wheelButton] = document.querySelectorAll("button");
 
@@ -37,11 +56,11 @@ const start = async () => {
     wheelPlaying = !wheelPlaying;
     wheelButton.innerText = wheelPlaying ? "Stop wheel" : "Start wheel";
     if (wheelPlaying) {
-      backgroundAnimation.startTrack("Waterrad");
-      backgroundAnimation.startTrack("Waterrad2");
+      bgAnimationControl.startTrack("Waterrad");
+      bgAnimationControl.startTrack("Waterrad2");
     } else {
-      backgroundAnimation.stopTrack("Waterrad");
-      backgroundAnimation.stopTrack("Waterrad2");
+      bgAnimationControl.stopTrack("Waterrad");
+      bgAnimationControl.stopTrack("Waterrad2");
     }
   });
 
@@ -49,16 +68,16 @@ const start = async () => {
     smokePlaying = !smokePlaying;
     smokeButton.innerText = smokePlaying ? "Stop smoke" : "Start smoke";
     if (smokePlaying) {
-      backgroundAnimation.startTrack("Rook");
+      bgAnimationControl.startTrack("Rook");
     } else {
-      backgroundAnimation.stopTrack("Rook");
+      bgAnimationControl.stopTrack("Rook");
     }
   });
 
   const renderFrame = () => {
     player.render();
-    backgroundAnimation.render();
-
+    bgAnimationControl.render();
+    charAnimationControls.render();
     window.requestAnimationFrame(renderFrame);
   };
 
