@@ -74,7 +74,52 @@ const start = async () => {
     }
   });
 
+  let lookTarget = [0, 0];
+  let currentLooking = [0, 0];
+  const eyesCentered = [0.145, 0.385];
+
+  canvas.addEventListener("click", (event) => {
+    const box = canvas.getBoundingClientRect();
+    const position = [event.x / box.width, event.y / box.height];
+    lookTarget = [
+      Math.min(1, Math.max(-1, (position[0] - eyesCentered[0]) / 0.4)),
+      Math.min(1, Math.max(-1, (position[1] - eyesCentered[1]) / 0.4)),
+    ];
+  });
+
+  const speed = 0.025;
+
   const renderFrame = () => {
+    if (currentLooking[0] !== lookTarget[0]) {
+      if (currentLooking[0] < lookTarget[0]) {
+        currentLooking[0] += Math.min(speed, lookTarget[0] - currentLooking[0]);
+      } else {
+        currentLooking[0] -= Math.min(speed, currentLooking[0] - lookTarget[0]);
+      }
+    }
+    if (currentLooking[1] !== lookTarget[1]) {
+      if (currentLooking[1] < lookTarget[1]) {
+        currentLooking[1] += Math.min(speed, lookTarget[1] - currentLooking[1]);
+      } else {
+        currentLooking[1] -= Math.min(speed, currentLooking[1] - lookTarget[1]);
+      }
+    }
+
+    charAnimationControls.setControlValue(
+      "RightEye-x",
+      currentLooking[0] + 1.0
+    );
+    charAnimationControls.setControlValue("LeftEye-x", currentLooking[0] + 1.0);
+
+    charAnimationControls.setControlValue(
+      "RightEye-y",
+      (currentLooking[1] + 1.0) * 0.5
+    );
+    charAnimationControls.setControlValue(
+      "LeftEye-y",
+      (currentLooking[1] + 1.0) * 0.5
+    );
+
     player.render();
     bgAnimationControl.render();
     charAnimationControls.render();
