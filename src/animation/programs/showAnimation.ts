@@ -1,6 +1,6 @@
 import { fileredTriangles, flatten } from "src/lib/vertices";
 import {
-  AnimationFrame,
+  // AnimationFrame,
   ControlDefinition,
   ControlValues,
   ImageDefinition,
@@ -18,6 +18,23 @@ import {
   mutationShader,
 } from "./mutatePoint";
 import { flattenShapes, getAnchor } from "./utils";
+
+const interpolateFloat = (
+  track: Float32Array,
+  position: number,
+  startValue = 0
+): number => {
+  for (let i = 0; i < track.length; i += 2) {
+    if (track[i] > position) {
+      const previousPos = i > 1 ? track[i - 2] : 0;
+      const previousValue = i > 1 ? track[i - 1] : startValue;
+      const mix = (position - previousPos) / (track[i] - previousPos);
+      return previousValue * (1 - mix) + track[i + 1] * mix;
+    }
+  }
+
+  return track[track.length - 1];
+};
 
 const animationVertexShader = `
   uniform vec2 viewport;
@@ -82,14 +99,7 @@ export const showAnimation = (): {
   let imageDefinition: ImageDefinition | null = null;
   let controlValues: ControlValues | null = null;
   let playStatus: PlayStatus = {};
-  const playKeyframes: Record<
-    string,
-    {
-      startedAt: number;
-      controlValues: ControlValues;
-    }
-  > = {};
-  const controlAnimations: Record<string, Record<string, Float32Array>> = {};
+  let controlAnimations: Record<string, [number, Float32Array][]> = {};
 
   let gl: WebGLRenderingContext | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
@@ -130,8 +140,10 @@ export const showAnimation = (): {
 
   const populateAnimations = () => {
     if (!imageDefinition) return;
+    const controlNames = imageDefinition.controls.map((e) => e.name);
+    controlAnimations = {};
     imageDefinition.animations.forEach((animation) => {
-      const controlNames = animation.keyframes.reduce<string[]>(
+      const animationControlNames = animation.keyframes.reduce<string[]>(
         (result, keyframe) =>
           result.concat(
             Object.keys(keyframe.controlValues).filter(
@@ -141,7 +153,7 @@ export const showAnimation = (): {
         []
       );
 
-      controlNames.forEach((name) => {
+      animationControlNames.forEach((name) => {
         const frameValues: Vec2[] = [];
         animation.keyframes.forEach((f) => {
           if (f.controlValues[name] !== undefined) {
@@ -152,9 +164,10 @@ export const showAnimation = (): {
         controlAnimations[animation.name] =
           controlAnimations[animation.name] || [];
 
-        controlAnimations[animation.name][name] = new Float32Array(
-          flatten(frameValues)
-        );
+        controlAnimations[animation.name].push([
+          controlNames.indexOf(name),
+          new Float32Array(flatten(frameValues)),
+        ]);
       });
     });
   };
@@ -507,8 +520,6 @@ export const showAnimation = (): {
             basePosition[2]
           );
 
-          const controls = imageDefinition.controls.map((e) => e.name);
-
           // Set control values to uniforms
           const uControlValues = gl.getUniformLocation(
             shaderProgram,
@@ -530,52 +541,11 @@ export const showAnimation = (): {
             }
             momentInAnimation %= animLength;
             // [1 , 4,  6,  32 ,64]
-            let startFrame: AnimationFrame | null = null;
-            let endFrame: AnimationFrame | null = null;
 
-            for (const frame of animation.keyframes) {
-              if (frame.time <= momentInAnimation) {
-                startFrame = frame;
-              }
-              if (frame.time >= momentInAnimation) {
-                endFrame = frame;
-                break;
-              }
-            }
-            if (!endFrame) return;
-
-            if (startFrame === null) {
-              let startValues = playKeyframes[animation.name];
-
-              if (!startValues || startValues.startedAt !== status.startedAt) {
-                const controlValues: ControlValues = {};
-                for (const key of Object.keys(endFrame.controlValues)) {
-                  const value = contrValues[controls.indexOf(key)];
-                  controlValues[key] = value;
-                }
-
-                startValues = {
-                  startedAt: status.startedAt,
-                  controlValues,
-                };
-                playKeyframes[animation.name] = startValues;
-              }
-
-              startFrame = {
-                time: 0,
-                controlValues: startValues.controlValues,
-              };
-            }
-            const mix =
-              (momentInAnimation - startFrame.time) /
-              (endFrame.time - startFrame.time);
-
-            for (const k of Object.keys(startFrame.controlValues)) {
-              const v =
-                startFrame.controlValues[k] * (1 - mix) +
-                endFrame.controlValues[k] * mix;
-              const index = controls.indexOf(k);
-              contrValues[index] = v;
+            const animationControlFrames = controlAnimations[animation.name];
+            for (const [controlIndex, track] of animationControlFrames) {
+              const value = interpolateFloat(track, momentInAnimation);
+              contrValues[controlIndex] = value;
             }
           });
 

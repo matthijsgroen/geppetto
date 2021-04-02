@@ -48,6 +48,7 @@ export const newDefinition = (): ImageDefinition => ({
   controls: [],
   defaultFrame: {},
   shapes: [],
+  version: "1.0",
 });
 
 export const getLayerNames = (layers: ShapeDefinition[]): string[] =>

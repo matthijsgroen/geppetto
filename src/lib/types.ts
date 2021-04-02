@@ -101,4 +101,5 @@ export type ImageDefinition = {
   controls: ControlDefinition[];
   controlValues: ControlValues;
   animations: Animation[];
+  version: string;
 };

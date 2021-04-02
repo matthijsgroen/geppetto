@@ -169,6 +169,7 @@ const newDefinition = {
   controls: [],
   defaultFrame: {},
   shapes: [],
+  version: "1.0",
 };
 
 function createWindow() {

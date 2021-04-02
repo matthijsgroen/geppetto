@@ -36,3 +36,7 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 To learn React, check out the [React documentation](https://reactjs.org/).
 
 To learn Electron, check out the [Electron documentation](https://electronjs.org/).
+
+# License
+
+[MIT](./LICENSE) (c) [Matthijs Groen](https://twitter.com/matthijsgroen)
