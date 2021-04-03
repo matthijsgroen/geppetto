@@ -4,6 +4,7 @@ import { ControlStyle } from "src/components/Control";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
 import SliderControl from "src/components/SliderControl";
+import TextInputControl from "src/components/TextInputControl";
 import { TimeContainer } from "src/components/TimeContainer";
 import { omitKeys } from "src/lib/definitionHelpers";
 import { maxZoomFactor } from "src/lib/webgl";
@@ -246,6 +247,21 @@ const Animation: React.VFC<AnimationProps> = ({
                         time: Math.max(newValue, 0),
                       }));
                       setSelectedFrame(newValue);
+                    }}
+                  />,
+                  <TextInputControl
+                    key={"event"}
+                    title={"event"}
+                    value={activeFrame.event || ""}
+                    onChange={(newValue) => {
+                      updateFrame((f) =>
+                        newValue.length === 0
+                          ? omitKeys(f, ["event"])
+                          : {
+                              ...f,
+                              event: newValue,
+                            }
+                      );
                     }}
                   />,
                 ]

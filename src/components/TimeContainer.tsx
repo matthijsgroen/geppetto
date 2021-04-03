@@ -122,13 +122,21 @@ const TimeDot = styled.div`
   text-align: right;
 `;
 
-const FrameDot = styled.div<{ _pos: number; selected?: boolean }>`
+const FrameDot = styled.div<{
+  _pos: number;
+  selected?: boolean;
+  _hasEvent: boolean;
+}>`
   width: 1.2rem;
   height: 1.2rem;
   margin-left: -0.6rem;
   border-radius: 50%;
-  background-color: ${({ theme, selected }) =>
-    selected
+  background-color: ${({ theme, selected, _hasEvent }) =>
+    _hasEvent
+      ? selected
+        ? theme.colors.itemSelected
+        : theme.colors.itemSpecial
+      : selected
       ? theme.colors.backgroundSelected
       : theme.colors.backgroundSecondary};
   border: 1px solid
@@ -238,12 +246,6 @@ export const TimeContainer: React.VFC<{
       setMouseMode(MouseMode.Default);
     }
   }, [selectedAnimation]);
-
-  /* <p>
-    {Math.floor(maxLength / 60e3)}:
-    {`00${Math.floor((maxLength % 60e3) / 1000)}`.slice(-2)}.
-    {`000${Math.floor(maxLength % 1e3)}`.slice(-3)}
-  </p> */
 
   return (
     <MainSection>
@@ -497,6 +499,7 @@ export const TimeContainer: React.VFC<{
                         selectedAnimation === t.name && selectedFrame === f.time
                       }
                       _pos={f.time / (maxLength + EXTRA_SECONDS * 1000)}
+                      _hasEvent={!!f.event}
                       key={i}
                       onClick={() => {
                         updateSelectedFrame((time) =>

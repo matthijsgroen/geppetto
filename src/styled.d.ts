@@ -12,6 +12,8 @@ declare module "styled-components" {
       text: string;
       backgroundSelected: string;
       textSelected: string;
+      itemSelected: string;
+      itemSpecial: string;
     };
   }
 }

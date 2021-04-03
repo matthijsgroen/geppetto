@@ -21,7 +21,7 @@ const Item = styled.div<{
   renaming: boolean;
 }>`
   background: ${({ selected, theme }) =>
-    selected ? theme.colors.backgroundSelected : "none"};
+    selected ? theme.colors.itemSelected : "none"};
   box-sizing: border-box;
   min-width: 100%;
   width: max-content;

@@ -21,6 +21,8 @@ const defaultTheme: DefaultTheme = {
     text: "#999",
     backgroundSelected: "#666",
     textSelected: "white",
+    itemSelected: "#669",
+    itemSpecial: "#336",
   },
 };
 
