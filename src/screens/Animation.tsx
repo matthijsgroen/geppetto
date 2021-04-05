@@ -191,7 +191,7 @@ const Animation: React.VFC<AnimationProps> = ({
               value={
                 activeFrame && frameControlKeys.includes(control.name)
                   ? activeFrame.controlValues[control.name]
-                  : controlValues[control.name]
+                  : controlValues[control.name] || 0
               }
               min={0}
               controlStyle={

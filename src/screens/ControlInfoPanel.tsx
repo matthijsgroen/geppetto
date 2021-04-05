@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import Menu from "src/components/Menu";
 import SelectControl, { Option } from "src/components/SelectControl";
 import SliderControl from "src/components/SliderControl";
-import { ControlDefinition, ImageDefinition, Keyframe } from "src/lib/types";
+import { ControlDefinition, ImageDefinition } from "src/lib/types";
 import { isControlDefinition, visit } from "src/lib/visit";
 
 interface ControlInfoPanelProps {
@@ -59,7 +59,7 @@ const ControlInfoPanel: React.VFC<ControlInfoPanelProps> = ({
                       ...node,
                       steps: node.steps.concat(
                         new Array(selected.value - node.steps.length).fill(
-                          {} as Keyframe
+                          node.steps[node.steps.length - 1]
                         )
                       ),
                     };
