@@ -179,7 +179,6 @@ function createWindow() {
     backgroundColor: "#000",
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false,
     },
   });
   win.setFullScreenable(false);
