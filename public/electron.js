@@ -6,6 +6,8 @@ const writeFile = util.promisify(require("fs").writeFile);
 const path = require("path");
 const isDev = require("electron-is-dev");
 
+const LINK_BASE_URL = "https://github.com/matthijsgroen/gepetto";
+
 /**
  * type EditorWindow = {
  *   window: BrowserWindow;
@@ -142,8 +144,22 @@ const template = [
         label: "Documentation",
         click: async () => {
           const { shell } = require("electron");
+          await shell.openExternal(`${LINK_BASE_URL}/wiki`);
+        },
+      },
+      {
+        label: "Report an issue",
+        click: async () => {
+          const { shell } = require("electron");
+          await shell.openExternal(`${LINK_BASE_URL}/issues`);
+        },
+      },
+      {
+        label: "Share your work!",
+        click: async () => {
+          const { shell } = require("electron");
           await shell.openExternal(
-            "https://github.com/matthijsgroen/gepetto/wiki"
+            `${LINK_BASE_URL}/discussions/categories/show-and-tell`
           );
         },
       },
