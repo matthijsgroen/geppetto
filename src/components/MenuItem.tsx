@@ -32,6 +32,7 @@ const Item = styled.div<{
   color: ${({ selected, theme }) =>
     selected ? theme.colors.textSelected : theme.colors.text};
   opacity: ${({ selected, dimmed }) => (selected ? 1 : dimmed ? 0.3 : 1.0)};
+  font: menu;
   font-size: 1rem;
   font-weight: normal;
   white-space: nowrap;

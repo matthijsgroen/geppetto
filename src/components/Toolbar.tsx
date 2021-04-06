@@ -13,6 +13,8 @@ export const Toolbar = styled.div`
   font-weight: normal;
   display: flex;
   flex-direction: row;
+  font-size: 1rem;
+  line-height: 1.5rem;
 
   padding: 0 0.2rem;
   > * + * {
@@ -25,7 +27,8 @@ export const ToolbarLabel = styled.p<{ controlStyle?: ControlStyle }>`
     controlStyle === ControlStyle.Selected
       ? theme.colors.textSelected
       : theme.colors.text};
-  padding: 0 1rem;
+  padding: 0.75rem 1rem;
+  margin: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   width: fit-content;

@@ -35,8 +35,8 @@ const MenuContainer = styled.div<{
 const MenuHeader = styled.div`
   color: ${({ theme }) => theme.colors.text};
   background-color: ${({ theme }) => theme.colors.background};
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 1rem;
+  line-height: 1.5rem;
   font-weight: normal;
   margin: 0;
   padding: 0 1rem;
@@ -48,8 +48,8 @@ const MenuTitle = styled.h1`
   color: ${({ theme }) => theme.colors.text};
   pointer-events: none;
   cursor: default;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 1rem;
+  line-height: 1.5rem;
   font-weight: normal;
   margin: 0;
   padding: 0.75rem 0;

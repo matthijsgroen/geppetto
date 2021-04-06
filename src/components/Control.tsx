@@ -19,6 +19,6 @@ export const Control = styled.div<{ controlStyle?: ControlStyle }>`
 `;
 
 export const ControlLabel = styled(ToolbarLabel)`
-  margin: 0;
+  padding: 0 1rem;
   flex: 1;
 `;
