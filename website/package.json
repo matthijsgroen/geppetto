@@ -1,6 +1,6 @@
 {
   "name": "website",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.0",
   "description": "Geppetto website",
   "main": "../docs/index.html",
   "author": "Matthijs Groen",
@@ -15,6 +15,6 @@
     "parcel": "^2.0.0-beta.2"
   },
   "dependencies": {
-    "geppetto-player": "^1.0.0-alpha.2"
+    "geppetto-player": "^1.0.0-beta.1"
   }
 }

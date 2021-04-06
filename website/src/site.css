@@ -6,3 +6,10 @@ canvas {
   border: 1px solid #eee;
   width: 100%;
 }
+
+.download {
+  color: #eee;
+}
+.download a {
+  color: #ddd;
+}

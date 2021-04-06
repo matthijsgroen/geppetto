@@ -3,10 +3,51 @@ import backgroundImage from "url:./assets/landscape.png";
 import backgroundAnimationData from "./assets/landscape.json";
 import characterImage from "url:./assets/body-texture.png";
 import characterAnimationData from "./assets/Body.json";
+import { version } from "../package.json";
 
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
-
 const player = setupWebGL(canvas);
+
+const BASE_URL = `https://github.com/matthijsgroen/geppetto/releases/download/${version}`;
+const BUILDS = [
+  { platform: "mac", arch: "x64", filename: `Geppetto-${version}-mac.zip` },
+  {
+    platform: "mac",
+    arch: "arm64",
+    filename: `Geppetto-${version}-arm64-mac.zip`,
+  },
+  {
+    platform: "win",
+    filename: `Geppetto Setup ${version}.exe`,
+  },
+  {
+    platform: "linux",
+    arch: "amd64",
+    filename: `geppetto_${version}_amd64.deb`,
+  },
+  {
+    platform: "linux",
+    arch: "arm64",
+    filename: `geppetto_${version}_arm64.deb`,
+  },
+];
+
+const populateDownloadLinks = () => {
+  const title = document.getElementById("version") as HTMLHeadingElement;
+  title.innerText = `Version ${version}`;
+
+  BUILDS.forEach((build) => {
+    const downloadList = document.getElementById(
+      `download-${build.platform}`
+    ) as HTMLParagraphElement;
+    const link = document.createElement("a");
+    link.setAttribute("href", `${BASE_URL}/${build.filename}`);
+    link.innerText = `Download ${build.arch || build.platform} version`;
+    const listItem = document.createElement("li");
+    listItem.appendChild(link);
+    downloadList.appendChild(listItem);
+  });
+};
 
 const loadTexture = async (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve) => {
@@ -37,6 +78,20 @@ const start = async () => {
     }
   );
 
+  console.log(
+    "Controls",
+    preppedCharAnim.controls.map((e) => e.name)
+  );
+
+  console.log(
+    "Animations",
+    preppedCharAnim.animations.map((e) => e.name)
+  );
+
+  charAnimationControls.onEvent((event, track, time) => {
+    console.log("EVENT:", event, track, time);
+  });
+
   const box = canvas.getBoundingClientRect();
   canvas.width = box.width * window.devicePixelRatio;
   canvas.height = box.height * window.devicePixelRatio;
@@ -48,7 +103,9 @@ const start = async () => {
   charAnimationControls.startTrack("Eye blink");
   charAnimationControls.startTrack("Talking");
 
-  const [smokeButton, wheelButton] = document.querySelectorAll("button");
+  const [smokeButton, wheelButton, winkButton] = document.querySelectorAll(
+    "button"
+  );
 
   let smokePlaying = true;
   let wheelPlaying = true;
@@ -72,6 +129,18 @@ const start = async () => {
     } else {
       bgAnimationControl.stopTrack("Rook");
     }
+  });
+
+  charAnimationControls.onTrackStopped((track) => {
+    console.log(`Track ${track} has stopped`);
+    if (track === "Eye wink") {
+      charAnimationControls.startTrack("Eye blink");
+    }
+  });
+
+  winkButton.addEventListener("click", () => {
+    console.log("Start Eye wink");
+    charAnimationControls.startTrack("Eye wink");
   });
 
   let lookTarget = [0, 0];
@@ -130,3 +199,4 @@ const start = async () => {
 };
 
 start();
+populateDownloadLinks();
