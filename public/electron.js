@@ -177,6 +177,7 @@ function createWindow() {
     width: 1280,
     height: 720,
     backgroundColor: "#000",
+    show: false,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -198,6 +199,10 @@ function createWindow() {
     showFPS: false,
   };
   windows.push(status);
+  win.on("ready-to-show", () => {
+    win.show();
+    win.focus();
+  });
 
   win.on("close", (event) => {
     if (status.changed) {
