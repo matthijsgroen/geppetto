@@ -16,5 +16,9 @@
   },
   "dependencies": {
     "geppetto-player": "^1.0.0-beta.2"
-  }
+  },
+  "browserslist": [
+    "defaults",
+    "Chrome 63"
+  ]
 }
