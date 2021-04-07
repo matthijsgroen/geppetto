@@ -47,9 +47,7 @@ const compositionVertexShader = `
     int pointIndex = int(coordinates.x);
     float radius = abs(coordinates.y);
 
-    // if (pointIndex == 0) {
     vec2 spec = vec2(-1.0, -1.0);
-    // }
 
     if (pointIndex == 1) {
       spec = vec2(1.0, -1.0);
@@ -101,9 +99,6 @@ const compositionFragmentShader = `
     if (distSquared > 1.0) discard;
 
     gl_FragColor = vec4(vColor.rgb * vColor.a, vColor.a);
-    // if (distSquared > 1.0) {
-    //   gl_FragColor = vColor.aaaa;
-    // }
   }
 `;
 
@@ -305,11 +300,7 @@ export const showCompositionVectors = (): {
       }
 
       const checkMatch = (shape: ShapeDefinition, item: ItemSelection) =>
-        (shape.name === item.name && item.type === "layer") ||
-        (item.type === "vector" &&
-          (shape.type === "sprite" || shape.type === "folder") &&
-          shape.mutationVectors &&
-          shape.mutationVectors.map((v) => v.name).includes(item.name));
+        shape.name === item.name && item.type === "layer"; //||
 
       const collectVectorNames = (
         s: ShapeDefinition[],
@@ -328,9 +319,7 @@ export const showCompositionVectors = (): {
               : result.concat(
                   vectorNamesFromShape(shape).filter(
                     (n) =>
-                      (layer.type === "vector" && n === layer.name) ||
-                      collect ||
-                      checkMatch(shape, layer)
+                      (layer.type === "vector" && n === layer.name) || collect
                   ),
                   collectVectorNames(
                     shape.items,
@@ -354,6 +343,13 @@ export const showCompositionVectors = (): {
         compositionFragmentShader
       );
       program = shaderProgram;
+
+      const translate = gl.getUniformLocation(shaderProgram, "translate");
+      const mutation = gl.getUniformLocation(shaderProgram, "mutation");
+      const uBasePosition = gl.getUniformLocation(
+        shaderProgram,
+        "basePosition"
+      );
 
       return {
         render() {
@@ -420,28 +416,22 @@ export const showCompositionVectors = (): {
             pan[1]
           );
 
-          const translate = gl.getUniformLocation(shaderProgram, "translate");
-          const uBasePosition = gl.getUniformLocation(
-            shaderProgram,
-            "basePosition"
-          );
           gl.uniform3f(
             uBasePosition,
             basePosition[0],
             basePosition[1],
             basePosition[2]
           );
-          const mutation = gl.getUniformLocation(shaderProgram, "mutation");
 
-          vectors.forEach((element) => {
-            if (vectorsSelected.includes(element.name)) {
-              gl.uniform3f(translate, element.x, element.y, element.z);
-              gl.uniform1f(mutation, element.mutator);
+          vectors.forEach((vector) => {
+            if (vectorsSelected.includes(vector.name)) {
+              gl.uniform3f(translate, vector.x, vector.y, vector.z);
+              gl.uniform1f(mutation, vector.mutator);
               gl.drawElements(
                 gl.TRIANGLES,
-                element.amount,
+                vector.amount,
                 gl.UNSIGNED_SHORT,
-                element.start * 2
+                vector.start * 2
               );
             }
           });
