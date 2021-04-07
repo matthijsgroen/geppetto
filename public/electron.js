@@ -172,7 +172,6 @@ const menu = Menu.buildFromTemplate(template);
 const windowMenuItems = ["fileSave", "fileSaveAs", "loadTexture", "showFPS"];
 
 const setItemsEnableState = (callback) => {
-  console.log("Setting items enable state.");
   windowMenuItems.forEach((item) => {
     const enabled = callback(item);
     const menuItem = menu.getMenuItemById(item);
