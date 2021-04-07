@@ -1,11 +1,9 @@
-import { setupWebGL, prepareAnimation } from "geppetto-player";
+import { setupWebGL, prepareAnimation, ImageDefinition } from "geppetto-player";
 import backgroundImage from "url:./assets/landscape.png";
 import backgroundAnimationData from "./assets/landscape.json";
 import characterImage from "url:./assets/lady.png";
 import characterAnimationData from "./assets/lady.json";
 import { version } from "../package.json";
-
-const errorElement = document.getElementById("errorBox");
 
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
 const player = setupWebGL(canvas);
@@ -61,13 +59,17 @@ const loadTexture = async (url: string): Promise<HTMLImageElement> =>
 
 const start = async () => {
   const bgTexture = await loadTexture(backgroundImage);
-  const preppedBgAnim = prepareAnimation(backgroundAnimationData);
+  const preppedBgAnim = prepareAnimation(
+    (backgroundAnimationData as unknown) as ImageDefinition
+  );
   const bgAnimationControl = player.addAnimation(preppedBgAnim, bgTexture, 0, {
     zoom: 2.0,
   });
 
   const charTexture = await loadTexture(characterImage);
-  const preppedCharAnim = prepareAnimation(characterAnimationData);
+  const preppedCharAnim = prepareAnimation(
+    (characterAnimationData as unknown) as ImageDefinition
+  );
   const charAnimationControls = player.addAnimation(
     preppedCharAnim,
     charTexture,
