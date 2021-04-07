@@ -3183,10 +3183,10 @@ gensync@^1.0.0-beta.2:
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
 
-geppetto-player@^1.0.0-beta.1:
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/geppetto-player/-/geppetto-player-1.0.0-beta.1.tgz#32c73f1324bb87628766f8d3227a003a15e47fb7"
-  integrity sha512-BXFJ3Pb5j+jdDelhpoaL+cf6pMszO/jW6Pn8tt28A1Fldd281t8/ukjy+Py9cf4AZJt0TG4YUbcATcXS3fbKpw==
+geppetto-player@^1.0.0-beta.3:
+  version "1.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/geppetto-player/-/geppetto-player-1.0.0-beta.3.tgz#e09151f349a1a93b4ce4f393202e9f4f267a8076"
+  integrity sha512-PYG/kzU8CWLr+AA+ZQn+1zersI9oa3SRcdDD/qNYppDTTFuNDlqPEg7eqayxYOiSz9pKa376gzgtCLnTpn36AQ==
   dependencies:
     delaunator "^4.0.1"
 
