@@ -1,8 +1,8 @@
 import { setupWebGL, prepareAnimation } from "geppetto-player";
 import backgroundImage from "url:./assets/landscape.png";
 import backgroundAnimationData from "./assets/landscape.json";
-import characterImage from "url:./assets/body-texture.png";
-import characterAnimationData from "./assets/Body.json";
+import characterImage from "url:./assets/lady.png";
+import characterAnimationData from "./assets/lady.json";
 import { version } from "../package.json";
 
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
@@ -72,7 +72,7 @@ const start = async () => {
     1,
     {
       zoom: 2.4,
-      panX: -0.3,
+      panX: -0.25,
       panY: 0.1,
       zIndex: 2,
     }
@@ -102,6 +102,7 @@ const start = async () => {
 
   charAnimationControls.startTrack("Eye blink");
   charAnimationControls.startTrack("Talking");
+  charAnimationControls.startTrack("HeadTilt");
 
   const [smokeButton, wheelButton, winkButton] = document.querySelectorAll(
     "button"
@@ -140,7 +141,7 @@ const start = async () => {
 
   winkButton.addEventListener("click", () => {
     console.log("Start Eye wink");
-    charAnimationControls.startTrack("Eye wink");
+    charAnimationControls.startTrack("EyeWink");
   });
 
   let lookTarget = [0, 0];
@@ -180,6 +181,10 @@ const start = async () => {
     );
     charAnimationControls.setControlValue("LeftEye-x", currentLooking[0] + 1.0);
 
+    charAnimationControls.setControlValue(
+      "HeadTurn",
+      1.0 - (currentLooking[0] + 1.0) * 0.5
+    );
     charAnimationControls.setControlValue(
       "RightEye-y",
       (currentLooking[1] + 1.0) * 0.5
