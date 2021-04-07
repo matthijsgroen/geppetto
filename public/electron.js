@@ -172,6 +172,7 @@ const menu = Menu.buildFromTemplate(template);
 const windowMenuItems = ["fileSave", "fileSaveAs", "loadTexture", "showFPS"];
 
 const setItemsEnableState = (callback) => {
+  console.log("Setting items enable state.");
   windowMenuItems.forEach((item) => {
     const enabled = callback(item);
     const menuItem = menu.getMenuItemById(item);
@@ -215,7 +216,7 @@ function createWindow() {
     showFPS: false,
   };
   windows.push(status);
-  win.on("ready-to-show", () => {
+  win.once("ready-to-show", () => {
     win.show();
     win.focus();
   });
@@ -241,11 +242,13 @@ function createWindow() {
         return false;
       }
     }
+    if (win.isFocused()) {
+      setItemsEnableState(() => false);
+    }
   });
 
   win.on("closed", () => {
     windows = windows.filter((w) => w.window !== win);
-    setItemsEnableState(() => false);
   });
 
   win.on("blur", () => {
@@ -400,7 +403,7 @@ async function loadFile(filePath) {
 
     if (browserWindow === null) {
       browserWindow = createWindow();
-      browserWindow.on("ready-to-show", () => {
+      browserWindow.once("ready-to-show", () => {
         const windowStatus = windows.find((e) => e.window === browserWindow);
         updateContentToBrowser(parsed, windowStatus, filePath);
       });
