@@ -1,5 +1,6 @@
 body {
   background-color: black;
+  color: #eee;
 }
 
 canvas {
@@ -7,9 +8,6 @@ canvas {
   width: 100%;
 }
 
-.download {
-  color: #eee;
-}
 .download a {
   color: #ddd;
 }
