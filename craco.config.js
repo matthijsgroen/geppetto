@@ -4,4 +4,7 @@ module.exports = {
       target: "electron-renderer",
     },
   },
+  babel: {
+    plugins: ["@babel/plugin-proposal-optional-chaining"],
+  },
 };

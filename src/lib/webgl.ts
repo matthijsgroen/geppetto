@@ -62,7 +62,7 @@ export const webGLScene = async (
   element: HTMLCanvasElement,
   programs: WebGLRenderer[]
 ): Promise<RenderAPI> => {
-  const gl = element.getContext("webgl2", {
+  const gl = element.getContext("webgl", {
     premultipliedalpha: true,
     depth: true,
     antialias: true,
