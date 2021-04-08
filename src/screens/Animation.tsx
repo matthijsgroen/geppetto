@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import AnimationCanvas from "src/animation/AnimationCanvas";
 import { ControlStyle } from "src/components/Control";
 import Menu from "src/components/Menu";
@@ -156,6 +156,14 @@ const Animation: React.VFC<AnimationProps> = ({
     setZoom(z);
   };
 
+  const onTrackStopped = useCallback(
+    (trackName: string, updateControls: ControlValues) => {
+      setPlayStatus((status) => omitKeys(status, [trackName]));
+      setControlValues(() => updateControls);
+    },
+    []
+  );
+
   return (
     <ScreenLayout
       main={
@@ -175,6 +183,7 @@ const Animation: React.VFC<AnimationProps> = ({
             panX={panX}
             panY={panY}
             showFPS={showFPS}
+            onTrackStopped={onTrackStopped}
           />
         </MouseControl>
       }

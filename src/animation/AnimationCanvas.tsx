@@ -19,6 +19,7 @@ export interface AnimationCanvasProps {
   panX: number;
   panY: number;
   showFPS?: boolean;
+  onTrackStopped?: (trackName: string, controlValues: ControlValues) => void;
 }
 
 const playerIntegration = () => {
@@ -28,6 +29,8 @@ const playerIntegration = () => {
   let panX = 0;
   let panY = 0;
   let internalControlValues: ControlValues = {};
+  let internalPlayStatus: PlayStatus = {};
+  let controlNames: string[] = [];
 
   const renderer: WebGLRenderer = (gl) => {
     const canvas = gl.canvas as HTMLCanvasElement;
@@ -45,11 +48,12 @@ const playerIntegration = () => {
       },
     };
   };
-  let controlNames: string[] = [];
 
   return {
     renderer,
     setAnimation(image: HTMLImageElement, imageDefinition: ImageDefinition) {
+      if (!player) return;
+      console.log("setAnimation!");
       controlNames = imageDefinition.controls.map((c) => c.name);
       if (animation !== null) {
         animation.destroy();
@@ -87,6 +91,47 @@ const playerIntegration = () => {
       }
       internalControlValues = { ...values };
     },
+    setPlayStatus(status: PlayStatus) {
+      if (animation) {
+        const playing = Object.keys(status);
+        const currentlyPlaying = Object.keys(internalPlayStatus);
+
+        const started = playing.filter((e) => !currentlyPlaying.includes(e));
+        const stopped = currentlyPlaying.filter((e) => !playing.includes(e));
+
+        for (const startAnim of started) {
+          animation.startTrack(startAnim);
+        }
+
+        for (const stopAnim of stopped) {
+          animation.stopTrack(stopAnim);
+        }
+      }
+      internalPlayStatus = status;
+    },
+    setTrackStopCallback(
+      callback: (trackName: string, newControls: ControlValues) => void
+    ) {
+      if (!animation) return;
+
+      const trackCallback = (track: string) => {
+        const controlValues = controlNames.reduce<ControlValues>(
+          (result, key) => ({
+            ...result,
+            [key]: animation ? animation.getControlValue(key) : 0,
+          }),
+          {}
+        );
+
+        callback(track, controlValues);
+      };
+
+      const unsub = animation.onTrackStopped(trackCallback);
+
+      return () => {
+        unsub();
+      };
+    },
   };
 };
 
@@ -94,11 +139,12 @@ const AnimationCanvas: React.FC<AnimationCanvasProps> = ({
   image,
   imageDefinition,
   controlValues,
-  // playStatus = {},
+  playStatus = {},
   zoom,
   panX,
   panY,
   showFPS,
+  onTrackStopped,
 }) => {
   const animation = useMemo(playerIntegration, []);
 
@@ -126,9 +172,14 @@ const AnimationCanvas: React.FC<AnimationCanvasProps> = ({
     animation.setControlValues(controlValues);
   }, [controlValues]);
 
-  // useEffect(() => {
-  //   animation.setPlayStatus(playStatus);
-  // }, [playStatus]);
+  useEffect(() => {
+    animation.setPlayStatus(playStatus);
+  }, [playStatus]);
+
+  useEffect(
+    () => onTrackStopped && animation.setTrackStopCallback(onTrackStopped),
+    [onTrackStopped]
+  );
 
   animation.setZoom(zoom);
   animation.setPan(panX, panY);

@@ -5499,6 +5499,11 @@ del@^4.1.1:
     pify "^4.0.1"
     rimraf "^2.6.3"
 
+delaunator@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-4.0.1.tgz#3d779687f57919a7a418f8ab947d3bddb6846957"
+  integrity sha512-WNPWi1IRKZfCt/qIDMfERkDp93+iZEmOxN2yy4Jg+Xhv8SLk2UTqqbe1sfiipn0and9QrE914/ihdx82Y/Giag==
+
 delaunator@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/delaunator/-/delaunator-5.0.0.tgz#60f052b28bd91c9b4566850ebf7756efe821d81b"
@@ -6976,12 +6981,12 @@ gensync@^1.0.0-beta.1, gensync@^1.0.0-beta.2:
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
 
-geppetto-player@1.0.0-beta.4:
-  version "1.0.0-beta.4"
-  resolved "https://registry.yarnpkg.com/geppetto-player/-/geppetto-player-1.0.0-beta.4.tgz#7d6cba1a52d591f2d9e83f65fe2aa3ea36580b9a"
-  integrity sha512-F9dT5Eb5CvyNdetidbBTsh5F7LTSbLT1b2OYxXK+6sxwQI0Qj6Fu7GIBv+oGufwjrDf+jHiq7i43FuYtpL6G7Q==
+geppetto-player@1.0.0-beta.6:
+  version "1.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/geppetto-player/-/geppetto-player-1.0.0-beta.6.tgz#a899000b5609a4ccf44f16c4b099b1d968d25b69"
+  integrity sha512-r3UckgsJjL7x9+ol89FdxnineeUMOuMxi69mYyAkpKCTNjEdBRb0DxB1xD6HCDaJR8tnM+TvdTzr2+q+9bE9xQ==
   dependencies:
-    delaunator "^5.0.0"
+    delaunator "^4.0.1"
 
 get-caller-file@^2.0.1, get-caller-file@^2.0.5:
   version "2.0.5"

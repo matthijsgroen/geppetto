@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarSeperator from "./ToolbarSeperator";
 import { ImageDefinition, PlayStatus } from "src/lib/types";
-import { makeAnimationName } from "src/lib/definitionHelpers";
+import { makeAnimationName, omitKeys } from "src/lib/definitionHelpers";
 import { Toolbar } from "./Toolbar";
 import RenameableLabel from "./RenameableLabel";
 
@@ -414,20 +414,14 @@ export const TimeContainer: React.VFC<{
                   <TimelineButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (playStatus[t.name] && playStatus[t.name].playing) {
-                        updatePlayStatus((status) => ({
-                          ...status,
-                          [t.name]: {
-                            playing: false,
-                            startAt: 0,
-                            startedAt: 0,
-                          },
-                        }));
+                      if (playStatus[t.name]) {
+                        updatePlayStatus((status) =>
+                          omitKeys(status, [t.name])
+                        );
                       } else {
                         updatePlayStatus((status) => ({
                           ...status,
                           [t.name]: {
-                            playing: true,
                             startAt: 0,
                             startedAt: +new Date(),
                           },
@@ -435,9 +429,7 @@ export const TimeContainer: React.VFC<{
                       }
                     }}
                   >
-                    {playStatus[t.name] && playStatus[t.name].playing
-                      ? "⏹"
-                      : "▶️"}
+                    {playStatus[t.name] ? "⏹" : "▶️"}
                   </TimelineButton>
                   <RenameableLabel
                     label={t.name}
@@ -483,7 +475,7 @@ export const TimeContainer: React.VFC<{
                   _isActive={selectedAnimation === t.name}
                   _maxLength={maxLength + EXTRA_SECONDS * 1000}
                 >
-                  {playStatus[t.name] && playStatus[t.name].playing && (
+                  {playStatus[t.name] && (
                     <TimeLinePlayer
                       max={
                         Math.max(0, ...t.keyframes.map((f) => f.time)) /

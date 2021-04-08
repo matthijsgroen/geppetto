@@ -74,7 +74,6 @@ export type ControlDefinition = {
 export type PlayStatus = Record<
   string,
   {
-    playing: boolean;
     startAt: number;
     startedAt: number;
   }
