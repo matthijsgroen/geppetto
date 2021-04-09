@@ -158,8 +158,8 @@ const Animation: React.VFC<AnimationProps> = ({
 
   const onTrackStopped = useCallback(
     (trackName: string, updateControls: ControlValues) => {
-      setPlayStatus((status) => omitKeys(status, [trackName]));
       setControlValues(() => updateControls);
+      setPlayStatus((status) => omitKeys(status, [trackName]));
     },
     []
   );
@@ -197,6 +197,7 @@ const Animation: React.VFC<AnimationProps> = ({
             <SliderControl
               key={`control${i}`}
               title={control.name}
+              showValue={true}
               value={
                 activeFrame && frameControlKeys.includes(control.name)
                   ? activeFrame.controlValues[control.name]

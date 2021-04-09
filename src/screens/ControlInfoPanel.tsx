@@ -79,6 +79,7 @@ const ControlInfoPanel: React.VFC<ControlInfoPanelProps> = ({
       <SliderControl
         key="control"
         title={"Control"}
+        showValue={true}
         value={value}
         min={0}
         max={controlSelected.steps.length - 1}

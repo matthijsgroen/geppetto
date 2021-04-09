@@ -68,6 +68,18 @@ const playerIntegration = () => {
           panY,
         }
       );
+      internalControlValues = imageDefinition.controlValues;
+
+      animation.onTrackStopped(() => {
+        const controlValues = controlNames.reduce<ControlValues>(
+          (result, key) => ({
+            ...result,
+            [key]: animation ? animation.getControlValue(key) : 0,
+          }),
+          {}
+        );
+        internalControlValues = controlValues;
+      });
     },
     setZoom(newZoom: number) {
       zoom = newZoom;
@@ -158,13 +170,17 @@ const AnimationCanvas: React.FC<AnimationCanvasProps> = ({
       controlValues: cleanImageDefinition.controlValues,
     };
     if (JSON.stringify(updatedDef) !== JSON.stringify(cleanImageDefinition)) {
-      setCleanImageDefintion(imageDefinition);
+      const debounce = setTimeout(() => {
+        setCleanImageDefintion(imageDefinition);
+      }, 100);
+      return () => clearTimeout(debounce);
     }
-  }, [imageDefinition, setCleanImageDefintion]);
+  }, [imageDefinition, controlValues, setCleanImageDefintion]);
 
   useEffect(() => {
     if (image && imageDefinition) {
       animation.setAnimation(image, imageDefinition);
+      animation.setControlValues(controlValues);
     }
   }, [image, cleanImageDefinition]);
 
