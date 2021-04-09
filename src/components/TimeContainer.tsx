@@ -60,7 +60,7 @@ const Label = styled.div<{ _isActive?: boolean }>`
   line-height: 1.5rem;
   position: sticky;
   left: 0px;
-  z-index: 1;
+  z-index: 4;
   display: grid;
   grid-template-columns: 26px 1fr 26px;
 `;
@@ -85,7 +85,7 @@ const FloatHeader = styled.div`
   position: sticky;
   top: 0px;
   left: 0px;
-  z-index: 2;
+  z-index: 3;
 `;
 
 const TimeHeader = styled.div<{
@@ -107,7 +107,7 @@ const TimeHeader = styled.div<{
     ${({ theme }) => theme.colors.itemContainerBackground};
   line-height: 2rem;
   position: sticky;
-  z-index: 1;
+  z-index: 4;
   top: 0px;
 `;
 

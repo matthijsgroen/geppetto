@@ -125,6 +125,10 @@ const App: React.FC = () => {
     updateWindowTitle(baseFileName, textureFileName);
   }, [baseFileName, textureFileName]);
 
+  const zoomState = useState(1.0);
+  const panXState = useState(0.0);
+  const panYState = useState(0.0);
+
   const compositionEnabled =
     textureFileName !== null && hasShapes(imageDefinition.shapes);
 
@@ -177,6 +181,9 @@ const App: React.FC = () => {
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
         showFPS={showFPS}
+        zoomState={zoomState}
+        panXState={panXState}
+        panYState={panYState}
       />
     ) : (
       <Animation
@@ -184,6 +191,9 @@ const App: React.FC = () => {
         imageDefinition={imageDefinition}
         updateImageDefinition={setImageDefinition}
         showFPS={showFPS}
+        zoomState={zoomState}
+        panXState={panXState}
+        panYState={panYState}
       />
     );
 

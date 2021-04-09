@@ -14,6 +14,7 @@ import {
   ControlValues,
   ImageDefinition,
   PlayStatus,
+  State,
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
@@ -22,6 +23,9 @@ interface AnimationProps {
   texture: HTMLImageElement | null;
   updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
   showFPS?: boolean;
+  zoomState: State<number>;
+  panXState: State<number>;
+  panYState: State<number>;
 }
 
 const Animation: React.VFC<AnimationProps> = ({
@@ -29,10 +33,14 @@ const Animation: React.VFC<AnimationProps> = ({
   imageDefinition,
   updateImageDefinition,
   showFPS,
+  zoomState,
+  panXState,
+  panYState,
 }) => {
-  const [zoom, setZoom] = useState(1.0);
-  const [panX, setPanX] = useState(0.0);
-  const [panY, setPanY] = useState(0.0);
+  const [zoom, setZoom] = zoomState;
+  const [panX, setPanX] = panXState;
+  const [panY, setPanY] = panYState;
+
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
     false
   );
@@ -156,13 +164,9 @@ const Animation: React.VFC<AnimationProps> = ({
     setZoom(z);
   };
 
-  const onTrackStopped = useCallback(
-    (trackName: string, updateControls: ControlValues) => {
-      setControlValues(() => updateControls);
-      setPlayStatus((status) => omitKeys(status, [trackName]));
-    },
-    []
-  );
+  const onTrackStopped = useCallback((trackName: string) => {
+    setPlayStatus((status) => omitKeys(status, [trackName]));
+  }, []);
 
   return (
     <ScreenLayout

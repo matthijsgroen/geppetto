@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { WebGLRenderer } from "src/lib/webgl";
 import { ControlValues, ImageDefinition, PlayStatus } from "../lib/types";
-// import { showAnimation } from "./programs/showAnimation";
 import WebGLCanvas from "./WebGLCanvas";
 import {
   AnimationControls,
@@ -69,17 +68,6 @@ const playerIntegration = () => {
         }
       );
       internalControlValues = imageDefinition.controlValues;
-
-      animation.onTrackStopped(() => {
-        const controlValues = controlNames.reduce<ControlValues>(
-          (result, key) => ({
-            ...result,
-            [key]: animation ? animation.getControlValue(key) : 0,
-          }),
-          {}
-        );
-        internalControlValues = controlValues;
-      });
     },
     setZoom(newZoom: number) {
       zoom = newZoom;

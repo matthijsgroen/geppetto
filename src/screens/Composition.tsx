@@ -49,6 +49,7 @@ import {
   Keyframe,
   MutationVector,
   ShapeDefinition,
+  State,
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 import ControlInfoPanel from "./ControlInfoPanel";
@@ -62,6 +63,9 @@ interface CompositionProps {
   texture: HTMLImageElement | null;
   updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
   showFPS?: boolean;
+  zoomState: State<number>;
+  panXState: State<number>;
+  panYState: State<number>;
 }
 
 type ControlMode = {
@@ -97,10 +101,13 @@ const Composition: React.VFC<CompositionProps> = ({
   imageDefinition,
   updateImageDefinition,
   showFPS,
+  zoomState,
+  panXState,
+  panYState,
 }) => {
-  const [zoom, setZoom] = useState(1.0);
-  const [panX, setPanX] = useState(0.0);
-  const [panY, setPanY] = useState(0.0);
+  const [zoom, setZoom] = zoomState;
+  const [panX, setPanX] = panXState;
+  const [panY, setPanY] = panYState;
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
     false
   );
