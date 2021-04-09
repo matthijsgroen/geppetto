@@ -18,7 +18,7 @@ const BUILDS = [
   },
   {
     platform: "win",
-    filename: `Geppetto Setup ${version}.exe`,
+    filename: `Geppetto.Setup.${version}.exe`,
   },
   {
     platform: "linux",
