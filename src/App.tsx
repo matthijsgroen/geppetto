@@ -9,8 +9,6 @@ import Animation from "./screens/Animation";
 
 import { ImageDefinition, ShapeDefinition } from "./lib/types";
 import { newDefinition } from "./lib/definitionHelpers";
-import { loadImage } from "./lib/webgl";
-import { ipcRenderer } from "electron";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -59,66 +57,37 @@ const App: React.FC = () => {
   const [showFPS, setShowFPS] = useState<boolean>(false);
 
   useEffect(() => {
-    const animationFileContentsLoaded = (
-      _event: Electron.IpcRendererEvent,
-      _path: string,
-      baseName: string,
-      contents: string
-    ) => {
-      const image = (JSON.parse(contents) as unknown) as ImageDefinition;
+    if (!window.electron) return;
+
+    window.electron.onAnimationFileLoaded((image, baseName) => {
       setImageDefinition(image);
       setBaseFilename(baseName);
-    };
-    ipcRenderer.on(
-      "animation-file-contents-loaded",
-      animationFileContentsLoaded
-    );
-    const animationFileNew = () => {
+    });
+    window.electron.onAnimationFileNew(() => {
       setImageDefinition(newDefinition());
       setBaseFilename(null);
-    };
-    ipcRenderer.on("animation-file-new", animationFileNew);
-    const animationFileNameChange = (
-      _event: Electron.IpcRendererEvent,
-      _path: string,
-      baseName: string
-    ) => {
-      setBaseFilename(baseName);
-    };
-    ipcRenderer.on("animation-file-name-change", animationFileNameChange);
-
-    const textureFileLoaded = (
-      _event: Electron.IpcRendererEvent,
-      path: string,
-      baseName: string
-    ) => {
-      setTextureFilename(baseName);
-      loadImage(path).then((image) => setImage(image));
-    };
-    ipcRenderer.on("texture-file-loaded", textureFileLoaded);
-    const showFPSHandler = (
-      _event: Electron.IpcRendererEvent,
-      value: boolean
-    ) => setShowFPS(value);
-    ipcRenderer.on("show-fps", showFPSHandler);
-
-    return () => {
-      ipcRenderer.off(
-        "animation-file-contents-loaded",
-        animationFileContentsLoaded
-      );
-      ipcRenderer.off("animation-file-new", animationFileNew);
-      ipcRenderer.off("animation-file-name-change", animationFileNameChange);
-      ipcRenderer.off("texture-file-loaded", textureFileLoaded);
-      ipcRenderer.off("show-fps", showFPSHandler);
-    };
+    });
+    window.electron.onAnimationFileNameChange((newName) => {
+      setBaseFilename(newName);
+    });
+    window.electron.onTextureFileLoaded((base64, baseName) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.addEventListener("load", () => {
+        setTextureFilename(baseName);
+        setImage(img);
+      });
+      img.src = `data:image/png;base64,${base64}`;
+    });
+    window.electron.onShowFPSChange((showFPS) => {
+      setShowFPS(showFPS);
+    });
   }, []);
 
   useEffect(() => {
-    ipcRenderer.send(
-      "animation-file-contents-changed",
-      JSON.stringify(imageDefinition)
-    );
+    if (window.electron) {
+      window.electron.updateAnimationFile(imageDefinition);
+    }
   }, [imageDefinition]);
 
   useEffect(() => {
