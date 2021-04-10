@@ -52,7 +52,6 @@ const playerIntegration = () => {
     renderer,
     setAnimation(image: HTMLImageElement, imageDefinition: ImageDefinition) {
       if (!player) return;
-      console.log("setAnimation!");
       controlNames = imageDefinition.controls.map((c) => c.name);
       if (animation !== null) {
         animation.destroy();
