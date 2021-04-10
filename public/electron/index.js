@@ -6,7 +6,7 @@ const writeFile = util.promisify(require("fs").writeFile);
 const path = require("path");
 const isDev = require("electron-is-dev");
 
-const LINK_BASE_URL = "https://github.com/matthijsgroen/gepetto";
+const LINK_BASE_URL = "https://github.com/matthijsgroen/geppetto";
 
 /**
  * type EditorWindow = {
@@ -117,7 +117,7 @@ const template = [
           browserWindow.webContents.send("show-fps", status.showFPS);
         },
       },
-      ...(isDev
+      ...(isDev || true
         ? [
             { type: "separator" },
             { role: "reload" },
@@ -202,7 +202,7 @@ function createWindow() {
   win.loadURL(
     isDev
       ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "../build/index.html")}`
+      : `file://${path.join(__dirname, "../../build/index.html")}`
   );
 
   const status = {
