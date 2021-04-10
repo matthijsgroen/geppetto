@@ -10,11 +10,11 @@ const player = setupWebGL(canvas);
 
 const BASE_URL = `https://github.com/matthijsgroen/geppetto/releases/download/${version}`;
 const BUILDS = [
-  { platform: "mac", arch: "x64", filename: `Geppetto-${version}-mac.zip` },
+  { platform: "mac", arch: "x64", filename: `Geppetto-${version}-mac.dmg` },
   {
     platform: "mac",
     arch: "arm64",
-    filename: `Geppetto-${version}-arm64-mac.zip`,
+    filename: `Geppetto-${version}-arm64-mac.dmg`,
   },
   {
     platform: "win",
