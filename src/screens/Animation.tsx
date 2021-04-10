@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import AnimationCanvas from "src/animation/AnimationCanvas";
 import { ControlStyle } from "src/components/Control";
 import Menu from "src/components/Menu";
@@ -14,6 +14,7 @@ import {
   ControlValues,
   ImageDefinition,
   PlayStatus,
+  State,
 } from "../lib/types";
 import ScreenLayout from "../templates/ScreenLayout";
 
@@ -22,6 +23,9 @@ interface AnimationProps {
   texture: HTMLImageElement | null;
   updateImageDefinition: Dispatch<SetStateAction<ImageDefinition>>;
   showFPS?: boolean;
+  zoomState: State<number>;
+  panXState: State<number>;
+  panYState: State<number>;
 }
 
 const Animation: React.VFC<AnimationProps> = ({
@@ -29,10 +33,14 @@ const Animation: React.VFC<AnimationProps> = ({
   imageDefinition,
   updateImageDefinition,
   showFPS,
+  zoomState,
+  panXState,
+  panYState,
 }) => {
-  const [zoom, setZoom] = useState(1.0);
-  const [panX, setPanX] = useState(0.0);
-  const [panY, setPanY] = useState(0.0);
+  const [zoom, setZoom] = zoomState;
+  const [panX, setPanX] = panXState;
+  const [panY, setPanY] = panYState;
+
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
     false
   );
@@ -156,6 +164,10 @@ const Animation: React.VFC<AnimationProps> = ({
     setZoom(z);
   };
 
+  const onTrackStopped = useCallback((trackName: string) => {
+    setPlayStatus((status) => omitKeys(status, [trackName]));
+  }, []);
+
   return (
     <ScreenLayout
       main={
@@ -175,6 +187,7 @@ const Animation: React.VFC<AnimationProps> = ({
             panX={panX}
             panY={panY}
             showFPS={showFPS}
+            onTrackStopped={onTrackStopped}
           />
         </MouseControl>
       }
@@ -188,6 +201,7 @@ const Animation: React.VFC<AnimationProps> = ({
             <SliderControl
               key={`control${i}`}
               title={control.name}
+              showValue={true}
               value={
                 activeFrame && frameControlKeys.includes(control.name)
                   ? activeFrame.controlValues[control.name]

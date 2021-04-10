@@ -195,8 +195,7 @@ function createWindow() {
     backgroundColor: "#000",
     show: false,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      preload: path.join(__dirname, "preload.js"),
     },
   });
   win.setFullScreenable(false);

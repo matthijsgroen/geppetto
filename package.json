@@ -3,26 +3,19 @@
   "productName": "Geppetto",
   "description": "Create awesome WebGL Animations.",
   "author": "Matthijs Groen <matthijs.groen@gmail.com>",
-  "main": "public/electron.js",
+  "main": "public/electron/index.js",
   "version": "1.0.0-beta.0",
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "@craco/craco": "^6.1.0",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.53",
-    "@types/react-dom": "^16.9.8",
-    "delaunator": "^4.0.1",
+    "delaunator": "^5.0.0",
     "electron-is-dev": "^1.2.0",
+    "geppetto-player": "1.0.0-beta.6",
     "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react-dom": "^17.0.2",
     "react-scripts": "4.0.1",
-    "styled-components": "^5.2.1",
-    "typescript": "^4.0.3"
+    "styled-components": "^5.2.3",
+    "typescript": "^4.2.4"
   },
   "scripts": {
     "electron-dev": "concurrently -s first -k \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
@@ -74,15 +67,19 @@
       "prettier"
     ]
   },
-  "browserslist": {
-    "production": [
-      "chrome 89"
-    ],
-    "development": [
-      "chrome 89"
-    ]
-  },
+  "browserslist": [
+    "chrome 89"
+  ],
   "devDependencies": {
+    "@babel/plugin-proposal-optional-chaining": "^7.13.12",
+    "@craco/craco": "^6.1.0",
+    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/react": "^11.2.6",
+    "@testing-library/user-event": "^13.1.1",
+    "@types/jest": "^26.0.22",
+    "@types/node": "^14.14.37",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
     "@types/styled-components": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",

@@ -21,4 +21,5 @@ export const Control = styled.div<{ controlStyle?: ControlStyle }>`
 export const ControlLabel = styled(ToolbarLabel)`
   padding: 0 1rem;
   flex: 1;
+  align-self: center;
 `;

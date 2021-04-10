@@ -1,5 +1,4 @@
 import { Vec2 } from "./types";
-import fs from "fs";
 
 export enum ShaderType {
   Vertex,
@@ -62,7 +61,7 @@ export const webGLScene = async (
   element: HTMLCanvasElement,
   programs: WebGLRenderer[]
 ): Promise<RenderAPI> => {
-  const gl = element.getContext("webgl2", {
+  const gl = element.getContext("webgl", {
     premultipliedalpha: true,
     depth: true,
     antialias: true,
@@ -136,17 +135,6 @@ export const createProgram = (
     },
   ];
 };
-
-export const loadImage = async (path: string): Promise<HTMLImageElement> =>
-  new Promise((resolve) => {
-    const base64 = Buffer.from(fs.readFileSync(path)).toString("base64");
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.addEventListener("load", () => {
-      resolve(img);
-    });
-    img.src = `data:image/png;base64,${base64}`;
-  });
 
 export const getTextureCoordinate = (
   canvasSize: Vec2,
