@@ -117,7 +117,7 @@ const template = [
           browserWindow.webContents.send("show-fps", status.showFPS);
         },
       },
-      ...(isDev || true
+      ...(isDev
         ? [
             { type: "separator" },
             { role: "reload" },
