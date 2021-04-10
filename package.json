@@ -24,7 +24,7 @@
     "lint": "eslint src/**/*.ts{,x}",
     "test": "craco test",
     "preelectron-pack": "yarn build",
-    "electron-pack": "electron-builder build --mac --win --linux deb --x64 --arm64 --c.extraMetadata.main=build/electron.js -c.mac.identity=null"
+    "electron-pack": "electron-builder build --mac --win --linux deb --x64 --arm64 --c.extraMetadata.main=build/electron/index.js -c.mac.identity=null"
   },
   "build": {
     "appId": "com.example.electron-cra",
@@ -44,7 +44,8 @@
       "icon": "build/icon.icns"
     },
     "linux": {
-      "category": "2DGraphics"
+      "category": "2DGraphics",
+      "icon": "build/512x512.png"
     }
   },
   "eslintConfig": {
