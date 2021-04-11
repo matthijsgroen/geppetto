@@ -85,7 +85,7 @@ const FloatHeader = styled.div`
   position: sticky;
   top: 0px;
   left: 0px;
-  z-index: 3;
+  z-index: 5;
 `;
 
 const TimeHeader = styled.div<{
