@@ -1,9 +1,10 @@
 {
   "name": "website",
   "version": "1.0.0-beta.1",
-  "description": "Geppetto website",
+  "description": "Geppetto is a free and open animation tool to embed webGL animations in a web site.",
   "main": "../docs/index.html",
-  "author": "Matthijs Groen",
+  "author": "Matthijs Groen <matthijs.groen@gmail.com> (https://github.com/matthijsgroen)",
+  "homepage": "https://matthijsgroen.github.io/geppetto",
   "license": "MIT",
   "private": true,
   "scripts": {
