@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { Icon } from "./Icon";
 import RenameableLabel from "./RenameableLabel";
 
 interface MenuItemProps {
@@ -58,7 +59,7 @@ const MenuItem: React.VFC<MenuItemProps> = ({
       indent={indent}
       renaming={true}
     >
-      {icon}{" "}
+      <Icon>{icon}</Icon>{" "}
       <RenameableLabel
         name={name}
         label={label}

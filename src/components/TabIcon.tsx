@@ -33,6 +33,7 @@ const Icon = styled.button.attrs({ type: "button" })<IconProps>`
         ? props.theme.colors.textSelected
         : props.theme.colors.backgroundSecondary};
   outline: none;
+  text-shadow: #000 0px 0px 1px;
 
   &:disabled {
     opacity: 0.3;

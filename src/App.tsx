@@ -12,15 +12,15 @@ import { newDefinition } from "./lib/definitionHelpers";
 
 const defaultTheme: DefaultTheme = {
   colors: {
-    background: "#333",
-    backgroundSecondary: "#444",
-    backgroundDestructive: "#911",
-    itemContainerBackground: "#111",
-    text: "#999",
-    backgroundSelected: "#666",
-    textSelected: "white",
-    itemSelected: "#669",
-    itemSpecial: "#336",
+    background: "var(--colors-background)",
+    backgroundDestructive: "var(--colors-background-destructive)",
+    backgroundSecondary: "var(--colors-background-secondary)",
+    backgroundSelected: "var(--colors-background-selected)",
+    itemContainerBackground: "var(--colors-item-container-background)",
+    itemSelected: "var(--colors-item-selected)",
+    itemSpecial: "var(--colors-item-special)",
+    text: "var(--colors-text)",
+    textSelected: "var(--colors-text-selected)",
   },
 };
 

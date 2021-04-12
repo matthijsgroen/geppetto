@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import { Icon } from "./Icon";
 
 interface ToolbarButtonProps {
   icon: string;
@@ -63,7 +64,7 @@ const ToolbarButton: React.FC<ToolbarButtonProps> = ({
     size={size}
     onClick={() => onClick && !disabled && onClick()}
   >
-    {icon} {label}
+    <Icon>{icon}</Icon> {label}
   </IconButton>
 );
 
