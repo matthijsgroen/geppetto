@@ -803,6 +803,8 @@ export const removeItem = (
   selectedItem: ItemSelection
 ): ImageDefinition => {
   const vectorsBefore = getVectorNames(image.shapes);
+  const controlRemoved =
+    selectedItem.type === "control" ? selectedItem.name : null;
 
   const result = visit(image, (item) =>
     ((selectedItem.type === "layer" && isShapeDefinition(item)) ||
@@ -818,9 +820,22 @@ export const removeItem = (
   if (vectorsRemoved.length === 0) {
     return result;
   }
+
   const tree: ImageDefinition = {
     ...result,
     defaultFrame: omitKeys(result.defaultFrame || {}, vectorsRemoved),
+    ...(controlRemoved
+      ? {
+          controlValues: omitKeys(result.controlValues || {}, [controlRemoved]),
+          animations: result.animations.map((animation) => ({
+            ...animation,
+            keyframes: animation.keyframes.map((frame) => ({
+              ...frame,
+              controlValues: omitKeys(frame.controlValues, [controlRemoved]),
+            })),
+          })),
+        }
+      : undefined),
   };
   return visit(tree, (item) => {
     if (isControlDefinition(item)) {
