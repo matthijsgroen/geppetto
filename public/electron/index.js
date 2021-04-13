@@ -1,9 +1,18 @@
 // eslint-env node
 const { app, BrowserWindow, Menu, dialog } = require("electron");
-const util = require("util");
-const readFile = util.promisify(require("fs").readFile);
-const writeFile = util.promisify(require("fs").writeFile);
-const path = require("path");
+const {
+  readFile: readFileCallback,
+  writeFile: writeFileCallback,
+  access: accessCallback,
+  constants,
+} = require("fs");
+const { promisify } = require("util");
+
+const readFile = promisify(readFileCallback);
+const writeFile = promisify(writeFileCallback);
+const access = promisify(accessCallback);
+
+const { basename, extname, dirname, join } = require("path");
 const isDev = require("electron-is-dev");
 
 const LINK_BASE_URL = "https://github.com/matthijsgroen/geppetto";
@@ -13,6 +22,7 @@ const LINK_BASE_URL = "https://github.com/matthijsgroen/geppetto";
  *   window: BrowserWindow;
  *   filePath: string;
  *   fileContents: string;
+ *   texturePath: string;
  *   changed: boolean;
  *   showFPS: boolean;
  * }
@@ -195,20 +205,21 @@ function createWindow() {
     backgroundColor: "#000",
     show: false,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: join(__dirname, "preload.js"),
     },
   });
   win.setFullScreenable(false);
   win.loadURL(
     isDev
       ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "../../build/index.html")}`
+      : `file://${join(__dirname, "../../build/index.html")}`
   );
 
   const status = {
     window: win,
     filePath: null,
     fileContents: JSON.stringify(newDefinition),
+    texturePath: null,
     activeContents: "",
     changed: false,
     showFPS: false,
@@ -301,12 +312,32 @@ async function loadTexture(browserWindow) {
   });
   if (!result.canceled) {
     const filePath = result.filePaths[0];
-    browserWindow.webContents.send(
-      "texture-file-loaded",
-      filePath,
-      path.basename(filePath)
-    );
+    setTexture(filePath, browserWindow);
   }
+}
+
+async function tryAutoLoadingTexture(imageDefPath, browserWindow) {
+  const extension = extname(imageDefPath);
+  const baseName = basename(imageDefPath, extension);
+  const tryTexturePath = join(dirname(imageDefPath), `${baseName}.png`);
+  try {
+    await access(tryTexturePath, constants.R_OK);
+
+    setTexture(tryTexturePath, browserWindow);
+  } catch (e) {
+    // No problem, file didn't exist
+  }
+}
+
+async function setTexture(filePath, browserWindow) {
+  const status = windows.find((w) => w.window === browserWindow);
+  status.texturePath = filePath;
+
+  browserWindow.webContents.send(
+    "texture-file-loaded",
+    Buffer.from(await readFile(filePath)).toString("base64"),
+    basename(filePath)
+  );
 }
 
 async function saveFile(browserWindow, useFilePath) {
@@ -318,7 +349,7 @@ async function saveFile(browserWindow, useFilePath) {
   if (filePath === null) {
     const defaultName =
       status && status.filePath
-        ? path.basename(status.filePath)
+        ? basename(status.filePath)
         : "new-animation.json";
     const result = await dialog.showSaveDialog(browserWindow, {
       defaultPath: defaultName,
@@ -347,7 +378,7 @@ async function saveFile(browserWindow, useFilePath) {
   browserWindow.webContents.send(
     "animation-file-name-change",
     filePath,
-    path.basename(filePath)
+    basename(filePath)
   );
   return true;
 }
@@ -368,7 +399,7 @@ const updateContentToBrowser = (parsed, windowStatus, filePath) => {
   browserWindow.webContents.send(
     "animation-file-contents-loaded",
     filePath,
-    path.basename(filePath),
+    basename(filePath),
     windowStatus.fileContents
   );
 };
@@ -404,10 +435,16 @@ async function loadFile(filePath) {
       browserWindow.once("ready-to-show", () => {
         const windowStatus = windows.find((e) => e.window === browserWindow);
         updateContentToBrowser(parsed, windowStatus, filePath);
+        if (windowStatus.texturePath === null) {
+          tryAutoLoadingTexture(filePath, browserWindow);
+        }
       });
     } else {
       const windowStatus = windows.find((e) => e.window === browserWindow);
       updateContentToBrowser(parsed, windowStatus, filePath);
+      if (windowStatus.texturePath === null) {
+        tryAutoLoadingTexture(filePath, browserWindow);
+      }
     }
   } catch (e) {
     // Show error message dialog

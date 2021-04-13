@@ -1,8 +1,4 @@
 const { ipcRenderer, contextBridge } = require("electron");
-const { readFileSync } = require("fs");
-
-const loadImage = async (path) =>
-  Buffer.from(readFileSync(path)).toString("base64");
 
 contextBridge.exposeInMainWorld("electron", {
   onAnimationFileLoaded: (callback) => {
@@ -22,10 +18,8 @@ contextBridge.exposeInMainWorld("electron", {
     );
   },
   onTextureFileLoaded: (callback) => {
-    ipcRenderer.on("texture-file-loaded", (_event, path, baseName) => {
-      loadImage(path).then((image) => {
-        callback(image, baseName);
-      });
+    ipcRenderer.on("texture-file-loaded", (_event, image, baseName) => {
+      callback(image, baseName);
     });
   },
   onShowFPSChange: (callback) => {
