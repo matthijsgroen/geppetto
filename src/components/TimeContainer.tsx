@@ -212,6 +212,7 @@ enum MouseMode {
 }
 
 const EXTRA_SECONDS = 5;
+const PARENT_OFFSET_LEFT = 42 + 250; // offsetLeft of all parents
 
 export const TimeContainer: React.VFC<{
   imageDefinition: ImageDefinition;
@@ -251,16 +252,21 @@ export const TimeContainer: React.VFC<{
     <MainSection>
       <MovingLineContainer
         onMouseMove={(event) => {
-          const lineX = event.pageX - 42 - 250;
+          const lineX = event.pageX - PARENT_OFFSET_LEFT;
           const time = (lineX / scale) * 1000;
           setMousePos(time);
         }}
         onMouseLeave={() => {
           setMousePos(-1);
         }}
-        onClick={() => {
+        onClick={(e) => {
           if (selectedAnimation && mouseMode === MouseMode.AddKeyframe) {
-            const time = Math.round(mousePos / 10) * 10;
+            const offset =
+              (e.target as HTMLDivElement).getBoundingClientRect().x -
+              PARENT_OFFSET_LEFT;
+            const scrollAdd = (Math.abs(offset) / scale) * 1000;
+            const time = Math.round((scrollAdd + mousePos) / 10) * 10;
+
             updateImageDefinition((image) => ({
               ...image,
               animations: image.animations.map((e) =>
