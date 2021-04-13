@@ -64,6 +64,7 @@ const start = async () => {
   );
   const bgAnimationControl = player.addAnimation(preppedBgAnim, bgTexture, 0, {
     zoom: 2.0,
+    panX: 0.13,
   });
 
   const charTexture = await loadTexture(characterImage);
@@ -89,6 +90,9 @@ const start = async () => {
   bgAnimationControl.startTrack("Waterrad");
   bgAnimationControl.startTrack("Waterrad2");
   bgAnimationControl.startTrack("Rook");
+  bgAnimationControl.startTrack("Wolken");
+  bgAnimationControl.startTrack("Riet");
+  bgAnimationControl.startTrack("Water");
 
   charAnimationControls.startTrack("Eye blink");
   charAnimationControls.startTrack("Talking");
