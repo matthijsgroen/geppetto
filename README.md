@@ -1,33 +1,32 @@
 # Geppetto
 
-Geppetto is a studio tool to define WebGL Animations.
+![Geppetto logo](./public/logo192.png)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Geppetto is a free and open animation tool to embed webGL animations in a web site. This is the repository for the desktop app.
+Made with [Create React App](https://github.com/facebook/create-react-app) and [Electron](https://electronjs.org/).
+
+- [Geppetto demo](https://matthijsgroen.github.io/geppetto/)
+- [Geppetto JavaScript Player library](https://github.com/matthijsgroen/geppetto-player)
+- [Documentation](https://github.com/matthijsgroen/geppetto/wiki)
+- [Discussions](https://github.com/matthijsgroen/geppetto/discussions)
+
+## What is Geppetto?
+
+Geppetto consists of two parts. A [desktop application](https://github.com/matthijsgroen/geppetto/releases/latest) to define animated images, and a [JavaScript library](https://github.com/matthijsgroen/geppetto-player) to play them.
+
+## How does it work?
+
+You need to create a texture file as .PNG. in Geppetto you will make layers from your texture, and compose them into your image. Next step is to add mutations to your layer tree to create motion. You can then create timelines to define multiple animations.
+
+These animations (the created .json file and your texture .png) can then be loaded using [the geppetto player](https://github.com/matthijsgroen/geppetto-player) and embedded in a website or electron app.
 
 ## Available Scripts
 
-In the project directory, you can run:
+Yarn scripts to get started with this repo:
 
-### `yarn electron-dev`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn electron-pack`
-
-Builds the app for distribution in the `dist` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be distributed!
+- `yarn electron-dev` Starts electron in develoment mode
+- `yarn test` Running tests
+- `yarn electron-pack` Create production builds
 
 ## Learn More
 
@@ -36,6 +35,10 @@ You can learn more in the [Create React App documentation](https://facebook.gith
 To learn React, check out the [React documentation](https://reactjs.org/).
 
 To learn Electron, check out the [Electron documentation](https://electronjs.org/).
+
+## Special thanks
+
+- Guido Theelen, for creating the Geppetto logo
 
 # License
 
