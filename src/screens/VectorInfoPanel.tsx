@@ -52,6 +52,52 @@ const iconForType = (type: VectorTypes): string =>
     opacity: "⚪️",
   } as Record<VectorTypes, string>)[type]);
 
+export const setMutationUnderControl = (
+  state: ImageDefinition,
+  activeControl: string,
+  vectorSelected: MutationVector,
+  controlPosition: number | undefined,
+  activeValue: Vec2
+): ImageDefinition =>
+  visit(state, (item) => {
+    if (isControlDefinition(item) && item.name === activeControl) {
+      return {
+        ...item,
+        steps: item.steps.map((step, index) =>
+          index === controlPosition
+            ? {
+                ...step,
+                [vectorSelected.name]: activeValue,
+              }
+            : step[vectorSelected.name] === undefined
+            ? {
+                ...step,
+                [vectorSelected.name]: defaultValueForVector(
+                  vectorSelected.type
+                ),
+              }
+            : step
+        ),
+      };
+    }
+  });
+
+const releaseMutationFromControl = (
+  state: ImageDefinition,
+  activeControl: string,
+  vectorSelected: MutationVector
+) =>
+  visit(state, (item) => {
+    if (isControlDefinition(item) && item.name === activeControl) {
+      const updatedControl = {
+        ...item,
+        steps: item.steps.map((step) => omitKeys(step, [vectorSelected.name])),
+      };
+      return updatedControl;
+    }
+    return undefined;
+  });
+
 const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
   vectorSelected,
   updateImageDefinition,
@@ -262,31 +308,13 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                   <Button
                     onClick={() => {
                       updateImageDefinition((state) =>
-                        visit(state, (item) => {
-                          if (
-                            isControlDefinition(item) &&
-                            item.name === activeControl
-                          ) {
-                            return {
-                              ...item,
-                              steps: item.steps.map((step, index) =>
-                                index === controlPosition
-                                  ? {
-                                      ...step,
-                                      [vectorSelected.name]: activeValue,
-                                    }
-                                  : step[vectorSelected.name] === undefined
-                                  ? {
-                                      ...step,
-                                      [vectorSelected.name]: defaultValueForVector(
-                                        vectorSelected.type
-                                      ),
-                                    }
-                                  : step
-                              ),
-                            };
-                          }
-                        })
+                        setMutationUnderControl(
+                          state,
+                          activeControl,
+                          vectorSelected,
+                          controlPosition,
+                          activeValue
+                        )
                       );
                     }}
                   >
@@ -298,21 +326,11 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                     buttonType={ButtonType.Destructive}
                     onClick={() => {
                       updateImageDefinition((state) =>
-                        visit(state, (item) => {
-                          if (
-                            isControlDefinition(item) &&
-                            item.name === activeControl
-                          ) {
-                            const updatedControl = {
-                              ...item,
-                              steps: item.steps.map((step) =>
-                                omitKeys(step, [vectorSelected.name])
-                              ),
-                            };
-                            return updatedControl;
-                          }
-                          return undefined;
-                        })
+                        releaseMutationFromControl(
+                          state,
+                          activeControl,
+                          vectorSelected
+                        )
                       );
                     }}
                   >

@@ -14,7 +14,7 @@ import {
   defaultValueForVector,
   mixVec2,
 } from "src/lib/vertices";
-import { isControlDefinition, isMutationVector, visit } from "src/lib/visit";
+import { isMutationVector, visit } from "src/lib/visit";
 import { maxZoomFactor } from "src/lib/webgl";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
@@ -54,7 +54,7 @@ import {
 import ScreenLayout from "../templates/ScreenLayout";
 import ControlInfoPanel from "./ControlInfoPanel";
 import LayerInfoPanel from "./LayerInfoPanel";
-import VectorInfoPanel from "./VectorInfoPanel";
+import VectorInfoPanel, { setMutationUnderControl } from "./VectorInfoPanel";
 
 const MAX_UNIFORM_VERTEX_LIMIT = 512; // Current limit on mobile phones
 
@@ -678,22 +678,13 @@ const Composition: React.VFC<CompositionProps> = ({
             updateVectorValue={(newValue) => {
               if (controlMode) {
                 updateImageDefinition((state) =>
-                  visit(state, (item) => {
-                    if (
-                      isControlDefinition(item) &&
-                      item.name === controlMode.control
-                    ) {
-                      return {
-                        ...item,
-                        steps: item.steps.map((step, index) =>
-                          index === controlModeStep
-                            ? { ...step, [vectorSelected.name]: newValue }
-                            : step
-                        ),
-                      };
-                    }
-                    return undefined;
-                  })
+                  setMutationUnderControl(
+                    state,
+                    controlMode.control,
+                    vectorSelected,
+                    controlModeStep,
+                    newValue
+                  )
                 );
               } else {
                 updateImageDefinition((state) => ({
