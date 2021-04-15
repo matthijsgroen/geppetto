@@ -7,13 +7,13 @@
     "Guido Theelen <guidotheelen@gmail.com> (https://github.com/guidotheelen)"
   ],
   "main": "public/electron/index.js",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-rc.1",
   "private": true,
-  "homepage": "./",
+  "homepage": "https://geppetto.js.org",
   "dependencies": {
     "delaunator": "^5.0.0",
     "electron-is-dev": "^1.2.0",
-    "geppetto-player": "1.0.0-beta.6",
+    "geppetto-player": "1.0.0-rc.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.1",
@@ -30,7 +30,7 @@
     "electron-pack": "electron-builder build --mac --win --linux deb --x64 --arm64 --c.extraMetadata.main=build/electron/index.js -c.mac.identity=null"
   },
   "build": {
-    "appId": "com.example.electron-cra",
+    "appId": "org.js.gepetto.electron-app",
     "files": [
       "build/**/*",
       "build/icon.png",
