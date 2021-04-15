@@ -16,18 +16,36 @@
     <div id="root">
         <canvas id="theatre"></canvas>
     </div>
-    <button>Stop smoke</button>
-    <button>Stop wheel</button>
-    <button>Wink</button>
+    <div class="download" role="dialog">
+      <header><h1 id="version">Version</h1></header>
+      <p>Download the desktop app to create Geppetto Animations:</p>
+      <section>
+        <h2>Windows</h2>
+        <ul id="download-win"></ul>
 
-    <div class="download">
-      <h1 id="version">Version</h1>
-      <h2>Windows</h2>
-      <ul id="download-win"></ul>
-      <h2>Mac</h2>
-      <ul id="download-mac"></ul>
-      <h2>Linux</h2>
-      <ul id="download-linux"></ul>
+        <h2>Mac</h2>
+        <ul id="download-mac"></ul>
+
+        <h2>Linux</h2>
+        <ul id="download-linux"></ul>
+      </section>
+
+      <section>
+        <h3>Online resouces</h3>
+        <ul>
+          <li><a href="https://github.com/matthijsgroen/geppetto/wiki">Manual (Soon™)</a></li>
+          <li><a href="https://github.com/matthijsgroen/geppetto/discussions">Forum</a></li>
+        </ul>
+
+        <h2>Playing animations</h2>
+        <div>
+          <p>Use the Geppetto player library to embed a Geppetto animation in your website:</p>
+          <ul>
+            <li><a href="https://www.npmjs.com/package/geppetto-player">Library on NPM</a></li>
+            <li><a href="https://matthijsgroen.github.io/geppetto-player/">API Documentation</a></li>
+          </ul>
+        </div>
+      </section>
     </div>
 
     <script type="module" src="./index.ts"></script>

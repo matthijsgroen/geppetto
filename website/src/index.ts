@@ -99,46 +99,6 @@ const start = async () => {
   charAnimationControls.startTrack("Eyebrows");
   charAnimationControls.startTrack("HeadTilt");
 
-  const [smokeButton, wheelButton, winkButton] = document.querySelectorAll(
-    "button"
-  );
-
-  let smokePlaying = true;
-  let wheelPlaying = true;
-  wheelButton.addEventListener("click", () => {
-    wheelPlaying = !wheelPlaying;
-    wheelButton.innerText = wheelPlaying ? "Stop wheel" : "Start wheel";
-    if (wheelPlaying) {
-      bgAnimationControl.startTrack("Waterrad");
-      bgAnimationControl.startTrack("Waterrad2");
-    } else {
-      bgAnimationControl.stopTrack("Waterrad");
-      bgAnimationControl.stopTrack("Waterrad2");
-    }
-  });
-
-  smokeButton.addEventListener("click", () => {
-    smokePlaying = !smokePlaying;
-    smokeButton.innerText = smokePlaying ? "Stop smoke" : "Start smoke";
-    if (smokePlaying) {
-      bgAnimationControl.startTrack("Rook");
-    } else {
-      bgAnimationControl.stopTrack("Rook");
-    }
-  });
-
-  charAnimationControls.onTrackStopped((track) => {
-    console.log(`Track ${track} has stopped`);
-    if (track === "Eye wink") {
-      charAnimationControls.startTrack("Eye blink");
-    }
-  });
-
-  winkButton.addEventListener("click", () => {
-    console.log("Start Eye wink");
-    charAnimationControls.startTrack("EyeWink");
-  });
-
   let lookTarget = [0, 0];
   let currentLooking = [0, 0];
   const eyesCentered = [0.145, 0.385];
