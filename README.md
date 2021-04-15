@@ -5,7 +5,7 @@
 Geppetto is a free and open animation tool to embed webGL animations in a web site. This is the repository for the desktop app.
 Made with [Create React App](https://github.com/facebook/create-react-app) and [Electron](https://electronjs.org/).
 
-- [Geppetto demo](https://matthijsgroen.github.io/geppetto/)
+- [Geppetto demo](https://geppetto.js.org/)
 - [Geppetto JavaScript Player library](https://github.com/matthijsgroen/geppetto-player)
 - [Documentation](https://github.com/matthijsgroen/geppetto/wiki)
 - [Discussions](https://github.com/matthijsgroen/geppetto/discussions)
