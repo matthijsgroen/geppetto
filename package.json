@@ -7,13 +7,13 @@
     "Guido Theelen <guidotheelen@gmail.com> (https://github.com/guidotheelen)"
   ],
   "main": "public/electron/index.js",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "private": true,
   "homepage": "https://geppetto.js.org",
   "dependencies": {
     "delaunator": "^5.0.0",
     "electron-is-dev": "^1.2.0",
-    "geppetto-player": "1.0.0-rc.1",
+    "geppetto-player": "1.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.1",
