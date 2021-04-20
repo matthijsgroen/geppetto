@@ -29,7 +29,9 @@ const NumberInputControl: React.VFC<SliderControlProps> = ({
     <NumberInput
       disabled={disabled}
       value={value}
-      onChange={(e) => onChange(e.currentTarget.valueAsNumber)}
+      onChange={(e) =>
+        onChange(e.currentTarget.value ? e.currentTarget.valueAsNumber : 0)
+      }
     />
   </Control>
 );
