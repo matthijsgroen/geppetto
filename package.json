@@ -9,7 +9,7 @@
   "main": "public/electron/index.js",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://geppetto.js.org",
+  "homepage": "./",
   "dependencies": {
     "delaunator": "^5.0.0",
     "electron-is-dev": "^1.2.0",
