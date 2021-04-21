@@ -225,7 +225,7 @@ const Layers: React.VFC<LayersProps> = ({
             <ToolbarButton
               key="copy"
               hint="Copy layer"
-              icon="📄"
+              icon="📝"
               size="small"
               disabled={!(shapeSelected && shapeSelected.type === "sprite")}
               label=""
