@@ -6,6 +6,7 @@ import NumberInputControl from "src/components/NumberInputControl";
 import SliderControl from "src/components/SliderControl";
 import TextInputControl from "src/components/TextInputControl";
 import { TimeContainer } from "src/components/TimeContainer";
+import ToolbarButton from "src/components/ToolbarButton";
 import { omitKeys } from "src/lib/definitionHelpers";
 import { maxZoomFactor } from "src/lib/webgl";
 import MouseControl, { MouseMode } from "../components/MouseControl";
@@ -66,12 +67,18 @@ const Animation: React.VFC<AnimationProps> = ({
 
   const [playStatus, setPlayStatus] = useState<PlayStatus>({});
 
+  const activeAnimation = selectedAnimation
+    ? imageDefinition.animations.find((e) => e.name === selectedAnimation)
+    : null;
+
   const activeFrame =
-    selectedAnimation && selectedFrame !== null
-      ? imageDefinition.animations
-          .find((e) => e.name === selectedAnimation)
-          ?.keyframes.find((f) => f.time === selectedFrame) || null
+    activeAnimation && selectedFrame !== null
+      ? activeAnimation.keyframes.find((f) => f.time === selectedFrame) || null
       : null;
+
+  const animationFrameTimes = activeAnimation
+    ? activeAnimation.keyframes.map((f) => f.time).sort((a, b) => a - b)
+    : [];
 
   const frameControlKeys = Object.keys(activeFrame?.controlValues || {});
   const trackControlKeys = selectedAnimation
@@ -244,16 +251,52 @@ const Animation: React.VFC<AnimationProps> = ({
           ))}
         />,
         <Menu
-          title={"Frame Info"}
+          title="Frame Info"
           key="info"
           collapsable={true}
           size="minimal"
+          toolbarItems={[
+            <ToolbarButton
+              key="previousFrame"
+              hint="Go to previous frame"
+              icon="◀️"
+              label=""
+              size="small"
+              disabled={
+                !activeFrame || activeFrame.time === animationFrameTimes[0]
+              }
+              onClick={async () => {
+                if (activeFrame) {
+                  const index = animationFrameTimes.indexOf(activeFrame.time);
+                  setSelectedFrame(animationFrameTimes[index - 1]);
+                }
+              }}
+            />,
+            <ToolbarButton
+              key="nextFrame"
+              hint="Go to next frame"
+              icon="▶️"
+              label=""
+              size="small"
+              disabled={
+                !activeFrame ||
+                activeFrame.time ===
+                  animationFrameTimes[animationFrameTimes.length - 1]
+              }
+              onClick={async () => {
+                if (activeFrame) {
+                  const index = animationFrameTimes.indexOf(activeFrame.time);
+                  setSelectedFrame(animationFrameTimes[index + 1]);
+                }
+              }}
+            />,
+          ]}
           items={
             activeFrame
               ? [
                   <NumberInputControl
-                    key={"time"}
-                    title={"time"}
+                    key="time"
+                    title="time"
                     value={activeFrame.time}
                     onChange={(newValue) => {
                       updateFrame((f) => ({
@@ -264,8 +307,8 @@ const Animation: React.VFC<AnimationProps> = ({
                     }}
                   />,
                   <TextInputControl
-                    key={"event"}
-                    title={"event"}
+                    key="event"
+                    title="event"
                     value={activeFrame.event || ""}
                     onChange={(newValue) => {
                       updateFrame((f) =>
