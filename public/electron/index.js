@@ -1,4 +1,3 @@
-// eslint-env node
 const { app, BrowserWindow, Menu, dialog } = require("electron");
 const {
   readFile: readFileCallback,
