@@ -1,10 +1,15 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
 body {
   background-color: black;
   color: #eee;
 }
 
 canvas {
-  border: 1px solid #eee;
   width: 100%;
 }
 
