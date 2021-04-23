@@ -16,7 +16,7 @@ const MainSection = styled.section`
 `;
 
 const MovingLineContainer = styled.div`
-  height: 200px;
+  height: 220px;
   position: relative;
   overflow: hidden;
 `;
@@ -27,7 +27,7 @@ const MovingLine = styled.div.attrs<{ at: number; scale: number }>((props) => ({
   },
 }))<{ at: number; scale: number }>`
   position: absolute;
-  height: 200px;
+  height: 220px;
   border-left: 2px solid white;
   z-index: 4;
   pointer-events: none;
@@ -36,6 +36,7 @@ const MovingLine = styled.div.attrs<{ at: number; scale: number }>((props) => ({
 const TimeLineOuterContainer = styled.div`
   width: calc(100vw - 42px);
   height: 200px;
+  padding-bottom: 20px;
   overflow: auto;
 `;
 
