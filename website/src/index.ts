@@ -1,9 +1,10 @@
 import { setupWebGL, prepareAnimation, ImageDefinition } from "geppetto-player";
-import backgroundImage from "url:./assets/landscape.png";
-import backgroundAnimationData from "./assets/landscape.json";
+import backgroundImage from "url:./assets/scenery.png";
+import backgroundAnimationData from "./assets/scenery.json";
 import characterImage from "url:./assets/lady.png";
 import characterAnimationData from "./assets/lady.json";
 import { version } from "../package.json";
+import { captureRejectionSymbol } from "node:events";
 
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
 const player = setupWebGL(canvas);
@@ -64,7 +65,7 @@ const start = async () => {
   );
   const bgAnimationControl = player.addAnimation(preppedBgAnim, bgTexture, 0, {
     zoom: 2.0,
-    panX: 0.13,
+    panX: 0,
   });
 
   const charTexture = await loadTexture(characterImage);
@@ -77,7 +78,7 @@ const start = async () => {
     1,
     {
       zoom: 2.4,
-      panX: -0.25,
+      panX: -0.3,
       panY: 0.1,
       zIndex: 2,
     }
@@ -87,87 +88,210 @@ const start = async () => {
   canvas.width = box.width * window.devicePixelRatio;
   canvas.height = box.height * window.devicePixelRatio;
 
-  bgAnimationControl.startTrack("Waterrad");
-  bgAnimationControl.startTrack("Waterrad2");
-  bgAnimationControl.startTrack("Rook");
-  bgAnimationControl.startTrack("Wolken");
-  bgAnimationControl.startTrack("Riet");
-  bgAnimationControl.startTrack("Water");
+  bgAnimationControl.startTrack("Wheel");
+  bgAnimationControl.startTrack("WheelBlades");
+  bgAnimationControl.startTrack("Tree");
+  bgAnimationControl.startTrack("Bird");
+  bgAnimationControl.startTrack("Cloud1", { speed: 0.03 });
+  bgAnimationControl.startTrack("Cloud2", { speed: 0.025 });
+  bgAnimationControl.startTrack("Cloud3", { speed: 0.03 });
+  bgAnimationControl.startTrack("Eyes");
+  bgAnimationControl.startTrack("Smoke");
 
   charAnimationControls.startTrack("Eye blink");
   charAnimationControls.startTrack("Talking");
   charAnimationControls.startTrack("Eyebrows");
   charAnimationControls.startTrack("HeadTilt");
 
-  let lookTarget = [0, 0];
-  let currentLooking = [0, 0];
-  const eyesCentered = [0.145, 0.385];
+  let tweens: { name: string; ticker: () => void }[] = [];
 
-  const LOOK_KEEP_POSITION = 180;
+  type TweenCreator = (
+    name: string,
+    source: number,
+    target: number,
+    speed: number,
+    applier: (value: number) => void
+  ) => Promise<void>;
 
-  let resetFrames = 0;
-  canvas.addEventListener("click", (event) => {
-    const box = canvas.getBoundingClientRect();
-    const position = [event.x / box.width, event.y / box.height];
-    lookTarget = [
-      Math.min(1, Math.max(-1, (position[0] - eyesCentered[0]) / 0.4)),
-      Math.min(1, Math.max(-1, (position[1] - eyesCentered[1]) / 0.4)),
-    ];
-    resetFrames = LOOK_KEEP_POSITION;
-  });
+  const cleanTicker = (name: string) => {
+    tweens = tweens.filter((e) => e.name !== name);
+  };
 
-  const speed = 0.025;
+  const animationTween: TweenCreator = (name, source, target, speed, applier) =>
+    new Promise((resolve) => {
+      cleanTicker(name);
+      let current = source;
+      const ticker = () => {
+        if (current === target) {
+          cleanTicker(name);
+          resolve();
+        } else {
+          if (current < target) {
+            current += Math.min(speed, target - current);
+          } else {
+            current -= Math.min(speed, current - target);
+          }
+        }
+        applier(current);
+      };
+      tweens = tweens.concat({ name, ticker });
+    });
+
+  const delayFrames = (name: string, frames: number): Promise<void> =>
+    new Promise((resolve) => {
+      cleanTicker(name);
+      let current = frames;
+
+      const ticker = () => {
+        if (current === 0) {
+          cleanTicker(name);
+          resolve();
+        } else {
+          current--;
+        }
+      };
+      tweens = tweens.concat({ name, ticker });
+    });
+
+  const butterFly = async () => {
+    const flySpeed = 0.0025;
+    const zoomSpeed = 0.025;
+    const REST_TOADSTOOL = {
+      x: 0.72,
+      y: 0.87,
+      z: 0.8,
+    };
+
+    const REST_STUMP = {
+      x: 0.51,
+      y: 0.29,
+      z: 0.95,
+    };
+
+    const current = {
+      ...REST_TOADSTOOL,
+    };
+
+    bgAnimationControl.setControlValue("ButterflyX", current.x);
+    bgAnimationControl.setControlValue("ButterflyY", current.y);
+    bgAnimationControl.setControlValue("ButterflyZoom", current.z);
+
+    bgAnimationControl.startTrack("ButterflyWings", { speed: 0.2 });
+    await delayFrames("bfParked", 320);
+
+    const flyTo = (x: number, y: number, z: number) => {
+      bgAnimationControl.startTrack("ButterflyWings");
+      if (x < current.x) {
+        bgAnimationControl.setControlValue("ButterflyTurn", 0);
+      } else {
+        bgAnimationControl.setControlValue("ButterflyTurn", 1);
+      }
+      return Promise.all([
+        animationTween("ButterflyX", current.x, x, flySpeed, (value) => {
+          current.x = value;
+          bgAnimationControl.setControlValue("ButterflyX", value);
+        }),
+        animationTween("ButterflyY", current.y, y, flySpeed, (value) => {
+          current.y = value;
+          bgAnimationControl.setControlValue("ButterflyY", value);
+        }),
+        animationTween("ButterflyZoom", current.z, z, zoomSpeed, (value) => {
+          current.z = value;
+          bgAnimationControl.setControlValue("ButterflyZoom", value);
+        }),
+      ]);
+    };
+
+    const flyToRandom = () => {
+      const distance = Math.random() * 0.3;
+      let xPos = Math.random() > 0.5 ? 1 : -1;
+      let yPos = Math.random() > 0.5 ? 1 : -1;
+      if (current.x + xPos * distance > 1 || current.x + xPos * distance < 0) {
+        xPos *= -1;
+      }
+      if (current.y + yPos * distance > 1 || current.y + yPos * distance < 0) {
+        yPos *= -1;
+      }
+
+      const x = current.x + xPos * distance;
+      const y = current.y + yPos * distance;
+      const z = Math.min(Math.max(current.z + Math.random() * distance, 0), 1);
+      return flyTo(x, y, z);
+    };
+
+    while (true) {
+      const destination = Math.random();
+      if (destination > 0.95) {
+        await flyTo(REST_TOADSTOOL.x, REST_TOADSTOOL.y, REST_TOADSTOOL.z);
+        bgAnimationControl.startTrack("ButterflyWings", { speed: 0.2 });
+        await delayFrames("bfParked", 320);
+      } else if (destination < 0.05) {
+        await flyTo(REST_STUMP.x, REST_STUMP.y, REST_STUMP.z);
+        bgAnimationControl.startTrack("ButterflyWings", { speed: 0.2 });
+        await delayFrames("bfParked", 320);
+      } else {
+        await flyToRandom();
+      }
+    }
+  };
+
+  const girlEyes = () => {
+    let currentLooking = [0, 0];
+    const eyesCentered = [0.145, 0.388];
+    const LOOK_KEEP_POSITION = 180;
+    const eyeSpeed = 0.025;
+
+    const lookAt = (x: number, y: number): Promise<void> =>
+      Promise.all([
+        animationTween("eye-X", currentLooking[0], x, eyeSpeed, (value) => {
+          currentLooking[0] = value;
+          charAnimationControls.setControlValue("RightEye-x", value + 1.0);
+          charAnimationControls.setControlValue("LeftEye-x", value + 1.0);
+          charAnimationControls.setControlValue(
+            "HeadTurn",
+            1.0 - (value + 1.0) * 0.5
+          );
+        }),
+        animationTween("eye-Y", currentLooking[1], y, eyeSpeed, (value) => {
+          currentLooking[1] = value;
+          charAnimationControls.setControlValue(
+            "RightEye-y",
+            (value + 1.0) * 0.5
+          );
+          charAnimationControls.setControlValue(
+            "LeftEye-y",
+            (value + 1.0) * 0.5
+          );
+        }),
+      ]).then(() => {});
+
+    canvas.addEventListener("click", async (event) => {
+      const box = canvas.getBoundingClientRect();
+      const position = [event.x / box.width, event.y / box.height];
+      const x = Math.min(
+        1,
+        Math.max(-1, (position[0] - eyesCentered[0]) / 0.4)
+      );
+      const y = Math.min(
+        1,
+        Math.max(-1, (position[1] - eyesCentered[1]) / 0.4)
+      );
+      cleanTicker("resetDelay");
+      await lookAt(x, y);
+      await delayFrames("resetDelay", LOOK_KEEP_POSITION);
+      await lookAt(0, -0.1);
+    });
+
+    lookAt(0, -0.1);
+  };
+
+  girlEyes();
+  butterFly();
 
   const renderFrame = () => {
-    if (currentLooking[0] !== lookTarget[0]) {
-      if (currentLooking[0] < lookTarget[0]) {
-        currentLooking[0] += Math.min(speed, lookTarget[0] - currentLooking[0]);
-      } else {
-        currentLooking[0] -= Math.min(speed, currentLooking[0] - lookTarget[0]);
-      }
+    for (const tween of tweens) {
+      tween.ticker();
     }
-    if (currentLooking[1] !== lookTarget[1]) {
-      if (currentLooking[1] < lookTarget[1]) {
-        currentLooking[1] += Math.min(speed, lookTarget[1] - currentLooking[1]);
-      } else {
-        currentLooking[1] -= Math.min(speed, currentLooking[1] - lookTarget[1]);
-      }
-    }
-    if (
-      resetFrames === LOOK_KEEP_POSITION &&
-      currentLooking[0] === lookTarget[0] &&
-      currentLooking[1] === lookTarget[1] &&
-      lookTarget[0] !== 0 &&
-      lookTarget[1] !== 0
-    ) {
-      resetFrames--;
-    }
-
-    if (resetFrames < LOOK_KEEP_POSITION) {
-      resetFrames--;
-      if (resetFrames < 0) {
-        lookTarget = [0, 0];
-      }
-    }
-
-    charAnimationControls.setControlValue(
-      "RightEye-x",
-      currentLooking[0] + 1.0
-    );
-    charAnimationControls.setControlValue("LeftEye-x", currentLooking[0] + 1.0);
-
-    charAnimationControls.setControlValue(
-      "HeadTurn",
-      1.0 - (currentLooking[0] + 1.0) * 0.5
-    );
-    charAnimationControls.setControlValue(
-      "RightEye-y",
-      (currentLooking[1] + 1.0) * 0.5
-    );
-    charAnimationControls.setControlValue(
-      "LeftEye-y",
-      (currentLooking[1] + 1.0) * 0.5
-    );
 
     player.render();
     bgAnimationControl.render();
