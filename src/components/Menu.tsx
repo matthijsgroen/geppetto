@@ -5,7 +5,8 @@ import { Toolbar } from "./Toolbar";
 interface MenuProps {
   title: string;
   items: React.ReactElement | React.ReactElement[];
-  size?: "default" | "large" | "minimal";
+  size?: "default" | "large" | "minimal" | "max";
+  maxHeight?: number;
   toolbarItems?: React.ReactElement | React.ReactElement[];
   collapsable?: boolean;
 }
@@ -21,15 +22,21 @@ const MenuHeaderContainer = styled.header`
 const MenuContainer = styled.div<{
   collapsed: boolean;
   size: MenuProps["size"];
+  maxHeight: MenuProps["maxHeight"];
 }>`
   background-color: ${({ theme }) => theme.colors.itemContainerBackground};
   width: 100%;
   box-sizing: border-box;
   padding: 0 2px;
   flex: ${({ size }) =>
-    size === "large" ? 2 : size === "minimal" ? "0 0 auto" : 1};
+    size === "large"
+      ? 2
+      : size === "minimal" || size === "max"
+      ? "0 0 auto"
+      : 1};
   overflow: auto;
-  max-height: ${({ collapsed }) => (collapsed ? "0" : "100vh")};
+  max-height: ${({ collapsed, size, maxHeight }) =>
+    collapsed ? "0" : size === "max" ? `${maxHeight}px` : "100vh"};
 `;
 
 const MenuHeader = styled.div`
@@ -76,6 +83,7 @@ const Menu: React.VFC<MenuProps> = ({
   title,
   items,
   size = "default",
+  maxHeight,
   toolbarItems = [],
   collapsable,
 }) => {
@@ -98,7 +106,7 @@ const Menu: React.VFC<MenuProps> = ({
           <Toolbar>{toolbarItems}</Toolbar>
         )}
       </MenuHeaderContainer>
-      <MenuContainer collapsed={collapsed} size={size}>
+      <MenuContainer collapsed={collapsed} size={size} maxHeight={maxHeight}>
         {items}
       </MenuContainer>
     </>

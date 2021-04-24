@@ -546,7 +546,8 @@ const Composition: React.VFC<CompositionProps> = ({
           title="Controls"
           key="controls"
           collapsable={true}
-          size="minimal"
+          size="max"
+          maxHeight={250}
           toolbarItems={[
             <ToolbarButton
               key="1"

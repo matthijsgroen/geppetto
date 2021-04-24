@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Number fields that are emptied crashed the application
 - Provided more clear 'icon' for the copy layer action
 
+### Changed
+
+- Set maximum height for control list
+
 ### Added
 
 - Ability to move from frame to frame in the animation screen
