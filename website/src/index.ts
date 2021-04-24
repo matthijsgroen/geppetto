@@ -4,7 +4,6 @@ import backgroundAnimationData from "./assets/scenery.json";
 import characterImage from "url:./assets/lady.png";
 import characterAnimationData from "./assets/lady.json";
 import { version } from "../package.json";
-import { captureRejectionSymbol } from "node:events";
 
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
 const player = setupWebGL(canvas);
@@ -92,9 +91,9 @@ const start = async () => {
   bgAnimationControl.startTrack("WheelBlades");
   bgAnimationControl.startTrack("Tree");
   bgAnimationControl.startTrack("Bird");
-  bgAnimationControl.startTrack("Cloud1", { speed: 0.03 });
-  bgAnimationControl.startTrack("Cloud2", { speed: 0.025 });
-  bgAnimationControl.startTrack("Cloud3", { speed: 0.03 });
+  bgAnimationControl.startTrack("Cloud1", { speed: 0.15 });
+  bgAnimationControl.startTrack("Cloud2", { speed: 0.1 });
+  bgAnimationControl.startTrack("Cloud3", { speed: 0.15 });
   bgAnimationControl.startTrack("Eyes");
   bgAnimationControl.startTrack("Smoke");
 
