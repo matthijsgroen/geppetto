@@ -205,6 +205,8 @@ function createWindow() {
     show: false,
     webPreferences: {
       preload: join(__dirname, "preload.js"),
+      webgl: true,
+      enableWebSQL: false,
     },
   });
   win.setFullScreenable(false);
