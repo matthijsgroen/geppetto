@@ -4,12 +4,12 @@
   "description": "Geppetto is a free and open animation tool to embed webGL animations in a web site.",
   "main": "../docs/lnl/index.html",
   "author": "Matthijs Groen <matthijs.groen@gmail.com> (https://github.com/matthijsgroen)",
-  "homepage": "https://geppetto.js.org",
+  "homepage": "https://geppetto.js.org/",
   "license": "MIT",
   "private": true,
   "scripts": {
     "start": "parcel serve ./src/index.html",
-    "build": "parcel build ./src/index.html --no-content-hash"
+    "build": "parcel build ./src/index.html --no-content-hash  --public-url /lnl/"
   },
   "devDependencies": {
     "@parcel/transformer-image": "2.0.0-beta.2",
