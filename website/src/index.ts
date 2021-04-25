@@ -1,8 +1,7 @@
 import { setupWebGL, prepareAnimation, ImageDefinition } from "geppetto-player";
 import backgroundImage from "url:./assets/scenery.png";
 import backgroundAnimationData from "./assets/scenery.json";
-import characterImage from "url:./assets/lady.png";
-import characterAnimationData from "./assets/lady.json";
+// import characterImage from "url:./assets/lady.png"; import characterAnimationData from "./assets/lady.json";
 import { version } from "../package.json";
 
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
@@ -73,21 +72,21 @@ const start = async () => {
       }
     );
 
-    const charTexture = await loadTexture(characterImage);
-    const preppedCharAnim = prepareAnimation(
-      (characterAnimationData as unknown) as ImageDefinition
-    );
-    const charAnimationControls = player.addAnimation(
-      preppedCharAnim,
-      charTexture,
-      1,
-      {
-        zoom: 2.4,
-        panX: -0.3,
-        panY: 0.1,
-        zIndex: 2,
-      }
-    );
+    // const charTexture = await loadTexture(characterImage);
+    // const preppedCharAnim = prepareAnimation(
+    //   (characterAnimationData as unknown) as ImageDefinition
+    // );
+    // const charAnimationControls = player.addAnimation(
+    //   preppedCharAnim,
+    //   charTexture,
+    //   1,
+    //   {
+    //     zoom: 2.4,
+    //     panX: -0.3,
+    //     panY: 0.1,
+    //     zIndex: 2,
+    //   }
+    // );
 
     const box = canvas.getBoundingClientRect();
     canvas.width = box.width * window.devicePixelRatio;
@@ -104,10 +103,10 @@ const start = async () => {
     bgAnimationControl.startTrack("Smoke");
     bgAnimationControl.startTrack("Water");
 
-    charAnimationControls.startTrack("Eye blink");
-    charAnimationControls.startTrack("Talking");
-    charAnimationControls.startTrack("Eyebrows");
-    charAnimationControls.startTrack("HeadTilt");
+    // charAnimationControls.startTrack("Eye blink");
+    // charAnimationControls.startTrack("Talking");
+    // charAnimationControls.startTrack("Eyebrows");
+    // charAnimationControls.startTrack("HeadTilt");
 
     let tweens: { name: string; ticker: () => void }[] = [];
 
@@ -266,6 +265,7 @@ const start = async () => {
       }
     };
 
+    /*
     const girlEyes = () => {
       let currentLooking = [0, 0];
       const eyesCentered = [0.145, 0.388];
@@ -315,8 +315,9 @@ const start = async () => {
 
       lookAt(0, -0.1);
     };
+    */
 
-    girlEyes();
+    // girlEyes();
     butterFly();
 
     const renderFrame = () => {
@@ -326,7 +327,7 @@ const start = async () => {
 
       player.render();
       bgAnimationControl.render();
-      charAnimationControls.render();
+      // charAnimationControls.render();
       window.requestAnimationFrame(renderFrame);
     };
 
