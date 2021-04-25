@@ -4,6 +4,17 @@ import backgroundAnimationData from "./assets/scenery.json";
 // import characterImage from "url:./assets/lady.png"; import characterAnimationData from "./assets/lady.json";
 import { version } from "../package.json";
 
+const writeError = (text: string) => {
+  const box = document.getElementById("errorBox");
+  const el = document.createElement("p");
+  el.textContent = e.message;
+  box.appendChild(el);
+};
+
+document.addEventListener("error", (e) => {
+  writeError(e.message);
+});
+
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
 const player = setupWebGL(canvas);
 
@@ -333,7 +344,7 @@ const start = async () => {
 
     window.requestAnimationFrame(renderFrame);
   } catch (e) {
-    document.write("Error", e.message);
+    writeError(e.message);
   }
 };
 
