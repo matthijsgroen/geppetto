@@ -96,6 +96,7 @@ const start = async () => {
   bgAnimationControl.startTrack("Cloud3", { speed: 0.15 });
   bgAnimationControl.startTrack("Eyes");
   bgAnimationControl.startTrack("Smoke");
+  bgAnimationControl.startTrack("Water");
 
   charAnimationControls.startTrack("Eye blink");
   charAnimationControls.startTrack("Talking");
