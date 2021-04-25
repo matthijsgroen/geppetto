@@ -662,12 +662,20 @@ export const renameControl = (
   image: ImageDefinition,
   currentName: string,
   newName: string
-): ImageDefinition =>
-  visit(image, (item) =>
+): ImageDefinition => ({
+  ...visit(image, (item) =>
     isControlDefinition(item) && item.name === currentName
       ? { ...item, name: newName }
       : undefined
-  );
+  ),
+  animations: image.animations.map((anim) => ({
+    ...anim,
+    keyframes: anim.keyframes.map((frame) => ({
+      ...frame,
+      controlValues: renameKey(frame.controlValues, currentName, newName),
+    })),
+  })),
+});
 
 const addRemovePointToShape = (
   shapes: ShapeDefinition[],

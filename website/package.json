@@ -16,7 +16,7 @@
     "parcel": "^2.0.0-beta.2"
   },
   "dependencies": {
-    "geppetto-player": "^1.0.0"
+    "geppetto-player": "^1.1.0"
   },
   "browserslist": [
     "defaults",
