@@ -336,5 +336,5 @@ const start = async () => {
   }
 };
 
-start();
 populateDownloadLinks();
+start();
