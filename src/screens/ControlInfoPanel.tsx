@@ -2,6 +2,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import Menu from "src/components/Menu";
 import SelectControl, { Option } from "src/components/SelectControl";
 import SliderControl from "src/components/SliderControl";
+import { updateValue } from "src/lib/definitionHelpers";
 import { ControlDefinition, ImageDefinition } from "src/lib/types";
 import { isControlDefinition, visit } from "src/lib/visit";
 
@@ -35,19 +36,28 @@ const ControlInfoPanel: React.VFC<ControlInfoPanelProps> = ({
         key="frames"
         title="Steps"
         value={controlSelected.steps.length}
-        options={createOptions(20)}
+        options={createOptions(10)}
         onChange={(selected) => {
           updateImageDefinition((image) =>
             visit(
               {
                 ...image,
-                controlValues: {
-                  ...image.controlValues,
-                  [controlSelected.name]: Math.min(
-                    image.controlValues[controlSelected.name],
-                    selected.value - 1
-                  ),
-                },
+                controlValues: updateValue(
+                  image.controlValues,
+                  controlSelected.name,
+                  (value: number) => Math.min(value, selected.value - 1)
+                ),
+                animations: image.animations.map((anim) => ({
+                  ...anim,
+                  keyframes: anim.keyframes.map((frame) => ({
+                    ...frame,
+                    controlValues: updateValue(
+                      frame.controlValues,
+                      controlSelected.name,
+                      (value: number) => Math.min(value, selected.value - 1)
+                    ),
+                  })),
+                })),
               },
               (node) => {
                 if (

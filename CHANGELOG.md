@@ -12,10 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Number fields that are emptied crashed the application
 - Provided more clear 'icon' for the copy layer action
 - Renaming control did not update control used in animation frames
+- Reducing steps of control did not reduce control values used in animations
 
 ### Changed
 
 - Set maximum height for control list
+- Set maximum steps for control to 10 (was 20)
 
 ### Added
 

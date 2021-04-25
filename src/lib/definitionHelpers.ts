@@ -15,7 +15,7 @@ import {
   visit,
 } from "./visit";
 
-const renameKey = <T extends Record<string, unknown>>(
+export const renameKey = <T extends Record<string, unknown>>(
   object: T,
   currentName: string,
   newName: string
@@ -25,6 +25,21 @@ const renameKey = <T extends Record<string, unknown>>(
         (result, [key, value]) =>
           key === currentName
             ? { ...result, [newName]: value }
+            : { ...result, [key]: value },
+        {} as T
+      )
+    : object;
+
+export const updateValue = <H, T extends Record<string, H>>(
+  object: T,
+  name: string,
+  mutator: (value: H) => H
+): T =>
+  Object.keys(object).includes(name)
+    ? Object.entries(object).reduce(
+        (result, [key, value]) =>
+          key === name
+            ? { ...result, [key]: mutator(value) }
             : { ...result, [key]: value },
         {} as T
       )
