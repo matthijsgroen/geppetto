@@ -177,9 +177,13 @@ const start = async () => {
 
     bgAnimationControl.startTrack("ButterflyWings", { speed: 0.2 });
     await delayFrames("bfParked", 320);
+    let isFlying = false;
 
     const flyTo = (x: number, y: number, z: number) => {
-      bgAnimationControl.startTrack("ButterflyWings");
+      if (!isFlying) {
+        bgAnimationControl.startTrack("ButterflyWings");
+        isFlying = true;
+      }
       if (x < current.x) {
         bgAnimationControl.setControlValue("ButterflyTurn", 0);
       } else {
@@ -222,11 +226,17 @@ const start = async () => {
       const destination = Math.random();
       if (destination > 0.95) {
         await flyTo(REST_TOADSTOOL.x, REST_TOADSTOOL.y, REST_TOADSTOOL.z);
-        bgAnimationControl.startTrack("ButterflyWings", { speed: 0.2 });
+        if (isFlying) {
+          bgAnimationControl.startTrack("ButterflyWings", { speed: 0.2 });
+          isFlying = false;
+        }
         await delayFrames("bfParked", 320);
       } else if (destination < 0.05) {
         await flyTo(REST_STUMP.x, REST_STUMP.y, REST_STUMP.z);
-        bgAnimationControl.startTrack("ButterflyWings", { speed: 0.2 });
+        if (isFlying) {
+          bgAnimationControl.startTrack("ButterflyWings", { speed: 0.2 });
+          isFlying = false;
+        }
         await delayFrames("bfParked", 320);
       } else {
         await flyToRandom();
