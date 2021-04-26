@@ -21,23 +21,23 @@ const player = setupWebGL(canvas);
 
 const BASE_URL = `https://github.com/matthijsgroen/geppetto/releases/download/${version}`;
 const BUILDS = [
-  { platform: "mac", arch: "x64", filename: `Geppetto-${version}-mac.dmg` },
+  { platform: "Mac", arch: "x64", filename: `Geppetto-${version}-mac.dmg` },
   {
-    platform: "mac",
+    platform: "Mac",
     arch: "arm64",
     filename: `Geppetto-${version}-arm64-mac.dmg`,
   },
   {
-    platform: "win",
+    platform: "Windows",
     filename: `Geppetto.Setup.${version}.exe`,
   },
   {
-    platform: "linux",
+    platform: "Linux",
     arch: "amd64",
     filename: `geppetto_${version}_amd64.deb`,
   },
   {
-    platform: "linux",
+    platform: "Linux",
     arch: "arm64",
     filename: `geppetto_${version}_arm64.deb`,
   },
@@ -49,11 +49,11 @@ const populateDownloadLinks = () => {
 
   BUILDS.forEach((build) => {
     const downloadList = document.getElementById(
-      `download-${build.platform}`
+      `download-${build.platform.toLocaleLowerCase()}`
     ) as HTMLParagraphElement;
     const link = document.createElement("a");
     link.setAttribute("href", `${BASE_URL}/${build.filename}`);
-    link.innerText = `Download ${build.arch || build.platform} version`;
+    link.innerText = `⬇ ${build.arch || build.platform} version`;
     const listItem = document.createElement("li");
     listItem.appendChild(link);
     downloadList.appendChild(listItem);
