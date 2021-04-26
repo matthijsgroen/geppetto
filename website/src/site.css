@@ -36,8 +36,11 @@ canvas {
 }
 
 .download ul {
-  margin-left: 1.2rem;
-  padding-left: 0;
+  margin-left: 0;
+  padding-left: 20px;
+}
+.download ul li::marker {
+  content: attr(data-marker) " ";
 }
 
 a {

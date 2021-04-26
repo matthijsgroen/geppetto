@@ -45,7 +45,7 @@ const BUILDS = [
 
 const populateDownloadLinks = () => {
   const title = document.getElementById("version") as HTMLHeadingElement;
-  title.innerText = `Version ${version}`;
+  title.innerText = `Geppetto ${version}`;
 
   BUILDS.forEach((build) => {
     const downloadList = document.getElementById(
@@ -53,8 +53,9 @@ const populateDownloadLinks = () => {
     ) as HTMLParagraphElement;
     const link = document.createElement("a");
     link.setAttribute("href", `${BASE_URL}/${build.filename}`);
-    link.innerText = `⬇ ${build.arch || build.platform} version`;
+    link.innerText = `${build.arch || build.platform} version`;
     const listItem = document.createElement("li");
+    listItem.setAttribute("data-marker", "⬇");
     listItem.appendChild(link);
     downloadList.appendChild(listItem);
   });
