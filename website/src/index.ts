@@ -104,6 +104,12 @@ const start = async () => {
     canvas.width = box.width * window.devicePixelRatio;
     canvas.height = box.height * window.devicePixelRatio;
 
+    window.addEventListener("resize", () => {
+      const box = canvas.getBoundingClientRect();
+      canvas.width = box.width * window.devicePixelRatio;
+      canvas.height = box.height * window.devicePixelRatio;
+    });
+
     bgAnimationControl.startTrack("Wheel");
     bgAnimationControl.startTrack("WheelBlades");
     bgAnimationControl.startTrack("Tree");
