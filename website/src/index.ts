@@ -91,7 +91,7 @@ const start = async () => {
     );
     const innKeeperDistance = {
       zoom: 0.26,
-      panX: -2.0,
+      panX: -2.1,
       panY: -0.5,
       zIndex: 2,
     };
@@ -105,7 +105,7 @@ const start = async () => {
       preppedCharAnim,
       charTexture,
       1,
-      innKeeperClose
+      innKeeperDistance
     );
 
     const box = canvas.getBoundingClientRect();
@@ -129,9 +129,9 @@ const start = async () => {
     bgAnimationControl.startTrack("Smoke");
     bgAnimationControl.startTrack("Water");
 
+    let inkeeperInDistance = true;
+
     charAnimationControls.startTrack("Eye blink");
-    charAnimationControls.startTrack("Talking");
-    charAnimationControls.startTrack("Eyebrows");
     charAnimationControls.startTrack("HeadTilt");
 
     let tweens: { name: string; ticker: () => void }[] = [];
@@ -324,6 +324,26 @@ const start = async () => {
       canvas.addEventListener("click", async (event) => {
         const box = canvas.getBoundingClientRect();
         const position = [event.x / box.width, event.y / box.height];
+
+        if (
+          position[0] > 0.203 &&
+          position[0] < 0.263 &&
+          position[1] > 0.458 &&
+          position[1] < 0.706 &&
+          inkeeperInDistance
+        ) {
+          charAnimationControls.setZoom(innKeeperClose.zoom);
+          charAnimationControls.setPanning(
+            innKeeperClose.panX,
+            innKeeperClose.panY
+          );
+          await delayFrames("startTalking", 240);
+          charAnimationControls.startTrack("Talking");
+          charAnimationControls.startTrack("Eyebrows");
+          inkeeperInDistance = false;
+          return;
+        }
+
         const x = Math.min(
           1,
           Math.max(-1, (position[0] - eyesCentered[0]) / 0.4)
