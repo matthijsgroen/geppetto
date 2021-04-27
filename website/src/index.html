@@ -5,11 +5,21 @@
     <title>Geppetto - Create 2D WebGL Animations</title>
     <link rel="stylesheet" type="text/css" href="./site.css" />
     <link rel="shortcut icon" type="image/png" href="./assets/logo192.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Geppetto" />
+    <meta
+      name="twitter:description"
+      content="Geppetto is a free and open animation tool to embed WebGL animations in a website."
+    />
+    <meta name="twitter:creator" content="@matthijsgroen" />
+    <meta name="twitter:image" content="./assets/static-image.jpg" />
+    <meta name="twitter:image:src" content="./assets/static-image.jpg" />
     <meta
       name="description"
       content="Geppetto is a free and open animation tool to embed WebGL animations in a website."
     />
     <meta property="og:title" content="Geppetto" />
+    <meta property="og:image" content="./assets/static-image.jpg" />
     <meta
       property="og:description"
       content="Geppetto is a free and open animation tool to embed WebGL animations in a website."
@@ -21,7 +31,9 @@
   <body>
     <div id="errorBox"></div>
     <div id="root">
-      <canvas id="theatre"></canvas>
+      <canvas id="theatre">
+        <img src="./assets/static-image.jpg" width="100%" />
+      </canvas>
     </div>
     <div class="download" role="dialog">
       <header><h1 id="version">Geppetto</h1></header>

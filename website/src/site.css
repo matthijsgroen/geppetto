@@ -12,6 +12,8 @@ body {
 
 canvas {
   width: 100%;
+  background: url("./assets/static-image.jpg");
+  background-size: cover;
 }
 
 .download {
