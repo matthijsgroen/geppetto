@@ -4383,15 +4383,10 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001157:
-  version "1.0.30001159"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001159.tgz#bebde28f893fa9594dadcaa7d6b8e2aa0299df20"
-  integrity sha512-w9Ph56jOsS8RL20K9cLND3u/+5WASWdhC/PPrf+V3/HsM3uHOavWOR1Xzakbv4Puo/srmPHudkmCRWM7Aq+/UA==
-
-caniuse-lite@^1.0.30001181:
-  version "1.0.30001208"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001208.tgz#a999014a35cebd4f98c405930a057a0d75352eb9"
-  integrity sha512-OE5UE4+nBOro8Dyvv0lfx+SRtfVIOM9uhKqFmJeUbGriqhhStgp1A0OyBpgy3OUF8AhYCT+PVwPC1gMl2ZcQMA==
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001125, caniuse-lite@^1.0.30001157, caniuse-lite@^1.0.30001181:
+  version "1.0.30001216"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001216.tgz"
+  integrity sha512-1uU+ww/n5WCJRwUcc9UH/W6925Se5aNnem/G5QaSDga2HzvjYMs8vRbekGUN/PnTZ7ezTHcxxTEb9fgiMYwH6Q==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -6920,10 +6915,10 @@ gensync@^1.0.0-beta.1:
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
   integrity sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==
 
-geppetto-player@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/geppetto-player/-/geppetto-player-1.0.0.tgz#f5ec7507b34c1761e963b4a074cfc45dc3e6feed"
-  integrity sha512-471HocMosBLa0l9u/PGtb2OItQs/rXRIkg9Oo8Q2rlKFERtid3i73cOar76EqVlY12QITds0PtRTaH8TkTGY4A==
+geppetto-player@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/geppetto-player/-/geppetto-player-1.1.0.tgz#08effbdbaa8e18f7f341e0ecf9c414ee25e3759e"
+  integrity sha512-1glLKtrJ8nt/bsSrFtqScZuvAmjDNLtgPmAXSCQ0lqiOkaT4gMc/Bzk7YjGBv8unGmLItQ0d5GScQg3qjA/SeA==
   dependencies:
     delaunator "^4.0.1"
 
