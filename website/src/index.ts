@@ -1,8 +1,8 @@
 import { setupWebGL, prepareAnimation, ImageDefinition } from "geppetto-player";
 import backgroundImage from "url:./assets/scenery.png";
 import backgroundAnimationData from "./assets/scenery.json";
-import characterImage from "url:./assets/lady.png";
-import characterAnimationData from "./assets/lady.json";
+import characterImage from "url:./assets/innkeeper.png";
+import characterAnimationData from "./assets/innkeeper.json";
 import { version } from "../package.json";
 
 const writeError = (text: string) => {
@@ -89,16 +89,23 @@ const start = async () => {
     const preppedCharAnim = prepareAnimation(
       (characterAnimationData as unknown) as ImageDefinition
     );
+    const innKeeperDistance = {
+      zoom: 0.26,
+      panX: -2.0,
+      panY: -0.5,
+      zIndex: 2,
+    };
+    const innKeeperClose = {
+      zoom: 2.2,
+      panX: -0.3,
+      panY: 0.1,
+      zIndex: 2,
+    };
     const charAnimationControls = player.addAnimation(
       preppedCharAnim,
       charTexture,
       1,
-      {
-        zoom: 2.4,
-        panX: -0.3,
-        panY: 0.1,
-        zIndex: 2,
-      }
+      innKeeperClose
     );
 
     const box = canvas.getBoundingClientRect();
