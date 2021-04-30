@@ -41,6 +41,27 @@ canvas {
   font-size: 1.1rem;
 }
 
+.choicebox {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: repeat(auto-fit, 4em);
+  align-content: center;
+}
+
+.choicebox button {
+  margin: 0.5em auto;
+  width: 60%;
+  min-width: 400px;
+  font-size: 1.2em;
+  background: #00000080;
+  border: 1px solid #69c0ff;
+  color: white;
+}
+
 .download {
   margin: 0 auto;
   padding: 0 2em;
