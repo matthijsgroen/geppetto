@@ -3,6 +3,8 @@ import backgroundImage from "url:./assets/scenery.png";
 import backgroundAnimationData from "./assets/scenery.json";
 import characterImage from "url:./assets/innkeeper.png";
 import characterAnimationData from "./assets/innkeeper.json";
+import { animationTween, cleanTicker, delayFrames, tick } from "./tween";
+import { conversation } from "./conversation";
 
 const writeError = (text: string) => {
   const box = document.getElementById("errorBox");
@@ -90,62 +92,6 @@ const start = async () => {
 
     charAnimationControls.startTrack("Eye blink");
     charAnimationControls.startTrack("HeadTilt");
-
-    let tweens: { name: string; ticker: () => void }[] = [];
-
-    type TweenCreator = (
-      name: string,
-      source: number,
-      target: number,
-      speed: number,
-      applier: (value: number) => void
-    ) => Promise<void>;
-
-    const cleanTicker = (name: string) => {
-      tweens = tweens.filter((e) => e.name !== name);
-    };
-
-    const animationTween: TweenCreator = (
-      name,
-      source,
-      target,
-      speed,
-      applier
-    ) =>
-      new Promise((resolve) => {
-        cleanTicker(name);
-        let current = source;
-        const ticker = () => {
-          if (current === target) {
-            cleanTicker(name);
-            resolve();
-          } else {
-            if (current < target) {
-              current += Math.min(speed, target - current);
-            } else {
-              current -= Math.min(speed, current - target);
-            }
-          }
-          applier(current);
-        };
-        tweens = tweens.concat({ name, ticker });
-      });
-
-    const delayFrames = (name: string, frames: number): Promise<void> =>
-      new Promise((resolve) => {
-        cleanTicker(name);
-        let current = frames;
-
-        const ticker = () => {
-          if (current === 0) {
-            cleanTicker(name);
-            resolve();
-          } else {
-            current--;
-          }
-        };
-        tweens = tweens.concat({ name, ticker });
-      });
 
     const butterFly = async () => {
       const flySpeed = 0.0025;
@@ -294,10 +240,15 @@ const start = async () => {
             innKeeperClose.panX,
             innKeeperClose.panY
           );
-          await delayFrames("startTalking", 240);
-          charAnimationControls.startTrack("Talking");
-          charAnimationControls.startTrack("Eyebrows");
           inkeeperInDistance = false;
+          conversation(charAnimationControls).then(() => {
+            charAnimationControls.setZoom(innKeeperDistance.zoom);
+            charAnimationControls.setPanning(
+              innKeeperDistance.panX,
+              innKeeperDistance.panY
+            );
+            inkeeperInDistance = true;
+          });
           return;
         }
 
@@ -322,9 +273,7 @@ const start = async () => {
     butterFly();
 
     const renderFrame = () => {
-      for (const tween of tweens) {
-        tween.ticker();
-      }
+      tick();
 
       player.render();
       bgAnimationControl.render();

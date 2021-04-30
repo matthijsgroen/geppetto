@@ -16,6 +16,31 @@ canvas {
   background-size: cover;
 }
 
+#root {
+  position: relative;
+}
+
+.dialogbox {
+  position: absolute;
+  bottom: 20px;
+  height: 100px;
+  width: 80%;
+  left: 5%;
+  background-color: #00000080;
+  padding: 1rem;
+  border: 1px solid #f0b800;
+}
+
+.dialogname {
+  color: #f0b800;
+  text-shadow: #000 1px 1px;
+  margin: 0 0 1rem 0;
+}
+
+.dialogbox p {
+  font-size: 1.1rem;
+}
+
 .download {
   margin: 0 auto;
   padding: 0 2em;
