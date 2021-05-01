@@ -91,23 +91,24 @@ const Animation: React.VFC<AnimationProps> = ({
         .filter((e, i, l) => l.indexOf(e) === i) || null
     : null;
 
-  const updateFrame = (
-    mutation: (current: AnimationFrame) => AnimationFrame
-  ) => {
-    updateImageDefinition((image) => ({
-      ...image,
-      animations: image.animations.map((a) =>
-        a.name === selectedAnimation
-          ? {
-              ...a,
-              keyframes: a.keyframes
-                .map((f) => (f === activeFrame ? mutation(f) : f))
-                .sort((a, b) => a.time - b.time),
-            }
-          : a
-      ),
-    }));
-  };
+  const updateFrame = useCallback(
+    (mutation: (current: AnimationFrame) => AnimationFrame) => {
+      updateImageDefinition((image) => ({
+        ...image,
+        animations: image.animations.map((a) =>
+          a.name === selectedAnimation
+            ? {
+                ...a,
+                keyframes: a.keyframes
+                  .map((f) => (f === activeFrame ? mutation(f) : f))
+                  .sort((a, b) => a.time - b.time),
+              }
+            : a
+        ),
+      }));
+    },
+    [selectedAnimation, activeFrame]
+  );
 
   const setFrameControlValues = (
     mutation: (current: ControlValues) => ControlValues

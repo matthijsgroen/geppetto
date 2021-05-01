@@ -925,3 +925,15 @@ export const countResources = (
     total: BASE_COST + MUTATOR_COST * mutatorCount + controlCount + controlCost,
   };
 };
+
+export const setControlValue = (
+  imageDefinition: ImageDefinition,
+  controlName: string,
+  value: number
+): ImageDefinition => ({
+  ...imageDefinition,
+  controlValues: {
+    ...imageDefinition.controlValues,
+    [controlName]: value,
+  },
+});

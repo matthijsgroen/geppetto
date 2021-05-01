@@ -41,6 +41,7 @@ import {
   renameControl,
   renameLayer,
   renameVector,
+  setControlValue,
 } from "../lib/definitionHelpers";
 import {
   ControlDefinition,
@@ -247,6 +248,9 @@ const Composition: React.VFC<CompositionProps> = ({
       const deltaY = elementY - isMouseDown[1];
       setMouseMoveDelta([deltaX, deltaY]);
 
+      const moveDeltaX = (deltaX - mouseMoveDelta[0]) / zoom;
+      const moveDeltaY = (deltaY - mouseMoveDelta[1]) / zoom;
+
       if ((shapeSelected || vectorSelected) && event.shiftKey) {
         updateImageDefinition((image) =>
           visit(image, (item, parents) => {
@@ -263,12 +267,8 @@ const Composition: React.VFC<CompositionProps> = ({
               return {
                 ...item,
                 translate: [
-                  Math.round(
-                    item.translate[0] + (deltaX - mouseMoveDelta[0]) / zoom
-                  ),
-                  Math.round(
-                    item.translate[1] + (deltaY - mouseMoveDelta[1]) / zoom
-                  ),
+                  Math.round(item.translate[0] + moveDeltaX),
+                  Math.round(item.translate[1] + moveDeltaY),
                 ],
               };
             }
@@ -281,16 +281,11 @@ const Composition: React.VFC<CompositionProps> = ({
               return {
                 ...item,
                 origin: [
-                  Math.round(
-                    item.origin[0] + (deltaX - mouseMoveDelta[0]) / zoom
-                  ),
-                  Math.round(
-                    item.origin[1] + (deltaY - mouseMoveDelta[1]) / zoom
-                  ),
+                  Math.round(item.origin[0] + moveDeltaX),
+                  Math.round(item.origin[1] + moveDeltaY),
                 ],
               };
             }
-
             return undefined;
           })
         );
@@ -705,13 +700,9 @@ const Composition: React.VFC<CompositionProps> = ({
             value={imageDefinition.controlValues[controlSelected.name] || 0}
             updateImageDefinition={updateImageDefinition}
             onChange={(newValue) => {
-              updateImageDefinition((state) => ({
-                ...state,
-                controlValues: {
-                  ...state.controlValues,
-                  [controlSelected.name]: newValue,
-                },
-              }));
+              updateImageDefinition((state) =>
+                setControlValue(state, controlSelected.name, newValue)
+              );
             }}
           />
         ) : (
