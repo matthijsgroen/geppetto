@@ -36,13 +36,9 @@ const SliderControl: React.VFC<SliderControlProps> = ({
   onChange,
   onSelect,
 }) => (
-  <Control controlStyle={controlStyle}>
+  <Control controlStyle={controlStyle} onClick={onSelect}>
     {title && (
-      <ControlLabel
-        controlStyle={controlStyle}
-        title={title}
-        onClick={onSelect}
-      >
+      <ControlLabel controlStyle={controlStyle} title={title}>
         {title}
       </ControlLabel>
     )}
@@ -53,7 +49,13 @@ const SliderControl: React.VFC<SliderControlProps> = ({
         max={max}
         step={step}
         value={value}
-        onChange={(e) => onChange(e.currentTarget.valueAsNumber)}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+        onChange={(e) => {
+          e.stopPropagation();
+          onChange(e.currentTarget.valueAsNumber);
+        }}
       />
     </div>
   </Control>

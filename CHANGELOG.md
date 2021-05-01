@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Adding/Removing control from animation frame is now more responsive
+
 ### Added
 
 - Auto suggest filename based on texture name
