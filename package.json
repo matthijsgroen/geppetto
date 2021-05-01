@@ -17,7 +17,11 @@
     "parcel": "^2.0.0-beta.2"
   },
   "dependencies": {
-    "geppetto-player": "^1.1.0"
+    "geppetto-player": "^1.1.1"
   },
-  "browserslist": ["defaults", "Chrome 63"]
+  "browserslist": [
+    "> 0.25%",
+    "not dead",
+    "Chrome 63"
+  ]
 }

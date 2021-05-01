@@ -1,4 +1,4 @@
-import { version } from "../package.json";
+const version = "1.1.0";
 
 const BASE_URL = `https://github.com/matthijsgroen/geppetto/releases/download/${version}`;
 const BUILDS = [

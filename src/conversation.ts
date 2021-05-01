@@ -102,7 +102,7 @@ export const conversation = async (character: AnimationControls) => {
     },
     "Is Geppetto free?": async () => {
       await say(
-        "Yes! It is free to use and distribute. It's also opensource (MIT License) So everyone can see how it works and extend it."
+        "Yes! It is free to use and distribute. It's also opensource (MIT License). So everyone can see how it works and extend it."
       );
     },
     "How does it work?": async () => {
@@ -110,7 +110,7 @@ export const conversation = async (character: AnimationControls) => {
         "You need to create a texture file as .PNG. in Geppetto you will make layers from your texture, and compose them into your image."
       );
       await say(
-        " Next step is to add mutations to your layer tree to create motion. You can then create timelines to define multiple animations."
+        "The next step is to add mutations to your layer tree to create motion. You can then create timelines to define multiple animations."
       );
     },
     "I think I'll start exploring!": async ({ endDialog }) => {

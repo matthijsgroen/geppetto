@@ -6,17 +6,6 @@ import characterAnimationData from "./assets/innkeeper.json";
 import { animationTween, cleanTicker, delayFrames, tick } from "./tween";
 import { conversation } from "./conversation";
 
-const writeError = (text: string) => {
-  const box = document.getElementById("errorBox");
-  const el = document.createElement("p");
-  el.textContent = e.message;
-  box.appendChild(el);
-};
-
-document.addEventListener("error", (e) => {
-  writeError(e.message);
-});
-
 const canvas = document.getElementById("theatre") as HTMLCanvasElement;
 const player = setupWebGL(canvas);
 
@@ -68,8 +57,15 @@ const start = async () => {
     );
 
     const box = canvas.getBoundingClientRect();
-    canvas.width = box.width * window.devicePixelRatio;
-    canvas.height = box.height * window.devicePixelRatio;
+    const override = navigator.userAgent.includes("SMART-TV") ? 2 : 1;
+    canvas.width = Math.min(
+      2048,
+      box.width * window.devicePixelRatio * override
+    );
+    canvas.height = Math.min(
+      1024,
+      box.height * window.devicePixelRatio * override
+    );
 
     window.addEventListener("resize", () => {
       const box = canvas.getBoundingClientRect();
