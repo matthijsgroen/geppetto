@@ -85,6 +85,7 @@
     "chrome 89"
   ],
   "devDependencies": {
+    "@babel/core": "^7.13.0",
     "@babel/plugin-proposal-optional-chaining": "^7.13.12",
     "@craco/craco": "^6.1.0",
     "@testing-library/jest-dom": "^5.11.10",
@@ -105,5 +106,10 @@
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.2.1",
     "wait-on": "^5.2.1"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!delaunator|robust-predicates)"
+    ]
   }
 }
