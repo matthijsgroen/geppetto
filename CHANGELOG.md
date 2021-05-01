@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Adding/Removing control from animation frame is now more responsive
+- Keep control value on renaming control
 
 ### Added
 

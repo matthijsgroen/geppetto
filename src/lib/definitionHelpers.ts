@@ -683,6 +683,7 @@ export const renameControl = (
       ? { ...item, name: newName }
       : undefined
   ),
+  controlValues: renameKey(image.controlValues, currentName, newName),
   animations: image.animations.map((anim) => ({
     ...anim,
     keyframes: anim.keyframes.map((frame) => ({
