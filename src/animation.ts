@@ -56,21 +56,22 @@ const start = async () => {
       innKeeperDistance
     );
 
-    const box = canvas.getBoundingClientRect();
-    const override = navigator.userAgent.includes("SMART-TV") ? 2 : 1;
-    canvas.width = Math.min(
-      2048,
-      box.width * window.devicePixelRatio * override
-    );
-    canvas.height = Math.min(
-      1024,
-      box.height * window.devicePixelRatio * override
-    );
+    const setCanvasSize = () => {
+      const box = canvas.getBoundingClientRect();
+      const override = navigator.userAgent.includes("SMART-TV") ? 2 : 1;
+      canvas.width = Math.min(
+        2048,
+        box.width * window.devicePixelRatio * override
+      );
+      canvas.height = Math.min(
+        1024,
+        box.height * window.devicePixelRatio * override
+      );
+    };
+    setCanvasSize();
 
     window.addEventListener("resize", () => {
-      const box = canvas.getBoundingClientRect();
-      canvas.width = box.width * window.devicePixelRatio;
-      canvas.height = box.height * window.devicePixelRatio;
+      setCanvasSize();
     });
 
     bgAnimationControl.startTrack("Wheel");
