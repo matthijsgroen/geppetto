@@ -86,36 +86,80 @@ const dialog = async (options: DialogOptions): Promise<void> => {
   }
 };
 
+const END = "END";
+
+type DialogTree = (string | DialogChoice)[];
+type DialogChoice = Record<string, DialogTree>;
+
+const dialogText: DialogTree = [
+  "Hi! Welcome adventurer, welcome to my inn! Is there something you want to know?",
+  {
+    "What is Geppetto?": [
+      "Geppetto consists of two parts. A desktop application to define animated images, and a JavaScript library to play them.",
+      {
+        "Is Geppetto free?": [
+          "Yes! It is free to use and distribute. It's also opensource (MIT License). So everyone can see how it works and extend it.",
+        ],
+        "How does it work?": [
+          "You need to create a texture file as .PNG. in Geppetto you will make layers from your texture, and compose them into your image.",
+          "The next step is to add mutations to your layer tree to create motion. You can then create timelines to define multiple animations.",
+          {
+            "Why not [Other product here]?": [
+              "Other solutions exist for animation. Some are paid, some are not open source, some use vector graphics.",
+              "Using a single texture file is fast (single http request) and adding more detail to your image doesn't have any rendering cost.",
+            ],
+            "What are the features?": [
+              "Real-time control and animations.  Did you know I can look in the direction you click in this image?",
+              "Smooth transition between animations.",
+              "Fast, most of the processing is on the GPU",
+              "Free as in beer and speech. Isn't that great! It also means Matthijs doesn't make any money from it, and only works on it in his free time. " +
+                "But, feel free to contribute!",
+            ],
+            "Sounds great!": [END],
+          },
+        ],
+        "I want to talk about something else": [END],
+      },
+    ],
+    "What can you tell me about your world?": [
+      "I hope the world I live in will be expanded into a full game! Wouldn't that be great?",
+      "For now it functions as a demo, to see if a game like environment could be created.",
+      "Can you Spot all the moving elements?",
+      END,
+    ],
+    "I think I'll start exploring!": ["Good luck!", END],
+  },
+];
+
+const playDialog = async (
+  dialogText: DialogTree,
+  talkFn: (text: string) => Promise<void>
+): Promise<void> => {
+  for (const item of dialogText) {
+    if (typeof item === "string" && item !== END) {
+      await talkFn(item);
+    }
+    if (typeof item === "object") {
+      const options = Object.entries(item).reduce<DialogOptions>(
+        (result, [key, tree]) => ({
+          ...result,
+          [key]: async ({ endDialog }) => {
+            await playDialog(tree, talkFn);
+            if (tree[tree.length - 1] === END) {
+              endDialog();
+            }
+          },
+        }),
+        {}
+      );
+      await dialog(options);
+    }
+  }
+};
+
 export const conversation = async (character: AnimationControls) => {
   await delayFrames("startTalking", 60);
   const say = charSay(character, "Innkeeper");
 
-  await say(
-    "Hi! Welcome adventurer, welcome to my inn! Is there something you want to know?"
-  );
-
-  await dialog({
-    "What is Geppetto?": async () => {
-      await say(
-        "Geppetto consists of two parts. A desktop application to define animated images, and a JavaScript library to play them."
-      );
-    },
-    "Is Geppetto free?": async () => {
-      await say(
-        "Yes! It is free to use and distribute. It's also opensource (MIT License). So everyone can see how it works and extend it."
-      );
-    },
-    "How does it work?": async () => {
-      await say(
-        "You need to create a texture file as .PNG. in Geppetto you will make layers from your texture, and compose them into your image."
-      );
-      await say(
-        "The next step is to add mutations to your layer tree to create motion. You can then create timelines to define multiple animations."
-      );
-    },
-    "I think I'll start exploring!": async ({ endDialog }) => {
-      await say("Good luck!");
-      endDialog();
-    },
-  });
+  await playDialog(dialogText, say);
 };
