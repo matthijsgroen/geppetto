@@ -341,6 +341,16 @@ async function setTexture(filePath, browserWindow) {
   );
 }
 
+const createDefaultImageDefName = ({ filePath, texturePath } = {}) => {
+  if (filePath) {
+    return basename(filePath);
+  }
+  if (texturePath) {
+    return `${basename(texturePath, extname(texturePath))}.json`;
+  }
+  return "new-animation.json";
+};
+
 async function saveFile(browserWindow, useFilePath) {
   if (!browserWindow) {
     return false;
@@ -348,10 +358,7 @@ async function saveFile(browserWindow, useFilePath) {
   const status = windows.find((w) => w.window === browserWindow);
   let filePath = useFilePath ? status.filePath : null;
   if (filePath === null) {
-    const defaultName =
-      status && status.filePath
-        ? basename(status.filePath)
-        : "new-animation.json";
+    const defaultName = createDefaultImageDefName(status);
     const result = await dialog.showSaveDialog(browserWindow, {
       defaultPath: defaultName,
       filters: [{ name: "Animation file", extensions: ["json"] }],
