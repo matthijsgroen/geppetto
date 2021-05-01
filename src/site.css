@@ -29,6 +29,7 @@ canvas {
   background-color: #00000080;
   padding: 1rem;
   border: 1px solid #f0b800;
+  cursor: pointer;
 }
 
 .dialogname {
@@ -60,6 +61,7 @@ canvas {
   background: #00000080;
   border: 1px solid #69c0ff;
   color: white;
+  cursor: pointer;
 }
 
 .download {
