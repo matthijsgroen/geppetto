@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Adding/Removing control from animation frame is now more responsive
 - Keep control value on renaming control
+- Open Recent now works on mac
 
 ### Added
 

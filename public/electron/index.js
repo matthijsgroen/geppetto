@@ -460,7 +460,10 @@ async function loadFile(filePath) {
   }
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  Menu.setApplicationMenu(menu);
+  createWindow();
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
@@ -477,4 +480,3 @@ app.on("activate", () => {
 app.on("open-file", (e, path) => {
   loadFile(path);
 });
-Menu.setApplicationMenu(menu);
