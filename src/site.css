@@ -23,7 +23,6 @@ canvas {
 .dialogbox {
   position: absolute;
   bottom: 20px;
-  height: 100px;
   width: 80%;
   left: 5%;
   background-color: #00000080;
@@ -40,6 +39,7 @@ canvas {
 
 .dialogbox p {
   font-size: 1.1rem;
+  margin: 0;
 }
 
 .choicebox {
@@ -48,6 +48,7 @@ canvas {
   height: 100%;
   width: 100%;
   display: grid;
+  overflow-y: scroll;
   grid-auto-flow: row;
   grid-template-rows: repeat(auto-fit, 4em);
   align-content: center;
