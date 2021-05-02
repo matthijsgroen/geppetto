@@ -20,6 +20,7 @@ interface VectorInfoPanelProps {
   updateVectorValue(newValue: Vec2): void;
   activeControl?: string;
   controlPosition?: number;
+  onRename(newName: string): void;
 }
 
 type VectorTypes = MutationVector["type"];
@@ -106,6 +107,7 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
   updateVectorValue,
   activeControl,
   controlPosition,
+  onRename,
 }) => {
   const control = activeControl
     ? image.controls.find((c) => c.name === activeControl) || null
@@ -158,12 +160,20 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                   },
                 ]}
                 onChange={(newValue) => {
+                  updateVectorValue(defaultValueForVector(newValue.value));
                   updateImageDefinition((state) =>
-                    updateVectorData(state, vectorSelected.name, (vector) =>
-                      createVector(vector.name, vector.origin, newValue.value)
+                    updateVectorData(
+                      state,
+                      vectorSelected.name,
+                      (vector) =>
+                        createVector(
+                          vector.name,
+                          vector.origin,
+                          newValue.value
+                        ),
+                      onRename
                     )
                   );
-                  updateVectorValue(defaultValueForVector(newValue.value));
                 }}
               />,
               <Vect2InputControl
@@ -172,10 +182,15 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 value={vectorSelected.origin}
                 onChange={(newValue) => {
                   updateImageDefinition((state) =>
-                    updateVectorData(state, vectorSelected.name, (vector) => ({
-                      ...vector,
-                      origin: newValue,
-                    }))
+                    updateVectorData(
+                      state,
+                      vectorSelected.name,
+                      (vector) => ({
+                        ...vector,
+                        origin: newValue,
+                      }),
+                      onRename
+                    )
                   );
                 }}
               />,
@@ -189,10 +204,15 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 value={vectorSelected.radius}
                 onChange={(newValue) => {
                   updateImageDefinition((state) =>
-                    updateVectorData(state, vectorSelected.name, (vector) => ({
-                      ...vector,
-                      radius: newValue,
-                    }))
+                    updateVectorData(
+                      state,
+                      vectorSelected.name,
+                      (vector) => ({
+                        ...vector,
+                        radius: newValue,
+                      }),
+                      onRename
+                    )
                   );
                 }}
               />,
@@ -231,10 +251,15 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 value={vectorSelected.radius !== -1}
                 onChange={(newValue) => {
                   updateImageDefinition((state) =>
-                    updateVectorData(state, vectorSelected.name, (vector) => ({
-                      ...vector,
-                      radius: newValue ? 1 : -1,
-                    }))
+                    updateVectorData(
+                      state,
+                      vectorSelected.name,
+                      (vector) => ({
+                        ...vector,
+                        radius: newValue ? 1 : -1,
+                      }),
+                      onRename
+                    )
                   );
                 }}
               />,
@@ -248,10 +273,15 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 value={vectorSelected.radius}
                 onChange={(newValue) => {
                   updateImageDefinition((state) =>
-                    updateVectorData(state, vectorSelected.name, (vector) => ({
-                      ...vector,
-                      radius: newValue,
-                    }))
+                    updateVectorData(
+                      state,
+                      vectorSelected.name,
+                      (vector) => ({
+                        ...vector,
+                        radius: newValue,
+                      }),
+                      onRename
+                    )
                   );
                 }}
               />,

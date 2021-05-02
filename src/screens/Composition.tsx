@@ -416,7 +416,7 @@ const Composition: React.VFC<CompositionProps> = ({
                   (shapeSelected || vectorSelected) as
                     | ShapeDefinition
                     | MutationVector,
-                  "New Mutator"
+                  "Translation"
                 );
                 setItemSelected(newVector);
               }}
@@ -662,6 +662,12 @@ const Composition: React.VFC<CompositionProps> = ({
             vectorSelected={vectorSelected}
             image={imageDefinition}
             updateImageDefinition={updateImageDefinition}
+            onRename={(newName) => {
+              setLayerSelected({
+                name: newName,
+                type: "vector",
+              });
+            }}
             activeControl={controlMode ? controlMode.control : undefined}
             controlPosition={controlMode ? controlModeStep : undefined}
             vectorValue={

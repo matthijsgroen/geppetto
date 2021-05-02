@@ -1,5 +1,10 @@
-import { addLayer, newDefinition } from "./definitionHelpers";
-import { ImageDefinition } from "./types";
+import {
+  addLayer,
+  addVector,
+  newDefinition,
+  updateVectorData,
+} from "./definitionHelpers";
+import { ImageDefinition, MutationVector } from "./types";
 
 const mutationState = (initial: ImageDefinition) => {
   let state = initial;
@@ -94,6 +99,7 @@ describe("addLayer", () => {
       const emptyImage = newDefinition();
       const test = mutationState(emptyImage);
       await addLayer(test.mutator, "Second Layer");
+      // New layers are put to the top by default
       await addLayer(test.mutator, "First Layer");
 
       expect(test.getState().shapes).toHaveLength(2);
@@ -105,5 +111,69 @@ describe("addLayer", () => {
       expect(test.getState().shapes).toHaveLength(3);
       expect(test.getState().shapes[1]).toBe(newLayer);
     });
+  });
+});
+
+describe("updateVectorData", () => {
+  describe("default naming", () => {
+    it.concurrent.each([
+      ["translate", "Translation"],
+      ["rotate", "Rotation"],
+      ["stretch", "Stretch"],
+      ["opacity", "Opacity"],
+      ["deform", "Deformation"],
+    ])(
+      "updates the default name on type change for %s",
+      async (mutationType, newName) => {
+        const emptyImage = newDefinition();
+        const test = mutationState(emptyImage);
+        const layer = await addLayer(test.mutator, "First Layer");
+        await addVector(test.mutator, layer, "New Mutator");
+        const onRename = jest.fn();
+
+        const result = updateVectorData(
+          test.getState(),
+          "New Mutator",
+          (vector) => ({
+            ...vector,
+            type: mutationType as MutationVector["type"],
+            radius: 10,
+          }),
+          onRename
+        );
+
+        expect(result.shapes[0].mutationVectors[0].name).toEqual(newName);
+      }
+    );
+
+    it.concurrent.each([
+      ["translate", "Translation"],
+      ["rotate", "Rotation"],
+      ["stretch", "Stretch"],
+      ["opacity", "Opacity"],
+      ["deform", "Deformation"],
+    ])(
+      "updates the default name on type change for %s with counter",
+      async (mutationType, newName) => {
+        const emptyImage = newDefinition();
+        const test = mutationState(emptyImage);
+        const layer = await addLayer(test.mutator, "First Layer");
+        await addVector(test.mutator, layer, "New Mutator (213)");
+        const onRename = jest.fn();
+
+        const result = updateVectorData(
+          test.getState(),
+          "New Mutator (213)",
+          (vector) => ({
+            ...vector,
+            type: mutationType as MutationVector["type"],
+            radius: 10,
+          }),
+          onRename
+        );
+
+        expect(result.shapes[0].mutationVectors[0].name).toEqual(newName);
+      }
+    );
   });
 });

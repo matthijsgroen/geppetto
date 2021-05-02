@@ -795,16 +795,62 @@ export const updateSpriteData = (
       : undefined
   );
 
+const defaultNamesForMutations: Record<MutationVector["type"], string> = {
+  translate: "Translation",
+  deform: "Deformation",
+  rotate: "Rotation",
+  opacity: "Opacity",
+  stretch: "Stretch",
+};
+const defaultNames = [
+  "New Mutator",
+  ...Object.values(defaultNamesForMutations),
+];
+
+const hasNameWithOptionalCounter = (
+  name: string,
+  nameMatches: string[]
+): boolean =>
+  nameMatches.some(
+    (test) => name === test || name.match(RegExp(`^${test} \\(\\d+\\)$`))
+  );
+
+const isWrongDefaultName = (mutation: MutationVector): boolean =>
+  hasNameWithOptionalCounter(
+    mutation.name,
+    defaultNames.filter((e) => e !== defaultNamesForMutations[mutation.type])
+  );
+
 export const updateVectorData = (
   imageDefinition: ImageDefinition,
   vectorName: string,
-  mutation: (vector: MutationVector) => MutationVector
-): ImageDefinition =>
-  visit(imageDefinition, (item) =>
-    isMutationVector(item) && item.name === vectorName
-      ? mutation(item)
-      : undefined
-  );
+  mutation: (vector: MutationVector) => MutationVector,
+  onRename: (newName: string) => void
+): ImageDefinition => {
+  const afterEffects: ((imageDef: ImageDefinition) => ImageDefinition)[] = [];
+
+  const result = visit(imageDefinition, (item) => {
+    if (isMutationVector(item) && item.name === vectorName) {
+      const updatedMutation = mutation(item);
+
+      if (updatedMutation && isWrongDefaultName(updatedMutation)) {
+        afterEffects.push((img) => {
+          const newName = makeVectorName(
+            img,
+            defaultNamesForMutations[updatedMutation.type],
+            updatedMutation.name
+          );
+          onRename(newName);
+          return renameVector(img, updatedMutation.name, newName);
+        });
+      }
+
+      return updatedMutation;
+    }
+  });
+
+  return afterEffects.reduce((result, mutator) => mutator(result), result);
+};
 
 export const canDelete = (
   selectedItem: ItemSelection | null,
