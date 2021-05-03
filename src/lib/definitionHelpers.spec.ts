@@ -143,6 +143,7 @@ describe("updateVectorData", () => {
         );
 
         expect(result.shapes[0].mutationVectors[0].name).toEqual(newName);
+        expect(onRename).toHaveBeenCalledWith(newName);
       }
     );
 
@@ -173,6 +174,7 @@ describe("updateVectorData", () => {
         );
 
         expect(result.shapes[0].mutationVectors[0].name).toEqual(newName);
+        expect(onRename).toHaveBeenCalledWith(newName);
       }
     );
   });
