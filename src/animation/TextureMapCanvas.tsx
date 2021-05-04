@@ -9,6 +9,7 @@ import WebGLCanvas from "./WebGLCanvas";
 export type GridSettings = {
   size: number;
   enabled: boolean;
+  magnetic: boolean;
 };
 
 export const GRID_SIZES = [8, 16, 32, 64, 128];

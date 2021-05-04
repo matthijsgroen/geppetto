@@ -49,6 +49,17 @@ interface LayersProps {
   showFPS?: boolean;
 }
 
+const snapToGrid = (gridSize: number, value: number) =>
+  Math.round(value / gridSize) * gridSize;
+
+const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
+  gridSettings.magnetic
+    ? [
+        snapToGrid(GRID_SIZES[gridSettings.size], coord[0]),
+        snapToGrid(GRID_SIZES[gridSettings.size], coord[1]),
+      ]
+    : coord;
+
 const Layers: React.VFC<LayersProps> = ({
   texture,
   imageDefinition,
@@ -60,6 +71,7 @@ const Layers: React.VFC<LayersProps> = ({
   const [panY, setPanY] = useState(0.0);
   const [gridSettings, setGridSettings] = useState<GridSettings>({
     enabled: false,
+    magnetic: false,
     size: 2,
   });
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
@@ -171,10 +183,12 @@ const Layers: React.VFC<LayersProps> = ({
         });
 
         if (!closePoint && mouseMode === MouseMode.Aim) {
+          const gridCoord = alignOnGrid(gridSettings, coord);
+          console.log(coord, gridCoord);
           updateImageDefinition((state) =>
-            addPoint(state, layerSelected.name, coord)
+            addPoint(state, layerSelected.name, gridCoord)
           );
-          setActiveCoord(coord);
+          setActiveCoord(gridCoord);
         } else {
           closePoint && setActiveCoord(closePoint);
         }
@@ -442,6 +456,20 @@ const Layers: React.VFC<LayersProps> = ({
             setGridSettings((settings) => ({
               ...settings,
               size: Math.min(settings.size + 1, GRID_SIZES.length),
+            }));
+          }}
+        />,
+        <ToolbarButton
+          key="magneticGrid"
+          hint="Toggle magnetic grid"
+          icon="🧲"
+          label=""
+          disabled={!texture}
+          active={gridSettings.magnetic}
+          onClick={() => {
+            setGridSettings((settings) => ({
+              ...settings,
+              magnetic: !settings.magnetic,
             }));
           }}
         />,

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Auto suggest filename based on texture name
 - Auto update mutator name based on type
+- Add Grid option on Layers screen, with option to be magnetic to make it easier to place point
 
 ## [1.1.0] - 2021-04-27
 
