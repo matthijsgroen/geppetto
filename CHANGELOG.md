@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Auto suggest filename based on texture name
 - Auto update mutator name based on type
 - Add Grid option on Layers screen, with option to be magnetic to make it easier to place point
+- Add support for `shift` + arrows in number fields to step with a stepsize of 10
+- Add support for `shift` + arrows in number fields of points
+  in the layer screen will step the coordinate with the active gridsize
+- Add support for `ctrl/cmd` + arrows in number fields to step with a stepsize of 100
 
 ## [1.1.0] - 2021-04-27
 

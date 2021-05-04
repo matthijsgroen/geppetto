@@ -5,6 +5,11 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import {
+  defaultStepFn,
+  StepSize,
+  UpDown,
+} from "src/components/NumberInputControl";
 import Vec2InputControl from "src/components/Vec2InputControl";
 import TextureMapCanvas, {
   GridSettings,
@@ -184,7 +189,6 @@ const Layers: React.VFC<LayersProps> = ({
 
         if (!closePoint && mouseMode === MouseMode.Aim) {
           const gridCoord = alignOnGrid(gridSettings, coord);
-          console.log(coord, gridCoord);
           updateImageDefinition((state) =>
             addPoint(state, layerSelected.name, gridCoord)
           );
@@ -361,6 +365,21 @@ const Layers: React.VFC<LayersProps> = ({
                         );
                         setActiveCoord(newValue);
                       }
+                    }}
+                    onStep={(value, upDown, step) => {
+                      const gSize = GRID_SIZES[gridSettings.size];
+                      if (step === StepSize.MEDIUM) {
+                        if (value % gSize === 0) {
+                          return upDown === UpDown.UP
+                            ? value + gSize
+                            : value - gSize;
+                        } else {
+                          return upDown === UpDown.UP
+                            ? Math.ceil(value / gSize) * gSize
+                            : Math.floor(value / gSize) * gSize;
+                        }
+                      }
+                      return defaultStepFn(value, upDown, step);
                     }}
                   />,
                 ]

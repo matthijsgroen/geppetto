@@ -1,7 +1,12 @@
 import React from "react";
 import { Vec2 } from "src/lib/types";
 import { Control, ControlLabel } from "./Control";
-import { NumberInput } from "./NumberInputControl";
+import {
+  NumberInput,
+  numberStepControl,
+  StepSize,
+  UpDown,
+} from "./NumberInputControl";
 
 interface SliderControlProps {
   title?: string;
@@ -9,6 +14,7 @@ interface SliderControlProps {
   disabled?: boolean;
   step?: number;
   onChange(newValue: Vec2): void;
+  onStep?(value: number, upDown: UpDown, size: StepSize): number;
 }
 
 const Vect2InputControl: React.VFC<SliderControlProps> = ({
@@ -17,6 +23,7 @@ const Vect2InputControl: React.VFC<SliderControlProps> = ({
   disabled = false,
   step = 1,
   onChange,
+  onStep,
 }) => (
   <Control>
     {title && <ControlLabel>{title}</ControlLabel>}
@@ -26,6 +33,10 @@ const Vect2InputControl: React.VFC<SliderControlProps> = ({
       value={value[0]}
       step={step}
       onChange={(e) => onChange([e.currentTarget.valueAsNumber, value[1]])}
+      onKeyDown={numberStepControl(
+        (stepValue) => onChange([stepValue, value[1]]),
+        onStep
+      )}
     />
     y
     <NumberInput
@@ -33,6 +44,10 @@ const Vect2InputControl: React.VFC<SliderControlProps> = ({
       value={value[1]}
       step={step}
       onChange={(e) => onChange([value[0], e.currentTarget.valueAsNumber])}
+      onKeyDown={numberStepControl(
+        (stepValue) => onChange([value[0], stepValue]),
+        onStep
+      )}
     />
   </Control>
 );
