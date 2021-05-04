@@ -6,7 +6,10 @@ import React, {
   useState,
 } from "react";
 import Vec2InputControl from "src/components/Vec2InputControl";
-import TextureMapCanvas from "../animation/TextureMapCanvas";
+import TextureMapCanvas, {
+  GridSettings,
+  GRID_SIZES,
+} from "../animation/TextureMapCanvas";
 import Menu from "../components/Menu";
 import MouseControl, { MouseMode } from "../components/MouseControl";
 import ShapeList from "../components/ShapeList";
@@ -55,6 +58,10 @@ const Layers: React.VFC<LayersProps> = ({
   const [zoom, setZoom] = useState(1.0);
   const [panX, setPanX] = useState(0.0);
   const [panY, setPanY] = useState(0.0);
+  const [gridSettings, setGridSettings] = useState<GridSettings>({
+    enabled: false,
+    size: 2,
+  });
   const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
     false
   );
@@ -397,6 +404,47 @@ const Layers: React.VFC<LayersProps> = ({
             setActiveCoord(null);
           }}
         />,
+        <ToolbarSeperator key="sep2" />,
+        <ToolbarButton
+          key="decreaseGrid"
+          hint="Decrease grid size"
+          icon=""
+          label="-"
+          disabled={!texture || gridSettings.size <= 0}
+          onClick={() => {
+            setGridSettings((settings) => ({
+              ...settings,
+              size: Math.max(settings.size - 1, 0),
+            }));
+          }}
+        />,
+        <ToolbarButton
+          key="toggleGrid"
+          hint="Toggle sticky grid"
+          icon="📏"
+          label={`${GRID_SIZES[gridSettings.size]}`}
+          disabled={!texture}
+          active={gridSettings.enabled}
+          onClick={() => {
+            setGridSettings((settings) => ({
+              ...settings,
+              enabled: !settings.enabled,
+            }));
+          }}
+        />,
+        <ToolbarButton
+          key="increaseGrid"
+          hint="Increase grid size"
+          icon=""
+          label="+"
+          disabled={!texture || gridSettings.size >= GRID_SIZES.length - 1}
+          onClick={() => {
+            setGridSettings((settings) => ({
+              ...settings,
+              size: Math.min(settings.size + 1, GRID_SIZES.length),
+            }));
+          }}
+        />,
       ]}
       main={
         <MouseControl
@@ -412,6 +460,7 @@ const Layers: React.VFC<LayersProps> = ({
             zoom={zoom}
             panX={panX}
             panY={panY}
+            grid={gridSettings}
             activeLayer={layerSelected}
             activeCoord={activeCoord}
             showFPS={showFPS}

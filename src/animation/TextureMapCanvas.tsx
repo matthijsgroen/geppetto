@@ -2,12 +2,21 @@ import React, { useEffect, useMemo } from "react";
 import { ItemSelection, ShapeDefinition, Vec2 } from "../lib/types";
 import { showLayerPoints } from "./programs/showLayerPoints";
 import { showTexture } from "./programs/showTexture";
+import { showGrid } from "./programs/showGrid";
 import { showTextureMap } from "./programs/showTextureMap";
 import WebGLCanvas from "./WebGLCanvas";
+
+export type GridSettings = {
+  size: number;
+  enabled: boolean;
+};
+
+export const GRID_SIZES = [8, 16, 32, 64, 128];
 
 export interface TextureMapCanvasProps {
   image: HTMLImageElement | null;
   shapes: ShapeDefinition[];
+  grid: GridSettings;
   zoom?: number;
   panX: number;
   panY: number;
@@ -23,6 +32,7 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   zoom = 1.0,
   panX,
   panY,
+  grid,
   activeLayer = null,
   activeCoord = null,
   showFPS,
@@ -30,9 +40,11 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   const textureProgram = useMemo(() => showTexture(), []);
   const textureMapProgram = useMemo(() => showTextureMap(), []);
   const pointsProgram = useMemo(() => showLayerPoints(), []);
+  const gridProgram = useMemo(() => showGrid(), []);
 
   const renderers = [
     textureProgram.renderer,
+    gridProgram.renderer,
     textureMapProgram.renderer,
     pointsProgram.renderer,
   ];
@@ -42,6 +54,7 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
       textureProgram.setImage(image);
       textureMapProgram.setImage(image);
       pointsProgram.setImage(image);
+      gridProgram.setImage(image);
     }
   }, [image]);
 
@@ -52,9 +65,12 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   textureMapProgram.setZoom(zoom);
   textureProgram.setZoom(zoom);
   pointsProgram.setZoom(zoom);
+  gridProgram.setZoom(zoom);
   textureMapProgram.setPan(panX, panY);
   textureProgram.setPan(panX, panY);
   pointsProgram.setPan(panX, panY);
+  gridProgram.setPan(panX, panY);
+  gridProgram.setGrid(grid.enabled ? GRID_SIZES[grid.size] : 0);
   pointsProgram.setLayerSelected(activeLayer ? activeLayer.name : null);
   pointsProgram.setActiveCoord(activeCoord);
 

@@ -123,7 +123,10 @@ export const createProgram = (
   gl.attachShader(program, fragment);
   gl.linkProgram(program);
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    throw new Error("Could not initialise shaders");
+    console.error("Link failed: " + gl.getProgramInfoLog(program));
+    console.error("vs info-log: " + gl.getShaderInfoLog(vertex));
+    console.error("fs info-log: " + gl.getShaderInfoLog(fragment));
+    throw new Error("Could not initialise shade(rs");
   }
 
   return [
