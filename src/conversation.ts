@@ -5,11 +5,12 @@ const root = document.getElementById("root");
 
 const awaitClick = async () =>
   new Promise<void>((resolve) => {
+    const dialog = document.getElementsByClassName("dialogbox")[0];
     const handler = () => {
       resolve();
-      root.removeEventListener("click", handler);
+      dialog.removeEventListener("click", handler);
     };
-    root.addEventListener("click", handler);
+    dialog.addEventListener("click", handler);
   });
 
 const charSay = (character: AnimationControls, name: string) => {
