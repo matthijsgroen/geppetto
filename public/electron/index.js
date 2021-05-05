@@ -104,6 +104,15 @@ const template = [
           saveFile(browserWindow, false);
         },
       },
+      {
+        label: "Export for web...",
+        accelerator: "CmdOrCtrl+E",
+        enabled: false,
+        id: "exportAs",
+        click(_event, browserWindow) {
+          exportForWeb(browserWindow);
+        },
+      },
       { role: "close" },
       ...(isMac ? [] : [{ role: "quit" }]),
     ],
@@ -178,7 +187,13 @@ const template = [
 
 const menu = Menu.buildFromTemplate(template);
 
-const windowMenuItems = ["fileSave", "fileSaveAs", "loadTexture", "showFPS"];
+const windowMenuItems = [
+  "fileSave",
+  "fileSaveAs",
+  "exportAs",
+  "loadTexture",
+  "showFPS",
+];
 
 const setItemsEnableState = (callback) => {
   windowMenuItems.forEach((item) => {
@@ -293,6 +308,9 @@ function createWindow() {
       const item = menu.getMenuItemById("fileSave");
       item.enabled = status.changed;
     }
+    if (channel === "animation-file-export") {
+      saveExportFile(win, data);
+    }
   });
 
   return win;
@@ -351,6 +369,29 @@ const createDefaultImageDefName = ({ filePath, texturePath } = {}) => {
   return "new-animation.json";
 };
 
+function exportForWeb(browserWindow) {
+  if (!browserWindow) {
+    return false;
+  }
+  browserWindow.webContents.send("export-as");
+}
+
+async function saveExportFile(browserWindow, data) {
+  if (!browserWindow) {
+    return false;
+  }
+  const result = await dialog.showSaveDialog(browserWindow, {
+    title: "Export as...",
+    filters: [{ name: "Animation file", extensions: ["json"] }],
+    buttonLabel: "Export",
+    message: "All internal names will be minimized to reduce file size",
+  });
+  if (result.canceled) {
+    return false;
+  }
+  await writeFile(result.filePath, JSON.stringify(JSON.parse(data)));
+}
+
 async function saveFile(browserWindow, useFilePath) {
   if (!browserWindow) {
     return false;
@@ -382,6 +423,9 @@ async function saveFile(browserWindow, useFilePath) {
 
   const itemAs = menu.getMenuItemById("fileSaveAs");
   itemAs.enabled = true;
+
+  const exportAs = menu.getMenuItemById("exportAs");
+  exportAs.enabled = true;
 
   browserWindow.webContents.send(
     "animation-file-name-change",

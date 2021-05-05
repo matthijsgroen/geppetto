@@ -12,6 +12,7 @@ declare global {
       ): void;
       onShowFPSChange(callback: (showFPS: boolean) => void): void;
       updateAnimationFile(contents: ImageDefinition): void;
+      onExportForWeb(processor: () => ImageDefinition): void;
     };
   }
 }

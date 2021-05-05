@@ -25,6 +25,12 @@ contextBridge.exposeInMainWorld("electron", {
   onShowFPSChange: (callback) => {
     ipcRenderer.on("show-fps", (_event, value) => callback(value));
   },
+  onExportForWeb: (prepareExport) => {
+    ipcRenderer.on("export-as", () => {
+      const contents = prepareExport();
+      ipcRenderer.send("animation-file-export", JSON.stringify(contents));
+    });
+  },
   updateAnimationFile: (contents) => {
     ipcRenderer.send(
       "animation-file-contents-changed",

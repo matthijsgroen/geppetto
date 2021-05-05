@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DefaultTheme, ThemeProvider } from "styled-components";
 import AppLayout from "./templates/AppLayout";
 import TabIcon from "./components/TabIcon";
@@ -9,6 +9,7 @@ import Animation from "./screens/Animation";
 
 import { ImageDefinition, ShapeDefinition } from "./lib/types";
 import { newDefinition } from "./lib/definitionHelpers";
+import { compressFile } from "./lib/compressFile";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -56,6 +57,8 @@ const App: React.FC = () => {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
   const [showFPS, setShowFPS] = useState<boolean>(false);
 
+  const imageDefRef = useRef(imageDefinition);
+
   useEffect(() => {
     if (!window.electron) return;
 
@@ -82,12 +85,14 @@ const App: React.FC = () => {
     window.electron.onShowFPSChange((showFPS) => {
       setShowFPS(showFPS);
     });
+    window.electron.onExportForWeb(() => compressFile(imageDefRef.current));
   }, []);
 
   useEffect(() => {
     if (window.electron) {
       window.electron.updateAnimationFile(imageDefinition);
     }
+    imageDefRef.current = imageDefinition;
   }, [imageDefinition]);
 
   useEffect(() => {
