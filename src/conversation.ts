@@ -109,7 +109,7 @@ const dialogText: DialogTree = [
               "Using a single texture file is fast (single http request) and adding more detail to your image doesn't have any rendering cost.",
             ],
             "What are the features?": [
-              "Real-time control and animations.  Did you know I can look in the direction you click in this image?",
+              "Real-time control and animations. Did you know I can look in the direction you click in this image?",
               "Smooth transition between animations.",
               "Fast, most of the processing is on the GPU",
               "Free as in beer and speech. Isn't that great! It also means Matthijs doesn't make any money from it, and only works on it in his free time. " +
@@ -124,7 +124,7 @@ const dialogText: DialogTree = [
     "What can you tell me about your world?": [
       "I hope the world I live in will be expanded into a full game! Wouldn't that be great?",
       "For now it functions as a demo, to see if a game like environment could be created.",
-      "Can you Spot all the moving elements?",
+      "Can you spot all the moving elements?",
       END,
     ],
     "I think I'll start exploring!": ["Good luck!", END],
