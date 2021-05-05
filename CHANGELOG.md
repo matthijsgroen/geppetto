@@ -7,12 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- Adding/Removing control from animation frame is now more responsive
-- Keep control value on renaming control
-- Open Recent now works on mac
-
 ### Added
 
 - Auto suggest filename based on texture name
@@ -26,7 +20,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Export for web" option in the file menu, that will save the file but minify all
   internal layer/mutation names, to reduce filesize
 
+### Fixed
+
+- Adding/Removing control from animation frame is now more responsive
+- Keep control value on renaming control
+- Open Recent now works on mac
+
 ## [1.1.0] - 2021-04-27
+
+### Added
+
+- Ability to move from frame to frame in the animation screen
+
+### Changed
+
+- Set maximum height for control list
+- Set maximum steps for control to 10 (was 20)
 
 ### Fixed
 
@@ -34,15 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Provided more clear 'icon' for the copy layer action
 - Renaming control did not update control used in animation frames
 - Reducing steps of control did not reduce control values used in animations
-
-### Changed
-
-- Set maximum height for control list
-- Set maximum steps for control to 10 (was 20)
-
-### Added
-
-- Ability to move from frame to frame in the animation screen
 
 ## [1.0.0] - 2021-04-18
 
