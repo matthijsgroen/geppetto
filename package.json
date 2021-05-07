@@ -24,6 +24,7 @@
     "electron-dev": "concurrently -s first -k \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
     "start": "craco start",
     "build": "craco build",
+    "postbuild": "cd build/static/js && rm *.js.map",
     "lint": "eslint src/**/*.ts{,x} public/**/*.js",
     "test": "craco test",
     "preelectron-pack": "yarn build",
