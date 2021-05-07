@@ -254,25 +254,13 @@ const start = async () => {
 
   girlEyes();
   butterFly();
-  let countPerf = 10;
-  let start = 1000;
 
   const renderFrame = () => {
     tick();
-    if (countPerf > 0 && start > 0) {
-      start--;
-    }
-    if (countPerf > 0 && start === 0) {
-      console.time("frame");
-    }
 
     player.render();
     bgAnimationControl.render();
     charAnimationControls.render();
-    if (countPerf > 0 && start === 0) {
-      console.timeEnd("frame");
-      countPerf--;
-    }
     window.requestAnimationFrame(renderFrame);
   };
 
