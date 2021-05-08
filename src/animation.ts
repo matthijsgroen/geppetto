@@ -84,6 +84,7 @@ const start = async () => {
 
   charAnimationControls.startTrack("Eye blink");
   charAnimationControls.startTrack("HeadTilt");
+  charAnimationControls.startTrack("Sweeping");
 
   const butterFly = async () => {
     const flySpeed = 0.0025;
@@ -224,6 +225,7 @@ const start = async () => {
           innKeeperClose.panY
         );
         inkeeperInDistance = false;
+        charAnimationControls.stopTrack("Sweeping");
         conversation(charAnimationControls).then(() => {
           charAnimationControls.setZoom(innKeeperDistance.zoom);
           charAnimationControls.setPanning(
@@ -231,6 +233,7 @@ const start = async () => {
             innKeeperDistance.panY
           );
           inkeeperInDistance = true;
+          charAnimationControls.startTrack("Sweeping");
         });
         return;
       }
