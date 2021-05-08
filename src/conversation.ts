@@ -160,6 +160,7 @@ const playDialog = async (
 
 export const conversation = async (character: AnimationControls) => {
   await delayFrames("startTalking", 60);
+  character.startTrack("PauseSweeping");
   const say = charSay(character, "Innkeeper");
 
   await playDialog(dialogText, say);

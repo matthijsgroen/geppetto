@@ -225,7 +225,6 @@ const start = async () => {
           innKeeperClose.panY
         );
         inkeeperInDistance = false;
-        charAnimationControls.stopTrack("Sweeping");
         conversation(charAnimationControls).then(() => {
           charAnimationControls.setZoom(innKeeperDistance.zoom);
           charAnimationControls.setPanning(
