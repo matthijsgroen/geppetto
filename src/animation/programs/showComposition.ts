@@ -50,11 +50,127 @@ const compositionFragmentShader = `
   uniform sampler2D uSampler;
   uniform mediump vec2 uTextureDimensions;
 
+  float RGBToL(vec3 color) {
+    lowp float fmin = min(min(color.r, color.g), color.b);    //Min. value of RGB
+    lowp float fmax = max(max(color.r, color.g), color.b);    //Max. value of RGB
+    
+    return (fmax + fmin) / 2.0; // Luminance
+  }
+
+  vec3 RGBToHSL(vec3 color) {
+    vec3 hsl; 
+
+    float fmin = min(min(color.r, color.g), color.b);
+    float fmax = max(max(color.r, color.g), color.b); 
+    float delta = fmax - fmin;
+
+    hsl.z = (fmax + fmin) / 2.0; // Luminance
+
+    if (delta == 0.0)	{
+      hsl.x = 0.0;	// Hue
+      hsl.y = 0.0;	// Saturation
+    } else                                  {
+      if (hsl.z < 0.5)
+        hsl.y = delta / (fmax + fmin); // Saturation
+      else
+        hsl.y = delta / (2.0 - fmax - fmin); // Saturation
+
+    float deltaR = (((fmax - color.r) / 6.0) + (delta / 2.0)) / delta;
+    float deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;
+    float deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;
+
+    if (color.r == fmax )
+      hsl.x = deltaB - deltaG; // Hue
+    else if (color.g == fmax)
+      hsl.x = (1.0 / 3.0) + deltaR - deltaB; // Hue
+    else if (color.b == fmax)
+      hsl.x = (2.0 / 3.0) + deltaG - deltaR; // Hue
+
+    if (hsl.x < 0.0)
+      hsl.x += 1.0; // Hue
+      else if (hsl.x > 1.0)
+      hsl.x -= 1.0; // Hue
+    }
+
+    return hsl;
+  }
+
+  float HueToRGB(lowp float f1, lowp float f2, lowp float hue) {
+    if (hue < 0.0)
+        hue += 1.0;
+    else if (hue > 1.0)
+        hue -= 1.0;
+    lowp float res;
+    if ((6.0 * hue) < 1.0)
+        res = f1 + (f2 - f1) * 6.0 * hue;
+    else if ((2.0 * hue) < 1.0)
+        res = f2;
+    else if ((3.0 * hue) < 2.0)
+        res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+    else
+        res = f1;
+    return res;
+  }
+
+  vec3 HSLToRGB(vec3 hsl) {
+    lowp vec3 rgb;
+
+    if (hsl.y == 0.0)
+        rgb = vec3(hsl.z); // Luminance
+    else {
+        lowp float f2;
+        if (hsl.z < 0.5)
+            f2 = hsl.z * (1.0 + hsl.y);
+        else
+            f2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);
+        float f1 = 2.0 * hsl.z - f2;
+        
+        rgb.r = HueToRGB(f1, f2, hsl.x + (1.0/3.0));
+        rgb.g = HueToRGB(f1, f2, hsl.x);
+        rgb.b = HueToRGB(f1, f2, hsl.x - (1.0/3.0));
+    }
+
+    return rgb;
+  }
+
+  float a = 0.25;
+  float b = 0.333;
+  float scale = 0.7;
+
+  vec3 colorBalance(vec3 color, vec3 shift) {
+    float lightness = RGBToL(color.rgb);
+    vec3 midtones = (clamp((lightness - b) /  a + 0.5, 0.0, 1.0) * clamp ((lightness + b - 1.0) / -a + 0.5, 0.0, 1.0) * scale) * shift;
+
+    vec3 newColor = color.rgb + midtones;
+    newColor = clamp(newColor, 0.0, 1.0);
+
+    // preserve luminosity
+    vec3 newHSL = RGBToHSL(newColor);
+    float oldLum = RGBToL(color.rgb);
+    return HSLToRGB(vec3(newHSL.x, newHSL.y, newHSL.z));
+  }
+
   void main(void) {
     highp vec2 coord = vTextureCoord.xy / uTextureDimensions;
     mediump vec4 texelColor = texture2D(uSampler, coord);
 
-    gl_FragColor = vec4(texelColor.rgb * texelColor.a * vOpacity, texelColor.a * vOpacity);
+    vec3 color = texelColor.rgb;
+
+    // Make a loop to process in proper order
+    float lightness = 1.0;
+    color = color.rgb * lightness;
+
+    // Contrast
+    float contrast = 1.0;
+    color = ((color.rgb - 0.5) * max(contrast, 0.0)) + 0.5;
+
+    color = colorBalance(color, vec3(0.0, 0.0, 0.0));
+
+    vec3 hsl = RGBToHSL(color);
+    float saturation = 1.0;
+    color = HSLToRGB(vec3(hsl.x, hsl.y * saturation, hsl.z));
+
+    gl_FragColor = vec4(color * texelColor.a * vOpacity, texelColor.a * vOpacity);
   }
 `;
 
