@@ -64,6 +64,7 @@ canvas {
   border: 1px solid #69c0ff;
   color: white;
   cursor: pointer;
+  pointer-events: all;
 }
 
 .download {
