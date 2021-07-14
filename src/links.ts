@@ -2,7 +2,7 @@ const version = "1.2.0";
 
 const BASE_URL = `https://github.com/matthijsgroen/geppetto/releases/download/${version}`;
 const BUILDS = [
-  { platform: "Mac", arch: "x64", filename: `Geppetto-${version}-mac.dmg` },
+  { platform: "Mac", arch: "x64", filename: `Geppetto-${version}.dmg` },
   {
     platform: "Mac",
     arch: "arm64",
