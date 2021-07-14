@@ -52,6 +52,7 @@ canvas {
   grid-auto-flow: row;
   grid-template-rows: repeat(auto-fit, 4em);
   align-content: center;
+  pointer-events: none;
 }
 
 .choicebox button {
