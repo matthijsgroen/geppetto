@@ -2,7 +2,7 @@ import { fileredTriangles, flatten } from "src/lib/vertices";
 import { Keyframe, ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
-  createMutationList,
+  createShapeMutationList,
   MAX_MUTATION_VECTORS,
   mutationShader,
   mutationValueShader,
@@ -246,7 +246,7 @@ export const showComposition = (): {
       vectorSettings,
       mutatorMapping,
       shapeMutatorMapping,
-    } = createMutationList(shapes);
+    } = createShapeMutationList(shapes);
 
     elements.forEach((element) => {
       element.mutator = shapeMutatorMapping[element.name];
@@ -432,7 +432,7 @@ export const showComposition = (): {
             gl.uniform1f(mutation, element.mutator);
 
             // lightness, saturation, targetHue, targetSaturation,
-            gl.uniform4f(uColorEffect, 0.8, 0.0, 1.0, 0.0);
+            gl.uniform4f(uColorEffect, 1.0, 1.0, 1.0, 1.0);
 
             gl.drawElements(
               gl.TRIANGLES,

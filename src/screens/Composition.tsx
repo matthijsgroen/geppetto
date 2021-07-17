@@ -14,7 +14,7 @@ import {
   defaultValueForVector,
   mixVec2,
 } from "src/lib/vertices";
-import { isMutationVector, visit } from "src/lib/visit";
+import { isMutationVector, isShapeMutationVector, visit } from "src/lib/visit";
 import { maxZoomFactor } from "src/lib/webgl";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
@@ -273,7 +273,7 @@ const Composition: React.VFC<CompositionProps> = ({
               };
             }
             if (
-              isMutationVector(item) &&
+              isShapeMutationVector(item) &&
               ((vectorSelected && item.name === vectorSelected.name) ||
                 (shapeSelected &&
                   parents.find((e) => e.name === shapeSelected.name)))

@@ -38,12 +38,30 @@ export type OpacityVector = {
   origin: Vec2;
 };
 
-export type MutationVector =
+export type Lightness = {
+  name: string;
+  type: "lightness";
+  value: number;
+};
+
+export type Colorize = {
+  name: string;
+  type: "colorize";
+  mix: number;
+  color: Vec2;
+};
+
+export type MutationVector = ShapeMutationVector | ColorMutationVector;
+export type MutationVectorTypes = MutationVector["type"];
+
+export type ShapeMutationVector =
   | TranslationVector
   | DeformationVector
   | StretchVector
   | RotationVector
   | OpacityVector;
+
+export type ColorMutationVector = Lightness | Colorize;
 
 export type SpriteDefinition = {
   name: string;
