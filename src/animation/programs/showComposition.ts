@@ -49,6 +49,7 @@ const compositionFragmentShader = `
   varying mediump float vOpacity;
   uniform sampler2D uSampler;
   uniform mediump vec2 uTextureDimensions;
+  uniform mediump vec4 uColorEffect;
 
   float RGBToL(vec3 color) {
     lowp float fmin = min(min(color.r, color.g), color.b);    //Min. value of RGB
@@ -133,42 +134,26 @@ const compositionFragmentShader = `
     return rgb;
   }
 
-  float a = 0.25;
-  float b = 0.333;
-  float scale = 0.7;
-
-  vec3 colorBalance(vec3 color, vec3 shift) {
-    float lightness = RGBToL(color.rgb);
-    vec3 midtones = (clamp((lightness - b) /  a + 0.5, 0.0, 1.0) * clamp ((lightness + b - 1.0) / -a + 0.5, 0.0, 1.0) * scale) * shift;
-
-    vec3 newColor = color.rgb + midtones;
-    newColor = clamp(newColor, 0.0, 1.0);
-
-    // preserve luminosity
-    vec3 newHSL = RGBToHSL(newColor);
-    float oldLum = RGBToL(color.rgb);
-    return HSLToRGB(vec3(newHSL.x, newHSL.y, newHSL.z));
-  }
-
   void main(void) {
+    float lightness = uColorEffect.r;
+    float saturation = uColorEffect.g;
+    float targetHue = uColorEffect.b;
+    float targetSaturation = uColorEffect.a;
+
     highp vec2 coord = vTextureCoord.xy / uTextureDimensions;
     mediump vec4 texelColor = texture2D(uSampler, coord);
 
     vec3 color = texelColor.rgb;
 
-    // Make a loop to process in proper order
-    float lightness = 1.0;
-    color = color.rgb * lightness;
+    vec3 hsl = RGBToHSL(color);
+    color = mix(
+      HSLToRGB(vec3(hsl.x, hsl.y * saturation, hsl.z)),
+      HSLToRGB(vec3(targetHue, targetSaturation, hsl.z)), 
+      1.0 - saturation
+    ) * lightness;
 
-    // Contrast
     float contrast = 1.0;
     color = ((color.rgb - 0.5) * max(contrast, 0.0)) + 0.5;
-
-    color = colorBalance(color, vec3(0.0, 0.0, 0.0));
-
-    vec3 hsl = RGBToHSL(color);
-    float saturation = 1.0;
-    color = HSLToRGB(vec3(hsl.x, hsl.y * saturation, hsl.z));
 
     gl_FragColor = vec4(color * texelColor.a * vOpacity, texelColor.a * vOpacity);
   }
@@ -354,6 +339,8 @@ export const showComposition = (): {
       populateShapes();
       const translate = gl.getUniformLocation(shaderProgram, "translate");
       const mutation = gl.getUniformLocation(shaderProgram, "mutation");
+      const uColorEffect = gl.getUniformLocation(program, "uColorEffect");
+
       const uBasePosition = gl.getUniformLocation(
         shaderProgram,
         "basePosition"
@@ -443,6 +430,10 @@ export const showComposition = (): {
             }
             gl.uniform3f(translate, element.x, element.y, element.z);
             gl.uniform1f(mutation, element.mutator);
+
+            // lightness, saturation, targetHue, targetSaturation,
+            gl.uniform4f(uColorEffect, 0.8, 0.0, 1.0, 0.0);
+
             gl.drawElements(
               gl.TRIANGLES,
               element.amount,
