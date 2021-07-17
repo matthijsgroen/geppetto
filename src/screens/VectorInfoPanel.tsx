@@ -4,6 +4,7 @@ import { Control } from "src/components/Control";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
 import SelectControl from "src/components/SelectControl";
+import { iconForType } from "src/components/ShapeList";
 import SliderControl from "src/components/SliderControl";
 import ToggleInputControl from "src/components/ToggleControl";
 import Vec2InputControl from "src/components/Vec2InputControl";
@@ -54,15 +55,6 @@ const createVector = (
       return { type: "colorize", name, mix: 1.0, color: [0.0, 0.0] };
   }
 };
-
-const iconForType = (type: MutationVectorTypes): string =>
-  (({
-    deform: "🟠",
-    rotate: "🔴",
-    stretch: "🟣",
-    translate: "🟢",
-    opacity: "⚪️",
-  } as Record<MutationVectorTypes, string>)[type]);
 
 export const setMutationUnderControl = (
   state: ImageDefinition,

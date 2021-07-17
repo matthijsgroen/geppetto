@@ -17,7 +17,8 @@ const iconMapping: Record<MutationVectorTypes, string> = {
   colorize: "🟧",
 };
 
-const iconForType = (type: MutationVectorTypes): string => iconMapping[type];
+export const iconForType = (type: MutationVectorTypes): string =>
+  iconMapping[type];
 
 const displayShapes = (
   shapes: ShapeDefinition[],
