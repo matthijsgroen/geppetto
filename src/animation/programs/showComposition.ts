@@ -184,6 +184,7 @@ export const showComposition = (): {
     start: number;
     amount: number;
     mutator: number;
+    lightness: number;
     x: number;
     y: number;
     z: number;
@@ -230,6 +231,7 @@ export const showComposition = (): {
         x: itemOffset[0],
         y: itemOffset[1],
         z: -0.5 + itemOffset[2] * 0.001,
+        lightness: 0.6,
       });
       const offset = vertices.length / stride;
       shape.points.forEach(([x, y]) => {
@@ -432,7 +434,7 @@ export const showComposition = (): {
             gl.uniform1f(mutation, element.mutator);
 
             // lightness, saturation, targetHue, targetSaturation,
-            gl.uniform4f(uColorEffect, 1.0, 1.0, 1.0, 1.0);
+            gl.uniform4f(uColorEffect, element.lightness, 1.0, 1.0, 1.0);
 
             gl.drawElements(
               gl.TRIANGLES,

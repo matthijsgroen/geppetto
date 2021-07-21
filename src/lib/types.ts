@@ -41,14 +41,13 @@ export type OpacityVector = {
 export type Lightness = {
   name: string;
   type: "lightness";
-  value: number;
+  origin: Vec2;
 };
 
 export type Colorize = {
   name: string;
   type: "colorize";
-  mix: number;
-  color: Vec2;
+  origin: Vec2;
 };
 
 export type MutationVector = ShapeMutationVector | ColorMutationVector;

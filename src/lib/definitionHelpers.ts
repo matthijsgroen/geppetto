@@ -796,7 +796,7 @@ export const updateSpriteData = (
       : undefined
   );
 
-const defaultNamesForMutations: Record<MutationVectorTypes, string> = {
+export const defaultNamesForMutations: Record<MutationVectorTypes, string> = {
   translate: "Translation",
   deform: "Deformation",
   rotate: "Rotation",

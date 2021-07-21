@@ -143,19 +143,14 @@ export const mutationShader = `
 
 `;
 
-const mutatorToVec4 = (mutator: MutationVector): Vec4 =>
-  mutator.type === "lightness"
-    ? [mutator.value, 1.0, 1.0, 1.0]
-    : mutator.type === "colorize"
-    ? [1.0, mutator.mix, ...mutator.color]
-    : [
-        vectorTypeMapping[mutator.type],
-        mutator.origin[0],
-        mutator.origin[1],
-        mutator.type === "deform" || mutator.type === "translate"
-          ? mutator.radius
-          : -1,
-      ];
+const mutatorToVec4 = (mutator: MutationVector): Vec4 => [
+  vectorTypeMapping[mutator.type],
+  mutator.origin[0],
+  mutator.origin[1],
+  mutator.type === "deform" || mutator.type === "translate"
+    ? mutator.radius
+    : -1,
+];
 
 const getParentMutation = (
   parents: (ShapeDefinition | MutationVector)[],

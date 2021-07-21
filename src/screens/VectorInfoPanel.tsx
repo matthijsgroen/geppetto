@@ -8,7 +8,11 @@ import { iconForType } from "src/components/ShapeList";
 import SliderControl from "src/components/SliderControl";
 import ToggleInputControl from "src/components/ToggleControl";
 import Vec2InputControl from "src/components/Vec2InputControl";
-import { omitKeys, updateVectorData } from "src/lib/definitionHelpers";
+import {
+  defaultNamesForMutations,
+  omitKeys,
+  updateVectorData,
+} from "src/lib/definitionHelpers";
 import {
   ImageDefinition,
   MutationVector,
@@ -50,9 +54,9 @@ const createVector = (
     case "opacity":
       return { type: "opacity", origin, name };
     case "lightness":
-      return { type: "lightness", name, value: 1.0 };
+      return { type: "lightness", origin, name };
     case "colorize":
-      return { type: "colorize", name, mix: 1.0, color: [0.0, 0.0] };
+      return { type: "colorize", origin, name };
   }
 };
 
@@ -102,36 +106,25 @@ const releaseMutationFromControl = (
     return undefined;
   });
 
+const makeOption = (
+  id: MutationVectorTypes
+): { name: string; id: string; value: MutationVectorTypes } => ({
+  name: defaultNamesForMutations[id],
+  id,
+  value: id,
+});
+
 const vectorSelectionOptions: {
   name: string;
   id: string;
   value: MutationVectorTypes;
 }[] = [
-  {
-    name: "Deformation",
-    id: "deform",
-    value: "deform",
-  },
-  {
-    name: "Translation",
-    id: "translate",
-    value: "translate",
-  },
-  {
-    name: "Rotation",
-    id: "rotate",
-    value: "rotate",
-  },
-  {
-    name: "Stretch",
-    id: "stretch",
-    value: "stretch",
-  },
-  {
-    name: "Opacity",
-    id: "opacity",
-    value: "opacity",
-  },
+  makeOption("deform"),
+  makeOption("translate"),
+  makeOption("rotate"),
+  makeOption("stretch"),
+  makeOption("opacity"),
+  makeOption("lightness"),
 ];
 
 const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
@@ -179,7 +172,7 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                           vector.name,
                           isShapeMutationVector(vector)
                             ? vector.origin
-                            : [0, 0],
+                            : [1, 1],
                           newValue.value
                         ),
                       onRename
@@ -336,10 +329,26 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 key={"value"}
                 title={"value"}
                 value={activeValue[0]}
-                showValue={true}
+                showValue={(value) => `${Math.round(value * 100)} %`}
                 min={0}
                 max={1}
-                step={0.05}
+                step={0.01}
+                onChange={(newValue) => {
+                  updateVectorValue([newValue, 0]);
+                }}
+              />,
+            ]
+          : []),
+        ...(vectorSelected.type === "lightness"
+          ? [
+              <SliderControl
+                key={"value"}
+                title={"value"}
+                value={activeValue[0]}
+                showValue={(value) => `${Math.round(value * 100)} %`}
+                min={0}
+                max={1}
+                step={0.01}
                 onChange={(newValue) => {
                   updateVectorValue([newValue, 0]);
                 }}
