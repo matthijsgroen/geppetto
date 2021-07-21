@@ -3,6 +3,7 @@ import React, {
   SetStateAction,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import {
@@ -79,9 +80,9 @@ const Layers: React.VFC<LayersProps> = ({
     magnetic: false,
     size: 2,
   });
-  const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
-    false
-  );
+  // const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
+  //   false
+  // );
   const [activeCoord, setActiveCoord] = useState<null | [number, number]>(null);
   const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
     null
@@ -117,26 +118,38 @@ const Layers: React.VFC<LayersProps> = ({
     }
   }, [imageDefinition]);
 
-  const mouseDown = (event: React.MouseEvent) => {
+  const mouseDownRef = useRef<false | [number, number]>(false);
+  const mouseMoveDeltaRef = useRef<[number, number]>([0, 0]);
+
+  const mouseDown = useCallback((event: React.MouseEvent) => {
     const canvasPos = event.currentTarget.getBoundingClientRect();
     const elementX = event.pageX - canvasPos.left;
     const elementY = event.pageY - canvasPos.top;
-    setIsMouseDown([elementX, elementY]);
-  };
 
-  const mouseMove = (event: React.MouseEvent) => {
-    if (isMouseDown) {
+    mouseDownRef.current = [elementX, elementY];
+    mouseMoveDeltaRef.current = [0, 0];
+  }, []);
+
+  const mouseMove = useCallback(
+    (event: React.MouseEvent) => {
+      if (!mouseDownRef.current) return;
+
       const canvasPos = event.currentTarget.getBoundingClientRect();
       const elementX = event.pageX - canvasPos.left;
       const elementY = event.pageY - canvasPos.top;
-      setIsMouseDown([elementX, elementY]);
-      const deltaX = elementX - isMouseDown[0];
-      const deltaY = elementY - isMouseDown[1];
+      const [x, y] = mouseDownRef.current;
+      const deltaX = elementX - x;
+      const deltaY = elementY - y;
+      const [prevDeltaX, prevDeltaY] = mouseMoveDeltaRef.current;
+      mouseMoveDeltaRef.current = [deltaX, deltaY];
 
       const newPanX = Math.min(
         1.0,
         Math.max(
-          panX + ((deltaX / canvasPos.width) * window.devicePixelRatio) / zoom,
+          panX +
+            (((deltaX - prevDeltaX) / canvasPos.width) *
+              window.devicePixelRatio) /
+              zoom,
           -1.0
         )
       );
@@ -146,68 +159,77 @@ const Layers: React.VFC<LayersProps> = ({
         1.0,
         Math.max(
           panY +
-            ((deltaY / canvasPos.height) * window.devicePixelRatio * -1.0) /
+            (((deltaY - prevDeltaY) / canvasPos.height) *
+              window.devicePixelRatio *
+              -1.0) /
               zoom,
           -1.0
         )
       );
       setPanY(newPanY);
-    }
-  };
+    },
+    [setPanX, setPanY, panX, panY, zoom]
+  );
 
-  const mouseUp = (event: React.MouseEvent) => {
-    if (
-      (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
-      texture &&
-      layerSelected
-    ) {
-      const canvasPos = event.currentTarget.getBoundingClientRect();
-      const elementX = event.pageX - canvasPos.left;
-      const elementY = event.pageY - canvasPos.top;
-      const coord = getTextureCoordinate(
-        [canvasPos.width, canvasPos.height],
-        [texture.width, texture.height],
-        [panX, panY],
-        zoom,
-        [elementX, elementY]
-      );
+  const mouseUp = useCallback(
+    (event: React.MouseEvent) => {
+      if (
+        (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
+        texture &&
+        layerSelected
+      ) {
+        const canvasPos = event.currentTarget.getBoundingClientRect();
+        const elementX = event.pageX - canvasPos.left;
+        const elementY = event.pageY - canvasPos.top;
+        const coord = getTextureCoordinate(
+          [canvasPos.width, canvasPos.height],
+          [texture.width, texture.height],
+          [panX, panY],
+          zoom,
+          [elementX, elementY]
+        );
 
-      const shape = getShape(imageDefinition, layerSelected.name);
-      if (shape && shape.type === "sprite") {
-        const closePoint = shape.points.find((p) => {
-          const dx = p[0] - coord[0];
-          const dy = p[1] - coord[1];
-          const zf = maxZoomFactor(texture);
+        const shape = getShape(imageDefinition, layerSelected.name);
+        if (shape && shape.type === "sprite") {
+          const closePoint = shape.points.find((p) => {
+            const dx = p[0] - coord[0];
+            const dy = p[1] - coord[1];
+            const zf = maxZoomFactor(texture);
 
-          return (
-            dx > -zf / zoom &&
-            dx < zf / zoom &&
-            dy > -zf / zoom &&
-            dy < zf / zoom
-          );
-        });
+            return (
+              dx > -zf / zoom &&
+              dx < zf / zoom &&
+              dy > -zf / zoom &&
+              dy < zf / zoom
+            );
+          });
 
-        if (!closePoint && mouseMode === MouseMode.Aim) {
-          const gridCoord = alignOnGrid(gridSettings, coord);
-          updateImageDefinition((state) =>
-            addPoint(state, layerSelected.name, gridCoord)
-          );
-          setActiveCoord(gridCoord);
-        } else {
-          closePoint && setActiveCoord(closePoint);
+          if (!closePoint && mouseMode === MouseMode.Aim) {
+            const gridCoord = alignOnGrid(gridSettings, coord);
+            updateImageDefinition((state) =>
+              addPoint(state, layerSelected.name, gridCoord)
+            );
+            setActiveCoord(gridCoord);
+          } else {
+            closePoint && setActiveCoord(closePoint);
+          }
         }
       }
-    }
-    setIsMouseDown(false);
-  };
+      mouseDownRef.current = false;
+    },
+    [panX, panY, setActiveCoord, updateImageDefinition, texture, mouseMode]
+  );
 
-  const mouseWheel = (delta: number) => {
-    const z = Math.min(
-      maxZoomFactor(texture),
-      Math.max(0.1, zoom - delta / 100)
-    );
-    setZoom(z);
-  };
+  const mouseWheel = useCallback(
+    (delta: number) => {
+      const z = Math.min(
+        maxZoomFactor(texture),
+        Math.max(0.1, zoom - delta / 100)
+      );
+      setZoom(z);
+    },
+    [zoom, texture, setZoom]
+  );
 
   return (
     <ScreenLayout

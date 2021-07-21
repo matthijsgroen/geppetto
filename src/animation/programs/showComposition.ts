@@ -231,7 +231,7 @@ export const showComposition = (): {
         x: itemOffset[0],
         y: itemOffset[1],
         z: -0.5 + itemOffset[2] * 0.001,
-        lightness: 0.6,
+        lightness: 1.0,
       });
       const offset = vertices.length / stride;
       shape.points.forEach(([x, y]) => {
