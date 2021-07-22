@@ -3,9 +3,9 @@ import React, {
   SetStateAction,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from "react";
+import LayerMouseControl from "src/components/LayerMouseControl";
 import {
   defaultStepFn,
   StepSize,
@@ -17,7 +17,7 @@ import TextureMapCanvas, {
   GRID_SIZES,
 } from "../animation/TextureMapCanvas";
 import Menu from "../components/Menu";
-import MouseControl, { MouseMode } from "../components/MouseControl";
+import { MouseMode } from "../components/MouseControl";
 import ShapeList from "../components/ShapeList";
 import ToolbarButton from "../components/ToolbarButton";
 import ToolbarSeperator from "../components/ToolbarSeperator";
@@ -72,17 +72,17 @@ const Layers: React.VFC<LayersProps> = ({
   updateImageDefinition,
   showFPS,
 }) => {
-  const [zoom, setZoom] = useState(1.0);
-  const [panX, setPanX] = useState(0.0);
-  const [panY, setPanY] = useState(0.0);
+  const zoomState = useState(1.0);
+  const panXState = useState(0.0);
+  const panYState = useState(0.0);
+  const [zoom] = zoomState;
+  const [panX] = panXState;
+  const [panY] = panYState;
   const [gridSettings, setGridSettings] = useState<GridSettings>({
     enabled: false,
     magnetic: false,
     size: 2,
   });
-  // const [isMouseDown, setIsMouseDown] = useState<false | [number, number]>(
-  //   false
-  // );
   const [activeCoord, setActiveCoord] = useState<null | [number, number]>(null);
   const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
     null
@@ -118,60 +118,7 @@ const Layers: React.VFC<LayersProps> = ({
     }
   }, [imageDefinition]);
 
-  const mouseDownRef = useRef<false | [number, number]>(false);
-  const mouseMoveDeltaRef = useRef<[number, number]>([0, 0]);
-
-  const mouseDown = useCallback((event: React.MouseEvent) => {
-    const canvasPos = event.currentTarget.getBoundingClientRect();
-    const elementX = event.pageX - canvasPos.left;
-    const elementY = event.pageY - canvasPos.top;
-
-    mouseDownRef.current = [elementX, elementY];
-    mouseMoveDeltaRef.current = [0, 0];
-  }, []);
-
-  const mouseMove = useCallback(
-    (event: React.MouseEvent) => {
-      if (!mouseDownRef.current) return;
-
-      const canvasPos = event.currentTarget.getBoundingClientRect();
-      const elementX = event.pageX - canvasPos.left;
-      const elementY = event.pageY - canvasPos.top;
-      const [x, y] = mouseDownRef.current;
-      const deltaX = elementX - x;
-      const deltaY = elementY - y;
-      const [prevDeltaX, prevDeltaY] = mouseMoveDeltaRef.current;
-      mouseMoveDeltaRef.current = [deltaX, deltaY];
-
-      const newPanX = Math.min(
-        1.0,
-        Math.max(
-          panX +
-            (((deltaX - prevDeltaX) / canvasPos.width) *
-              window.devicePixelRatio) /
-              zoom,
-          -1.0
-        )
-      );
-      setPanX(newPanX);
-
-      const newPanY = Math.min(
-        1.0,
-        Math.max(
-          panY +
-            (((deltaY - prevDeltaY) / canvasPos.height) *
-              window.devicePixelRatio *
-              -1.0) /
-              zoom,
-          -1.0
-        )
-      );
-      setPanY(newPanY);
-    },
-    [setPanX, setPanY, panX, panY, zoom]
-  );
-
-  const mouseUp = useCallback(
+  const mouseClick = useCallback(
     (event: React.MouseEvent) => {
       if (
         (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
@@ -215,20 +162,19 @@ const Layers: React.VFC<LayersProps> = ({
           }
         }
       }
-      mouseDownRef.current = false;
     },
-    [panX, panY, setActiveCoord, updateImageDefinition, texture, mouseMode]
-  );
-
-  const mouseWheel = useCallback(
-    (delta: number) => {
-      const z = Math.min(
-        maxZoomFactor(texture),
-        Math.max(0.1, zoom - delta / 100)
-      );
-      setZoom(z);
-    },
-    [zoom, texture, setZoom]
+    [
+      layerSelected,
+      mouseMode,
+      panX,
+      panY,
+      setActiveCoord,
+      texture,
+      updateImageDefinition,
+      zoom,
+      imageDefinition,
+      gridSettings,
+    ]
   );
 
   return (
@@ -516,12 +462,13 @@ const Layers: React.VFC<LayersProps> = ({
         />,
       ]}
       main={
-        <MouseControl
+        <LayerMouseControl
           mode={mouseMode}
-          onMouseDown={mouseDown}
-          onMouseMove={mouseMove}
-          onMouseUp={mouseUp}
-          onWheel={mouseWheel}
+          texture={texture}
+          panXState={panXState}
+          panYState={panYState}
+          zoomState={zoomState}
+          onClick={mouseClick}
         >
           <TextureMapCanvas
             image={texture}
@@ -534,7 +481,7 @@ const Layers: React.VFC<LayersProps> = ({
             activeCoord={activeCoord}
             showFPS={showFPS}
           />
-        </MouseControl>
+        </LayerMouseControl>
       }
     />
   );

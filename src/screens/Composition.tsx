@@ -4,9 +4,9 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
+import LayerMouseControl from "src/components/LayerMouseControl";
 import MenuItem from "src/components/MenuItem";
 import { ToolbarLabel, ToolbarSpacer } from "src/components/Toolbar";
 import ToolbarMeter from "src/components/ToolbarMeter";
@@ -16,10 +16,9 @@ import {
   mixVec2,
 } from "src/lib/vertices";
 import { isMutationVector, isShapeMutationVector, visit } from "src/lib/visit";
-import { maxZoomFactor } from "src/lib/webgl";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
-import MouseControl, { MouseMode } from "../components/MouseControl";
+import { MouseMode } from "../components/MouseControl";
 import ShapeList from "../components/ShapeList";
 import ToolbarButton from "../components/ToolbarButton";
 import {
@@ -107,9 +106,9 @@ const Composition: React.VFC<CompositionProps> = ({
   panXState,
   panYState,
 }) => {
-  const [zoom, setZoom] = zoomState;
-  const [panX, setPanX] = panXState;
-  const [panY, setPanY] = panYState;
+  const [zoom] = zoomState;
+  const [panX] = panXState;
+  const [panY] = panYState;
 
   const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
     null
@@ -225,35 +224,8 @@ const Composition: React.VFC<CompositionProps> = ({
     return combineKeyFrames(result, mixed, vectorMapping);
   }, defaultFrameValues);
 
-  const mouseDownRef = useRef<false | [number, number]>(false);
-  const mouseMoveDeltaRef = useRef<[number, number]>([0, 0]);
-
-  const mouseDown = useCallback((event: React.MouseEvent) => {
-    const canvasPos = event.currentTarget.getBoundingClientRect();
-    const elementX = event.pageX - canvasPos.left;
-    const elementY = event.pageY - canvasPos.top;
-
-    mouseDownRef.current = [elementX, elementY];
-    mouseMoveDeltaRef.current = [0, 0];
-  }, []);
-
-  const mouseMove = useCallback(
-    (event: React.MouseEvent) => {
-      if (!mouseDownRef.current) return;
-
-      const canvasPos = event.currentTarget.getBoundingClientRect();
-      const elementX = event.pageX - canvasPos.left;
-      const elementY = event.pageY - canvasPos.top;
-
-      const [x, y] = mouseDownRef.current;
-      const deltaX = elementX - x;
-      const deltaY = elementY - y;
-      const [prevDeltaX, prevDeltaY] = mouseMoveDeltaRef.current;
-      mouseMoveDeltaRef.current = [deltaX, deltaY];
-
-      const moveDeltaX = (deltaX - prevDeltaX) / zoom;
-      const moveDeltaY = (deltaY - prevDeltaY) / zoom;
-
+  const handleDrag = useCallback(
+    (event: React.MouseEvent, deltaX: number, deltaY: number) => {
       if ((shapeSelected || vectorSelected) && event.shiftKey) {
         updateImageDefinition((image) =>
           visit(image, (item, parents) => {
@@ -270,8 +242,8 @@ const Composition: React.VFC<CompositionProps> = ({
               return {
                 ...item,
                 translate: [
-                  Math.round(item.translate[0] + moveDeltaX),
-                  Math.round(item.translate[1] + moveDeltaY),
+                  Math.round(item.translate[0] + deltaX),
+                  Math.round(item.translate[1] + deltaY),
                 ],
               };
             }
@@ -284,57 +256,19 @@ const Composition: React.VFC<CompositionProps> = ({
               return {
                 ...item,
                 origin: [
-                  Math.round(item.origin[0] + moveDeltaX),
-                  Math.round(item.origin[1] + moveDeltaY),
+                  Math.round(item.origin[0] + deltaX),
+                  Math.round(item.origin[1] + deltaY),
                 ],
               };
             }
             return undefined;
           })
         );
-        return;
+        return true;
       }
-      const newPanX = Math.min(
-        1.0,
-        Math.max(
-          panX +
-            (((deltaX - prevDeltaX) / canvasPos.width) *
-              window.devicePixelRatio) /
-              zoom,
-          -1.0
-        )
-      );
-      setPanX(newPanX);
-
-      const newPanY = Math.min(
-        1.0,
-        Math.max(
-          panY +
-            (((deltaY - prevDeltaY) / canvasPos.height) *
-              window.devicePixelRatio *
-              -1.0) /
-              zoom,
-          -1.0
-        )
-      );
-      setPanY(newPanY);
+      return false;
     },
-    [updateImageDefinition, setPanX, setPanY, panX, panY, zoom]
-  );
-
-  const mouseUp = useCallback(() => {
-    mouseDownRef.current = false;
-  }, []);
-
-  const mouseWheel = useCallback(
-    (delta: number) => {
-      const z = Math.min(
-        maxZoomFactor(texture),
-        Math.max(0.1, zoom - delta / 100)
-      );
-      setZoom(z);
-    },
-    [setZoom, texture, zoom]
+    [updateImageDefinition, shapeSelected, vectorSelected]
   );
 
   return (
@@ -729,12 +663,13 @@ const Composition: React.VFC<CompositionProps> = ({
         ),
       ]}
       main={
-        <MouseControl
+        <LayerMouseControl
           mode={mouseMode}
-          onMouseDown={mouseDown}
-          onMouseMove={mouseMove}
-          onMouseUp={mouseUp}
-          onWheel={mouseWheel}
+          handleDrag={handleDrag}
+          texture={texture}
+          zoomState={zoomState}
+          panXState={panXState}
+          panYState={panYState}
         >
           <CompositionCanvas
             image={texture}
@@ -746,7 +681,7 @@ const Composition: React.VFC<CompositionProps> = ({
             activeLayer={layerSelected}
             showFPS={showFPS}
           />
-        </MouseControl>
+        </LayerMouseControl>
       }
     />
   );
