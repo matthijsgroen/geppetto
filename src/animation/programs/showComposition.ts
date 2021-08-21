@@ -71,7 +71,6 @@ const compositionFragmentShader = `
 
   uniform sampler2D uSampler;
   uniform mediump vec2 uTextureDimensions;
-  //uniform mediump vec4 uColorEffect;
 
   float RGBToL(vec3 color) {
     lowp float fmin = min(min(color.r, color.g), color.b);    //Min. value of RGB
@@ -201,7 +200,6 @@ export const showComposition = (): {
     start: number;
     amount: number;
     mutator: number;
-    //lightness: number;
     x: number;
     y: number;
     z: number;
@@ -248,7 +246,6 @@ export const showComposition = (): {
         x: itemOffset[0],
         y: itemOffset[1],
         z: -0.5 + itemOffset[2] * 0.001,
-        //lightness: 1.0,
       });
       const offset = vertices.length / stride;
       shape.points.forEach(([x, y]) => {
@@ -358,7 +355,6 @@ export const showComposition = (): {
       populateShapes();
       const translate = gl.getUniformLocation(shaderProgram, "translate");
       const mutation = gl.getUniformLocation(shaderProgram, "mutation");
-      //const uColorEffect = gl.getUniformLocation(program, "uColorEffect");
 
       const uBasePosition = gl.getUniformLocation(
         shaderProgram,
@@ -449,9 +445,6 @@ export const showComposition = (): {
             }
             gl.uniform3f(translate, element.x, element.y, element.z);
             gl.uniform1f(mutation, element.mutator);
-
-            // lightness, saturation, targetHue, targetSaturation,
-            //gl.uniform4f(uColorEffect, element.lightness, 1.0, 1.0, 1.0);
 
             gl.drawElements(
               gl.TRIANGLES,
