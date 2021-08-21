@@ -23,7 +23,7 @@ const compositionVertexShader = `
   varying mediump vec4 vColor;
   varying mediump vec4 vCircle;
   varying mediump vec2 vViewport;
-  uniform float mutation; 
+  uniform float mutation;
 
   uniform vec2 viewport;
   uniform vec3 translate;
@@ -34,9 +34,9 @@ const compositionVertexShader = `
   attribute vec4 color;
 
   mat4 viewportScale = mat4(
-    2.0 / viewport.x, 0, 0, 0,   
-    0, -2.0 / viewport.y, 0, 0,    
-    0, 0, 1, 0,    
+    2.0 / viewport.x, 0, 0, 0,
+    0, -2.0 / viewport.y, 0, 0,
+    0, 0, 1, 0,
     -1, +1, 0, 1
   );
 
@@ -44,9 +44,15 @@ const compositionVertexShader = `
   ${mutationShader}
 
   void main() {
-    vec3 deform = mutatePoint(vec3(translate.xy, 1.0), int(mutation));
+    mat3 start = mat3(
+      coordinates + translate.xy, 1.0,
+      0, 0, 0,
+      0, 0, 0
+    );
+    mat3 deform = mutatePoint(start, int(mutation));
+    vec3 deformPos = deform[0];
 
-    vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deformPos.xy + basePosition.xy) * scale.x, translate.z, 1.0);
 
     int pointIndex = int(coordinates.x);
     float radius = abs(coordinates.y);

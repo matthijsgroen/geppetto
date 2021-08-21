@@ -45,6 +45,10 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
     mouseMoveDeltaRef.current = [0, 0];
   }, []);
 
+  const zoomRef = useRef(zoom);
+  const panXRef = useRef(panX);
+  const panYRef = useRef(panY);
+
   const mouseMove = useCallback(
     (event: React.MouseEvent) => {
       if (!mouseDownRef.current) return;
@@ -59,36 +63,38 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
       const [prevDeltaX, prevDeltaY] = mouseMoveDeltaRef.current;
       mouseMoveDeltaRef.current = [deltaX, deltaY];
 
-      const moveDeltaX = (deltaX - prevDeltaX) / zoom;
-      const moveDeltaY = (deltaY - prevDeltaY) / zoom;
+      const moveDeltaX = (deltaX - prevDeltaX) / zoomRef.current;
+      const moveDeltaY = (deltaY - prevDeltaY) / zoomRef.current;
       if (handleDrag && handleDrag(event, moveDeltaX, moveDeltaY)) return;
 
       const newPanX = Math.min(
         1.0,
         Math.max(
-          panX +
+          panXRef.current +
             (((deltaX - prevDeltaX) / canvasPos.width) *
               window.devicePixelRatio) /
-              zoom,
+              zoomRef.current,
           -1.0
         )
       );
+      panXRef.current = newPanX;
       setPanX(newPanX);
 
       const newPanY = Math.min(
         1.0,
         Math.max(
-          panY +
+          panYRef.current +
             (((deltaY - prevDeltaY) / canvasPos.height) *
               window.devicePixelRatio *
               -1.0) /
-              zoom,
+              zoomRef.current,
           -1.0
         )
       );
+      panYRef.current = newPanY;
       setPanY(newPanY);
     },
-    [handleDrag, setPanX, setPanY, panX, panY, zoom]
+    [handleDrag, setPanX, setPanY]
   );
 
   const mouseUp = useCallback(
@@ -105,11 +111,12 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
     (delta: number) => {
       const z = Math.min(
         maxZoomFactor(texture),
-        Math.max(0.1, zoom - delta / 100)
+        Math.max(0.1, zoomRef.current - delta / 100)
       );
+      zoomRef.current = z;
       setZoom(z);
     },
-    [setZoom, texture, zoom]
+    [setZoom, texture]
   );
 
   return (

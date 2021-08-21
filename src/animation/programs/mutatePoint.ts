@@ -6,7 +6,7 @@ import {
 } from "src/lib/types";
 import {
   isShapeDefinition,
-  isShapeMutationVector,
+  isMutationVector,
   visitShapes,
 } from "src/lib/visit";
 
@@ -85,51 +85,63 @@ export const mutationShader = `
   uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];
   uniform float uMutationParent[${MAX_MUTATION_VECTORS}];
 
-  vec3 mutateOnce(vec3 startValue, int mutationIndex) {
+  mat3 mutateOnce(mat3 startValue, int mutationIndex) {
     vec4 mutation = uMutationVectors[mutationIndex];
     int mutationType = int(mutation.x);
 
     vec2 mutationValue = getMutationValue(mutationIndex, mutationType);
     vec2 origin = mutation.yz;
-    vec3 result = startValue;
+
+    vec3 result = startValue[0];
+    vec3 color = startValue[1];
+    vec3 extra = startValue[2];
 
     if (mutationType == 1) { // Translate
       float effect = 1.0;
-      if (mutation.a > 0.0 && distance(startValue.xy, origin) > mutation.a) {
+      if (mutation.a > 0.0 && distance(result.xy, origin) > mutation.a) {
         effect = 0.0;
       }
-      result = vec3(startValue.xy + mutationValue * effect, startValue.z);
+      result = vec3(result.xy + mutationValue * effect, result.z);
     }
 
     if (mutationType == 2) { // Stretch
       result = vec3(origin.xy + vec2(
-        (startValue.x - origin.x) * mutationValue.x, 
-        (startValue.y - origin.y) * mutationValue.y
-      ), startValue.z);
+        (result.x - origin.x) * mutationValue.x,
+        (result.y - origin.y) * mutationValue.y
+      ), result.z);
     }
 
     if (mutationType == 3) { // Rotation
       float rotation = mutationValue.x * PI_FRAC;
       mat2 entityRotationMatrix = mat2(cos(rotation), sin(rotation), -sin(rotation), cos(rotation));
-      result = vec3((startValue.xy - origin) * entityRotationMatrix + origin, startValue.z);
+      result = vec3((result.xy - origin) * entityRotationMatrix + origin, result.z);
     }
 
     if (mutationType == 4) { // Deform
-      float effect = 1.0 - clamp(distance(startValue.xy, origin), 0.0, mutation.a) / mutation.a;	
-      result = vec3(startValue.xy + mutationValue * effect, startValue.z);	
+      float effect = 1.0 - clamp(distance(result.xy, origin), 0.0, mutation.a) / mutation.a;
+      result = vec3(result.xy + mutationValue * effect, result.z);
     }
 
     if (mutationType == 5) { // Opacity
       float opacity = mutationValue.x;
-      result = vec3(startValue.xy, startValue.z * opacity);	
+      result = vec3(result.xy, result.z * opacity);
     }
 
-    return result;
+    if (mutationType == 6) { // Lightness
+      float lightness = mutationValue.x;
+      color = vec3(color.x * lightness, color.yz);
+    }
+
+    return mat3(
+      result,
+      color,
+      extra
+    );
   }
 
-  vec3 mutatePoint(vec3 startValue, int mutationIndex) {
+  mat3 mutatePoint(mat3 startValue, int mutationIndex) {
     int currentNode = mutationIndex;
-    vec3 result = startValue;
+    mat3 result = startValue;
 
     for(int i = 0; i < ${MAX_MUTATION_VECTORS}; i++) {
         if (currentNode == -1) {
@@ -190,7 +202,7 @@ export const createShapeMutationList = (
   const mutatorMapping: Record<string, number> = {};
 
   visitShapes(shapes, (item, parents) => {
-    if (isShapeMutationVector(item)) {
+    if (isMutationVector(item)) {
       const value = mutatorToVec4(item);
       const index = mutators.length;
       mutators.push(value);
