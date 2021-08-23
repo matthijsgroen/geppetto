@@ -128,6 +128,7 @@ const vectorSelectionOptions: {
   makeOption("opacity"),
   makeOption("lightness"),
   makeOption("saturation"),
+  makeOption("colorize"),
 ];
 
 const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
