@@ -1,7 +1,12 @@
-import { MutationVector, ShapeDefinition, Vec4 } from "src/lib/types";
 import {
-  isMutationVector,
+  MutationVector,
+  MutationVectorTypes,
+  ShapeDefinition,
+  Vec4,
+} from "src/lib/types";
+import {
   isShapeDefinition,
+  isMutationVector,
   visitShapes,
 } from "src/lib/visit";
 
@@ -9,12 +14,15 @@ export const MAX_MUTATION_VECTORS = 60;
 export const MAX_CONTROLS = 20;
 export const MAX_MUTATION_CONTROL_VECTORS = 120;
 
-export const vectorTypeMapping = {
+export const vectorTypeMapping: Record<MutationVectorTypes, number> = {
   translate: 1,
   stretch: 2,
   rotate: 3,
   deform: 4,
   opacity: 5,
+  lightness: 6,
+  colorize: 7,
+  saturation: 8,
 };
 
 export const mutationControlShader = `
@@ -78,51 +86,73 @@ export const mutationShader = `
   uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];
   uniform float uMutationParent[${MAX_MUTATION_VECTORS}];
 
-  vec3 mutateOnce(vec3 startValue, int mutationIndex) {
+  mat3 mutateOnce(mat3 startValue, int mutationIndex) {
     vec4 mutation = uMutationVectors[mutationIndex];
     int mutationType = int(mutation.x);
 
     vec2 mutationValue = getMutationValue(mutationIndex, mutationType);
     vec2 origin = mutation.yz;
-    vec3 result = startValue;
+
+    vec3 result = startValue[0];
+    vec3 color = startValue[1];
+    vec3 effect = startValue[2];
 
     if (mutationType == 1) { // Translate
       float effect = 1.0;
-      if (mutation.a > 0.0 && distance(startValue.xy, origin) > mutation.a) {
+      if (mutation.a > 0.0 && distance(result.xy, origin) > mutation.a) {
         effect = 0.0;
       }
-      result = vec3(startValue.xy + mutationValue * effect, startValue.z);
+      result = vec3(result.xy + mutationValue * effect, result.z);
     }
 
     if (mutationType == 2) { // Stretch
       result = vec3(origin.xy + vec2(
-        (startValue.x - origin.x) * mutationValue.x, 
-        (startValue.y - origin.y) * mutationValue.y
-      ), startValue.z);
+        (result.x - origin.x) * mutationValue.x,
+        (result.y - origin.y) * mutationValue.y
+      ), result.z);
     }
 
     if (mutationType == 3) { // Rotation
       float rotation = mutationValue.x * PI_FRAC;
       mat2 entityRotationMatrix = mat2(cos(rotation), sin(rotation), -sin(rotation), cos(rotation));
-      result = vec3((startValue.xy - origin) * entityRotationMatrix + origin, startValue.z);
+      result = vec3((result.xy - origin) * entityRotationMatrix + origin, result.z);
     }
 
     if (mutationType == 4) { // Deform
-      float effect = 1.0 - clamp(distance(startValue.xy, origin), 0.0, mutation.a) / mutation.a;	
-      result = vec3(startValue.xy + mutationValue * effect, startValue.z);	
+      float effect = 1.0 - clamp(distance(result.xy, origin), 0.0, mutation.a) / mutation.a;
+      result = vec3(result.xy + mutationValue * effect, result.z);
     }
 
     if (mutationType == 5) { // Opacity
       float opacity = mutationValue.x;
-      result = vec3(startValue.xy, startValue.z * opacity);	
+      result = vec3(result.xy, result.z * opacity);
     }
 
-    return result;
+    if (mutationType == 6) { // Lightness
+      float lightness = mutationValue.x;
+      color = vec3(lightness, color.yz);
+    }
+
+    if (mutationType == 7) { // De-saturation color
+      effect = vec3(mutationValue.xy, effect.z);
+    }
+
+    if (mutationType == 8) { // Saturation
+      float saturation = mutationValue.x;
+      color = vec3(color.x, saturation, color.z);
+    }
+
+
+    return mat3(
+      result,
+      color,
+      effect
+    );
   }
 
-  vec3 mutatePoint(vec3 startValue, int mutationIndex) {
+  mat3 mutatePoint(mat3 startValue, int mutationIndex) {
     int currentNode = mutationIndex;
-    vec3 result = startValue;
+    mat3 result = startValue;
 
     for(int i = 0; i < ${MAX_MUTATION_VECTORS}; i++) {
         if (currentNode == -1) {
@@ -169,7 +199,7 @@ const getParentMutation = (
   return null;
 };
 
-export const createMutationList = (
+export const createShapeMutationList = (
   shapes: ShapeDefinition[]
 ): {
   parentList: Float32Array;

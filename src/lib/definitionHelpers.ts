@@ -4,6 +4,7 @@ import {
   ImageDefinition,
   ItemSelection,
   MutationVector,
+  MutationVectorTypes,
   ShapeDefinition,
   SpriteDefinition,
   Vec2,
@@ -795,13 +796,17 @@ export const updateSpriteData = (
       : undefined
   );
 
-const defaultNamesForMutations: Record<MutationVector["type"], string> = {
+export const defaultNamesForMutations: Record<MutationVectorTypes, string> = {
   translate: "Translation",
   deform: "Deformation",
   rotate: "Rotation",
   opacity: "Opacity",
   stretch: "Stretch",
+  lightness: "Lightness",
+  colorize: "Colorize",
+  saturation: "Saturation",
 };
+
 const defaultNames = [
   "New Mutator",
   ...Object.values(defaultNamesForMutations),
