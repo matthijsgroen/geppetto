@@ -39,7 +39,7 @@ const compositionVertexShader = `
   void main() {
     mat3 value = mat3(
       coordinates + translate.xy, 1.0,
-      1.0, 1.0, 1.0,
+      1.0, 1.0, 0,
       0, 0, 0
     );
     mat3 deform = mutatePoint(value, int(mutation));
@@ -52,10 +52,10 @@ const compositionVertexShader = `
     vTextureCoord = aTextureCoord.xy;
     vOpacity = deformPos.z;
 
-    vBrightness = deformColor.r;
-    vSaturation = deformColor.g;
-    vTargetHue = deformColor.b;
-    vTargetSaturation = deformEffect.r;
+    vBrightness = deformColor.x;
+    vSaturation = deformColor.y;
+    vTargetHue = deformEffect.x;
+    vTargetSaturation = deformEffect.y;
   }
 `;
 

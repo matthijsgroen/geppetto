@@ -360,6 +360,34 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
               />,
             ]
           : []),
+        ...(vectorSelected.type === "colorize"
+          ? [
+              <SliderControl
+                key={"hue"}
+                title={"color hue"}
+                value={activeValue[0]}
+                showValue={(value) => `${Math.round(value * 360)} deg`}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(newValue) => {
+                  updateVectorValue([newValue, activeValue[1]]);
+                }}
+              />,
+              <SliderControl
+                key={"sat"}
+                title={"color sat"}
+                value={activeValue[1]}
+                showValue={(value) => `${Math.round(value * 100)} %`}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(newValue) => {
+                  updateVectorValue([activeValue[0], newValue]);
+                }}
+              />,
+            ]
+          : []),
         ...(vectorSelected.type === "saturation"
           ? [
               <SliderControl

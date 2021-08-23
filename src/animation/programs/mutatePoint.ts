@@ -95,7 +95,7 @@ export const mutationShader = `
 
     vec3 result = startValue[0];
     vec3 color = startValue[1];
-    vec3 extra = startValue[2];
+    vec3 effect = startValue[2];
 
     if (mutationType == 1) { // Translate
       float effect = 1.0;
@@ -133,6 +133,10 @@ export const mutationShader = `
       color = vec3(lightness, color.yz);
     }
 
+    if (mutationType == 7) { // De-saturation color
+      effect = vec3(mutationValue.xy, effect.z);
+    }
+
     if (mutationType == 8) { // Saturation
       float saturation = mutationValue.x;
       color = vec3(color.x, saturation, color.z);
@@ -142,7 +146,7 @@ export const mutationShader = `
     return mat3(
       result,
       color,
-      extra
+      effect
     );
   }
 
