@@ -22,6 +22,7 @@ export const vectorTypeMapping: Record<MutationVectorTypes, number> = {
   opacity: 5,
   lightness: 6,
   colorize: 7,
+  saturation: 8,
 };
 
 export const mutationControlShader = `
@@ -129,8 +130,14 @@ export const mutationShader = `
 
     if (mutationType == 6) { // Lightness
       float lightness = mutationValue.x;
-      color = vec3(color.x * lightness, color.yz);
+      color = vec3(lightness, color.yz);
     }
+
+    if (mutationType == 8) { // Saturation
+      float saturation = mutationValue.x;
+      color = vec3(color.x, saturation, color.z);
+    }
+
 
     return mat3(
       result,

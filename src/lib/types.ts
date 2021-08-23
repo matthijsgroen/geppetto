@@ -44,6 +44,12 @@ export type Lightness = {
   origin: Vec2;
 };
 
+export type Saturation = {
+  name: string;
+  type: "saturation";
+  origin: Vec2;
+};
+
 export type Colorize = {
   name: string;
   type: "colorize";
@@ -60,7 +66,7 @@ export type ShapeMutationVector =
   | RotationVector
   | OpacityVector;
 
-export type ColorMutationVector = Lightness | Colorize;
+export type ColorMutationVector = Lightness | Colorize | Saturation;
 
 export type SpriteDefinition = {
   name: string;

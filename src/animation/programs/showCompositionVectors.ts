@@ -128,6 +128,7 @@ const colorMapping: Record<MutationVectorTypes, Color> = {
   opacity: white,
   lightness: white,
   colorize: orange,
+  saturation: green,
 };
 
 export const showCompositionVectors = (): {

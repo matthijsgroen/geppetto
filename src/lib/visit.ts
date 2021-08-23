@@ -39,7 +39,9 @@ export const isShapeMutationVector = (
 export const isColorMutationVector = (
   item: ItemWithType
 ): item is ColorMutationVector =>
-  item.type === "colorize" || item.type === "lightness";
+  item.type === "colorize" ||
+  item.type === "lightness" ||
+  item.type === "saturation";
 
 export const visitVectors = (
   vectors: MutationVector[],

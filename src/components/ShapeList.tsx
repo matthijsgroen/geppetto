@@ -15,6 +15,7 @@ const iconMapping: Record<MutationVectorTypes, string> = {
   opacity: "⚪️",
   lightness: "⬜️",
   colorize: "🟧",
+  saturation: "🟩",
 };
 
 export const iconForType = (type: MutationVectorTypes): string =>

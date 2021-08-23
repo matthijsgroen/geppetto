@@ -40,7 +40,7 @@ const compositionVertexShader = `
     mat3 value = mat3(
       coordinates + translate.xy, 1.0,
       1.0, 1.0, 1.0,
-      1.0, 0, 0
+      0, 0, 0
     );
     mat3 deform = mutatePoint(value, int(mutation));
     vec3 deformPos = deform[0];

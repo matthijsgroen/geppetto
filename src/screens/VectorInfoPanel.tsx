@@ -55,6 +55,8 @@ const createVector = (
       return { type: "opacity", origin, name };
     case "lightness":
       return { type: "lightness", origin, name };
+    case "saturation":
+      return { type: "saturation", origin, name };
     case "colorize":
       return { type: "colorize", origin, name };
   }
@@ -125,6 +127,7 @@ const vectorSelectionOptions: {
   makeOption("stretch"),
   makeOption("opacity"),
   makeOption("lightness"),
+  makeOption("saturation"),
 ];
 
 const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
@@ -162,6 +165,7 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 value={vectorSelected.type}
                 options={vectorSelectionOptions}
                 onChange={(newValue) => {
+                  console.log(newValue);
                   updateVectorValue(defaultValueForVector(newValue.value));
                   updateImageDefinition((state) =>
                     updateVectorData(
@@ -340,6 +344,22 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
             ]
           : []),
         ...(vectorSelected.type === "lightness"
+          ? [
+              <SliderControl
+                key={"value"}
+                title={"value"}
+                value={activeValue[0]}
+                showValue={(value) => `${Math.round(value * 100)} %`}
+                min={0}
+                max={1}
+                step={0.01}
+                onChange={(newValue) => {
+                  updateVectorValue([newValue, 0]);
+                }}
+              />,
+            ]
+          : []),
+        ...(vectorSelected.type === "saturation"
           ? [
               <SliderControl
                 key={"value"}
