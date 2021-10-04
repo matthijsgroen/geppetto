@@ -57,7 +57,7 @@ export const mutationControlShader = `
         vec2 mutBValue = uControlMutationValues[endIndex];
         vec2 mutValue = mix(mutAValue, mutBValue, mixFactor);
 
-        if (mutationType == 2 || mutationType == 5) { // Stretch & Opacity
+        if (mutationType == 2 || mutationType == 5 || mutationType == 8 || mutationType == 6) { // Stretch & Opacity
           result *= mutValue;
         } else {
           result += mutValue;
@@ -139,7 +139,7 @@ export const mutationShader = `
 
     if (mutationType == 8) { // Saturation
       float saturation = mutationValue.x;
-      color = vec3(color.x, saturation, color.z);
+      color = vec3(color.x, saturation * color.y, color.z);
     }
 
 

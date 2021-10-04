@@ -163,13 +163,13 @@ const compositionFragmentShader = `
 
     vec3 hsl = RGBToHSL(color);
     color = mix(
-      HSLToRGB(vec3(hsl.x, hsl.y * vSaturation, hsl.z)),
-      HSLToRGB(vec3(vTargetHue, vTargetSaturation, hsl.z)),
+      color,
+      HSLToRGB(vec3(vTargetHue, 1.0, hsl.z * vTargetSaturation * 0.5)), //hsl.z)),
       1.0 - vSaturation
     ) * vBrightness;
 
-    float contrast = 1.0;
-    color = ((color.rgb - 0.5) * max(contrast, 0.0)) + 0.5;
+    //float contrast = 1.0;
+    //color = ((color.rgb - 0.5) * max(contrast, 0.0)) + 0.5;
 
     gl_FragColor = vec4(color * texelColor.a * vOpacity, texelColor.a * vOpacity);
   }
