@@ -14,6 +14,7 @@ import {
   combineKeyFrames,
   defaultValueForVector,
   mixVec2,
+  mixHueVec2,
 } from "src/lib/vertices";
 import { isMutationVector, isShapeMutationVector, visit } from "src/lib/visit";
 import CompositionCanvas from "../animation/CompositionCanvas";
@@ -218,7 +219,10 @@ const Composition: React.VFC<CompositionProps> = ({
         control.steps[endStep][vectorKey] ||
         defaultValueForVector(vectorMapping[vectorKey].type);
 
-      const vectorValue = mixVec2(min, max, mixValue);
+      const vectorValue =
+        vectorMapping[vectorKey].type === "colorize"
+          ? mixHueVec2(min, max, mixValue)
+          : mixVec2(min, max, mixValue);
       return { ...result, [vectorKey]: vectorValue };
     }, {} as Keyframe);
     return combineKeyFrames(result, mixed, vectorMapping);

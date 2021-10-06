@@ -13,11 +13,34 @@ export const fileredTriangles = (points: number[][]): number[] =>
 export const mix = (a: number, b: number, factor: number): number =>
   a * (1 - factor) + factor * b;
 
+const circularDistance = (a: number, b: number): [number, number] => {
+  const d = Math.abs(a - b);
+
+  if (a < b && Math.abs(a + 1 - b) < d) {
+    return [a + 1, b];
+  }
+  if (a > b && Math.abs(b - a + 1) < d) {
+    return [a, b + 1];
+  }
+  return [a, b];
+};
+
+const mixHue = (a: number, b: number, factor: number): number => {
+  const [aa, ba] = circularDistance(a, b);
+  return mix(aa, ba, factor) % 1.0;
+};
+
 export const mixVec2 = (
   a: Vec2 = [0, 0],
   b: Vec2 = [0, 0],
   factor: number
 ): Vec2 => [mix(a[0], b[0], factor), mix(a[1], b[1], factor)] as Vec2;
+
+export const mixHueVec2 = (
+  a: Vec2 = [0, 0],
+  b: Vec2 = [0, 0],
+  factor: number
+): Vec2 => [mixHue(a[0], b[0], factor), mix(a[1], b[1], factor)] as Vec2;
 
 export const defaultValueForVector = (type: MutationVector["type"]): Vec2 =>
   type === "stretch" ||
