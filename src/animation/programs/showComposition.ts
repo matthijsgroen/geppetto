@@ -79,44 +79,6 @@ const compositionFragmentShader = `
     return (fmax + fmin) / 2.0; // Luminance
   }
 
-  vec3 RGBToHSL(vec3 color) {
-    vec3 hsl;
-
-    float fmin = min(min(color.r, color.g), color.b);
-    float fmax = max(max(color.r, color.g), color.b);
-    float delta = fmax - fmin;
-
-    hsl.z = (fmax + fmin) / 2.0; // Luminance
-
-    if (delta == 0.0)	{
-      hsl.x = 0.0;	// Hue
-      hsl.y = 0.0;	// Saturation
-    } else                                  {
-      if (hsl.z < 0.5)
-        hsl.y = delta / (fmax + fmin); // Saturation
-      else
-        hsl.y = delta / (2.0 - fmax - fmin); // Saturation
-
-    float deltaR = (((fmax - color.r) / 6.0) + (delta / 2.0)) / delta;
-    float deltaG = (((fmax - color.g) / 6.0) + (delta / 2.0)) / delta;
-    float deltaB = (((fmax - color.b) / 6.0) + (delta / 2.0)) / delta;
-
-    if (color.r == fmax )
-      hsl.x = deltaB - deltaG; // Hue
-    else if (color.g == fmax)
-      hsl.x = (1.0 / 3.0) + deltaR - deltaB; // Hue
-    else if (color.b == fmax)
-      hsl.x = (2.0 / 3.0) + deltaG - deltaR; // Hue
-
-    if (hsl.x < 0.0)
-      hsl.x += 1.0; // Hue
-      else if (hsl.x > 1.0)
-      hsl.x -= 1.0; // Hue
-    }
-
-    return hsl;
-  }
-
   float HueToRGB(lowp float f1, lowp float f2, lowp float hue) {
     if (hue < 0.0)
         hue += 1.0;
@@ -161,15 +123,12 @@ const compositionFragmentShader = `
 
     vec3 color = texelColor.rgb;
 
-    vec3 hsl = RGBToHSL(color);
+    float luminance = RGBToL(color);
     color = mix(
       color,
-      HSLToRGB(vec3(vTargetHue, 1.0, hsl.z * vTargetSaturation * 0.5)), //hsl.z)),
+      HSLToRGB(vec3(vTargetHue, 1.0, luminance * vTargetSaturation * 0.5)),
       1.0 - vSaturation
     ) * vBrightness;
-
-    //float contrast = 1.0;
-    //color = ((color.rgb - 0.5) * max(contrast, 0.0)) + 0.5;
 
     gl_FragColor = vec4(color * texelColor.a * vOpacity, texelColor.a * vOpacity);
   }

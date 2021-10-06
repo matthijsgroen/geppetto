@@ -25,52 +25,6 @@ export const vectorTypeMapping: Record<MutationVectorTypes, number> = {
   saturation: 8,
 };
 
-export const mutationControlShader = `
-  uniform vec2 uControlMutationValues[${MAX_MUTATION_CONTROL_VECTORS}];
-  uniform vec3 uMutationValueIndices[${MAX_MUTATION_CONTROL_VECTORS}];
-  uniform vec2 uControlMutationIndices[${MAX_MUTATION_VECTORS}];
-
-  uniform float uControlValues[${MAX_CONTROLS}];
-  uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
-
-  vec2 getMutationValue(int mutationIndex, int mutationType) {
-    vec2 result = uMutationValues[mutationIndex];
-    vec2 controlMutations = uControlMutationIndices[mutationIndex];
-    int start = int(controlMutations.x);
-    int steps = int(controlMutations.y);
-    if (steps == 0) {
-      return result;
-    }
-    for(int i = 0; i < ${MAX_CONTROLS}; i++) {
-      if (i < steps) {
-        vec3 valueIndices = uMutationValueIndices[start + i];
-        // x = offset
-        // y = control value index
-        // z = stepType
-        float controlValue = uControlValues[int(valueIndices.y)];
-
-        int startIndex = int(floor(valueIndices.x + controlValue));
-        int endIndex = int(ceil(valueIndices.x + controlValue));
-        float mixFactor = controlValue - floor(controlValue);
-
-        vec2 mutAValue = uControlMutationValues[startIndex];
-        vec2 mutBValue = uControlMutationValues[endIndex];
-        vec2 mutValue = mix(mutAValue, mutBValue, mixFactor);
-
-        if (mutationType == 2 || mutationType == 5 || mutationType == 8 || mutationType == 6) { // Stretch & Opacity
-          result *= mutValue;
-        } else {
-          result += mutValue;
-        }
-      } else {
-        return result;
-      }
-    }
-
-    return result;
-  }
-`;
-
 export const mutationValueShader = `
   uniform vec2 uMutationValues[${MAX_MUTATION_VECTORS}];
 
