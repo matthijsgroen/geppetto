@@ -260,7 +260,7 @@ export const showCompositionVectors = (): {
     gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
 
     const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
-    gl.uniform1fv(uMutationParent, parentList);
+    gl.uniform1iv(uMutationParent, parentList);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);

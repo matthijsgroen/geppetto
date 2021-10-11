@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import Button, { ButtonType } from "src/components/Button";
-import { Control } from "src/components/Control";
+import { Control, ControlLabel } from "src/components/Control";
 import Menu from "src/components/Menu";
 import NumberInputControl from "src/components/NumberInputControl";
 import SelectControl from "src/components/SelectControl";
@@ -166,7 +166,6 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 value={vectorSelected.type}
                 options={vectorSelectionOptions}
                 onChange={(newValue) => {
-                  console.log(newValue);
                   updateVectorValue(defaultValueForVector(newValue.value));
                   updateImageDefinition((state) =>
                     updateVectorData(
@@ -362,6 +361,18 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
           : []),
         ...(vectorSelected.type === "colorize"
           ? [
+              <Control key={"hue-preview"}>
+                <ControlLabel title={"Color"}>Color</ControlLabel>
+                <div
+                  style={{
+                    width: 100,
+                    height: 24,
+                    backgroundColor: `hsl(${activeValue[0] * 360}deg, ${
+                      activeValue[1] * 100
+                    }%, 50%)`,
+                  }}
+                ></div>
+              </Control>,
               <SliderControl
                 key={"hue"}
                 title={"color hue"}

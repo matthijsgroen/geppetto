@@ -15,14 +15,16 @@ export const mix = (a: number, b: number, factor: number): number =>
 
 const circularDistance = (a: number, b: number): [number, number] => {
   const d = Math.abs(a - b);
+  let aa = a;
+  let ba = b;
 
   if (a < b && Math.abs(a + 1 - b) < d) {
-    return [a + 1, b];
+    aa += 1;
   }
   if (a > b && Math.abs(b - a + 1) < d) {
-    return [a, b + 1];
+    ba += 1;
   }
-  return [a, b];
+  return [aa, ba];
 };
 
 const mixHue = (a: number, b: number, factor: number): number => {
@@ -70,6 +72,8 @@ export const mergeMutationValue = (
   type === "opacity" ||
   type === "saturation"
     ? vecMul(a, b)
+    : type === "colorize"
+    ? a || b || [0, 0]
     : vecAdd(a, b);
 
 export const combineKeyFrames = (

@@ -38,7 +38,7 @@ export const mutationShader = `
 
   // x = type, yz = origin, a = radius
   uniform vec4 uMutationVectors[${MAX_MUTATION_VECTORS}];
-  uniform float uMutationParent[${MAX_MUTATION_VECTORS}];
+  uniform int uMutationParent[${MAX_MUTATION_VECTORS}];
 
   mat3 mutateOnce(mat3 startValue, int mutationIndex) {
     vec4 mutation = uMutationVectors[mutationIndex];
@@ -78,24 +78,20 @@ export const mutationShader = `
     }
 
     if (mutationType == 5) { // Opacity
-      float opacity = mutationValue.x;
-      result = vec3(result.xy, result.z * opacity);
+      result = vec3(result.xy, result.z * mutationValue.x);
     }
 
     if (mutationType == 6) { // Lightness
-      float lightness = mutationValue.x;
-      color = vec3(lightness, color.yz);
+      color = vec3(mutationValue.x * color.x, color.yz);
     }
 
-    if (mutationType == 7) { // De-saturation color
+    if (mutationType == 7) { // Colorize setting
       effect = vec3(mutationValue.xy, effect.z);
     }
 
     if (mutationType == 8) { // Saturation
-      float saturation = mutationValue.x;
-      color = vec3(color.x, saturation * color.y, color.z);
+      color = vec3(color.x, mutationValue.x * color.y, color.z);
     }
-
 
     return mat3(
       result,
@@ -113,7 +109,7 @@ export const mutationShader = `
             return result;
         }
         result = mutateOnce(result, currentNode);
-        currentNode = int(uMutationParent[currentNode]);
+        currentNode = uMutationParent[currentNode];
     }
     return result;
   }

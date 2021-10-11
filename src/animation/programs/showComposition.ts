@@ -50,8 +50,8 @@ const compositionVertexShader = `
     vec4 pos = viewportScale * vec4((deformPos.xy + basePosition.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z, 1.0);
     vTextureCoord = aTextureCoord.xy;
-    vOpacity = deformPos.z;
 
+    vOpacity = deformPos.z;
     vBrightness = deformColor.x;
     vSaturation = deformColor.y;
     vTargetHue = deformEffect.x;
@@ -126,7 +126,7 @@ const compositionFragmentShader = `
     float luminance = RGBToL(color);
     color = mix(
       color,
-      HSLToRGB(vec3(vTargetHue, 1.0, luminance * vTargetSaturation * 0.5)),
+      HSLToRGB(vec3(vTargetHue, vTargetSaturation, luminance)),
       1.0 - vSaturation
     ) * vBrightness;
 
@@ -235,7 +235,7 @@ export const showComposition = (): {
     gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
 
     const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
-    gl.uniform1fv(uMutationParent, parentList);
+    gl.uniform1iv(uMutationParent, parentList);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
