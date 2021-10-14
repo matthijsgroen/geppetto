@@ -1,6 +1,6 @@
 import { setupWebGL, prepareAnimation, ImageDefinition } from "geppetto-player";
-import backgroundImage from "url:./assets/scenery.png";
-import backgroundAnimationData from "./assets/scenery.json";
+import backgroundImage from "url:./assets/colortest.png";
+import backgroundAnimationData from "./assets/colortest.json";
 import characterImage from "url:./assets/innkeeper.png";
 import characterAnimationData from "./assets/innkeeper.json";
 import { animationTween, cleanTicker, delayFrames, tick } from "./tween";
@@ -20,7 +20,7 @@ const loadTexture = async (url: string): Promise<HTMLImageElement> =>
 const start = async () => {
   const bgTexture = await loadTexture(backgroundImage);
   const preppedBgAnim = prepareAnimation(
-    (backgroundAnimationData as unknown) as ImageDefinition
+    backgroundAnimationData as unknown as ImageDefinition
   );
   const bgAnimationControl = player.addAnimation(preppedBgAnim, bgTexture, 0, {
     zoom: 2.0,
@@ -29,7 +29,7 @@ const start = async () => {
 
   const charTexture = await loadTexture(characterImage);
   const preppedCharAnim = prepareAnimation(
-    (characterAnimationData as unknown) as ImageDefinition
+    characterAnimationData as unknown as ImageDefinition
   );
 
   const innKeeperDistance = {
@@ -76,9 +76,22 @@ const start = async () => {
   bgAnimationControl.startTrack("Cloud1", { speed: 0.15 });
   bgAnimationControl.startTrack("Cloud2", { speed: 0.1 });
   bgAnimationControl.startTrack("Cloud3", { speed: 0.15 });
+  bgAnimationControl.startTrack("Day night", { speed: 0.125 });
   bgAnimationControl.startTrack("Eyes");
   bgAnimationControl.startTrack("Smoke");
   bgAnimationControl.startTrack("Water");
+  bgAnimationControl.onEvent((eventName) => {
+    if (eventName === "evening") {
+      bgAnimationControl.startTrack("LightFlicker");
+      bgAnimationControl.stopTrack("Bird");
+    }
+    if (eventName === "endNight") {
+      bgAnimationControl.startTrack("LightOff");
+    }
+    if (eventName === "morning") {
+      bgAnimationControl.startTrack("Bird");
+    }
+  });
 
   let inkeeperInDistance = true;
 
