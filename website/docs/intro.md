@@ -2,50 +2,35 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Getting started
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Hey! Welcome to Geppetto! With Geppetto you can create 2D animations from your 2D image.
 
-## Getting Started
+What this documentation wants to learn you:
 
-Get started by **creating a new site**.
+- Why does Geppetto exist?
+- How does Geppetto work
+- How to create animations
+- How to use these animations in any webbased product
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Why does Geppetto exist?
 
-## Generate a new site
+Motivation
 
-Generate a new Docusaurus site using the **classic template**:
+### Goals
 
-```shell
-npm init docusaurus@latest my-website classic
-```
+1. goal 1
+2. goal 2
+3. goal 3
 
-## Start your site
+## How does Geppetto work?
 
-Run the development server:
+explanation about 2d texture, 2D shapes and shape manipulation that causes animation.
 
-```shell
-cd my-website
+### Concepts
 
-npx docusaurus start
-```
-
-Your site starts at `http://localhost:3000`.
-
-Open `docs/intro.md` and edit some lines: the site **reloads automatically** and display your changes.
-
-## Installation
-
-You can download the latest version of the app from https://github.com/matthijsgroen/geppetto/releases
-
-The apps are untrusted at the moment, if you don't trust it, you can either checkout the electron code at https://github.com/matthijsgroen/geppetto/tree/main/public/electron to review yourself if you trust what I'm doing.
-
-To open an untrusted app:
-
-## On Mac
-
-https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac
-
-## On Windows
-
-...
+1. Texture
+2. Layers
+3. Mutations
+4. Controls
+5. Animations

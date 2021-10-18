@@ -1,8 +1,28 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
-# Screens
+# Geppetto Studio
+
+- Add download buttons
+
+## Installation
+
+You can download the latest version of the app from https://github.com/matthijsgroen/geppetto/releases
+
+The apps are untrusted at the moment, if you don't trust it, you can either checkout the electron code at https://github.com/matthijsgroen/geppetto/tree/main/public/electron to review yourself if you trust what I'm doing.
+
+To open an untrusted app:
+
+## On Mac
+
+https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unidentified-developer-mh40616/mac
+
+## On Windows
+
+...
+
+## Screens
 
 Here you can find how each screen works, what its purpose is and even
 tutorials how to create cool 2d animated characters!

@@ -26,11 +26,12 @@ const config = {
           editUrl:
             "https://github.com/matthijsgroen/geppetto/edit/gh-pages/website/",
         },
-        blog: {
-          showReadingTime: true,
-          editUrl:
-            "https://github.com/matthijsgroen/geppetto/edit/gh-pages/website/blog/",
-        },
+        // blog: {
+        //   showReadingTime: true,
+        //   editUrl:
+        //     "https://github.com/matthijsgroen/geppetto/edit/gh-pages/website/blog/",
+        // },
+        blog: false,
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
@@ -50,15 +51,38 @@ const config = {
         items: [
           {
             type: "doc",
-            docId: "intro",
-            position: "left",
-            label: "Tutorial",
-          },
-          { to: "/blog", label: "Blog", position: "left" },
-          {
-            href: "https://github.com/matthijsgroen/geppetto",
-            label: "GitHub",
+            docId: "features",
             position: "right",
+            label: "Features",
+          },
+          {
+            to: "demo",
+            position: "right",
+            label: "Demo",
+          },
+          {
+            type: "doc",
+            docId: "intro",
+            position: "right",
+            label: "Getting Started",
+          },
+          {
+            type: "doc",
+            docId: "creating-animation/studio",
+            position: "right",
+            label: "Creating an animation",
+          },
+          {
+            type: "doc",
+            docId: "using-animation/player",
+            position: "right",
+            label: "Embedding an animation",
+          },
+          {
+            type: "doc",
+            docId: "using-animation/api",
+            position: "right",
+            label: "API",
           },
         ],
       },
@@ -75,28 +99,19 @@ const config = {
             ],
           },
           {
-            title: "Community",
+            title: "Contact and Source code",
             items: [
-              {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
-              },
               {
                 label: "Twitter",
                 href: "https://twitter.com/matthijsgroen",
               },
-            ],
-          },
-          {
-            title: "More",
-            items: [
               {
-                label: "Blog",
-                to: "/blog",
+                label: "Studio GitHub",
+                href: "https://github.com/matthijsgroen/geppetto",
               },
               {
-                label: "GitHub",
-                href: "https://github.com/matthijsgroen/geppetto",
+                label: "Player GitHub",
+                href: "https://github.com/matthijsgroen/geppetto-player",
               },
             ],
           },
