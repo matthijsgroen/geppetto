@@ -67,6 +67,14 @@ export const newDefinition = (): ImageDefinition => ({
   version: "1.0",
 });
 
+export const updateVersionNumber = (
+  version: string,
+  imageDef: ImageDefinition
+): ImageDefinition => ({
+  ...imageDef,
+  version,
+});
+
 export const getLayerNames = (layers: ShapeDefinition[]): string[] =>
   layers.reduce(
     (result, layer) =>
