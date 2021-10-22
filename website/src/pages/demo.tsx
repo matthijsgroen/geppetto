@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useMemo, useRef, ComponentProps } from "react";
 import Layout from "@theme/Layout";
 import { Player, Animation } from "../components/Player";
 import scenery from "@site/static/demo-assets/scenery.json";
@@ -6,6 +6,7 @@ import sceneryTextureUrl from "@site/static/demo-assets/scenery.png";
 import innkeeper from "@site/static/demo-assets/innkeeper.json";
 import innkeeperTextureUrl from "@site/static/demo-assets/innkeeper.png";
 import { AnimationControls } from "geppetto-player";
+import ClickableAreas from "../components/ClickableAreas";
 
 const Demo: React.VFC = () => {
   const animationRef = useRef<AnimationControls>();
@@ -50,16 +51,26 @@ const Demo: React.VFC = () => {
     []
   );
 
+  const areas = useMemo<ComponentProps<typeof ClickableAreas>["areas"]>(
+    () => [
+      {
+        id: "innkeeper",
+        left: 0.203,
+        right: 0.263,
+        top: 0.458,
+        bottom: 0.706,
+        onClick: () => {
+          console.log("innkeeper interact");
+        },
+        cursor: "pointer",
+      },
+    ],
+    []
+  );
+
   return (
-    <Layout title="Hello">
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          fontSize: "20px",
-        }}
-      >
+    <Layout title="Demo">
+      <ClickableAreas areas={areas}>
         <Player width={2048} height={1024}>
           <Animation
             animation={scenery}
@@ -79,7 +90,7 @@ const Demo: React.VFC = () => {
             }}
           />
         </Player>
-      </div>
+      </ClickableAreas>
     </Layout>
   );
 };

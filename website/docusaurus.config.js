@@ -51,7 +51,7 @@ const config = {
         items: [
           {
             type: "doc",
-            docId: "features",
+            docId: "features/features",
             position: "right",
             label: "Features",
           },
@@ -74,13 +74,13 @@ const config = {
           },
           {
             type: "doc",
-            docId: "using-animation/player",
+            docId: "using-player/player",
             position: "right",
             label: "Embedding an animation",
           },
           {
             type: "doc",
-            docId: "using-animation/api",
+            docId: "using-player/api",
             position: "right",
             label: "API",
           },

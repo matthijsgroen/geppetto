@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  Children,
+} from "react";
 import {
   setupWebGL,
   prepareAnimation,
@@ -19,9 +25,9 @@ const PlayerContext =
   React.createContext<
     (
       animation: PreparedImageDefinition,
-      texture: HTMLImageElement,
+      textureUrl: string,
       options?: Partial<AnimationOptions>
-    ) => [AnimationControls, () => void]
+    ) => Promise<[AnimationControls, () => void]>
   >(null);
 
 export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
@@ -29,21 +35,20 @@ export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
   const [player, setPlayer] = useState<GeppettoPlayer>(null);
   const animations = useRef<AnimationControls[]>([]);
 
-  const playerActive = useRef<boolean>(true);
+  const playerMounted = useRef<boolean>(true);
 
   const addAnimation = useCallback(
-    (
+    async (
       animation: PreparedImageDefinition,
-      texture: HTMLImageElement,
+      textureUrl: string,
       options?: Partial<AnimationOptions>
-    ): [AnimationControls, () => void] => {
-      const controls = player.addAnimation(
-        animation,
-        texture,
-        animations.current.length,
-        options
-      );
-      animations.current.push(controls);
+    ): Promise<[AnimationControls, () => void]> => {
+      const index = animations.current.length;
+      animations.current.push(null);
+      const texture = await loadTexture(textureUrl);
+
+      const controls = player.addAnimation(animation, texture, index, options);
+      animations.current[index] = controls;
 
       return [
         controls,
@@ -61,11 +66,13 @@ export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
     setPlayer(player);
 
     const renderFrame = () => {
-      if (!playerActive.current) {
+      if (!playerMounted.current) {
         return;
       }
       player.render();
-      animations.current.forEach((animation) => animation.render());
+      animations.current.forEach(
+        (animation) => animation && animation.render()
+      );
       window.requestAnimationFrame(renderFrame);
     };
 
@@ -85,15 +92,12 @@ export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
     };
 
     setCanvasSize();
-    const resizeListener = () => {
-      setCanvasSize();
-    };
-    window.addEventListener("resize", resizeListener);
+    window.addEventListener("resize", setCanvasSize);
 
     return () => {
       player.destroy();
-      window.removeEventListener("resize", resizeListener);
-      playerActive.current = false;
+      window.removeEventListener("resize", setCanvasSize);
+      playerMounted.current = false;
     };
   }, []);
 
@@ -145,16 +149,16 @@ export const Animation: React.VFC<AnimationProps> = ({
     <PlayerContext.Consumer>
       {(addAnimation) => {
         if (typeof addAnimation !== "function") return null;
-        const preparedAnimation = prepareAnimation(animation);
-        loadTexture(textureUrl).then((imageElement) => {
-          const [controls, destroy] = addAnimation(
+        (async () => {
+          const preparedAnimation = prepareAnimation(animation);
+          const [controls, destroy] = await addAnimation(
             preparedAnimation,
-            imageElement,
+            textureUrl,
             options
           );
           destroyRef.current = destroy;
           onAnimationReady(controls);
-        });
+        })();
 
         return null;
       }}
