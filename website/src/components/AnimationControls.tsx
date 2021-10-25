@@ -12,9 +12,9 @@ type Props = {
 
 const AnimationGrid = styled.ul`
   display: grid;
-  grid-template-columns: repeat(auto-fill, 15em);
-  grid-auto-columns: 15em;
-  grid-auto-rows: 2em;
+  font-size: 0.25rem;
+  grid-template-columns: repeat(auto-fill, 30em);
+  grid-auto-rows: 6em;
   gap: 0.5em;
   padding: 0;
   margin: 1em 0;
@@ -31,12 +31,18 @@ const AnimationButton = styled.button<{ playstate: PlayState }>`
   position: relative;
   width: 100%;
   height: 100%;
+  padding-left: 2em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &::before {
     content: "▶️ ";
     display: block;
     position: absolute;
-    top: 0.2em;
+    top: 0;
+    margin-left: -1.5em;
+    margin-top: -0.1em;
   }
 
   ${(props) =>
@@ -79,6 +85,7 @@ const AnimationControls: FunctionComponent<Props> = ({
                   setTrackStates((state) => ({ ...state, [a.name]: true }));
                 }
               }}
+              title={a.name}
             >
               {a.name}
             </AnimationButton>
