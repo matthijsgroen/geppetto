@@ -15,20 +15,20 @@ import {
   AnimationOptions,
   PreparedImageDefinition,
 } from "geppetto-player";
+import { animations } from "./Playground";
 
 type PlayerProps = {
   width: number;
   height: number;
 };
 
-const PlayerContext =
-  React.createContext<
-    (
-      animation: PreparedImageDefinition,
-      textureUrl: string,
-      options?: Partial<AnimationOptions>
-    ) => Promise<[AnimationControls, () => void]>
-  >(null);
+type ContextValueType = (
+  animation: PreparedImageDefinition,
+  textureUrl: string,
+  options?: Partial<AnimationOptions>
+) => Promise<[AnimationControls, () => void]>;
+
+const PlayerContext = React.createContext<ContextValueType>(null);
 
 export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
   const canvasRef = useRef<HTMLCanvasElement>();
@@ -78,6 +78,13 @@ export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
 
     window.requestAnimationFrame(renderFrame);
 
+    return () => {
+      player.destroy();
+      playerMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     const setCanvasSize = () => {
       const box = canvasRef.current.getBoundingClientRect();
       const override = navigator.userAgent.includes("SMART-TV") ? 2 : 1;
@@ -95,11 +102,9 @@ export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
     window.addEventListener("resize", setCanvasSize);
 
     return () => {
-      player.destroy();
       window.removeEventListener("resize", setCanvasSize);
-      playerMounted.current = false;
     };
-  }, []);
+  }, [width, height]);
 
   return (
     <>
@@ -110,7 +115,7 @@ export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
         ref={canvasRef}
         style={{
           aspectRatio: `${width / height}`,
-          width: "100%",
+          width: `min(${width}px, 100%)`,
         }}
       />
     </>
@@ -129,7 +134,10 @@ type AnimationProps = {
   animation: ImageDefinition;
   textureUrl: string;
   options?: Partial<AnimationOptions>;
-  onAnimationReady: (animationControls: AnimationControls) => void;
+  onAnimationReady: (
+    animationControls: AnimationControls,
+    animation: PreparedImageDefinition
+  ) => void;
 };
 
 export const Animation: React.VFC<AnimationProps> = ({
@@ -139,26 +147,36 @@ export const Animation: React.VFC<AnimationProps> = ({
   onAnimationReady,
 }) => {
   const destroyRef = useRef(() => {});
+  const addAnimationRef = useRef<ContextValueType>(undefined);
+
   useEffect(() => {
     return () => {
       destroyRef.current();
     };
   }, []);
 
+  useEffect(() => {
+    destroyRef.current && destroyRef.current();
+
+    if (addAnimationRef.current) {
+      (async () => {
+        const preparedAnimation = prepareAnimation(animation);
+        const [controls, destroy] = await addAnimationRef.current(
+          preparedAnimation,
+          textureUrl,
+          options
+        );
+        destroyRef.current = destroy;
+        onAnimationReady(controls, preparedAnimation);
+      })();
+    }
+  }, [animation, textureUrl, addAnimationRef.current]);
+
   return (
     <PlayerContext.Consumer>
       {(addAnimation) => {
         if (typeof addAnimation !== "function") return null;
-        (async () => {
-          const preparedAnimation = prepareAnimation(animation);
-          const [controls, destroy] = await addAnimation(
-            preparedAnimation,
-            textureUrl,
-            options
-          );
-          destroyRef.current = destroy;
-          onAnimationReady(controls);
-        })();
+        addAnimationRef.current = addAnimation;
 
         return null;
       }}

@@ -1,4 +1,12 @@
+---
+hide_table_of_contents: true
+---
+
+import Demo from "/src/components/Demo";
+
 # Demo
+
+<Demo />
 
 In this image, 2 seperate animations are combined into one: The background animation, and the innkeeper in the front.
 
@@ -7,3 +15,47 @@ In this image, 2 seperate animations are combined into one: The background anima
 You can interact with the innkeeper by clicking on her.
 
 :::
+
+## Overview of animated elements
+
+### Scenery animations
+
+- The spider in the attic goes up and down, using a [translation][] with a
+  radius (pulling the string of the spider longer).
+- The sun and clouds move, using a [translation][].
+- The trees sway with the [deformation][] mutation.
+- The water of the water wheel moves using a [translation][] mutation.
+- The blades of the wheel move using a [translation][] mutation combined
+  with a [stretch][] mutation.
+- The wheel turns using a [stretch][] mutation combined with a [rotation][] mutation.
+- The depth of layers is done by the [saturation][] mutation, with a color
+  set with a [colorize][].
+- The day/night cycle is done by updating the colors of the [colorize][]
+  mutation and adjusting the brightness with the [lightness][] mutation.
+- The beak of the bird is done with the [rotation][] mutation.
+- The eyes of at the hole near the water is done by the [opacity][] mutation.
+
+### Butterfly
+
+The butterfly wings is an animation loop, (using [stretch][] and [rotation][]). But its
+actually controlled by a small script. The location destination is random, and the butterfly's
+direction is flipped using the [stretch][] effect. There are 2 landing spots defined,
+and when landed, the wings animation is changed.
+
+[opacity]: /docs/creating-animation/composition#-opacity-mutation
+[translation]: /docs/creating-animation/composition#-translation-mutation
+[deformation]: /docs/creating-animation/composition#-deformation-mutation
+[stretch]: /docs/creating-animation/composition#-stretch-mutation
+[rotation]: /docs/creating-animation/composition#-rotation-mutation
+[saturation]: /docs/creating-animation/composition#-colorize-mutation
+[colorize]: /docs/creating-animation/composition#-saturation-mutation
+[lightness]: /docs/creating-animation/composition#-lightness-mutation
+
+### Inkeeper animations
+
+- Head tilt
+- Head turn
+- Mouth movement
+- Eye blinking
+- Eye looking
+- Using the broom

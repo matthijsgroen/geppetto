@@ -68,6 +68,18 @@ folder. The origin is changeable, but it will not affect the result.
 The orange circle means deformation. It is like translation with radius, only
 its effect will linear decline from the origin towards the radius.
 
+### ⬜ Lightness mutation
+
+The white square means lightness. It can be used to make colors darker.
+
+### 🟧 Colorize mutation
+
+The orange square is to set the color as base color for 'Saturation' effects.
+
+### 🟩 Saturation mutation
+
+The green square is to desaturate the colors. Normally colors would go to grayscale if the saturation is decreased, but here you can move the color towards the color set with the Colorize mutation.
+
 ## Adding Controls
 
 Controls allow your image to be controlled from the outside, or by an animation.

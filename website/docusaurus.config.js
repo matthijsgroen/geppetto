@@ -56,7 +56,8 @@ const config = {
             label: "Features",
           },
           {
-            to: "demo",
+            type: "doc",
+            docId: "features/demo",
             position: "right",
             label: "Demo",
           },
