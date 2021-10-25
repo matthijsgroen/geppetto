@@ -89,11 +89,11 @@ export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
       const box = canvasRef.current.getBoundingClientRect();
       const override = navigator.userAgent.includes("SMART-TV") ? 2 : 1;
       canvasRef.current.width = Math.min(
-        width,
+        width * window.devicePixelRatio * override,
         box.width * window.devicePixelRatio * override
       );
       canvasRef.current.height = Math.min(
-        height,
+        height * window.devicePixelRatio * override,
         box.height * window.devicePixelRatio * override
       );
     };
