@@ -50,8 +50,9 @@ const Playground: FunctionComponent = () => {
   const [animationData, setAnimationData] = useState<AnimationSelection>(
     animations[0]
   );
-  const [animationControls, setAnimationControls] =
-    useState<[GeppettoAnimationControls, PreparedImageDefinition]>(null);
+  const [[controls, imageDef], setAnimationControls] = useState<
+    [GeppettoAnimationControls, PreparedImageDefinition]
+  >([undefined, undefined]);
 
   const getSceneryControls = useCallback(
     (
@@ -70,20 +71,21 @@ const Playground: FunctionComponent = () => {
         active={animationData}
         options={animations}
       />
-      <Player width={animationData.width} height={animationData.height}>
-        <Animation
-          animation={animationData.animation}
-          textureUrl={animationData.textureUrl}
-          onAnimationReady={getSceneryControls}
-          options={animationData.options}
-        />
-      </Player>
-      {animationControls && (
-        <AnimationControls
-          controls={animationControls[0]}
-          animation={animationControls[1]}
-        />
-      )}
+
+      <AnimationControls
+        controls={controls}
+        animation={imageDef}
+        width={animationData.width}
+      >
+        <Player width={animationData.width} height={animationData.height}>
+          <Animation
+            animation={animationData.animation}
+            textureUrl={animationData.textureUrl}
+            onAnimationReady={getSceneryControls}
+            options={animationData.options}
+          />
+        </Player>
+      </AnimationControls>
     </>
   );
 };

@@ -6,15 +6,28 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
-  controls: GeppettoAnimationControls;
-  animation: PreparedImageDefinition;
+  controls?: GeppettoAnimationControls;
+  animation?: PreparedImageDefinition;
+  width: number;
 };
 
 const AnimationGrid = styled.ul`
   display: grid;
-  font-size: 0.25rem;
-  grid-template-columns: repeat(auto-fill, 30em);
-  grid-auto-rows: 6em;
+  grid-template-columns: repeat(auto-fill, 7em);
+  grid-auto-rows: 1.5em;
+  gap: 0.5em;
+  padding: 0;
+  margin: 1em 0;
+  list-style: none;
+  & > li + li {
+    margin-top: 0;
+  }
+`;
+
+const ControlGrid = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 7em);
+  grid-auto-rows: 3em;
   gap: 0.5em;
   padding: 0;
   margin: 1em 0;
@@ -35,6 +48,8 @@ const AnimationButton = styled.button<{ playstate: PlayState }>`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: var(--ifm-color-info-contrast-background);
+  border: 1px solid var(--ifm-menu-color-background-active);
 
   &::before {
     content: "▶️ ";
@@ -56,47 +71,135 @@ const AnimationButton = styled.button<{ playstate: PlayState }>`
     `}
 `;
 
+const AnimationControl = styled.li`
+  border: 1px solid var(--ifm-menu-color-background-active);
+  background: var(--ifm-color-info-contrast-background);
+  border-radius: 2px;
+  font-size: 0.8em;
+  padding: 0 0.2em;
+`;
+
+const ControlSlider = styled.input.attrs(() => ({
+  type: "range",
+  min: 0,
+  max: 1,
+  step: 0.01,
+}))`
+  width: calc(100% - 0.2em);
+`;
+
+const SidePanel = styled.aside`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 9em;
+  height: calc(100% - 0.5em);
+  padding: 0.5em;
+  background: rgba(96, 96, 96, 0.5);
+  overflow: scroll;
+
+  & h4 {
+    color: white;
+  }
+`;
+
 const AnimationControls: FunctionComponent<Props> = ({
   animation,
   controls,
+  width,
+  children,
 }) => {
   const [trackStates, setTrackStates] = useState<Record<string, boolean>>({});
+  const [controlValues, setControlValues] = useState<Record<string, number>>(
+    () => {
+      const initialControlValues = {};
+      if (animation && controls) {
+        animation.controls.map((c) => {
+          initialControlValues[c.name] = controls.getControlValue(c.name);
+        });
+      }
+      return initialControlValues;
+    }
+  );
   useEffect(() => {
+    if (!controls) return;
+
     return controls.onTrackStopped((trackName) => {
       setTrackStates((state) => ({ ...state, [trackName]: false }));
     });
-  }, []);
+  }, [controls]);
+  useEffect(() => {
+    if (!animation || !controls) return;
+    const initialControlValues = {};
+    if (animation.controls) {
+      animation.controls.map((c) => {
+        initialControlValues[c.name] = controls.getControlValue(c.name);
+      });
+    }
+    setControlValues(initialControlValues);
+  }, [animation, controls]);
 
   return (
-    <div>
-      <h3>Interactions</h3>
-      <h4>Animations</h4>
-      <AnimationGrid>
-        {animation.animations.map((a) => (
-          <li key={a.name}>
-            <AnimationButton
-              playstate={trackStates[a.name] === true ? "playing" : "stopped"}
-              onClick={() => {
-                if (trackStates[a.name] === true) {
-                  controls.stopTrack(a.name);
-                  setTrackStates((state) => ({ ...state, [a.name]: false }));
-                } else {
-                  controls.startTrack(a.name);
-                  setTrackStates((state) => ({ ...state, [a.name]: true }));
-                }
-              }}
-              title={a.name}
-            >
-              {a.name}
-            </AnimationButton>
-          </li>
-        ))}
-      </AnimationGrid>
+    <div
+      style={{
+        position: "relative",
+        width: `min(100%, ${width}px)`,
+        overflow: "hidden",
+      }}
+    >
+      {children}
+      {controls && animation && (
+        <SidePanel>
+          <h4>Animations</h4>
+          <AnimationGrid>
+            {animation.animations.map((a) => (
+              <li key={a.name}>
+                <AnimationButton
+                  playstate={
+                    trackStates[a.name] === true ? "playing" : "stopped"
+                  }
+                  onClick={() => {
+                    if (trackStates[a.name] === true) {
+                      controls.stopTrack(a.name);
+                      setTrackStates((state) => ({
+                        ...state,
+                        [a.name]: false,
+                      }));
+                    } else {
+                      controls.startTrack(a.name);
+                      setTrackStates((state) => ({ ...state, [a.name]: true }));
+                    }
+                  }}
+                  title={a.name}
+                >
+                  {a.name}
+                </AnimationButton>
+              </li>
+            ))}
+          </AnimationGrid>
 
-      <h4>Controls</h4>
-      {animation.controls.map((c) => (
-        <li key={c.name}>{c.name}</li>
-      ))}
+          <h4>Controls</h4>
+          <ControlGrid>
+            {animation.controls.map((c) => (
+              <AnimationControl key={c.name}>
+                {c.name}
+                <ControlSlider
+                  value={controlValues[c.name] / (c.steps - 1)}
+                  onChange={(value) => {
+                    const sliderValue = value.currentTarget.valueAsNumber;
+                    const controlValue = sliderValue * (c.steps - 1);
+                    setControlValues((state) => ({
+                      ...state,
+                      [c.name]: controlValue,
+                    }));
+                    controls.setControlValue(c.name, controlValue);
+                  }}
+                />
+              </AnimationControl>
+            ))}
+          </ControlGrid>
+        </SidePanel>
+      )}
     </div>
   );
 };
