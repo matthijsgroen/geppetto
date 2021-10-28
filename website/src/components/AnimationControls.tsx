@@ -103,6 +103,17 @@ const SidePanel = styled.aside`
   }
 `;
 
+const createInitialControlValues = (
+  animation: PreparedImageDefinition,
+  controls: GeppettoAnimationControls
+): Record<string, number> => {
+  const initialControlValues = {};
+  animation.controls.map((c) => {
+    initialControlValues[c.name] = controls.getControlValue(c.name);
+  });
+  return initialControlValues;
+};
+
 const AnimationControls: FunctionComponent<Props> = ({
   animation,
   controls,
@@ -111,23 +122,20 @@ const AnimationControls: FunctionComponent<Props> = ({
 }) => {
   const [trackStates, setTrackStates] = useState<Record<string, boolean>>({});
   const [controlValues, setControlValues] = useState<Record<string, number>>(
-    () => {
-      const initialControlValues = {};
-      if (animation && controls) {
-        animation.controls.map((c) => {
-          initialControlValues[c.name] = controls.getControlValue(c.name);
-        });
-      }
-      return initialControlValues;
-    }
+    () =>
+      animation && controls
+        ? createInitialControlValues(animation, controls)
+        : {}
   );
   useEffect(() => {
     if (!controls) return;
+    setControlValues(createInitialControlValues(animation, controls));
 
     return controls.onTrackStopped((trackName) => {
       setTrackStates((state) => ({ ...state, [trackName]: false }));
     });
   }, [controls]);
+
   useEffect(() => {
     if (!animation || !controls) return;
     const initialControlValues = {};
@@ -184,7 +192,11 @@ const AnimationControls: FunctionComponent<Props> = ({
               <AnimationControl key={c.name}>
                 {c.name}
                 <ControlSlider
-                  value={controlValues[c.name] / (c.steps - 1)}
+                  value={
+                    controlValues[c.name] === undefined
+                      ? 0
+                      : (controlValues[c.name] ?? 0.0) / (c.steps - 1)
+                  }
                   onChange={(value) => {
                     const sliderValue = value.currentTarget.valueAsNumber;
                     const controlValue = sliderValue * (c.steps - 1);
