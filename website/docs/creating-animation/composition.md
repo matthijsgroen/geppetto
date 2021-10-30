@@ -72,13 +72,13 @@ its effect will linear decline from the origin towards the radius.
 
 The white square means lightness. It can be used to make colors darker.
 
-### 🟧 Colorize mutation
+### 🟧 Target color mutation
 
-The orange square is to set the color as base color for 'Saturation' effects.
+The orange square is to set the color as base color for 'Color Transition' effects.
 
-### 🟩 Saturation mutation
+### 🟩 Color transition mutation
 
-The green square is to desaturate the colors. Normally colors would go to grayscale if the saturation is decreased, but here you can move the color towards the color set with the Colorize mutation.
+The green square is to transition the colors towards the 'Target color'. If no target color is specified it will transition to greyscale.
 
 ## Adding Controls
 
