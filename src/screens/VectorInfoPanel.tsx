@@ -404,13 +404,13 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
               <SliderControl
                 key={"value"}
                 title={"value"}
-                value={activeValue[0]}
+                value={1 - activeValue[0]}
                 showValue={(value) => `${Math.round(value * 100)} %`}
                 min={0}
                 max={1}
                 step={0.01}
                 onChange={(newValue) => {
-                  updateVectorValue([newValue, 0]);
+                  updateVectorValue([1 - newValue, 0]);
                 }}
               />,
             ]

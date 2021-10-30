@@ -811,8 +811,8 @@ export const defaultNamesForMutations: Record<MutationVectorTypes, string> = {
   opacity: "Opacity",
   stretch: "Stretch",
   lightness: "Lightness",
-  colorize: "Colorize",
-  saturation: "Saturation",
+  colorize: "Target Color",
+  saturation: "Color Transition",
 };
 
 const defaultNames = [
