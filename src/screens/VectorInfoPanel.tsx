@@ -349,9 +349,9 @@ const VectorInfoPanel: React.VFC<VectorInfoPanelProps> = ({
                 key={"value"}
                 title={"value"}
                 value={activeValue[0]}
-                showValue={(value) => `${Math.round(value * 100)} %`}
+                showValue={(value) => `${Math.round((value - 1) * 100)} %`}
                 min={0}
-                max={1}
+                max={2}
                 step={0.01}
                 onChange={(newValue) => {
                   updateVectorValue([newValue, 0]);
