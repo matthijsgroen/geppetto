@@ -12,24 +12,32 @@ type BaseType = {
   label: string;
 };
 
+const Tab = styled.li.attrs({ role: "tab" })`
+  margin-top: 0 !important;
+`;
+
 const AnimationSelector = <T extends BaseType>({
   active,
   options,
   onSelect,
 }: Props<T>): React.ReactElement<Props<T>> => {
   return (
-    <div>
+    <ul role="tablist" className="tabs">
       {options.map((option) => (
-        <button
+        <Tab
+          className={["tabs__item", active === option && "tabs__item--active"]
+            .filter(Boolean)
+            .join(" ")}
           key={option.id}
+          aria-selected={active === option ? "yes" : "no"}
           onClick={() => {
             onSelect(option);
           }}
         >
           {option.label}
-        </button>
+        </Tab>
       ))}
-    </div>
+    </ul>
   );
 };
 

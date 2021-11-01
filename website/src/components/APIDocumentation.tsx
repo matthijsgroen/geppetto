@@ -131,8 +131,11 @@ const getSignature = (docItem: DocItem): DocItem => {
   ) {
     return docItem.signatures[0];
   }
-  const signatures = docItem.type.declaration.signatures;
-  return signatures[0];
+  if ("declaration" in docItem.type) {
+    const signatures = docItem.type.declaration.signatures;
+    return signatures[0];
+  }
+  return undefined;
 };
 
 const generateMethodSignature = (
@@ -178,7 +181,6 @@ const generateObjectType = (docItem: DocItem): string[] => [
     ? generateProperties(docItem.type.declaration)
     : []),
   "};",
-  "",
 ];
 
 const generateMethodType = (docItem: DocItem): string[] => {
@@ -193,7 +195,6 @@ const generateMethodType = (docItem: DocItem): string[] => {
     `type ${docItem.name} = (${generateParameters(signature)}): ${generateType(
       signature.type
     )};`,
-    "",
   ];
 };
 
@@ -204,7 +205,6 @@ const generateDocs = (docItem: DocItem, withComments = true): string[] => {
       `interface ${docItem.name} {`,
       ...generateProperties(docItem),
       "};",
-      "",
     ];
   } else if (docItem.kindString === "Type alias") {
     if (!docItem.type) return [];
@@ -215,7 +215,6 @@ const generateDocs = (docItem: DocItem, withComments = true): string[] => {
       : [
           ...commentBlock(docItem),
           `type ${docItem.name} = ${docItem.type.name}`,
-          "",
         ];
   } else if (docItem.kindString === "Function") {
     if (!docItem.signatures) return [];
@@ -227,7 +226,6 @@ const generateDocs = (docItem: DocItem, withComments = true): string[] => {
       `const ${docItem.name} = (${generateParameters(
         signature
       )}): ${generateType(signature.type)};`,
-      "",
     ];
   } else return [`// soon support for ${docItem.kindString}`];
 };
@@ -258,6 +256,20 @@ const Arguments: FunctionComponent<{
     text: docItem.comment ? docItem.comment.text : "",
   }));
 
+  const extraCodeBlocks = [
+    ...parameters
+      .map((p) => api.children.find((c) => p.types.includes(c.name)))
+      .filter(Boolean)
+      .flatMap(generateDocs),
+    ...api.children
+      .filter(
+        (c) =>
+          collectTypes(signature.type).includes(c.name) &&
+          addReturnTypeInfo(c.name)
+      )
+      .flatMap(generateDocs),
+  ];
+
   return parameters.length > 0 ? (
     <>
       <p>
@@ -271,25 +283,11 @@ const Arguments: FunctionComponent<{
           </li>
         ))}
       </ul>
-      {parameters
-        .map((p) => api.children.find((c) => p.types.includes(c.name)))
-        .filter(Boolean)
-        .map((typeInfo) => (
-          <CodeBlock key={typeInfo.name} className="language-tsx">
-            {generateDocs(typeInfo).join("\n")}
-          </CodeBlock>
-        ))}
-      {api.children
-        .filter(
-          (c) =>
-            collectTypes(signature.type).includes(c.name) &&
-            addReturnTypeInfo(c.name)
-        )
-        .map((typeInfo) => (
-          <CodeBlock key={typeInfo.name} className="language-tsx">
-            {generateDocs(typeInfo).join("\n")}
-          </CodeBlock>
-        ))}
+      {extraCodeBlocks.length > 0 && (
+        <CodeBlock className="language-tsx">
+          {extraCodeBlocks.join("\n")}
+        </CodeBlock>
+      )}
     </>
   ) : null;
 };

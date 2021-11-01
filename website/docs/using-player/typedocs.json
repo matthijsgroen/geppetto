@@ -7,7 +7,7 @@
 	"originalName": "Geppetto Player",
 	"children": [
 		{
-			"id": 65,
+			"id": 63,
 			"name": "AnimationOptions",
 			"kind": 256,
 			"kindString": "Interface",
@@ -17,7 +17,7 @@
 			},
 			"children": [
 				{
-					"id": 66,
+					"id": 64,
 					"name": "panX",
 					"kind": 1024,
 					"kindString": "Property",
@@ -44,7 +44,7 @@
 					}
 				},
 				{
-					"id": 67,
+					"id": 65,
 					"name": "panY",
 					"kind": 1024,
 					"kindString": "Property",
@@ -71,7 +71,7 @@
 					}
 				},
 				{
-					"id": 69,
+					"id": 67,
 					"name": "zIndex",
 					"kind": 1024,
 					"kindString": "Property",
@@ -98,7 +98,7 @@
 					}
 				},
 				{
-					"id": 68,
+					"id": 66,
 					"name": "zoom",
 					"kind": 1024,
 					"kindString": "Property",
@@ -130,10 +130,10 @@
 					"title": "Properties",
 					"kind": 1024,
 					"children": [
-						66,
+						64,
+						65,
 						67,
-						69,
-						68
+						66
 					]
 				}
 			],
@@ -146,7 +146,7 @@
 			]
 		},
 		{
-			"id": 24,
+			"id": 23,
 			"name": "AnimationControls",
 			"kind": 4194304,
 			"kindString": "Type alias",
@@ -164,68 +164,21 @@
 			"type": {
 				"type": "reflection",
 				"declaration": {
-					"id": 25,
+					"id": 24,
 					"name": "__type",
 					"kind": 65536,
 					"kindString": "Type literal",
 					"flags": {},
 					"children": [
 						{
-							"id": 26,
-							"name": "render",
-							"kind": 1024,
-							"kindString": "Property",
-							"flags": {},
-							"comment": {
-								"shortText": "Render a frame of the image."
-							},
-							"sources": [
-								{
-									"fileName": "player.ts",
-									"line": 38,
-									"character": 8
-								}
-							],
-							"type": {
-								"type": "reflection",
-								"declaration": {
-									"id": 27,
-									"name": "__type",
-									"kind": 65536,
-									"kindString": "Type literal",
-									"flags": {},
-									"sources": [
-										{
-											"fileName": "player.ts",
-											"line": 38,
-											"character": 9
-										}
-									],
-									"signatures": [
-										{
-											"id": 28,
-											"name": "__type",
-											"kind": 4096,
-											"kindString": "Call signature",
-											"flags": {},
-											"type": {
-												"type": "intrinsic",
-												"name": "void"
-											}
-										}
-									]
-								}
-							}
-						},
-						{
-							"id": 63,
+							"id": 61,
 							"name": "destroy",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 64,
+									"id": 62,
 									"name": "destroy",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -241,14 +194,14 @@
 							]
 						},
 						{
-							"id": 44,
+							"id": 42,
 							"name": "getControlValue",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 45,
+									"id": 43,
 									"name": "getControlValue",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -259,7 +212,7 @@
 									},
 									"parameters": [
 										{
-											"id": 46,
+											"id": 44,
 											"name": "controlName",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -281,82 +234,107 @@
 							]
 						},
 						{
-							"id": 60,
+							"id": 58,
 							"name": "onEvent",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 61,
+									"id": 59,
 									"name": "onEvent",
 									"kind": 4096,
 									"kindString": "Call signature",
 									"flags": {},
 									"parameters": [
 										{
-											"id": 62,
+											"id": 60,
 											"name": "callback",
 											"kind": 32768,
 											"kindString": "Parameter",
 											"flags": {},
 											"type": {
 												"type": "reference",
+												"id": 79,
 												"name": "CustomEventCallback"
 											}
 										}
 									],
 									"type": {
 										"type": "reference",
-										"id": 74,
+										"id": 72,
 										"name": "Unsubscribe"
 									}
 								}
 							]
 						},
 						{
-							"id": 57,
+							"id": 55,
 							"name": "onTrackStopped",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 58,
+									"id": 56,
 									"name": "onTrackStopped",
 									"kind": 4096,
 									"kindString": "Call signature",
 									"flags": {},
 									"parameters": [
 										{
-											"id": 59,
+											"id": 57,
 											"name": "callback",
 											"kind": 32768,
 											"kindString": "Parameter",
 											"flags": {},
 											"type": {
 												"type": "reference",
+												"id": 75,
 												"name": "TrackStoppedCallback"
 											}
 										}
 									],
 									"type": {
 										"type": "reference",
-										"id": 74,
+										"id": 72,
 										"name": "Unsubscribe"
 									}
 								}
 							]
 						},
 						{
-							"id": 40,
+							"id": 25,
+							"name": "render",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 26,
+									"name": "render",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Render a frame of the image."
+									},
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						},
+						{
+							"id": 38,
 							"name": "setControlValue",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 41,
+									"id": 39,
 									"name": "setControlValue",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -372,7 +350,7 @@
 									},
 									"parameters": [
 										{
-											"id": 42,
+											"id": 40,
 											"name": "controlName",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -386,7 +364,7 @@
 											}
 										},
 										{
-											"id": 43,
+											"id": 41,
 											"name": "value",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -408,14 +386,14 @@
 							]
 						},
 						{
-							"id": 29,
+							"id": 27,
 							"name": "setLooping",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 30,
+									"id": 28,
 									"name": "setLooping",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -432,7 +410,7 @@
 									},
 									"parameters": [
 										{
-											"id": 31,
+											"id": 29,
 											"name": "loop",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -446,7 +424,7 @@
 											}
 										},
 										{
-											"id": 32,
+											"id": 30,
 											"name": "trackName",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -468,14 +446,14 @@
 							]
 						},
 						{
-							"id": 47,
+							"id": 45,
 							"name": "setPanning",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 48,
+									"id": 46,
 									"name": "setPanning",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -485,7 +463,7 @@
 									},
 									"parameters": [
 										{
-											"id": 49,
+											"id": 47,
 											"name": "panX",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -499,7 +477,7 @@
 											}
 										},
 										{
-											"id": 50,
+											"id": 48,
 											"name": "panY",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -521,21 +499,21 @@
 							]
 						},
 						{
-							"id": 54,
+							"id": 52,
 							"name": "setZIndex",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 55,
+									"id": 53,
 									"name": "setZIndex",
 									"kind": 4096,
 									"kindString": "Call signature",
 									"flags": {},
 									"parameters": [
 										{
-											"id": 56,
+											"id": 54,
 											"name": "zIndex",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -554,14 +532,14 @@
 							]
 						},
 						{
-							"id": 51,
+							"id": 49,
 							"name": "setZoom",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 52,
+									"id": 50,
 									"name": "setZoom",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -571,7 +549,7 @@
 									},
 									"parameters": [
 										{
-											"id": 53,
+											"id": 51,
 											"name": "zoom",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -593,14 +571,14 @@
 							]
 						},
 						{
-							"id": 33,
+							"id": 31,
 							"name": "startTrack",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 34,
+									"id": 32,
 									"name": "startTrack",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -616,7 +594,7 @@
 									},
 									"parameters": [
 										{
-											"id": 35,
+											"id": 33,
 											"name": "trackName",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -630,7 +608,7 @@
 											}
 										},
 										{
-											"id": 36,
+											"id": 34,
 											"name": "options",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -639,7 +617,7 @@
 											},
 											"type": {
 												"type": "reference",
-												"id": 70,
+												"id": 68,
 												"name": "PlayOptions"
 											}
 										}
@@ -652,14 +630,14 @@
 							]
 						},
 						{
-							"id": 37,
+							"id": 35,
 							"name": "stopTrack",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 38,
+									"id": 36,
 									"name": "stopTrack",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -669,7 +647,7 @@
 									},
 									"parameters": [
 										{
-											"id": 39,
+											"id": 37,
 											"name": "trackName",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -693,27 +671,21 @@
 					],
 					"groups": [
 						{
-							"title": "Properties",
-							"kind": 1024,
-							"children": [
-								26
-							]
-						},
-						{
 							"title": "Methods",
 							"kind": 2048,
 							"children": [
-								63,
-								44,
-								60,
-								57,
-								40,
-								29,
-								47,
-								54,
-								51,
-								33,
-								37
+								61,
+								42,
+								58,
+								55,
+								25,
+								38,
+								27,
+								45,
+								52,
+								49,
+								31,
+								35
 							]
 						}
 					],
@@ -722,6 +694,85 @@
 							"fileName": "player.ts",
 							"line": 34,
 							"character": 31
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 79,
+			"name": "CustomEventCallback",
+			"kind": 4194304,
+			"kindString": "Type alias",
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 13,
+					"character": 31
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 80,
+					"name": "__type",
+					"kind": 65536,
+					"kindString": "Type literal",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 13,
+							"character": 33
+						}
+					],
+					"signatures": [
+						{
+							"id": 81,
+							"name": "__type",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 82,
+									"name": "eventName",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								},
+								{
+									"id": 83,
+									"name": "track",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								},
+								{
+									"id": 84,
+									"name": "time",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "number"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
 						}
 					]
 				}
@@ -753,7 +804,7 @@
 					"flags": {},
 					"children": [
 						{
-							"id": 21,
+							"id": 20,
 							"name": "destroy",
 							"kind": 1024,
 							"kindString": "Property",
@@ -771,7 +822,7 @@
 							"type": {
 								"type": "reflection",
 								"declaration": {
-									"id": 22,
+									"id": 21,
 									"name": "__type",
 									"kind": 65536,
 									"kindString": "Type literal",
@@ -785,7 +836,7 @@
 									],
 									"signatures": [
 										{
-											"id": 23,
+											"id": 22,
 											"name": "__type",
 											"kind": 4096,
 											"kindString": "Call signature",
@@ -800,61 +851,14 @@
 							}
 						},
 						{
-							"id": 12,
-							"name": "render",
-							"kind": 1024,
-							"kindString": "Property",
-							"flags": {},
-							"comment": {
-								"shortText": "Clears the canvas. Use this when you created the player with {@link setupWebGL}.\nIf you want to control the rendering process (and the clearing of the canvas) yourself,\nskip the call to this method in your render cycle."
-							},
-							"sources": [
-								{
-									"fileName": "player.ts",
-									"line": 172,
-									"character": 8
-								}
-							],
-							"type": {
-								"type": "reflection",
-								"declaration": {
-									"id": 13,
-									"name": "__type",
-									"kind": 65536,
-									"kindString": "Type literal",
-									"flags": {},
-									"sources": [
-										{
-											"fileName": "player.ts",
-											"line": 172,
-											"character": 9
-										}
-									],
-									"signatures": [
-										{
-											"id": 14,
-											"name": "__type",
-											"kind": 4096,
-											"kindString": "Call signature",
-											"flags": {},
-											"type": {
-												"type": "intrinsic",
-												"name": "void"
-											}
-										}
-									]
-								}
-							}
-						},
-						{
-							"id": 15,
+							"id": 14,
 							"name": "addAnimation",
 							"kind": 2048,
 							"kindString": "Method",
 							"flags": {},
 							"signatures": [
 								{
-									"id": 16,
+									"id": 15,
 									"name": "addAnimation",
 									"kind": 4096,
 									"kindString": "Call signature",
@@ -864,7 +868,7 @@
 									},
 									"parameters": [
 										{
-											"id": 17,
+											"id": 16,
 											"name": "animation",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -878,7 +882,7 @@
 											}
 										},
 										{
-											"id": 18,
+											"id": 17,
 											"name": "image",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -892,7 +896,7 @@
 											}
 										},
 										{
-											"id": 19,
+											"id": 18,
 											"name": "textureUnit",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -906,7 +910,7 @@
 											}
 										},
 										{
-											"id": 20,
+											"id": 19,
 											"name": "options",
 											"kind": 32768,
 											"kindString": "Parameter",
@@ -921,7 +925,7 @@
 												"typeArguments": [
 													{
 														"type": "reference",
-														"id": 65,
+														"id": 63,
 														"name": "AnimationOptions"
 													}
 												],
@@ -931,8 +935,31 @@
 									],
 									"type": {
 										"type": "reference",
-										"id": 24,
+										"id": 23,
 										"name": "AnimationControls"
+									}
+								}
+							]
+						},
+						{
+							"id": 12,
+							"name": "render",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 13,
+									"name": "render",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Clears the canvas. Use this when you created the player with {@link setupWebGL}.\nIf you want to control the rendering process (and the clearing of the canvas) yourself,\nskip the call to this method in your render cycle."
+									},
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
 									}
 								}
 							]
@@ -943,15 +970,15 @@
 							"title": "Properties",
 							"kind": 1024,
 							"children": [
-								21,
-								12
+								20
 							]
 						},
 						{
 							"title": "Methods",
 							"kind": 2048,
 							"children": [
-								15
+								14,
+								12
 							]
 						}
 					],
@@ -966,7 +993,7 @@
 			}
 		},
 		{
-			"id": 70,
+			"id": 68,
 			"name": "PlayOptions",
 			"kind": 4194304,
 			"kindString": "Type alias",
@@ -981,14 +1008,14 @@
 			"type": {
 				"type": "reflection",
 				"declaration": {
-					"id": 71,
+					"id": 69,
 					"name": "__type",
 					"kind": 65536,
 					"kindString": "Type literal",
 					"flags": {},
 					"children": [
 						{
-							"id": 73,
+							"id": 71,
 							"name": "speed",
 							"kind": 1024,
 							"kindString": "Property",
@@ -1017,7 +1044,7 @@
 							}
 						},
 						{
-							"id": 72,
+							"id": 70,
 							"name": "startAt",
 							"kind": 1024,
 							"kindString": "Property",
@@ -1045,8 +1072,8 @@
 							"title": "Properties",
 							"kind": 1024,
 							"children": [
-								73,
-								72
+								71,
+								70
 							]
 						}
 					],
@@ -1061,7 +1088,64 @@
 			}
 		},
 		{
-			"id": 74,
+			"id": 75,
+			"name": "TrackStoppedCallback",
+			"kind": 4194304,
+			"kindString": "Type alias",
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 12,
+					"character": 32
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 76,
+					"name": "__type",
+					"kind": 65536,
+					"kindString": "Type literal",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 12,
+							"character": 34
+						}
+					],
+					"signatures": [
+						{
+							"id": 77,
+							"name": "__type",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"parameters": [
+								{
+									"id": 78,
+									"name": "track",
+									"kind": 32768,
+									"kindString": "Parameter",
+									"flags": {},
+									"type": {
+										"type": "intrinsic",
+										"name": "string"
+									}
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 72,
 			"name": "Unsubscribe",
 			"kind": 4194304,
 			"kindString": "Type alias",
@@ -1079,7 +1163,7 @@
 			"type": {
 				"type": "reflection",
 				"declaration": {
-					"id": 75,
+					"id": 73,
 					"name": "__type",
 					"kind": 65536,
 					"kindString": "Type literal",
@@ -1093,7 +1177,7 @@
 					],
 					"signatures": [
 						{
-							"id": 76,
+							"id": 74,
 							"name": "__type",
 							"kind": 4096,
 							"kindString": "Call signature",
@@ -1259,17 +1343,19 @@
 			"title": "Interfaces",
 			"kind": 256,
 			"children": [
-				65
+				63
 			]
 		},
 		{
 			"title": "Type aliases",
 			"kind": 4194304,
 			"children": [
-				24,
+				23,
+				79,
 				10,
-				70,
-				74
+				68,
+				75,
+				72
 			]
 		},
 		{

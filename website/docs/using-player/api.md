@@ -2,8 +2,8 @@
 sidebar_position: 2
 ---
 
-import { ObjectMethods, MethodSignature } from "/src/components/APIDocumentation";
-import API from "/src/typedocs.json";
+import { ObjectMethods, MethodSignature } from "@site/src/components/APIDocumentation";
+import API from "./typedocs.json";
 
 # API Reference
 

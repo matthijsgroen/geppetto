@@ -51,13 +51,7 @@ const config = {
         items: [
           {
             type: "doc",
-            docId: "features/features",
-            position: "right",
-            label: "Features",
-          },
-          {
-            type: "doc",
-            docId: "features/demo",
+            docId: "demo",
             position: "right",
             label: "Demo",
           },
@@ -84,6 +78,10 @@ const config = {
             docId: "using-player/api",
             position: "right",
             label: "API",
+          },
+          {
+            type: "docsVersion",
+            label: "1.3",
           },
         ],
       },
