@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-import APIDocumentation, { MethodSignature } from "/src/components/APIDocumentation";
+import { ObjectMethods, MethodSignature } from "/src/components/APIDocumentation";
 import API from "/src/typedocs.json";
 
 # API Reference
@@ -25,8 +25,8 @@ The following methods are exposed on top level:
 
 ## GeppetoPlayer
 
-<APIDocumentation api={API} element="GeppettoPlayer" />
+<ObjectMethods api={API} element="GeppettoPlayer" omitReturnTypes={["AnimationControls"]} />
 
 ## AnimationControls
 
-<APIDocumentation api={API} element="AnimationControls" />
+<ObjectMethods api={API} element="AnimationControls" />

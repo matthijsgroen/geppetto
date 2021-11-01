@@ -1,5 +1,8 @@
 import React, { FunctionComponent } from "react";
 import CodeBlock from "@theme/CodeBlock";
+import heading from "@theme/Heading";
+
+const LinkHeading = heading("h3");
 
 type TypeDecl =
   | undefined
@@ -11,6 +14,9 @@ interface DocItem {
   name: string;
   kind: number;
   kindString: string;
+  flags: {
+    isOptional?: boolean;
+  };
   comment?: {
     shortText: string;
     text?: string;
@@ -58,13 +64,42 @@ const commentBlock = (docItem: DocItem): string[] => {
 
 const indent = (lines: string[]): string[] => lines.map((line) => `  ${line}`);
 
-const generateParameters = (signature: DocItem): string => {
+const generateParameters = (signature: DocItem, withTypes = true): string => {
   if (signature.parameters) {
     return signature.parameters
-      .map((parameter) => `${parameter.name}: ${generateType(parameter.type)}`)
+      .map((parameter) =>
+        withTypes
+          ? `${parameter.name}${
+              parameter.flags.isOptional ? "?" : ""
+            }: ${generateType(parameter.type)}`
+          : parameter.flags.isOptional
+          ? `[${parameter.name}]`
+          : parameter.name
+      )
       .join(", ");
   }
   return "";
+};
+
+const collectTypes = (itemType: TypeDecl): string[] => {
+  if (!itemType) return [];
+  if ("name" in itemType && !("typeArguments" in itemType))
+    return [itemType.name];
+  if ("name" in itemType && itemType.typeArguments)
+    return [itemType.name, ...itemType.typeArguments.map(generateType)];
+  if ("declaration" in itemType) {
+    const signatures = itemType.declaration.signatures;
+    if (!signatures || signatures.length === 0) return [];
+    const signature = signatures[0];
+
+    return [
+      ...(signature.parameters || []).flatMap((parameter) =>
+        collectTypes(parameter.type)
+      ),
+      ...collectTypes(signature.type),
+    ];
+  }
+  return [];
 };
 
 const generateType = (itemType: TypeDecl): string => {
@@ -86,6 +121,31 @@ const generateType = (itemType: TypeDecl): string => {
   }
 
   return "unknown";
+};
+
+const getSignature = (docItem: DocItem): DocItem => {
+  if (
+    docItem.kindString === "Method" &&
+    docItem.signatures &&
+    docItem.signatures.length > 0
+  ) {
+    return docItem.signatures[0];
+  }
+  const signatures = docItem.type.declaration.signatures;
+  return signatures[0];
+};
+
+const generateMethodSignature = (
+  docItem: DocItem,
+  withTypes = true
+): string => {
+  const signature = getSignature(docItem);
+
+  return withTypes
+    ? `${docItem.name}(${generateParameters(signature)}): ${generateType(
+        signature.type
+      )}`
+    : `${docItem.name}(${generateParameters(signature, false)})`;
 };
 
 const generateProperties = (docItem: DocItem): string[] =>
@@ -186,38 +246,100 @@ const APIDocumentation: FunctionComponent<Props> = ({
   );
 };
 
-export const MethodSignature: FunctionComponent<Props> = ({
-  api,
-  element,
-  title,
-}) => {
-  const item = api.children.find((e) => e.name === element);
-  const signature = item.signatures[0];
-
+const Arguments: FunctionComponent<{
+  signature: DocItem;
+  api: DocItem;
+  addReturnTypeInfo?: (type: string) => boolean;
+}> = ({ signature, api, addReturnTypeInfo = () => true }) => {
   const parameters = (signature.parameters || []).map((docItem) => ({
     name: docItem.name,
-    type: generateType(docItem.type),
-    text: docItem.comment.text,
+    displayType: generateType(docItem.type),
+    types: collectTypes(docItem.type),
+    text: docItem.comment ? docItem.comment.text : "",
   }));
+
+  return parameters.length > 0 ? (
+    <>
+      <p>
+        Returns <code>{generateType(signature.type)}</code>
+      </p>
+      <h4>Arguments</h4>
+      <ul>
+        {parameters.map(({ name, displayType, text }) => (
+          <li key={name}>
+            <strong>{name}</strong> <code>{displayType}</code> {text}
+          </li>
+        ))}
+      </ul>
+      {parameters
+        .map((p) => api.children.find((c) => p.types.includes(c.name)))
+        .filter(Boolean)
+        .map((typeInfo) => (
+          <CodeBlock key={typeInfo.name} className="language-tsx">
+            {generateDocs(typeInfo).join("\n")}
+          </CodeBlock>
+        ))}
+      {api.children
+        .filter(
+          (c) =>
+            collectTypes(signature.type).includes(c.name) &&
+            addReturnTypeInfo(c.name)
+        )
+        .map((typeInfo) => (
+          <CodeBlock key={typeInfo.name} className="language-tsx">
+            {generateDocs(typeInfo).join("\n")}
+          </CodeBlock>
+        ))}
+    </>
+  ) : null;
+};
+
+export const MethodSignature: FunctionComponent<Props> = ({ api, element }) => {
+  const item = api.children.find((e) => e.name === element);
+  const signature = item.signatures[0];
 
   const code = generateDocs(item, false).join("\n");
   return (
     <>
       <p>{signature.comment.shortText}</p>
       {signature.comment.text && <p>{signature.comment.text}</p>}
-      {parameters.length > 0 && (
-        <>
-          <h4>Parameters</h4>
-          <ul>
-            {parameters.map(({ name, type, text }) => (
-              <li key={name}>
-                <strong>{name}</strong> <code>{type}</code> {text}
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      <Arguments
+        signature={signature}
+        api={api}
+        addReturnTypeInfo={() => false}
+      />
       <CodeBlock className="language-tsx">{code}</CodeBlock>
+    </>
+  );
+};
+
+export const ObjectMethods: FunctionComponent<
+  Props & { omitReturnTypes?: string[] }
+> = ({ api, element, omitReturnTypes = [] }) => {
+  const item = api.children.find((e) => e.name === element);
+
+  const methods: DocItem[] = item.type.declaration.children;
+
+  return (
+    <>
+      <p>{item.comment.shortText}</p>
+
+      {methods.map((method) => (
+        <div key={method.name}>
+          <LinkHeading id={`${element}-${method.name}`}>
+            {generateMethodSignature(method, false)}
+          </LinkHeading>
+          {method.comment && <p>{method.comment.shortText}</p>}
+          {method.signatures && method.signatures[0].comment && (
+            <p>{method.signatures[0].comment.shortText}</p>
+          )}
+          <Arguments
+            signature={getSignature(method)}
+            api={api}
+            addReturnTypeInfo={(name) => !omitReturnTypes.includes(name)}
+          />
+        </div>
+      ))}
     </>
   );
 };

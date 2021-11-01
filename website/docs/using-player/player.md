@@ -12,17 +12,17 @@ import TabItem from '@theme/TabItem';
 You can install the project using the `geppetto-player` package.
 
 <Tabs groupId="package-manager">
+<TabItem value="npm" label="npm">
+
+```sh
+npm install geppetto-player
+```
+
+</TabItem>
 <TabItem value="yarn" label="Yarn">
 
 ```sh
 yarn add geppetto-player
-```
-
-</TabItem>
-<TabItem value="npm" label="Npm">
-
-```sh
-npm install geppetto-player
 ```
 
 </TabItem>
