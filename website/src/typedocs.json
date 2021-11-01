@@ -1,0 +1,1292 @@
+{
+	"id": 0,
+	"name": "Geppetto Player - v1.2.0",
+	"kind": 0,
+	"kindString": "Project",
+	"flags": {},
+	"originalName": "Geppetto Player",
+	"children": [
+		{
+			"id": 65,
+			"name": "AnimationOptions",
+			"kind": 256,
+			"kindString": "Interface",
+			"flags": {},
+			"comment": {
+				"shortText": "Options to set directly when adding an animation."
+			},
+			"children": [
+				{
+					"id": 66,
+					"name": "panX",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"comment": {
+						"shortText": "Horizontal position of image in canvas. `0` = center, `-1` = left, `1` = right.",
+						"tags": [
+							{
+								"tag": "default",
+								"text": "0.0\n"
+							}
+						]
+					},
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 124,
+							"character": 6
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				},
+				{
+					"id": 67,
+					"name": "panY",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"comment": {
+						"shortText": "Vertical position of image in canvas. `0` = center, `-1` = bottom, `1` = top.",
+						"tags": [
+							{
+								"tag": "default",
+								"text": "0.0\n"
+							}
+						]
+					},
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 130,
+							"character": 6
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				},
+				{
+					"id": 69,
+					"name": "zIndex",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"comment": {
+						"shortText": "Adds a stacking order to the rendering elements, this helps when\nstacking multiple animations on top of eachother.",
+						"tags": [
+							{
+								"tag": "default",
+								"text": "0\n"
+							}
+						]
+					},
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 143,
+							"character": 8
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				},
+				{
+					"id": 68,
+					"name": "zoom",
+					"kind": 1024,
+					"kindString": "Property",
+					"flags": {},
+					"comment": {
+						"shortText": "Zoom level. `1` = 100%, `1.5` is 150%, `0.5` = 50% zoom.",
+						"tags": [
+							{
+								"tag": "default",
+								"text": "1.0\n"
+							}
+						]
+					},
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 136,
+							"character": 6
+						}
+					],
+					"type": {
+						"type": "intrinsic",
+						"name": "number"
+					}
+				}
+			],
+			"groups": [
+				{
+					"title": "Properties",
+					"kind": 1024,
+					"children": [
+						66,
+						67,
+						69,
+						68
+					]
+				}
+			],
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 118,
+					"character": 33
+				}
+			]
+		},
+		{
+			"id": 24,
+			"name": "AnimationControls",
+			"kind": 4194304,
+			"kindString": "Type alias",
+			"flags": {},
+			"comment": {
+				"shortText": "Options to control the animation, start animation tracks, etc."
+			},
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 34,
+					"character": 29
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 25,
+					"name": "__type",
+					"kind": 65536,
+					"kindString": "Type literal",
+					"flags": {},
+					"children": [
+						{
+							"id": 26,
+							"name": "render",
+							"kind": 1024,
+							"kindString": "Property",
+							"flags": {},
+							"comment": {
+								"shortText": "Render a frame of the image."
+							},
+							"sources": [
+								{
+									"fileName": "player.ts",
+									"line": 38,
+									"character": 8
+								}
+							],
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 27,
+									"name": "__type",
+									"kind": 65536,
+									"kindString": "Type literal",
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "player.ts",
+											"line": 38,
+											"character": 9
+										}
+									],
+									"signatures": [
+										{
+											"id": 28,
+											"name": "__type",
+											"kind": 4096,
+											"kindString": "Call signature",
+											"flags": {},
+											"type": {
+												"type": "intrinsic",
+												"name": "void"
+											}
+										}
+									]
+								}
+							}
+						},
+						{
+							"id": 63,
+							"name": "destroy",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 64,
+									"name": "destroy",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Clears all memory associated to this animation."
+									},
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						},
+						{
+							"id": 44,
+							"name": "getControlValue",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 45,
+									"name": "getControlValue",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Retreives current value of a control. This value will not update for each frame\nof an animation. It will only update at the end of each play iteration of an animation.",
+										"returns": "value of the control. Take into account that each control can have different\nvalue limits, depending on the amount of step a control has.\n"
+									},
+									"parameters": [
+										{
+											"id": 46,
+											"name": "controlName",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "name of the control to get value from"
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "string"
+											}
+										}
+									],
+									"type": {
+										"type": "intrinsic",
+										"name": "number"
+									}
+								}
+							]
+						},
+						{
+							"id": 60,
+							"name": "onEvent",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 61,
+									"name": "onEvent",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"parameters": [
+										{
+											"id": 62,
+											"name": "callback",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"type": {
+												"type": "reference",
+												"name": "CustomEventCallback"
+											}
+										}
+									],
+									"type": {
+										"type": "reference",
+										"id": 74,
+										"name": "Unsubscribe"
+									}
+								}
+							]
+						},
+						{
+							"id": 57,
+							"name": "onTrackStopped",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 58,
+									"name": "onTrackStopped",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"parameters": [
+										{
+											"id": 59,
+											"name": "callback",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"type": {
+												"type": "reference",
+												"name": "TrackStoppedCallback"
+											}
+										}
+									],
+									"type": {
+										"type": "reference",
+										"id": 74,
+										"name": "Unsubscribe"
+									}
+								}
+							]
+						},
+						{
+							"id": 40,
+							"name": "setControlValue",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 41,
+									"name": "setControlValue",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Manipulates a control. Will stop animations that are using this control as well.",
+										"tags": [
+											{
+												"tag": "throws",
+												"text": "an error if the provided controlName does not exist\n"
+											}
+										]
+									},
+									"parameters": [
+										{
+											"id": 42,
+											"name": "controlName",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "name of the control to change"
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "string"
+											}
+										},
+										{
+											"id": 43,
+											"name": "value",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "value to set for control. Take into account that each control can have different\nvalue limits, depending on the amount of step a control has."
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "number"
+											}
+										}
+									],
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						},
+						{
+							"id": 29,
+							"name": "setLooping",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 30,
+									"name": "setLooping",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Set the looping state of an animation track.",
+										"text": "The default value is based on how the animation is build.\n",
+										"tags": [
+											{
+												"tag": "throws",
+												"text": "an error if the provided trackName does not exist\n"
+											}
+										]
+									},
+									"parameters": [
+										{
+											"id": 31,
+											"name": "loop",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "true for looping, false to stop looping."
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "boolean"
+											}
+										},
+										{
+											"id": 32,
+											"name": "trackName",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "the name of the animation track to adjust."
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "string"
+											}
+										}
+									],
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						},
+						{
+							"id": 47,
+							"name": "setPanning",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 48,
+									"name": "setPanning",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Update the panning of the animation."
+									},
+									"parameters": [
+										{
+											"id": 49,
+											"name": "panX",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "value of horizontal panning. See {@link AnimationOptions.panX}"
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "number"
+											}
+										},
+										{
+											"id": 50,
+											"name": "panY",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "value of vertical panning. See {@link AnimationOptions.panY}\n"
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "number"
+											}
+										}
+									],
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						},
+						{
+							"id": 54,
+							"name": "setZIndex",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 55,
+									"name": "setZIndex",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"parameters": [
+										{
+											"id": 56,
+											"name": "zIndex",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"type": {
+												"type": "intrinsic",
+												"name": "number"
+											}
+										}
+									],
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						},
+						{
+							"id": 51,
+							"name": "setZoom",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 52,
+									"name": "setZoom",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Update the zoom"
+									},
+									"parameters": [
+										{
+											"id": 53,
+											"name": "zoom",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "See {@link AnimationOptions.zoom}\n"
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "number"
+											}
+										}
+									],
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						},
+						{
+							"id": 33,
+							"name": "startTrack",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 34,
+									"name": "startTrack",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Start an animation. Conflicting animations will be automatically stopped.",
+										"tags": [
+											{
+												"tag": "throws",
+												"text": "an error if the provided trackName does not exist\n"
+											}
+										]
+									},
+									"parameters": [
+										{
+											"id": 35,
+											"name": "trackName",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "the name of the animation track to start.\nIf the name is not valid, an exception will be thrown\nindicating what animation names are available."
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "string"
+											}
+										},
+										{
+											"id": 36,
+											"name": "options",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {
+												"isOptional": true
+											},
+											"type": {
+												"type": "reference",
+												"id": 70,
+												"name": "PlayOptions"
+											}
+										}
+									],
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						},
+						{
+							"id": 37,
+							"name": "stopTrack",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 38,
+									"name": "stopTrack",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Stop an animation."
+									},
+									"parameters": [
+										{
+											"id": 39,
+											"name": "trackName",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "the name of the animation track to start.\nIf the name is not valid, an exception will be thrown\nindicating what animation names are available.\n"
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "string"
+											}
+										}
+									],
+									"type": {
+										"type": "intrinsic",
+										"name": "void"
+									}
+								}
+							]
+						}
+					],
+					"groups": [
+						{
+							"title": "Properties",
+							"kind": 1024,
+							"children": [
+								26
+							]
+						},
+						{
+							"title": "Methods",
+							"kind": 2048,
+							"children": [
+								63,
+								44,
+								60,
+								57,
+								40,
+								29,
+								47,
+								54,
+								51,
+								33,
+								37
+							]
+						}
+					],
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 34,
+							"character": 31
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 10,
+			"name": "GeppettoPlayer",
+			"kind": 4194304,
+			"kindString": "Type alias",
+			"flags": {},
+			"comment": {
+				"shortText": "A player to add Gepetto animations to."
+			},
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 166,
+					"character": 26
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 11,
+					"name": "__type",
+					"kind": 65536,
+					"kindString": "Type literal",
+					"flags": {},
+					"children": [
+						{
+							"id": 21,
+							"name": "destroy",
+							"kind": 1024,
+							"kindString": "Property",
+							"flags": {},
+							"comment": {
+								"shortText": "Destroys all animations added to this player."
+							},
+							"sources": [
+								{
+									"fileName": "player.ts",
+									"line": 193,
+									"character": 9
+								}
+							],
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 22,
+									"name": "__type",
+									"kind": 65536,
+									"kindString": "Type literal",
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "player.ts",
+											"line": 193,
+											"character": 10
+										}
+									],
+									"signatures": [
+										{
+											"id": 23,
+											"name": "__type",
+											"kind": 4096,
+											"kindString": "Call signature",
+											"flags": {},
+											"type": {
+												"type": "intrinsic",
+												"name": "void"
+											}
+										}
+									]
+								}
+							}
+						},
+						{
+							"id": 12,
+							"name": "render",
+							"kind": 1024,
+							"kindString": "Property",
+							"flags": {},
+							"comment": {
+								"shortText": "Clears the canvas. Use this when you created the player with {@link setupWebGL}.\nIf you want to control the rendering process (and the clearing of the canvas) yourself,\nskip the call to this method in your render cycle."
+							},
+							"sources": [
+								{
+									"fileName": "player.ts",
+									"line": 172,
+									"character": 8
+								}
+							],
+							"type": {
+								"type": "reflection",
+								"declaration": {
+									"id": 13,
+									"name": "__type",
+									"kind": 65536,
+									"kindString": "Type literal",
+									"flags": {},
+									"sources": [
+										{
+											"fileName": "player.ts",
+											"line": 172,
+											"character": 9
+										}
+									],
+									"signatures": [
+										{
+											"id": 14,
+											"name": "__type",
+											"kind": 4096,
+											"kindString": "Call signature",
+											"flags": {},
+											"type": {
+												"type": "intrinsic",
+												"name": "void"
+											}
+										}
+									]
+								}
+							}
+						},
+						{
+							"id": 15,
+							"name": "addAnimation",
+							"kind": 2048,
+							"kindString": "Method",
+							"flags": {},
+							"signatures": [
+								{
+									"id": 16,
+									"name": "addAnimation",
+									"kind": 4096,
+									"kindString": "Call signature",
+									"flags": {},
+									"comment": {
+										"shortText": "Add a Geppetto animation to the player."
+									},
+									"parameters": [
+										{
+											"id": 17,
+											"name": "animation",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "an animation prepared with {@link prepareAnimation}."
+											},
+											"type": {
+												"type": "reference",
+												"name": "PreparedImageDefinition"
+											}
+										},
+										{
+											"id": 18,
+											"name": "image",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "a HTML Image element with loaded url to use as texture."
+											},
+											"type": {
+												"type": "reference",
+												"name": "HTMLImageElement"
+											}
+										},
+										{
+											"id": 19,
+											"name": "textureUnit",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {},
+											"comment": {
+												"text": "The texture unit to use you can use `0` for your first animation,\n`1` for your second, etc."
+											},
+											"type": {
+												"type": "intrinsic",
+												"name": "number"
+											}
+										},
+										{
+											"id": 20,
+											"name": "options",
+											"kind": 32768,
+											"kindString": "Parameter",
+											"flags": {
+												"isOptional": true
+											},
+											"comment": {
+												"text": "\n"
+											},
+											"type": {
+												"type": "reference",
+												"typeArguments": [
+													{
+														"type": "reference",
+														"id": 65,
+														"name": "AnimationOptions"
+													}
+												],
+												"name": "Partial"
+											}
+										}
+									],
+									"type": {
+										"type": "reference",
+										"id": 24,
+										"name": "AnimationControls"
+									}
+								}
+							]
+						}
+					],
+					"groups": [
+						{
+							"title": "Properties",
+							"kind": 1024,
+							"children": [
+								21,
+								12
+							]
+						},
+						{
+							"title": "Methods",
+							"kind": 2048,
+							"children": [
+								15
+							]
+						}
+					],
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 166,
+							"character": 28
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 70,
+			"name": "PlayOptions",
+			"kind": 4194304,
+			"kindString": "Type alias",
+			"flags": {},
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 19,
+					"character": 23
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 71,
+					"name": "__type",
+					"kind": 65536,
+					"kindString": "Type literal",
+					"flags": {},
+					"children": [
+						{
+							"id": 73,
+							"name": "speed",
+							"kind": 1024,
+							"kindString": "Property",
+							"flags": {
+								"isOptional": true
+							},
+							"comment": {
+								"shortText": "Playback speed.",
+								"tags": [
+									{
+										"tag": "default",
+										"text": "1.0\n"
+									}
+								]
+							},
+							"sources": [
+								{
+									"fileName": "player.ts",
+									"line": 28,
+									"character": 7
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "number"
+							}
+						},
+						{
+							"id": 72,
+							"name": "startAt",
+							"kind": 1024,
+							"kindString": "Property",
+							"flags": {
+								"isOptional": true
+							},
+							"comment": {
+								"shortText": "Start animation at given ms."
+							},
+							"sources": [
+								{
+									"fileName": "player.ts",
+									"line": 23,
+									"character": 9
+								}
+							],
+							"type": {
+								"type": "intrinsic",
+								"name": "number"
+							}
+						}
+					],
+					"groups": [
+						{
+							"title": "Properties",
+							"kind": 1024,
+							"children": [
+								73,
+								72
+							]
+						}
+					],
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 19,
+							"character": 25
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 74,
+			"name": "Unsubscribe",
+			"kind": 4194304,
+			"kindString": "Type alias",
+			"flags": {},
+			"comment": {
+				"shortText": "Function to call for unsubscribing to an event listener"
+			},
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 10,
+					"character": 23
+				}
+			],
+			"type": {
+				"type": "reflection",
+				"declaration": {
+					"id": 75,
+					"name": "__type",
+					"kind": 65536,
+					"kindString": "Type literal",
+					"flags": {},
+					"sources": [
+						{
+							"fileName": "player.ts",
+							"line": 10,
+							"character": 25
+						}
+					],
+					"signatures": [
+						{
+							"id": 76,
+							"name": "__type",
+							"kind": 4096,
+							"kindString": "Call signature",
+							"flags": {},
+							"type": {
+								"type": "intrinsic",
+								"name": "void"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": 4,
+			"name": "createPlayer",
+			"kind": 64,
+			"kindString": "Function",
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 314,
+					"character": 25
+				}
+			],
+			"signatures": [
+				{
+					"id": 5,
+					"name": "createPlayer",
+					"kind": 4096,
+					"kindString": "Call signature",
+					"flags": {},
+					"comment": {
+						"shortText": "Initializes a player to display in an existing WebGL Environment.\nUse this function to create a player if you want to have full control over the\nrendering process (possibly to combine with other render code)."
+					},
+					"parameters": [
+						{
+							"id": 6,
+							"name": "element",
+							"kind": 32768,
+							"kindString": "Parameter",
+							"flags": {},
+							"comment": {
+								"text": "the Canvas DOM element containing a WebGL Context\n"
+							},
+							"type": {
+								"type": "reference",
+								"name": "HTMLCanvasElement"
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"id": 10,
+						"name": "GeppettoPlayer"
+					}
+				}
+			]
+		},
+		{
+			"id": 1,
+			"name": "prepareAnimation",
+			"kind": 64,
+			"kindString": "Function",
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "prepareAnimation.ts",
+					"line": 251,
+					"character": 29
+				}
+			],
+			"signatures": [
+				{
+					"id": 2,
+					"name": "prepareAnimation",
+					"kind": 4096,
+					"kindString": "Call signature",
+					"flags": {},
+					"comment": {
+						"shortText": "Convert the JSON based input animation file into a preprocessed list of buffers to place into WebGL",
+						"returns": "PreparedAnimation\n"
+					},
+					"parameters": [
+						{
+							"id": 3,
+							"name": "imageDefinition",
+							"kind": 32768,
+							"kindString": "Parameter",
+							"flags": {},
+							"comment": {},
+							"type": {
+								"type": "reference",
+								"name": "ImageDefinition"
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"name": "PreparedImageDefinition"
+					}
+				}
+			]
+		},
+		{
+			"id": 7,
+			"name": "setupWebGL",
+			"kind": 64,
+			"kindString": "Function",
+			"flags": {
+				"isConst": true
+			},
+			"sources": [
+				{
+					"fileName": "player.ts",
+					"line": 219,
+					"character": 23
+				}
+			],
+			"signatures": [
+				{
+					"id": 8,
+					"name": "setupWebGL",
+					"kind": 4096,
+					"kindString": "Call signature",
+					"flags": {},
+					"comment": {
+						"shortText": "Initializes the WebGL Context of a provided context. Configures the context and returns\na GeppettoPlayer bound to this element.",
+						"text": "Use this method if you only render Geppetto Animations in your Canvas.\nUse {@link createPlayer} if you want your own control over the canvas configuration\n"
+					},
+					"parameters": [
+						{
+							"id": 9,
+							"name": "element",
+							"kind": 32768,
+							"kindString": "Parameter",
+							"flags": {},
+							"comment": {
+								"text": "the Canvas DOM element that is not yet initialized with a context\n"
+							},
+							"type": {
+								"type": "reference",
+								"name": "HTMLCanvasElement"
+							}
+						}
+					],
+					"type": {
+						"type": "reference",
+						"id": 10,
+						"name": "GeppettoPlayer"
+					}
+				}
+			]
+		}
+	],
+	"groups": [
+		{
+			"title": "Interfaces",
+			"kind": 256,
+			"children": [
+				65
+			]
+		},
+		{
+			"title": "Type aliases",
+			"kind": 4194304,
+			"children": [
+				24,
+				10,
+				70,
+				74
+			]
+		},
+		{
+			"title": "Functions",
+			"kind": 64,
+			"children": [
+				4,
+				1,
+				7
+			]
+		}
+	],
+	"sources": [
+		{
+			"fileName": "index.ts",
+			"line": 1,
+			"character": 0
+		}
+	]
+}
