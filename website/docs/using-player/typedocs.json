@@ -34,7 +34,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 124,
+							"line": 131,
 							"character": 6
 						}
 					],
@@ -61,7 +61,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 130,
+							"line": 137,
 							"character": 6
 						}
 					],
@@ -88,7 +88,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 143,
+							"line": 150,
 							"character": 8
 						}
 					],
@@ -115,7 +115,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 136,
+							"line": 143,
 							"character": 6
 						}
 					],
@@ -140,7 +140,7 @@
 			"sources": [
 				{
 					"fileName": "player.ts",
-					"line": 118,
+					"line": 125,
 					"character": 33
 				}
 			]
@@ -469,7 +469,7 @@
 											"kindString": "Parameter",
 											"flags": {},
 											"comment": {
-												"text": "value of horizontal panning. See {@link AnimationOptions.panX}"
+												"text": "value of horizontal panning. `0` = center, `-1` = left, `1` = right."
 											},
 											"type": {
 												"type": "intrinsic",
@@ -483,7 +483,7 @@
 											"kindString": "Parameter",
 											"flags": {},
 											"comment": {
-												"text": "value of vertical panning. See {@link AnimationOptions.panY}\n"
+												"text": "value of vertical panning. `0` = center, `-1` = bottom, `1` = top.\n"
 											},
 											"type": {
 												"type": "intrinsic",
@@ -511,6 +511,9 @@
 									"kind": 4096,
 									"kindString": "Call signature",
 									"flags": {},
+									"comment": {
+										"shortText": "Changes the rendering order of animations."
+									},
 									"parameters": [
 										{
 											"id": 54,
@@ -518,6 +521,9 @@
 											"kind": 32768,
 											"kindString": "Parameter",
 											"flags": {},
+											"comment": {
+												"text": "The index number for rendering.\nThe higher the number, the more in the front the element will be stacked\n"
+											},
 											"type": {
 												"type": "intrinsic",
 												"name": "number"
@@ -545,7 +551,7 @@
 									"kindString": "Call signature",
 									"flags": {},
 									"comment": {
-										"shortText": "Update the zoom"
+										"shortText": "Updates the zoom level."
 									},
 									"parameters": [
 										{
@@ -555,7 +561,7 @@
 											"kindString": "Parameter",
 											"flags": {},
 											"comment": {
-												"text": "See {@link AnimationOptions.zoom}\n"
+												"text": "`1` = 100%, `1.5` is 150%, `0.5` = 50% zoom.\n"
 											},
 											"type": {
 												"type": "intrinsic",
@@ -790,7 +796,7 @@
 			"sources": [
 				{
 					"fileName": "player.ts",
-					"line": 166,
+					"line": 173,
 					"character": 26
 				}
 			],
@@ -815,7 +821,7 @@
 							"sources": [
 								{
 									"fileName": "player.ts",
-									"line": 193,
+									"line": 200,
 									"character": 9
 								}
 							],
@@ -830,7 +836,7 @@
 									"sources": [
 										{
 											"fileName": "player.ts",
-											"line": 193,
+											"line": 200,
 											"character": 10
 										}
 									],
@@ -985,7 +991,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 166,
+							"line": 173,
 							"character": 28
 						}
 					]
@@ -1202,7 +1208,7 @@
 			"sources": [
 				{
 					"fileName": "player.ts",
-					"line": 314,
+					"line": 321,
 					"character": 25
 				}
 			],
@@ -1298,7 +1304,7 @@
 			"sources": [
 				{
 					"fileName": "player.ts",
-					"line": 219,
+					"line": 226,
 					"character": 23
 				}
 			],
