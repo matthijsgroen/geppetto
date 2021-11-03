@@ -7,9 +7,11 @@ import TabItem from '@theme/TabItem';
 
 # Using the player
 
+The Geppetto Player is a Typescript library you can use in your web project to embed animations on your website.
+
 ## Install Player
 
-You can install the project using the `geppetto-player` package.
+You can install the library using the [`geppetto-player`](https://www.npmjs.com/package/geppetto-player) npm package.
 
 <Tabs groupId="package-manager">
 <TabItem value="npm" label="npm">

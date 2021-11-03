@@ -9,7 +9,7 @@ const config = {
   title: "Geppetto",
   tagline: "WebGL Animation Studio",
   url: "https://geppetto.js.org",
-  baseUrl: "/",
+  baseUrl: "/beta/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
@@ -74,12 +74,6 @@ const config = {
             label: "Embedding an animation",
           },
           {
-            type: "doc",
-            docId: "using-player/api",
-            position: "right",
-            label: "API",
-          },
-          {
             type: "docsVersion",
             label: "1.3",
           },
@@ -89,33 +83,50 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Docs",
-            items: [
-              {
-                label: "Tutorial",
-                to: "/docs/intro",
-              },
-            ],
-          },
-          {
-            title: "Contact and Source code",
+            title: "Contact",
             items: [
               {
                 label: "Twitter",
                 href: "https://twitter.com/matthijsgroen",
               },
               {
-                label: "Studio GitHub",
+                label: "Issue tracker",
+                href: "https://github.com/matthijsgroen/geppetto",
+              },
+            ],
+          },
+          {
+            title: "Tech Docs",
+            items: [
+              {
+                label: "API Reference",
+                to: "/docs/using-player/api",
+              },
+              {
+                label: "Changelog",
+                href: "https://github.com/matthijsgroen/geppetto/blob/main/CHANGELOG.md",
+              },
+            ],
+          },
+          {
+            title: "Source",
+            items: [
+              {
+                label: "NPM Package",
+                href: "https://www.npmjs.com/package/geppetto-player",
+              },
+              {
+                label: "Studio sourcecode",
                 href: "https://github.com/matthijsgroen/geppetto",
               },
               {
-                label: "Player GitHub",
+                label: "Player sourcecode",
                 href: "https://github.com/matthijsgroen/geppetto-player",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Matthijs Groen. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} Matthijs Groen.`,
       },
       prism: {
         theme: lightCodeTheme,
