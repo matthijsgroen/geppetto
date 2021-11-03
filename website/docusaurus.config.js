@@ -26,11 +26,6 @@ const config = {
           editUrl:
             "https://github.com/matthijsgroen/geppetto/edit/gh-pages/website/",
         },
-        // blog: {
-        //   showReadingTime: true,
-        //   editUrl:
-        //     "https://github.com/matthijsgroen/geppetto/edit/gh-pages/website/blog/",
-        // },
         blog: false,
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -46,7 +41,7 @@ const config = {
         title: "Geppetto",
         logo: {
           alt: "Geppetto logo",
-          src: "img/logo.svg",
+          src: "/img/logo.svg",
         },
         items: [
           {
