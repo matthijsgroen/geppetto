@@ -1,21 +1,13 @@
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  Children,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   setupWebGL,
   prepareAnimation,
   GeppettoPlayer,
   ImageDefinition,
   AnimationControls,
-  PreparedAnimation,
   AnimationOptions,
   PreparedImageDefinition,
 } from "geppetto-player";
-import { animations } from "./Playground";
 
 type PlayerProps = {
   width: number;
