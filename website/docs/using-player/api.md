@@ -25,7 +25,7 @@ Use [createPlayer](#createplayer) if you want your own control over the canvas c
 
 
 
-Returns `GeppettoPlayer`
+Returns `GeppettoPlayer` 
 
 #### Arguments
 
@@ -43,7 +43,7 @@ Use this function to create a player if you want to have full control over the
 rendering process (possibly to combine with other render code).
 
 
-Returns `GeppettoPlayer`
+Returns `GeppettoPlayer` 
 
 #### Arguments
 
@@ -59,7 +59,8 @@ const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer;
 Convert the JSON based input animation file into a preprocessed list of buffers to place into WebGL
 
 
-Returns `PreparedImageDefinition`
+Returns `PreparedImageDefinition` PreparedAnimation
+
 
 #### Arguments
 
@@ -80,7 +81,7 @@ Destroys all animations added to this player.
 
 
 
-Returns `void`
+Returns `void` 
 
 
 
@@ -89,7 +90,7 @@ Returns `void`
 
 Add a Geppetto animation to the player.
 
-Returns `AnimationControls`
+Returns `AnimationControls` 
 
 #### Arguments
 
@@ -142,7 +143,7 @@ Clears the canvas. Use this when you created the player with [setupWebGL](#setup
 If you want to control the rendering process (and the clearing of the canvas) yourself,
 skip the call to this method in your render cycle.
 
-Returns `void`
+Returns `void` 
 
 
 
@@ -157,7 +158,7 @@ Options to control the animation, start animation tracks, etc.
 
 Clears all memory associated to this animation.
 
-Returns `void`
+Returns `void` 
 
 
 
@@ -167,7 +168,9 @@ Returns `void`
 Retreives current value of a control. This value will not update for each frame
 of an animation. It will only update at the end of each play iteration of an animation.
 
-Returns `number`
+Returns `number` value of the control. Take into account that each control can have different
+value limits, depending on the amount of step a control has.
+
 
 #### Arguments
 
@@ -177,13 +180,16 @@ Returns `number`
 ### onEvent(callback) {#animationcontrols-onevent}
 
 
+Register a callback to get notifications when an event is triggered.
+Events can be defined in an animation.
 
+Returns `Unsubscribe` a function to call to unsubscribe
 
-Returns `Unsubscribe`
 
 #### Arguments
 
-- **callback** `CustomEventCallback` 
+- **callback** `CustomEventCallback` function that gets called whenever an event happens.
+It passes in the eventName, track and time.
 
 ```tsx
 type CustomEventCallback = (eventName: string, track: string, time: number): void;
@@ -198,13 +204,16 @@ type Unsubscribe = (): void;
 ### onTrackStopped(callback) {#animationcontrols-ontrackstopped}
 
 
+Register a callback to get notifications when a track is stopped.
+A track can be stopped for the following reasons.
 
+Returns `Unsubscribe` a function to call to unsubscribe
 
-Returns `Unsubscribe`
 
 #### Arguments
 
-- **callback** `TrackStoppedCallback` 
+- **callback** `TrackStoppedCallback` function to call when tracks are stopped.
+The first argument will be the trackname.
 
 ```tsx
 type TrackStoppedCallback = (track: string): void;
@@ -221,7 +230,7 @@ type Unsubscribe = (): void;
 
 Render a frame of the image.
 
-Returns `void`
+Returns `void` 
 
 
 
@@ -230,7 +239,7 @@ Returns `void`
 
 Manipulates a control. Will stop animations that are using this control as well.
 
-Returns `void`
+Returns `void` 
 
 #### Arguments
 
@@ -244,7 +253,7 @@ value limits, depending on the amount of step a control has.
 
 Set the looping state of an animation track.
 
-Returns `void`
+Returns `void` 
 
 #### Arguments
 
@@ -257,7 +266,7 @@ Returns `void`
 
 Update the panning of the animation.
 
-Returns `void`
+Returns `void` 
 
 #### Arguments
 
@@ -271,12 +280,12 @@ Returns `void`
 
 Changes the rendering order of animations.
 
-Returns `void`
+Returns `void` 
 
 #### Arguments
 
 - **zIndex** `number` The index number for rendering.
-The higher the number, the more in the front the element will be stacked
+The higher the number, the more in the front the element will be stacked.
 
 
 
@@ -285,7 +294,7 @@ The higher the number, the more in the front the element will be stacked
 
 Updates the zoom level.
 
-Returns `void`
+Returns `void` 
 
 #### Arguments
 
@@ -298,7 +307,7 @@ Returns `void`
 
 Start an animation. Conflicting animations will be automatically stopped.
 
-Returns `void`
+Returns `void` 
 
 #### Arguments
 
@@ -329,7 +338,7 @@ type PlayOptions = {
 
 Stop an animation.
 
-Returns `void`
+Returns `void` 
 
 #### Arguments
 

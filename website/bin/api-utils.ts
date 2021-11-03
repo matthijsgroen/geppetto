@@ -14,6 +14,7 @@ export interface DocItem {
   comment?: {
     shortText: string;
     text?: string;
+    returns?: string;
     tags?: { tag: string; text: string }[];
   };
   children?: DocItem[];
@@ -226,7 +227,12 @@ const methodArguments = (
 ): string => {
   if (!signature) return "";
   const result = [];
-  result.push("", `Returns \`${generateType(signature.type)}\``, "");
+  const returnDescription = signature.comment?.returns ?? "";
+  result.push(
+    "",
+    `Returns \`${generateType(signature.type)}\` ${returnDescription}`,
+    ""
+  );
 
   const parameters = (signature.parameters || []).map((docItem) => ({
     name: docItem.name,

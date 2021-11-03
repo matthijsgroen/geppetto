@@ -34,7 +34,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 131,
+							"line": 152,
 							"character": 6
 						}
 					],
@@ -61,7 +61,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 137,
+							"line": 158,
 							"character": 6
 						}
 					],
@@ -88,7 +88,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 150,
+							"line": 171,
 							"character": 8
 						}
 					],
@@ -115,7 +115,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 143,
+							"line": 164,
 							"character": 6
 						}
 					],
@@ -140,7 +140,7 @@
 			"sources": [
 				{
 					"fileName": "player.ts",
-					"line": 125,
+					"line": 146,
 					"character": 33
 				}
 			]
@@ -246,6 +246,10 @@
 									"kind": 4096,
 									"kindString": "Call signature",
 									"flags": {},
+									"comment": {
+										"shortText": "Register a callback to get notifications when an event is triggered.\nEvents can be defined in an animation.",
+										"returns": "a function to call to unsubscribe\n"
+									},
 									"parameters": [
 										{
 											"id": 60,
@@ -253,6 +257,9 @@
 											"kind": 32768,
 											"kindString": "Parameter",
 											"flags": {},
+											"comment": {
+												"text": "function that gets called whenever an event happens.\nIt passes in the eventName, track and time."
+											},
 											"type": {
 												"type": "reference",
 												"id": 79,
@@ -281,6 +288,11 @@
 									"kind": 4096,
 									"kindString": "Call signature",
 									"flags": {},
+									"comment": {
+										"shortText": "Register a callback to get notifications when a track is stopped.\nA track can be stopped for the following reasons.",
+										"text": "- A control is used that is conflicting with an animation track.\n- Another track is started that is conflicting with an animation track.\n- A track is stopped using `stopTrack`\n",
+										"returns": "a function to call to unsubscribe\n"
+									},
 									"parameters": [
 										{
 											"id": 57,
@@ -288,6 +300,9 @@
 											"kind": 32768,
 											"kindString": "Parameter",
 											"flags": {},
+											"comment": {
+												"text": "function to call when tracks are stopped.\nThe first argument will be the trackname."
+											},
 											"type": {
 												"type": "reference",
 												"id": 75,
@@ -522,7 +537,7 @@
 											"kindString": "Parameter",
 											"flags": {},
 											"comment": {
-												"text": "The index number for rendering.\nThe higher the number, the more in the front the element will be stacked\n"
+												"text": "The index number for rendering.\nThe higher the number, the more in the front the element will be stacked.\n"
 											},
 											"type": {
 												"type": "intrinsic",
@@ -796,7 +811,7 @@
 			"sources": [
 				{
 					"fileName": "player.ts",
-					"line": 173,
+					"line": 194,
 					"character": 26
 				}
 			],
@@ -821,7 +836,7 @@
 							"sources": [
 								{
 									"fileName": "player.ts",
-									"line": 200,
+									"line": 221,
 									"character": 9
 								}
 							],
@@ -836,7 +851,7 @@
 									"sources": [
 										{
 											"fileName": "player.ts",
-											"line": 200,
+											"line": 221,
 											"character": 10
 										}
 									],
@@ -991,7 +1006,7 @@
 					"sources": [
 						{
 							"fileName": "player.ts",
-							"line": 173,
+							"line": 194,
 							"character": 28
 						}
 					]
@@ -1208,7 +1223,7 @@
 			"sources": [
 				{
 					"fileName": "player.ts",
-					"line": 321,
+					"line": 342,
 					"character": 25
 				}
 			],
@@ -1304,7 +1319,7 @@
 			"sources": [
 				{
 					"fileName": "player.ts",
-					"line": 226,
+					"line": 247,
 					"character": 23
 				}
 			],
