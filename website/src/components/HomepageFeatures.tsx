@@ -18,8 +18,8 @@ const FeatureList = [
     Svg: require("../../static/img/undraw_docusaurus_tree.svg").default,
     description: (
       <>
-        With only <strong>6KB</strong> the library is small. But it also is
-        focused on performance, to extend your battery life.
+        With less than <strong>10 kB</strong> the library is small. But it also
+        is focused on performance, to extend your battery life.
       </>
     ),
   },
@@ -35,19 +35,17 @@ const FeatureList = [
   },
 ];
 
-function Feature({ Svg, title, description }) {
-  return (
-    <div className={clsx("col col--4")}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} alt={title} />
-      </div>
-      <div className="text--center padding-horiz--md">
-        <h3>{title}</h3>
-        <p>{description}</p>
-      </div>
+const Feature: React.FunctionComponent = ({ Svg, title, description }) => (
+  <div className={clsx("col col--4")}>
+    <div className="text--center">
+      <Svg className={styles.featureSvg} alt={title} />
     </div>
-  );
-}
+    <div className="text--center padding-horiz--md">
+      <h3>{title}</h3>
+      <p>{description}</p>
+    </div>
+  </div>
+);
 
 export default function HomepageFeatures() {
   return (
