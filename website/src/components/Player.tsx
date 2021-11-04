@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  setupWebGL,
-  prepareAnimation,
+import { setupWebGL, prepareAnimation } from "geppetto-player";
+import type {
   GeppettoPlayer,
   ImageDefinition,
   AnimationControls,

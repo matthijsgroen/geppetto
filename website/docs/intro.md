@@ -14,7 +14,7 @@ Hey! Welcome to Geppetto! With Geppetto you can create 2D animations from your i
 
 - 🐣 **Small in size**
 
-  Size: **5.75 KB** with all dependencies, minified and gzipped.
+  Size: **7.84 kB** with all dependencies, minified and gzipped
 
 - ⚖️ **Open source**
 
