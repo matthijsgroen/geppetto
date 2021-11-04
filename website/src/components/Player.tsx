@@ -21,6 +21,11 @@ type ContextValueType = (
 
 const PlayerContext = React.createContext<ContextValueType>(null);
 
+const useForceUpdate = () => {
+  const [, updater] = useState(0);
+  return useCallback(() => updater((n) => n + 1), []);
+};
+
 export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
   const canvasRef = useRef<HTMLCanvasElement>();
   const [player, setPlayer] = useState<GeppettoPlayer>(null);
@@ -137,6 +142,7 @@ export const Animation: React.VFC<AnimationProps> = ({
   options,
   onAnimationReady,
 }) => {
+  const forceUpdate = useForceUpdate();
   const destroyRef = useRef(() => {});
   const addAnimationRef = useRef<ContextValueType>(undefined);
 
@@ -168,6 +174,7 @@ export const Animation: React.VFC<AnimationProps> = ({
       {(addAnimation) => {
         if (typeof addAnimation !== "function") return null;
         addAnimationRef.current = addAnimation;
+        setTimeout(forceUpdate, 0);
 
         return null;
       }}
