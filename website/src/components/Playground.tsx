@@ -50,13 +50,15 @@ const Playground: FunctionComponent = () => {
         active={animationData}
         options={animations}
       />
-      <ControllableAnimation
-        width={animationData.width}
-        height={animationData.height}
-        animation={animationData.animation}
-        textureUrl={animationData.textureUrl}
-        options={animationData.options}
-      />
+      <div style={{ margin: "1rem 0" }}>
+        <ControllableAnimation
+          width={animationData.width}
+          height={animationData.height}
+          animation={animationData.animation}
+          textureUrl={animationData.textureUrl}
+          options={animationData.options}
+        />
+      </div>
     </>
   );
 };

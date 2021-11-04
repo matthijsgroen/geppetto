@@ -2,7 +2,15 @@
 sidebar_position: 4
 ---
 
-# Layers screen
+# Creating layers
+
+:::caution Todo
+
+- Talk about why you need layers
+- why specifying the shape points yourself is important.
+- Add screenshots describing the task
+
+:::
 
 The layer screen is where you create layers from your texture.
 

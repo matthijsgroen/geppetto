@@ -34,12 +34,6 @@ Hey! Welcome to Geppetto! With Geppetto you can create 2D animations from your i
 
 ## How does Geppetto work?
 
-explanation about 2d texture, 2D shapes and shape manipulation that causes animation.
+Geppetto uses your 2D texture (image) to render pieces of the image on a 2D vector area. This area is build up from triangles, that you can specify yourself in the Geppetto Studio App.
 
-### Concepts
-
-1. Texture
-2. Layers
-3. Mutations
-4. Controls
-5. Animations
+These 2D areas can then be manipulated in size and form, causing the image to stretch as well, causing motion and animation.

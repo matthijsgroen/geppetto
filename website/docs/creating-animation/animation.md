@@ -2,7 +2,14 @@
 sidebar_position: 6
 ---
 
-# Animation screen
+# Creating animations
+
+:::caution Todo
+
+- Make the document 'task based' What is the user trying to accomplish?
+- Add screenshots
+
+:::
 
 The animation screen is where you set up animations using controls defined in
 the [Composition](./Composition) screen.

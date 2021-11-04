@@ -29,7 +29,7 @@ const AnimationSelector = <T extends BaseType>({
             .filter(Boolean)
             .join(" ")}
           key={option.id}
-          aria-selected={active === option ? "yes" : "no"}
+          aria-selected={active === option}
           onClick={() => {
             onSelect(option);
           }}

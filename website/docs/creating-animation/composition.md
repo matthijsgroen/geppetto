@@ -2,7 +2,14 @@
 sidebar_position: 5
 ---
 
-# Composition screen
+# Making the image 'move'
+
+:::caution Todo
+
+- Make the document 'task based' What is the user trying to accomplish?
+- Add screenshots
+
+:::
 
 The composition screen is where you wire up all the moving parts of your image.
 

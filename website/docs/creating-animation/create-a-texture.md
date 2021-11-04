@@ -2,7 +2,15 @@
 sidebar_position: 3
 ---
 
-# Create a texture
+# Creating a texture
+
+:::caution Todo
+
+Talk about image editing tools, layers and how to create a proper texture.
+
+Show texture of scenery.
+
+:::
 
 1. Create a proper texture file (a 2d image file, for instance .png). You should
    use a digital paint program for this. For instance Photoshop or The Gimp.
