@@ -1,10 +1,11 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
+title: "Download"
 ---
 
-# Geppetto Studio
+# Download
 
-Currently the Studio app is only available as installable Desktop application for Mac, Linux and Windows. In the future I hope to also make it available directly from the browser.
+Currently the **Geppetto Studio app** is only available as installable Desktop application for Mac, Linux and Windows. In the future I hope to also make it available directly from the browser.
 
 :::caution Todo
 

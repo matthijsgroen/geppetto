@@ -58,13 +58,13 @@ const config = {
           },
           {
             type: "doc",
-            docId: "creating-animation/studio",
+            docId: "creating-animation",
             position: "right",
             label: "Creating an animation",
           },
           {
             type: "doc",
-            docId: "using-player/player",
+            docId: "player",
             position: "right",
             label: "Embedding an animation",
           },
@@ -95,7 +95,7 @@ const config = {
             items: [
               {
                 label: "API Reference",
-                to: "/docs/using-player/api",
+                to: "/docs/api",
               },
               {
                 label: "Changelog",
