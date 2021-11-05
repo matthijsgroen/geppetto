@@ -28,8 +28,10 @@ Show texture of scenery.
 
 :::
 
+![Creating texture in the Gimp](/screenshots/texture.png)
+
 1. Create a proper texture file (a 2d image file, for instance .png). You should
-   use a digital paint program for this. For instance Photoshop or The Gimp.
+   use a digital paint program for this. For instance [Photoshop](https://www.adobe.com/products/photoshop.html) or [The Gimp](https://www.gimp.org/).
 2. In Geppetto, you'll load in this texture and create shapes from the 2d
    texture, in the **Layers** screen. Each shape is build by placing points,
    that gets automatically triangulated into a shape. The location you place the
@@ -46,9 +48,10 @@ Show texture of scenery.
 
 - Talk about why you need layers
 - why specifying the shape points yourself is important.
-- Add screenshots describing the task
 
 :::
+
+![Layer screen](/screenshots/layers.png)
 
 The layer screen is where you create layers from your texture.
 
@@ -92,14 +95,19 @@ point is selected, you can see (and edit) its coordinates in the "Point info"
 pane in the bottomleft. You can also delete the selected point by using the `🗑`
 on top of the center area.
 
+### Using the grid
+
+You can enable a grid to more easily place points. Using the `-` and `+` buttons in the toolbar, you can increase / decrease the raster size. By clicking on the size, you can toggle the visibility of the grid, and by clicking the `🧲` icon, you can make the grid magnetic, then all new points will automatically be placed on raster edges.
+
 ## Making the image 'move'
 
 :::caution Todo
 
 - Make the document 'task based' What is the user trying to accomplish?
-- Add screenshots
 
 :::
+
+![Composition screen](/screenshots/rotation.png)
 
 The composition screen is where you wire up all the moving parts of your image.
 
@@ -179,6 +187,8 @@ The green square is to transition the colors towards the 'Target color'. If no t
 
 ### Adding Controls
 
+![Controls](/screenshots/controls.png)
+
 Controls allow your image to be controlled from the outside, or by an animation.
 A control has 'steps', each step is a set of values for mutations. By using
 controls, Geppetto will transition these mutations when the controls are
@@ -230,9 +240,10 @@ or by building animation timelines.
 :::caution Todo
 
 - Make the document 'task based' What is the user trying to accomplish?
-- Add screenshots
 
 :::
+
+![Animation screen](/screenshots/animation.png)
 
 The animation screen is where you set up animations using controls defined in
 the [Composition][composition] screen.
