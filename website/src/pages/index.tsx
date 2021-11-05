@@ -20,7 +20,7 @@ function HomepageHeader() {
           >
             Download
           </Link>
-          <Link className="button button--secondary button--lg" to="/docs/demo">
+          <Link className="button button--info button--lg" to="/docs/demo">
             Demo
           </Link>
         </div>

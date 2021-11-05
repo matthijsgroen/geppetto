@@ -2,6 +2,10 @@
 sidebar_position: 4
 ---
 
+import ThemedImage from '@theme/ThemedImage';
+import TextureImage from '@site/src/components/TextureImage';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Creating an animation
 
 ## Overview
@@ -20,27 +24,21 @@ Creating a Geppetto Animation is a 5 step affair.
 
 ## Creating a texture
 
-:::caution Todo
-
-Talk about image editing tools, layers and how to create a proper texture.
-
-Show texture of scenery.
-
-:::
-
 ![Creating texture in the Gimp](/screenshots/texture.png)
 
-1. Create a proper texture file (a 2d image file, for instance .png). You should
+1. Create a texture file (a 2d image file, for instance .png). You should
    use a digital paint program for this. For instance [Photoshop](https://www.adobe.com/products/photoshop.html) or [The Gimp](https://www.gimp.org/).
-2. In Geppetto, you'll load in this texture and create shapes from the 2d
+   Make sure you put the layers you want next to eachother in the flat image, you can make them stack again within the Geppetto Studio app.
+2. In the app, you'll load in this texture and create shapes from the 2d
    texture, in the **Layers** screen. Each shape is build by placing points,
    that gets automatically triangulated into a shape. The location you place the
    points can be important, since the goal of the mutations is to move these
    points around, causing the texture on the shape to move, stretch, rotate or
    bend.
-3. In the composition screen, you can place the layers to reform your
-   intended picture. The order of layers is also the stacking order. In this
-   screen you will add mutations to layers and/or folders, crea
+3. In the composition screen, you can stack and move the layers to form your
+   intended picture. The order of layers is also the stacking order.
+
+<TextureImage src={"/demo-assets/scenery.png"} alt="Scenery texture" />
 
 ## Creating layers
 
@@ -51,7 +49,13 @@ Show texture of scenery.
 
 :::
 
-![Layer screen](/screenshots/layers.png)
+<ThemedImage
+alt="Layer screen"
+sources={{
+   light: useBaseUrl('/screenshots/layers-light.png'),
+   dark: useBaseUrl('/screenshots/layers-dark.png')
+}}
+/>
 
 The layer screen is where you create layers from your texture.
 
@@ -107,7 +111,13 @@ You can enable a grid to more easily place points. Using the `-` and `+` buttons
 
 :::
 
-![Composition screen](/screenshots/rotation.png)
+<ThemedImage
+alt="Composition screen"
+sources={{
+   light: useBaseUrl('/screenshots/rotation-light.png'),
+   dark: useBaseUrl('/screenshots/rotation-dark.png')
+}}
+/>
 
 The composition screen is where you wire up all the moving parts of your image.
 
@@ -187,7 +197,13 @@ The green square is to transition the colors towards the 'Target color'. If no t
 
 ### Adding Controls
 
-![Controls](/screenshots/controls.png)
+<ThemedImage
+alt="Controls"
+sources={{
+   light: useBaseUrl('/screenshots/controls-light.png'),
+   dark: useBaseUrl('/screenshots/controls-dark.png')
+}}
+/>
 
 Controls allow your image to be controlled from the outside, or by an animation.
 A control has 'steps', each step is a set of values for mutations. By using
@@ -243,7 +259,13 @@ or by building animation timelines.
 
 :::
 
-![Animation screen](/screenshots/animation.png)
+<ThemedImage
+alt="Animation screen"
+sources={{
+   light: useBaseUrl('/screenshots/animation-light.png'),
+   dark: useBaseUrl('/screenshots/animation-dark.png')
+}}
+/>
 
 The animation screen is where you set up animations using controls defined in
 the [Composition][composition] screen.
