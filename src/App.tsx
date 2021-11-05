@@ -22,6 +22,7 @@ const defaultTheme: DefaultTheme = {
     itemSpecial: "var(--colors-item-special)",
     text: "var(--colors-text)",
     textSelected: "var(--colors-text-selected)",
+    textDestructive: "var(--colors-text-destructive)",
   },
 };
 

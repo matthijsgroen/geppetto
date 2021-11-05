@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
 - Added `Lightness` mutation to make colors darker / lighter.
 - Added `Color Transition` mutation to transition color to target color.
 - Added `Target Color` mutation as target for Colorize.
 - Added option to reload texture from disk.
+
+### Changed
+
+- Updated Electron to 15.2.0
 
 ## [1.2.0] - 2021-05-05
 
