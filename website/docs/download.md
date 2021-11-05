@@ -3,15 +3,13 @@ sidebar_position: 2
 title: "Download"
 ---
 
+import DownloadButtons from "@site/src/components/DownloadButtons";
+
 # Download
 
 Currently the **Geppetto Studio app** is only available as installable Desktop application for Mac, Linux and Windows. In the future I hope to also make it available directly from the browser.
 
-:::caution Todo
-
-- Add download buttons
-
-:::
+<DownloadButtons version={"1.2.0"} />
 
 ## Installation
 

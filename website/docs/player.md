@@ -141,7 +141,6 @@ const animationControl = player.addAnimation(
 ## Setting up a render loop
 
 In order to make the animation work, you should create a render loop that renders the animation for each frame.
-
 The reason we let you setup this loop, is that you will have more control over it.
 
 For the animation above, this loop would be simple:
