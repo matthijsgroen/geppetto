@@ -1,6 +1,7 @@
 import React, { Fragment, useState, VFC } from "react";
 import Link from "@docusaurus/Link";
 import styles from "./DownloadButtons.module.css";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 
 type VersionNumber = `${number}.${number}.${number}`;
 
@@ -89,4 +90,8 @@ const DownloadButtons: VFC<Props> = ({ version }) => {
   );
 };
 
-export default DownloadButtons;
+const WrappedDownload: React.FunctionComponent<Props> = (props) => (
+  <BrowserOnly>{() => <DownloadButtons {...props} />}</BrowserOnly>
+);
+
+export default WrappedDownload;
