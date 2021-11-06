@@ -12,12 +12,20 @@ import innkeeper from "@site/static/demo-assets/innkeeper.json";
 import innkeeperTextureUrl from "@site/static/demo-assets/innkeeper.png";
 import { AnimationControls } from "geppetto-player";
 import ClickableAreas from "./ClickableAreas";
-import { animationTween, delayFrames } from "./tween";
+import { animationTween, delayFrames, tick } from "./tween";
+import Dialog from "./Dialog";
 
 const innKeeperClose = {
   zoom: 2.2,
   panX: -0.3,
   panY: 0.1,
+  zIndex: 2,
+};
+
+const innKeeperDistance = {
+  zoom: 0.26,
+  panX: -2.1,
+  panY: -0.5,
   zIndex: 2,
 };
 
@@ -113,9 +121,40 @@ const butterFly = async (scenery: AnimationControls) => {
   }
 };
 
+const END = "END";
+
+type DialogTree = (string | DialogChoice)[];
+type DialogChoice = Record<string, DialogTree>;
+
+const dialogTree: DialogTree = [
+  "Hi! Welcome adventurer, welcome to my inn!",
+  "Feel free to explore our world!",
+  "During dialog my eyes will move to where you click in the image",
+  "Nice meeting you, adventurer! Bye!",
+  END,
+];
+
+const playDialog = async (
+  dialogText: DialogTree,
+  talkFn: (text: string) => Promise<void>
+): Promise<void> => {
+  for (const item of dialogText) {
+    if (typeof item === "string" && item !== END) {
+      await talkFn(item);
+    }
+  }
+};
+
 const Demo: React.VFC = () => {
   const animationRef = useRef<AnimationControls>();
   const characterRef = useRef<AnimationControls>();
+  const [dialogText, setDialogText] = useState<string | null>(null);
+
+  const dialogDoneRef = useRef(() => {});
+
+  const onClick = useCallback(() => {
+    dialogDoneRef.current();
+  }, []);
 
   const getInnkeeperControls = useCallback(
     (animationControl: AnimationControls) => {
@@ -173,13 +212,37 @@ const Demo: React.VFC = () => {
               right: 0.263,
               top: 0.508,
               bottom: 0.78,
-              onClick: () => {
+              onClick: async () => {
                 setInteracting(true);
                 characterRef.current.setZoom(innKeeperClose.zoom);
                 characterRef.current.setPanning(
                   innKeeperClose.panX,
                   innKeeperClose.panY
                 );
+                await delayFrames("startTalking", 60);
+                characterRef.current.startTrack("PauseSweeping");
+
+                const say = async (text: string) => {
+                  characterRef.current.startTrack("Talking", { startAt: 800 });
+                  characterRef.current.startTrack("Eyebrows");
+                  await new Promise<void>((resolve) => {
+                    dialogDoneRef.current = resolve;
+                    setDialogText(text);
+                  });
+                  setDialogText(null);
+                  characterRef.current.startTrack("StopTalking");
+                  characterRef.current.startTrack("EyebrowReset");
+                };
+
+                await playDialog(dialogTree, say);
+
+                characterRef.current.setZoom(innKeeperDistance.zoom);
+                characterRef.current.setPanning(
+                  innKeeperDistance.panX,
+                  innKeeperDistance.panY
+                );
+                setInteracting(false);
+                characterRef.current.startTrack("Sweeping");
               },
               cursor: "pointer",
             },
@@ -187,9 +250,13 @@ const Demo: React.VFC = () => {
     [interacting]
   );
 
+  const onRender = useCallback(() => {
+    tick();
+  }, []);
+
   return (
     <ClickableAreas areas={areas} width={2048}>
-      <Player width={2048} height={1024}>
+      <Player width={2048} height={1024} onRender={onRender}>
         <Animation
           animation={scenery}
           textureUrl={sceneryTextureUrl}
@@ -200,14 +267,10 @@ const Demo: React.VFC = () => {
           animation={innkeeper}
           textureUrl={innkeeperTextureUrl}
           onAnimationReady={getInnkeeperControls}
-          options={{
-            zoom: 0.26,
-            panX: -2.1,
-            panY: -0.5,
-            zIndex: 2,
-          }}
+          options={innKeeperDistance}
         />
       </Player>
+      <Dialog text={dialogText} title={"Innkeeper"} onClick={onClick} />
     </ClickableAreas>
   );
 };

@@ -9,8 +9,6 @@ import Demo from "@site/src/components/Demo";
 
 :::caution Todo
 
-- Explain effects of facial expressions
-- Add small dialog part, to allow ending dialog and placing innkeeper back into background
 - Add clicking and eye tracking
 
 :::
@@ -51,6 +49,15 @@ actually controlled by a small script. The location destination is random, and t
 direction is flipped using the [stretch][] effect. There are 2 landing spots defined,
 and when landed, the wings animation is changed.
 
+### Inkeeper animations
+
+- Head tilting is done with the [rotation][] mutation, combined with the hair movement with a [deformation][].
+- Head turning is done with multiple [translation][] effects moving different layers with different amounts.
+- Mouth movement is done with a [translation][] on the chin, [deformation][] mutations for the lips, [translation][] on the teeth.
+- Eye blinking is done by stretching the eyelids with a [deformation][] and flipping the eyelashes with a [stretch][] effect.
+- Eyes direction is done with [translation][] effect on the pupils, with a [stretch][] mutation to give the eye a more circular effect.
+- Using the broom is done with a multiple of [rotation][] mutations for arm movements.
+
 [opacity]: /docs/creating-animation#-opacity-mutation
 [translation]: /docs/creating-animation#-translation-mutation
 [deformation]: /docs/creating-animation#-deformation-mutation
@@ -59,12 +66,3 @@ and when landed, the wings animation is changed.
 [color transition]: /docs/creating-animation#-color-transition-mutation
 [target color]: /docs/creating-animation#-target-color-mutation
 [lightness]: /docs/creating-animation#-lightness-mutation
-
-### Inkeeper animations
-
-- Head tilt
-- Head turn
-- Mouth movement
-- Eye blinking
-- Eye looking
-- Using the broom

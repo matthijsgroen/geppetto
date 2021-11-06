@@ -11,6 +11,7 @@ import type {
 type PlayerProps = {
   width: number;
   height: number;
+  onRender?: () => void;
 };
 
 type ContextValueType = (
@@ -26,7 +27,12 @@ const useForceUpdate = () => {
   return useCallback(() => updater((n) => n + 1), []);
 };
 
-export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
+export const Player: React.FC<PlayerProps> = ({
+  width,
+  height,
+  children,
+  onRender,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>();
   const [player, setPlayer] = useState<GeppettoPlayer>(null);
   const animations = useRef<AnimationControls[]>([]);
@@ -69,6 +75,9 @@ export const Player: React.FC<PlayerProps> = ({ width, height, children }) => {
       animations.current.forEach(
         (animation) => animation && animation.render()
       );
+      if (onRender) {
+        onRender();
+      }
       window.requestAnimationFrame(renderFrame);
     };
 
