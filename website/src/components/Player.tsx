@@ -182,8 +182,10 @@ export const Animation: React.VFC<AnimationProps> = ({
     <PlayerContext.Consumer>
       {(addAnimation) => {
         if (typeof addAnimation !== "function") return null;
-        addAnimationRef.current = addAnimation;
-        setTimeout(forceUpdate, 0);
+        if (addAnimationRef.current !== addAnimation) {
+          addAnimationRef.current = addAnimation;
+          setTimeout(forceUpdate, 0);
+        }
 
         return null;
       }}
