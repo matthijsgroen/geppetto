@@ -42,13 +42,6 @@ Creating a Geppetto Animation is a 5 step affair.
 
 ## Creating layers
 
-:::caution Todo
-
-- Talk about why you need layers
-- why specifying the shape points yourself is important.
-
-:::
-
 <ThemedImage
 alt="Layer screen"
 sources={{
@@ -58,6 +51,12 @@ sources={{
 />
 
 The layer screen is where you create layers from your texture.
+
+:::note
+
+In the composition screen you can then stack te layers to make items move across of eachother.
+
+:::
 
 1. Create a new file: Ctrl/Cmd + N (or File -> New from the main menu)
 2. Load your texture file: Ctrl/Cmd + Shift + O (or File -> Load Texture from
@@ -99,17 +98,17 @@ point is selected, you can see (and edit) its coordinates in the "Point info"
 pane in the bottomleft. You can also delete the selected point by using the `🗑`
 on top of the center area.
 
+:::tip
+
+When mutating elemements, they will move the points of a surface, making the image move. So placing extra points in your surface can imporove movement effects.
+
+:::
+
 ### Using the grid
 
 You can enable a grid to more easily place points. Using the `-` and `+` buttons in the toolbar, you can increase / decrease the raster size. By clicking on the size, you can toggle the visibility of the grid, and by clicking the `🧲` icon, you can make the grid magnetic, then all new points will automatically be placed on raster edges.
 
 ## Making the image 'move'
-
-:::caution Todo
-
-- Make the document 'task based' What is the user trying to accomplish?
-
-:::
 
 <ThemedImage
 alt="Composition screen"
@@ -252,12 +251,6 @@ This can be done in realtime using the Geppetto player that adjust the controls,
 or by building animation timelines.
 
 ## Creating animations
-
-:::caution Todo
-
-- Make the document 'task based' What is the user trying to accomplish?
-
-:::
 
 <ThemedImage
 alt="Animation screen"
