@@ -85,6 +85,10 @@ const config = {
                 href: "https://twitter.com/matthijsgroen",
               },
               {
+                label: "Keybase chat",
+                href: "https://keybase.io/matthijsgroen/chat",
+              },
+              {
                 label: "Issue tracker",
                 href: "https://github.com/matthijsgroen/geppetto",
               },

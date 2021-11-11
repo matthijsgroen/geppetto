@@ -4,16 +4,46 @@
  */
 
 .heroBanner {
-  padding: 8rem 0;
   text-align: center;
   position: relative;
   overflow: hidden;
 }
 
+.overlay {
+  position: absolute;
+  top: 0rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay h1 {
+  color: #eee;
+  text-shadow: 0 0 0.5rem #0008;
+}
+
 @media screen and (max-width: 966px) {
-  .heroBanner {
-    padding: 3rem;
+  .overlay h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
   }
+
+  .overlay p {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.overlay p {
+  color: #eee;
+  text-shadow: 0 0 0.5rem #0008;
+}
+
+.stacker {
+  position: relative;
 }
 
 .buttons {

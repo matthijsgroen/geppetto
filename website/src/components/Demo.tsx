@@ -12,8 +12,9 @@ import innkeeper from "@site/static/demo-assets/innkeeper.json";
 import innkeeperTextureUrl from "@site/static/demo-assets/innkeeper.png";
 import { AnimationControls } from "geppetto-player";
 import ClickableAreas from "./ClickableAreas";
-import { animationTween, delayFrames, tick } from "./tween";
+import { animationTween, cleanTicker, delayFrames, tick } from "./tween";
 import Dialog from "./Dialog";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 
 const innKeeperClose = {
   zoom: 2.2,
@@ -120,6 +121,30 @@ const butterFly = async (scenery: AnimationControls) => {
     }
   }
 };
+
+let currentLooking = [0, 0];
+const eyesCentered = [0.145, 0.388];
+const LOOK_KEEP_POSITION = 180;
+const eyeSpeed = 0.025;
+
+const lookAt = (
+  character: AnimationControls,
+  x: number,
+  y: number
+): Promise<void> =>
+  Promise.all([
+    animationTween("eye-X", currentLooking[0], x, eyeSpeed, (value) => {
+      currentLooking[0] = value;
+      character.setControlValue("RightEye-x", value + 1.0);
+      character.setControlValue("LeftEye-x", value + 1.0);
+      character.setControlValue("HeadTurn", 1.0 - (value + 1.0) * 0.5);
+    }),
+    animationTween("eye-Y", currentLooking[1], y, eyeSpeed, (value) => {
+      currentLooking[1] = value;
+      character.setControlValue("RightEye-y", (value + 1.0) * 0.5);
+      character.setControlValue("LeftEye-y", (value + 1.0) * 0.5);
+    }),
+  ]).then(() => {});
 
 const END = "END";
 
@@ -254,9 +279,32 @@ const Demo: React.VFC = () => {
     tick();
   }, []);
 
+  const width = 2048;
+  const height = 1024;
+
+  const eyesClick = useCallback(
+    async (percX: number, percY: number) => {
+      if (!interacting) return;
+
+      const x = Math.min(1, Math.max(-1, (percX - eyesCentered[0]) / 0.4));
+      const y = Math.min(1, Math.max(-1, (percY - eyesCentered[1]) / 0.4));
+      cleanTicker("resetDelay");
+      await lookAt(characterRef.current, x, y);
+      await delayFrames("resetDelay", LOOK_KEEP_POSITION);
+      await lookAt(characterRef.current, 0, -0.1);
+    },
+    [interacting]
+  );
+
   return (
-    <ClickableAreas areas={areas} width={2048}>
-      <Player width={2048} height={1024} onRender={onRender}>
+    <ClickableAreas
+      areas={areas}
+      width={width}
+      height={height}
+      onClick={eyesClick}
+      allowFullscreen={document.fullscreenEnabled}
+    >
+      <Player width={width} height={height} onRender={onRender}>
         <Animation
           animation={scenery}
           textureUrl={sceneryTextureUrl}
@@ -275,4 +323,8 @@ const Demo: React.VFC = () => {
   );
 };
 
-export default Demo;
+const WrappedDemo: React.FunctionComponent = () => (
+  <BrowserOnly>{() => <Demo />}</BrowserOnly>
+);
+
+export default WrappedDemo;
