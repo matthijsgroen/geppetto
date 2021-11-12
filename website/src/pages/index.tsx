@@ -102,8 +102,8 @@ export default function Home() {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
-      title={`${siteConfig.title} | Bring your art to life`}
-      description="Description will go into a meta tag in <head />"
+      title="Bring your art to life"
+      description="Geppetto is a free and open animation tool to create and embed WebGL animations in a website."
     >
       <HomepageHeader />
       <main>

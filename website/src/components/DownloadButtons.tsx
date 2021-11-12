@@ -43,17 +43,27 @@ type Props = {
   version: VersionNumber;
 };
 
+type UserAgentData = {
+  platform: string;
+};
+
+const platformString = (): string =>
+  (navigator as Navigator & { userAgentData: UserAgentData })?.userAgentData
+    ?.platform || navigator.platform;
+
 function isMacintosh() {
-  return navigator.platform.indexOf("Mac") > -1;
+  const ps = platformString();
+  return ps.indexOf("Mac") > -1 || ps.indexOf("macOS") > -1;
 }
 
-function isLinux() {
-  return navigator.platform.indexOf("Linux") > -1;
+function isWindows() {
+  const ps = platformString();
+  return ps.indexOf("win") > -1 || ps.indexOf("Win") > -1;
 }
 
 const DownloadButtons: VFC<Props> = ({ version }) => {
   const [platform, setPlatform] = useState<Platform>(() =>
-    isMacintosh() ? "Mac" : isLinux() ? "Linux" : "Windows"
+    isMacintosh() ? "Mac" : isWindows() ? "Windows" : "Linux"
   );
 
   const eligibleBuilds = builds(version).filter((b) => b.platform === platform);

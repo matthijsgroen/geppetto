@@ -7,7 +7,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "Geppetto",
-  tagline: "WebGL Animation Studio",
+  tagline: "Bring your art to life",
   url: "https://geppetto.js.org",
   baseUrl: "/beta/",
   onBrokenLinks: "throw",

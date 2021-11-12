@@ -32,9 +32,11 @@
     "production": [
       ">0.5%",
       "not dead",
+      "Chrome 63",
       "not op_mini all"
     ],
     "development": [
+      "Chrome 63",
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
