@@ -45,7 +45,7 @@ const compositionVertexShader = `
 
   void main() {
     mat3 start = mat3(
-      coordinates + translate.xy, 1.0,
+      translate.xy, 1.0,
       0, 0, 0,
       0, 0, 0
     );
