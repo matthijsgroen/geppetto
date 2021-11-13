@@ -31,14 +31,14 @@ const ClickableArea = styled.div<Omit<Area, "id">>`
 const ClickableContainer = styled.div<{ width: number; height: number }>`
   position: relative;
   width: min(${(props) => props.width}px, 100%);
-  aspect-ratio: ${(props) => props.width / props.height};
+  aspect-ratio: ${(props) => `${props.width} / ${props.height}`};
   display: flex;
 `;
 
 const Centered = styled.div<{ width: number; height: number }>`
   position: relative;
   width: min(${(props) => props.width}px, 100%);
-  aspect-ratio: ${(props) => props.width / props.height};
+  aspect-ratio: ${(props) => `${props.width} / ${props.height}`};
   align-self: center;
 `;
 

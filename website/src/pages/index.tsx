@@ -8,6 +8,7 @@ import HomepageFeatures from "../components/HomepageFeatures";
 import { Player, Animation } from "../components/Player";
 import scenery from "@site/static/demo-assets/scenery.json";
 import sceneryTextureUrl from "@site/static/demo-assets/scenery.png";
+import fallbackUrl from "@site/static/img/static-image.jpg";
 import { AnimationControls } from "geppetto-player";
 import { animationTween, tick } from "../components/tween";
 
@@ -67,7 +68,12 @@ function HomepageHeader() {
   return (
     <header className={styles.heroBanner}>
       <div className={styles.stacker}>
-        <Player width={2048} height={800} onRender={onRender}>
+        <Player
+          width={2048}
+          height={800}
+          fallbackUrl={fallbackUrl}
+          onRender={onRender}
+        >
           <Animation
             animation={scenery}
             textureUrl={sceneryTextureUrl}

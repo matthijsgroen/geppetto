@@ -11,6 +11,7 @@ import type {
 type PlayerProps = {
   width: number;
   height: number;
+  fallbackUrl?: string;
   onRender?: () => void;
 };
 
@@ -30,6 +31,7 @@ const useForceUpdate = () => {
 export const Player: React.FC<PlayerProps> = ({
   width,
   height,
+  fallbackUrl,
   children,
   onRender,
 }) => {
@@ -119,8 +121,14 @@ export const Player: React.FC<PlayerProps> = ({
       <canvas
         ref={canvasRef}
         style={{
-          aspectRatio: `${width / height}`,
+          aspectRatio: `${width} / ${height}`,
           width: `min(${width}px, 100%)`,
+          ...(fallbackUrl
+            ? {
+                backgroundImage: `url("${fallbackUrl}")`,
+                backgroundSize: "cover",
+              }
+            : {}),
         }}
       />
     </>

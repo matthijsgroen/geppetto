@@ -8,6 +8,7 @@ import React, {
 import { Player, Animation } from "./Player";
 import scenery from "@site/static/demo-assets/scenery.json";
 import sceneryTextureUrl from "@site/static/demo-assets/scenery.png";
+import fallbackUrl from "@site/static/img/static-image.jpg";
 import innkeeper from "@site/static/demo-assets/innkeeper.json";
 import innkeeperTextureUrl from "@site/static/demo-assets/innkeeper.png";
 import { AnimationControls } from "geppetto-player";
@@ -304,7 +305,12 @@ const Demo: React.VFC = () => {
       onClick={eyesClick}
       allowFullscreen={document.fullscreenEnabled}
     >
-      <Player width={width} height={height} onRender={onRender}>
+      <Player
+        width={width}
+        height={height}
+        onRender={onRender}
+        fallbackUrl={fallbackUrl}
+      >
         <Animation
           animation={scenery}
           textureUrl={sceneryTextureUrl}
