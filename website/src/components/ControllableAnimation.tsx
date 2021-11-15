@@ -4,7 +4,12 @@ import {
   AnimationOptions,
   ImageDefinition,
 } from "geppetto-player";
-import React, { FunctionComponent, useCallback, useState } from "react";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import AnimationControls from "./AnimationControls";
 import LayerMouseControl from "./LayerMouseControl";
 import { MouseMode } from "./MouseControl";
@@ -32,6 +37,7 @@ const ControllableAnimation: FunctionComponent<Props> = ({
   const zoomState = useState(options.zoom || 1.0);
   const panXState = useState(options.panX || 0.0);
   const panYState = useState(options.panY || 0.0);
+
   const getSceneryControls = useCallback(
     (
       controls: GeppettoAnimationControls,
@@ -44,6 +50,13 @@ const ControllableAnimation: FunctionComponent<Props> = ({
     },
     [textureUrl, animation, options, width, height]
   );
+
+  useEffect(() => {
+    // reset states
+    zoomState[1](options.zoom || 1.0);
+    panXState[1](options.panX || 0.0);
+    panYState[1](options.panY || 0.0);
+  }, [textureUrl, animation]);
 
   if (controls) {
     controls.setPanning(panXState[0], panYState[0]);

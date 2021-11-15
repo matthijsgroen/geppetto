@@ -54,6 +54,18 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
 
     mouseDownRef.current = [elementX, elementY];
     mouseMoveDeltaRef.current = [0, 0];
+    setZoom((zoom) => {
+      zoomRef.current = zoom;
+      return zoom;
+    });
+    setPanX((panX) => {
+      panXRef.current = panX;
+      return panX;
+    });
+    setPanY((panY) => {
+      panYRef.current = panY;
+      return panY;
+    });
   }, []);
 
   const zoomRef = useRef(zoom);
@@ -88,8 +100,8 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
           -1.0
         )
       );
-      panXRef.current = newPanX;
       setPanX(newPanX);
+      panXRef.current = newPanX;
 
       const newPanY = Math.min(
         1.0,
@@ -102,8 +114,8 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
           -1.0
         )
       );
-      panYRef.current = newPanY;
       setPanY(newPanY);
+      panYRef.current = newPanY;
     },
     [handleDrag, setPanX, setPanY]
   );
