@@ -12,6 +12,9 @@ import fallbackUrl from "@site/static/img/static-image.jpg";
 import { AnimationControls } from "geppetto-player";
 import { animationTween, tick } from "../components/tween";
 
+const DAY = 0.1;
+const NIGHT = 1.5;
+
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
   const onAnimationReady = useCallback((controls: AnimationControls) => {
@@ -24,27 +27,31 @@ function HomepageHeader() {
     controls.startTrack("Cloud3", { speed: 0.15 });
     controls.startTrack("Smoke");
     controls.startTrack("Water");
+    controls.startTrack("LightOff");
     const html = document.querySelector("html");
 
     let mode = "light";
-    let position = 0.0;
+    let position = DAY;
     const speed = 0.03;
+    controls.setControlValue("DayNight", position);
 
     const updateMode = () => {
       if (html.getAttribute("data-theme") === "light" && mode === "dark") {
-        animationTween("daylight", position, 0.0, speed, (value) => {
+        animationTween("daylight", position, DAY, speed, (value) => {
           position = value;
           controls.setControlValue("DayNight", value);
         });
+        controls.startTrack("LightOff");
         mode = "light";
       } else if (
         html.getAttribute("data-theme") === "dark" &&
         mode === "light"
       ) {
-        animationTween("daylight", position, 1.2, speed, (value) => {
+        animationTween("daylight", position, NIGHT, speed, (value) => {
           position = value;
           controls.setControlValue("DayNight", value);
         });
+        controls.startTrack("LightFlicker");
         mode = "dark";
       }
     };
@@ -77,7 +84,7 @@ function HomepageHeader() {
           <Animation
             animation={scenery}
             textureUrl={sceneryTextureUrl}
-            options={{ zoom: 3.0, panY: -0.15 }}
+            options={{ zoom: 2.95, panY: -0.1, panX: 0.05 }}
             onAnimationReady={onAnimationReady}
           />
         </Player>
