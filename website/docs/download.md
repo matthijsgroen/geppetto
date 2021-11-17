@@ -9,7 +9,7 @@ import DownloadButtons from "@site/src/components/DownloadButtons";
 
 Currently the **Geppetto Studio app** is only available as installable Desktop application for Mac, Linux and Windows. In the future I hope to also make it available directly from the browser.
 
-<DownloadButtons version={"1.2.0"} />
+<DownloadButtons version={"1.3.0"} />
 
 ## Installation
 

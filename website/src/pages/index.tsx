@@ -9,7 +9,7 @@ import { Player, Animation } from "../components/Player";
 import scenery from "@site/static/demo-assets/scenery.json";
 import sceneryTextureUrl from "@site/static/demo-assets/scenery.png";
 import fallbackUrl from "@site/static/img/static-image.jpg";
-import { AnimationControls } from "geppetto-player";
+import { AnimationControls, ImageDefinition } from "geppetto-player";
 import { animationTween, tick } from "../components/tween";
 
 const DAY = 0.1;
@@ -82,7 +82,7 @@ function HomepageHeader() {
           onRender={onRender}
         >
           <Animation
-            animation={scenery}
+            animation={scenery as unknown as ImageDefinition}
             textureUrl={sceneryTextureUrl}
             options={{ zoom: 2.95, panY: -0.1, panX: 0.05 }}
             onAnimationReady={onAnimationReady}
@@ -112,11 +112,11 @@ function HomepageHeader() {
 }
 
 export default function Home() {
-  const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
       title="Bring your art to life"
       description="Geppetto is a free and open animation tool to create and embed WebGL animations in a website."
+      image={fallbackUrl}
     >
       <HomepageHeader />
       <main>

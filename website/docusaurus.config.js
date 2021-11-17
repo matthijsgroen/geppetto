@@ -9,7 +9,7 @@ const config = {
   title: "Geppetto",
   tagline: "Bring your art to life",
   url: "https://geppetto.js.org",
-  baseUrl: "/beta/",
+  baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
