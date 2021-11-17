@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated Electron to 15.2.0
+- Updated Electron to 16.0.0
 
 ## [1.2.0] - 2021-05-05
 
