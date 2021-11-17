@@ -9,7 +9,10 @@ export default styled.button.attrs({
   type: "button",
 })<{ buttonType?: ButtonType }>`
   padding: 0.5rem;
-  color: ${({ theme }) => theme.colors.textSelected};
+  color: ${({ theme, buttonType }) =>
+    buttonType === ButtonType.Destructive
+      ? theme.colors.textDestructive
+      : theme.colors.textSelected};
   background-color: ${({ theme, buttonType }) =>
     buttonType === ButtonType.Destructive
       ? theme.colors.backgroundDestructive

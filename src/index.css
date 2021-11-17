@@ -19,6 +19,7 @@ body,
   --colors-item-selected: #669;
   --colors-item-special: #336;
   --colors-text-selected: white;
+  --colors-text-destructive: white;
   --colors-text: #999;
 }
 
@@ -32,6 +33,7 @@ body,
     --colors-item-selected: #bbe;
     --colors-item-special: #366;
     --colors-text-selected: black;
+    --colors-text-destructive: #eee;
     --colors-text: #333;
   }
 }

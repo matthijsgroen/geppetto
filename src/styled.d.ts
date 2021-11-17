@@ -10,6 +10,7 @@ declare module "styled-components" {
       backgroundDestructive: string;
       itemContainerBackground: string;
       text: string;
+      textDestructive: string;
       backgroundSelected: string;
       textSelected: string;
       itemSelected: string;

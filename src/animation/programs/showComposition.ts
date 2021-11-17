@@ -2,7 +2,7 @@ import { fileredTriangles, flatten } from "src/lib/vertices";
 import { Keyframe, ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
-  createMutationList,
+  createShapeMutationList,
   MAX_MUTATION_VECTORS,
   mutationShader,
   mutationValueShader,
@@ -14,18 +14,22 @@ const compositionVertexShader = `
   uniform vec3 basePosition;
   uniform vec3 translate;
   uniform vec4 scale;
-  uniform float mutation; 
+  uniform float mutation;
 
   attribute vec2 coordinates;
   attribute vec2 aTextureCoord;
 
   varying lowp vec2 vTextureCoord;
   varying lowp float vOpacity;
+  varying lowp float vBrightness;
+  varying lowp float vSaturation;
+  varying lowp float vTargetHue;
+  varying lowp float vTargetSaturation;
 
   mat4 viewportScale = mat4(
-    2.0 / viewport.x, 0, 0, 0,   
-    0, -2.0 / viewport.y, 0, 0,    
-    0, 0, 1, 0,    
+    2.0 / viewport.x, 0, 0, 0,
+    0, -2.0 / viewport.y, 0, 0,
+    0, 0, 1, 0,
     -1, +1, 0, 1
   );
 
@@ -33,12 +37,25 @@ const compositionVertexShader = `
   ${mutationShader}
 
   void main() {
-    vec3 deform = mutatePoint(vec3(coordinates + translate.xy, 1.0), int(mutation));
+    mat3 value = mat3(
+      coordinates + translate.xy, 1.0,
+      1.0, 1.0, 0,
+      0, 0, 0
+    );
+    mat3 deform = mutatePoint(value, int(mutation));
+    vec3 deformPos = deform[0];
+    vec3 deformColor = deform[1];
+    vec3 deformEffect = deform[2];
 
-    vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deformPos.xy + basePosition.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z, 1.0);
     vTextureCoord = aTextureCoord.xy;
-    vOpacity = deform.z;
+
+    vOpacity = deformPos.z;
+    vBrightness = deformColor.x;
+    vSaturation = deformColor.y;
+    vTargetHue = deformEffect.x;
+    vTargetSaturation = deformEffect.y;
   }
 `;
 
@@ -46,15 +63,78 @@ const compositionFragmentShader = `
   precision mediump float;
 
   varying mediump vec2 vTextureCoord;
-  varying mediump float vOpacity;
+  varying lowp float vOpacity;
+  varying lowp float vBrightness;
+  varying lowp float vSaturation;
+  varying lowp float vTargetHue;
+  varying lowp float vTargetSaturation;
+
   uniform sampler2D uSampler;
   uniform mediump vec2 uTextureDimensions;
+
+  float RGBToL(vec3 color) {
+    lowp float fmin = min(min(color.r, color.g), color.b);    //Min. value of RGB
+    lowp float fmax = max(max(color.r, color.g), color.b);    //Max. value of RGB
+
+    return (fmax + fmin) / 2.0; // Luminance
+  }
+
+  float HueToRGB(lowp float f1, lowp float f2, lowp float hue) {
+    if (hue < 0.0)
+        hue += 1.0;
+    else if (hue > 1.0)
+        hue -= 1.0;
+    lowp float res;
+    if ((6.0 * hue) < 1.0)
+        res = f1 + (f2 - f1) * 6.0 * hue;
+    else if ((2.0 * hue) < 1.0)
+        res = f2;
+    else if ((3.0 * hue) < 2.0)
+        res = f1 + (f2 - f1) * ((2.0 / 3.0) - hue) * 6.0;
+    else
+        res = f1;
+    return res;
+  }
+
+  vec3 HSLToRGB(vec3 hsl) {
+    lowp vec3 rgb;
+
+    if (hsl.y == 0.0)
+        rgb = vec3(hsl.z); // Luminance
+    else {
+        lowp float f2;
+        if (hsl.z < 0.5)
+            f2 = hsl.z * (1.0 + hsl.y);
+        else
+            f2 = (hsl.z + hsl.y) - (hsl.y * hsl.z);
+        float f1 = 2.0 * hsl.z - f2;
+
+        rgb.r = HueToRGB(f1, f2, hsl.x + (1.0/3.0));
+        rgb.g = HueToRGB(f1, f2, hsl.x);
+        rgb.b = HueToRGB(f1, f2, hsl.x - (1.0/3.0));
+    }
+
+    return rgb;
+  }
 
   void main(void) {
     highp vec2 coord = vTextureCoord.xy / uTextureDimensions;
     mediump vec4 texelColor = texture2D(uSampler, coord);
 
-    gl_FragColor = vec4(texelColor.rgb * texelColor.a * vOpacity, texelColor.a * vOpacity);
+    vec3 color = texelColor.rgb;
+
+    float luminance = RGBToL(color);
+    color = mix(
+      mix(
+        color,
+        HSLToRGB(vec3(vTargetHue, vTargetSaturation, luminance)),
+        1.0 - vSaturation
+      ) * clamp(vBrightness, 0.0, 1.0), 
+      vec3(1., 1., 1.), 
+      clamp(vBrightness - 1.0, 0.0, 1.0)
+    );
+
+    gl_FragColor = vec4(color * texelColor.a * vOpacity, texelColor.a * vOpacity);
   }
 `;
 
@@ -145,7 +225,7 @@ export const showComposition = (): {
       vectorSettings,
       mutatorMapping,
       shapeMutatorMapping,
-    } = createMutationList(shapes);
+    } = createShapeMutationList(shapes);
 
     elements.forEach((element) => {
       element.mutator = shapeMutatorMapping[element.name];
@@ -159,7 +239,7 @@ export const showComposition = (): {
     gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
 
     const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
-    gl.uniform1fv(uMutationParent, parentList);
+    gl.uniform1iv(uMutationParent, parentList);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -238,6 +318,7 @@ export const showComposition = (): {
       populateShapes();
       const translate = gl.getUniformLocation(shaderProgram, "translate");
       const mutation = gl.getUniformLocation(shaderProgram, "mutation");
+
       const uBasePosition = gl.getUniformLocation(
         shaderProgram,
         "basePosition"
@@ -327,6 +408,7 @@ export const showComposition = (): {
             }
             gl.uniform3f(translate, element.x, element.y, element.z);
             gl.uniform1f(mutation, element.mutator);
+
             gl.drawElements(
               gl.TRIANGLES,
               element.amount,

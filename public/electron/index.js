@@ -77,6 +77,15 @@ const template = [
         },
       },
       {
+        label: "Reload texture",
+        accelerator: isDev ? "CmdOrCtrl+T" : "CmdOrCtrl+R",
+        enabled: false,
+        id: "reloadTexture",
+        click(_event, browserWindow) {
+          reloadTexture(browserWindow);
+        },
+      },
+      {
         label: "Open Recent",
         role: "recentdocuments",
         submenu: [
@@ -192,6 +201,7 @@ const windowMenuItems = [
   "fileSaveAs",
   "exportAs",
   "loadTexture",
+  "reloadTexture",
   "showFPS",
 ];
 
@@ -282,7 +292,11 @@ function createWindow() {
 
   win.on("focus", () => {
     setItemsEnableState((item) =>
-      item === "fileSave" ? status.changed : true
+      item === "fileSave"
+        ? status.changed
+        : item === "reloadTexture"
+        ? status.texturePath
+        : true
     );
 
     const showFPSMenuItem = menu.getMenuItemById("showFPS");
@@ -292,7 +306,11 @@ function createWindow() {
   win.on("show", () => {
     if (win.isFocused()) {
       setItemsEnableState((item) =>
-        item === "fileSave" ? status.changed : true
+        item === "fileSave"
+          ? status.changed
+          : item === "reloadTexture"
+          ? status.texturePath
+          : true
       );
 
       const showFPSMenuItem = menu.getMenuItemById("showFPS");
@@ -335,6 +353,11 @@ async function loadTexture(browserWindow) {
   }
 }
 
+async function reloadTexture(browserWindow) {
+  const status = windows.find((w) => w.window === browserWindow);
+  setTexture(status.texturePath, browserWindow);
+}
+
 async function tryAutoLoadingTexture(imageDefPath, browserWindow) {
   const extension = extname(imageDefPath);
   const baseName = basename(imageDefPath, extension);
@@ -351,6 +374,9 @@ async function tryAutoLoadingTexture(imageDefPath, browserWindow) {
 async function setTexture(filePath, browserWindow) {
   const status = windows.find((w) => w.window === browserWindow);
   status.texturePath = filePath;
+
+  const item = menu.getMenuItemById("reloadTexture");
+  item.enabled = !!status.texturePath;
 
   browserWindow.webContents.send(
     "texture-file-loaded",

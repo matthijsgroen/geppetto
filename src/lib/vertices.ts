@@ -13,14 +13,44 @@ export const fileredTriangles = (points: number[][]): number[] =>
 export const mix = (a: number, b: number, factor: number): number =>
   a * (1 - factor) + factor * b;
 
+const circularDistance = (a: number, b: number): [number, number] => {
+  const d = Math.abs(a - b);
+  let aa = a;
+  let ba = b;
+
+  if (a < b && Math.abs(a + 1 - b) < d) {
+    aa += 1;
+  }
+  if (a > b && Math.abs(b - a + 1) < d) {
+    ba += 1;
+  }
+  return [aa, ba];
+};
+
+const mixHue = (a: number, b: number, factor: number): number => {
+  const [aa, ba] = circularDistance(a, b);
+  return mix(aa, ba, factor) % 1.0;
+};
+
 export const mixVec2 = (
   a: Vec2 = [0, 0],
   b: Vec2 = [0, 0],
   factor: number
 ): Vec2 => [mix(a[0], b[0], factor), mix(a[1], b[1], factor)] as Vec2;
 
+export const mixHueVec2 = (
+  a: Vec2 = [0, 0],
+  b: Vec2 = [0, 0],
+  factor: number
+): Vec2 => [mixHue(a[0], b[0], factor), mix(a[1], b[1], factor)] as Vec2;
+
 export const defaultValueForVector = (type: MutationVector["type"]): Vec2 =>
-  type === "stretch" || type === "opacity" ? [1, 1] : [0, 0];
+  type === "stretch" ||
+  type === "opacity" ||
+  type === "lightness" ||
+  type === "saturation"
+    ? [1, 1]
+    : [0, 0];
 
 export const vecAdd = (a: Vec2 = [0, 0], b: Vec2 = [0, 0]): Vec2 => [
   a[0] + b[0],
@@ -37,7 +67,14 @@ export const mergeMutationValue = (
   b: Vec2 | undefined,
   type: MutationVector["type"]
 ): Vec2 =>
-  type === "stretch" || type === "opacity" ? vecMul(a, b) : vecAdd(a, b);
+  type === "lightness" ||
+  type === "stretch" ||
+  type === "opacity" ||
+  type === "saturation"
+    ? vecMul(a, b)
+    : type === "colorize"
+    ? a || b || [0, 0]
+    : vecAdd(a, b);
 
 export const combineKeyFrames = (
   a: Keyframe,

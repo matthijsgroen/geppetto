@@ -8,7 +8,7 @@ import Composition from "./screens/Composition";
 import Animation from "./screens/Animation";
 
 import { ImageDefinition, ShapeDefinition } from "./lib/types";
-import { newDefinition } from "./lib/definitionHelpers";
+import { newDefinition, updateVersionNumber } from "./lib/definitionHelpers";
 import { compressFile } from "./lib/compressFile";
 
 const defaultTheme: DefaultTheme = {
@@ -22,6 +22,7 @@ const defaultTheme: DefaultTheme = {
     itemSpecial: "var(--colors-item-special)",
     text: "var(--colors-text)",
     textSelected: "var(--colors-text-selected)",
+    textDestructive: "var(--colors-text-destructive)",
   },
 };
 
@@ -47,6 +48,8 @@ const hasShapes = (shapes: ShapeDefinition[]): boolean =>
       (s.type === "folder" && hasShapes(s.items))
   );
 
+const OUTPUT_VERSION_NUMBER = "1.1";
+
 const App: React.FC = () => {
   const [activeItem, setActiveItem] = useState(MenuItems.Layers);
   const [imageDefinition, setImageDefinition] = useState<ImageDefinition>(
@@ -63,11 +66,13 @@ const App: React.FC = () => {
     if (!window.electron) return;
 
     window.electron.onAnimationFileLoaded((image, baseName) => {
-      setImageDefinition(image);
+      setImageDefinition(updateVersionNumber(OUTPUT_VERSION_NUMBER, image));
       setBaseFilename(baseName);
     });
     window.electron.onAnimationFileNew(() => {
-      setImageDefinition(newDefinition());
+      setImageDefinition(
+        updateVersionNumber(OUTPUT_VERSION_NUMBER, newDefinition())
+      );
       setBaseFilename(null);
     });
     window.electron.onAnimationFileNameChange((newName) => {

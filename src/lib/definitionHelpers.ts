@@ -4,6 +4,7 @@ import {
   ImageDefinition,
   ItemSelection,
   MutationVector,
+  MutationVectorTypes,
   ShapeDefinition,
   SpriteDefinition,
   Vec2,
@@ -64,6 +65,14 @@ export const newDefinition = (): ImageDefinition => ({
   defaultFrame: {},
   shapes: [],
   version: "1.0",
+});
+
+export const updateVersionNumber = (
+  version: string,
+  imageDef: ImageDefinition
+): ImageDefinition => ({
+  ...imageDef,
+  version,
 });
 
 export const getLayerNames = (layers: ShapeDefinition[]): string[] =>
@@ -795,13 +804,17 @@ export const updateSpriteData = (
       : undefined
   );
 
-const defaultNamesForMutations: Record<MutationVector["type"], string> = {
+export const defaultNamesForMutations: Record<MutationVectorTypes, string> = {
   translate: "Translation",
   deform: "Deformation",
   rotate: "Rotation",
   opacity: "Opacity",
   stretch: "Stretch",
+  lightness: "Lightness",
+  colorize: "Target Color",
+  saturation: "Color Transition",
 };
+
 const defaultNames = [
   "New Mutator",
   ...Object.values(defaultNamesForMutations),

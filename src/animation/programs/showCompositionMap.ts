@@ -2,7 +2,7 @@ import { ItemSelection, Keyframe, ShapeDefinition } from "../../lib/types";
 import { flatten, verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
-  createMutationList,
+  createShapeMutationList,
   MAX_MUTATION_VECTORS,
   mutationShader,
   mutationValueShader,
@@ -14,14 +14,14 @@ const compositionVertexShader = `
   uniform vec3 translate;
   uniform vec3 basePosition;
   uniform vec4 scale;
-  uniform float mutation; 
+  uniform float mutation;
 
   attribute vec2 coordinates;
 
   mat4 viewportScale = mat4(
-    2.0 / viewport.x, 0, 0, 0,   
-    0, -2.0 / viewport.y, 0, 0,    
-    0, 0, 1, 0,    
+    2.0 / viewport.x, 0, 0, 0,
+    0, -2.0 / viewport.y, 0, 0,
+    0, 0, 1, 0,
     -1, +1, 0, 1
   );
 
@@ -29,9 +29,15 @@ const compositionVertexShader = `
   ${mutationShader}
 
   void main() {
-    vec3 deform = mutatePoint(vec3(coordinates + translate.xy, 1.0), int(mutation));
+    mat3 start = mat3(
+      coordinates + translate.xy, 1.0,
+      0, 0, 0,
+      0, 0, 0
+    );
+    mat3 deform = mutatePoint(start, int(mutation));
+    vec3 deformPos = deform[0];
 
-    vec4 pos = viewportScale * vec4((deform.xy + basePosition.xy) * scale.x, translate.z, 1.0);
+    vec4 pos = viewportScale * vec4((deformPos.xy + basePosition.xy) * scale.x, translate.z, 1.0);
     gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z - 1.0, 1.0);
   }
 `;
@@ -112,7 +118,7 @@ export const showCompositionMap = (): {
       vectorSettings,
       mutatorMapping,
       shapeMutatorMapping,
-    } = createMutationList(shapes);
+    } = createShapeMutationList(shapes);
 
     elements.forEach((element) => {
       element.mutator = shapeMutatorMapping[element.name];
@@ -126,7 +132,7 @@ export const showCompositionMap = (): {
     gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
 
     const uMutationParent = gl.getUniformLocation(program, "uMutationParent");
-    gl.uniform1fv(uMutationParent, parentList);
+    gl.uniform1iv(uMutationParent, parentList);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
