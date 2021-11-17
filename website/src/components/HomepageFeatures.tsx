@@ -2,10 +2,16 @@ import React from "react";
 import clsx from "clsx";
 import styles from "./HomepageFeatures.module.css";
 
-const FeatureList = [
+type FeatureProps = {
+  title: string;
+  description: React.ReactNode;
+  img: string;
+};
+
+const FeatureList: FeatureProps[] = [
   {
     title: "Bring your art to life",
-    Svg: require("../../static/img/undraw_docusaurus_mountain.svg").default,
+    img: require("../../static/img/site-highlight1.png").default,
     description: (
       <>
         Geppetto makes your 2D images come to life using animations and
@@ -15,7 +21,7 @@ const FeatureList = [
   },
   {
     title: "Small and Fast",
-    Svg: require("../../static/img/undraw_docusaurus_tree.svg").default,
+    img: require("../../static/img/site-highlight2.png").default,
     description: (
       <>
         With less than <strong>10 kB</strong> the library is small. But it also
@@ -25,7 +31,7 @@ const FeatureList = [
   },
   {
     title: "Studio and Player",
-    Svg: require("../../static/img/undraw_docusaurus_react.svg").default,
+    img: require("../../static/img/site-highlight3.png").default,
     description: (
       <>
         Create awesome animations using the Studio, and embed them on any
@@ -35,10 +41,14 @@ const FeatureList = [
   },
 ];
 
-const Feature: React.FunctionComponent = ({ Svg, title, description }) => (
+const Feature: React.FunctionComponent<FeatureProps> = ({
+  img,
+  title,
+  description,
+}) => (
   <div className={clsx("col col--4")}>
     <div className="text--center">
-      <Svg className={styles.featureSvg} alt={title} />
+      <img src={img} alt={title} width="300" />
     </div>
     <div className="text--center padding-horiz--md">
       <h3>{title}</h3>
