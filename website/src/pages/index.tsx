@@ -8,7 +8,8 @@ import HomepageFeatures from "../components/HomepageFeatures";
 import { Player, Animation } from "../components/Player";
 import scenery from "@site/static/demo-assets/scenery.json";
 import sceneryTextureUrl from "@site/static/demo-assets/scenery.png";
-import fallbackUrl from "@site/static/img/static-image.jpg";
+import socialImageUrl from "@site/static/img/static-image.jpg";
+import fallbackUrl from "@site/static/img/static-homepage.jpg";
 import { AnimationControls, ImageDefinition } from "geppetto-player";
 import { animationTween, tick } from "../components/tween";
 
@@ -116,7 +117,7 @@ export default function Home() {
     <Layout
       title="Bring your art to life"
       description="Geppetto is a free and open animation tool to create and embed WebGL animations in a website."
-      image={fallbackUrl}
+      image={socialImageUrl}
     >
       <HomepageHeader />
       <main>

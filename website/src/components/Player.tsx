@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  Children,
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { setupWebGL, prepareAnimation } from "geppetto-player";
 import type {
   GeppettoPlayer,
@@ -36,10 +43,42 @@ export const Player: React.FC<PlayerProps> = ({
   onRender,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>();
-  const [player, setPlayer] = useState<GeppettoPlayer>(null);
   const animations = useRef<AnimationControls[]>([]);
-
+  const animationDataPrepped = useRef<boolean[]>(
+    Array(Children.count(children)).fill(false)
+  );
+  const animationResolvers = useRef<((player: GeppettoPlayer) => void)[]>([]);
   const playerMounted = useRef<boolean>(true);
+
+  const preparePlayer = useCallback(
+    async (animationList: MutableRefObject<boolean[]>) =>
+      new Promise<GeppettoPlayer>((resolve) => {
+        animationResolvers.current.push(resolve);
+
+        if (animationList.current.every((e) => e)) {
+          const player = setupWebGL(canvasRef.current);
+
+          const renderFrame = () => {
+            if (!playerMounted.current) {
+              player.destroy();
+              return;
+            }
+            player.render();
+            animations.current.forEach(
+              (animation) => animation && animation.render()
+            );
+            if (onRender) {
+              onRender();
+            }
+            window.requestAnimationFrame(renderFrame);
+          };
+          animationResolvers.current.forEach((f) => f(player));
+
+          window.requestAnimationFrame(renderFrame);
+        }
+      }),
+    []
+  );
 
   const addAnimation = useCallback(
     async (
@@ -50,6 +89,8 @@ export const Player: React.FC<PlayerProps> = ({
       const index = animations.current.length;
       animations.current.push(null);
       const texture = await loadTexture(textureUrl);
+      animationDataPrepped.current[index] = true;
+      const player: GeppettoPlayer = await preparePlayer(animationDataPrepped);
 
       const controls = player.addAnimation(animation, texture, index, options);
       animations.current[index] = controls;
@@ -62,31 +103,11 @@ export const Player: React.FC<PlayerProps> = ({
         },
       ];
     },
-    [player]
+    []
   );
 
   useEffect(() => {
-    const player = setupWebGL(canvasRef.current);
-    setPlayer(player);
-
-    const renderFrame = () => {
-      if (!playerMounted.current) {
-        return;
-      }
-      player.render();
-      animations.current.forEach(
-        (animation) => animation && animation.render()
-      );
-      if (onRender) {
-        onRender();
-      }
-      window.requestAnimationFrame(renderFrame);
-    };
-
-    window.requestAnimationFrame(renderFrame);
-
     return () => {
-      player.destroy();
       playerMounted.current = false;
     };
   }, []);
@@ -115,7 +136,7 @@ export const Player: React.FC<PlayerProps> = ({
 
   return (
     <>
-      <PlayerContext.Provider value={player && addAnimation}>
+      <PlayerContext.Provider value={addAnimation}>
         {children}
       </PlayerContext.Provider>
       <canvas
@@ -159,9 +180,8 @@ export const Animation: React.VFC<AnimationProps> = ({
   options,
   onAnimationReady,
 }) => {
-  const forceUpdate = useForceUpdate();
   const destroyRef = useRef(() => {});
-  const addAnimationRef = useRef<ContextValueType>(undefined);
+  const animationSet = useRef("");
 
   useEffect(() => {
     return () => {
@@ -169,31 +189,23 @@ export const Animation: React.VFC<AnimationProps> = ({
     };
   }, []);
 
-  useEffect(() => {
-    destroyRef.current && destroyRef.current();
-
-    if (addAnimationRef.current) {
-      (async () => {
-        const preparedAnimation = prepareAnimation(animation);
-        const [controls, destroy] = await addAnimationRef.current(
-          preparedAnimation,
-          textureUrl,
-          options
-        );
-        destroyRef.current = destroy;
-        onAnimationReady(controls, preparedAnimation);
-      })();
-    }
-  }, [animation, textureUrl, addAnimationRef.current]);
-
   return (
     <PlayerContext.Consumer>
       {(addAnimation) => {
         if (typeof addAnimation !== "function") return null;
-        if (addAnimationRef.current !== addAnimation) {
-          addAnimationRef.current = addAnimation;
-          setTimeout(forceUpdate, 0);
-        }
+        (async () => {
+          if (animationSet.current === textureUrl) return;
+          animationSet.current = textureUrl;
+          destroyRef.current();
+          const preparedAnimation = prepareAnimation(animation);
+          const [controls, destroy] = await addAnimation(
+            preparedAnimation,
+            textureUrl,
+            options
+          );
+          destroyRef.current = destroy;
+          onAnimationReady(controls, preparedAnimation);
+        })();
 
         return null;
       }}
