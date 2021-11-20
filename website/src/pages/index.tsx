@@ -12,6 +12,7 @@ import socialImageUrl from "@site/static/img/static-image.jpg";
 import fallbackUrl from "@site/static/img/static-homepage.jpg";
 import { AnimationControls, ImageDefinition } from "geppetto-player";
 import { animationTween, tick } from "../components/tween";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 
 const DAY = 0.1;
 const NIGHT = 1.5;
@@ -76,19 +77,23 @@ function HomepageHeader() {
   return (
     <header className={styles.heroBanner}>
       <div className={styles.stacker}>
-        <Player
-          width={2048}
-          height={800}
-          fallbackUrl={fallbackUrl}
-          onRender={onRender}
-        >
-          <Animation
-            animation={scenery as unknown as ImageDefinition}
-            textureUrl={sceneryTextureUrl}
-            options={{ zoom: 2.95, panY: -0.1, panX: 0.05 }}
-            onAnimationReady={onAnimationReady}
-          />
-        </Player>
+        <BrowserOnly>
+          {() => (
+            <Player
+              width={2048}
+              height={800}
+              fallbackUrl={fallbackUrl}
+              onRender={onRender}
+            >
+              <Animation
+                animation={scenery as unknown as ImageDefinition}
+                textureUrl={sceneryTextureUrl}
+                options={{ zoom: 2.95, panY: -0.1, panX: 0.05 }}
+                onAnimationReady={onAnimationReady}
+              />
+            </Player>
+          )}
+        </BrowserOnly>
         <div className={styles.overlay}>
           <h1 className="hero__title">{siteConfig.title}</h1>
           <p className="hero__subtitle">{siteConfig.tagline}</p>

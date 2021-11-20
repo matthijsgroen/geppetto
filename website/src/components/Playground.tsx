@@ -7,6 +7,7 @@ import innkeeper from "@site/static/demo-assets/innkeeper.json";
 import innkeeperTextureUrl from "@site/static/demo-assets/innkeeper.png";
 import AnimationSelector from "./AnimationSelector";
 import ControllableAnimation from "./ControllableAnimation";
+import BrowserOnly from "@docusaurus/BrowserOnly";
 
 export type AnimationSelection = {
   id: string;
@@ -44,22 +45,26 @@ const Playground: FunctionComponent = () => {
     animations[0]
   );
   return (
-    <>
-      <AnimationSelector
-        onSelect={setAnimationData}
-        active={animationData}
-        options={animations}
-      />
-      <div style={{ margin: "1rem 0" }}>
-        <ControllableAnimation
-          width={animationData.width}
-          height={animationData.height}
-          animation={animationData.animation}
-          textureUrl={animationData.textureUrl}
-          options={animationData.options}
-        />
-      </div>
-    </>
+    <BrowserOnly>
+      {() => (
+        <>
+          <AnimationSelector
+            onSelect={setAnimationData}
+            active={animationData}
+            options={animations}
+          />
+          <div style={{ margin: "1rem 0" }}>
+            <ControllableAnimation
+              width={animationData.width}
+              height={animationData.height}
+              animation={animationData.animation}
+              textureUrl={animationData.textureUrl}
+              options={animationData.options}
+            />
+          </div>
+        </>
+      )}
+    </BrowserOnly>
   );
 };
 
