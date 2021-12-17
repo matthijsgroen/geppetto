@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Toolbar } from "./Toolbar";
 
@@ -9,6 +9,8 @@ interface MenuProps {
   maxHeight?: number;
   toolbarItems?: React.ReactElement | React.ReactElement[];
   collapsable?: boolean;
+  onExpand?: () => void;
+  onCollapse?: () => void;
 }
 
 const MenuHeaderContainer = styled.header`
@@ -86,8 +88,19 @@ const Menu: React.VFC<MenuProps> = ({
   maxHeight,
   toolbarItems = [],
   collapsable,
+  onExpand,
+  onCollapse,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
+  useEffect(() => {
+    if (!collapsed && onExpand) {
+      onExpand();
+    }
+    if (collapsed && onCollapse) {
+      onCollapse();
+    }
+  }, [collapsed, onExpand, onCollapse]);
+
   return (
     <>
       <MenuHeaderContainer>

@@ -129,7 +129,9 @@ const Composition: React.VFC<CompositionProps> = ({
           : {
               name: item.name,
               type:
-                item.type === "folder" || item.type === "sprite"
+                item.type === "folder"
+                  ? "folder"
+                  : item.type === "sprite"
                   ? "layer"
                   : item.type === "slider"
                   ? "control"
@@ -142,7 +144,8 @@ const Composition: React.VFC<CompositionProps> = ({
 
   const mouseMode = MouseMode.Grab;
   const shapeSelected =
-    layerSelected === null || layerSelected.type !== "layer"
+    layerSelected === null ||
+    !(layerSelected.type === "layer" || layerSelected.type === "folder")
       ? null
       : getShape(imageDefinition, layerSelected.name);
   const vectorSelected =
@@ -182,7 +185,7 @@ const Composition: React.VFC<CompositionProps> = ({
     if (!layerSelected) {
       return;
     }
-    if (layerSelected.type === "layer") {
+    if (layerSelected.type === "layer" || layerSelected.type === "folder") {
       const names = getLayerNames(imageDefinition.shapes);
       if (!names.includes(layerSelected.name)) {
         setItemSelected(null);
@@ -275,6 +278,8 @@ const Composition: React.VFC<CompositionProps> = ({
     [updateImageDefinition, shapeSelected, vectorSelected]
   );
 
+  const [layersCollapsed, setlayersCollapsed] = useState(false);
+
   return (
     <ScreenLayout
       bottomTools={[
@@ -343,6 +348,8 @@ const Composition: React.VFC<CompositionProps> = ({
           key="layers"
           collapsable={true}
           size={"large"}
+          onCollapse={() => setlayersCollapsed(true)}
+          onExpand={() => setlayersCollapsed(false)}
           toolbarItems={[
             <ToolbarButton
               key="1"
@@ -462,7 +469,7 @@ const Composition: React.VFC<CompositionProps> = ({
                   );
                   setLayerSelected({
                     name: layerName,
-                    type: "layer",
+                    type: item.type === "folder" ? "folder" : "layer",
                   });
                 } else {
                   const vectorName = makeVectorName(
@@ -486,7 +493,7 @@ const Composition: React.VFC<CompositionProps> = ({
           title="Controls"
           key="controls"
           collapsable={true}
-          size="max"
+          size={layersCollapsed ? "large" : "max"}
           maxHeight={250}
           toolbarItems={[
             <ToolbarButton

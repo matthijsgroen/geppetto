@@ -121,7 +121,7 @@ const displayShapes = (
                   !!(
                     layerSelected &&
                     shape.name === layerSelected.name &&
-                    layerSelected.type === "layer"
+                    layerSelected.type === "folder"
                   )
                 }
                 icon={"📁"}
@@ -131,7 +131,7 @@ const displayShapes = (
                 indent={indent}
                 onClick={() =>
                   setItemSelected(
-                    layerSelected?.type === "layer" &&
+                    layerSelected?.type === "folder" &&
                       shape.name === layerSelected.name
                       ? null
                       : shape

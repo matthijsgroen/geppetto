@@ -315,7 +315,8 @@ export const showCompositionVectors = (): {
       }
 
       const checkMatch = (shape: ShapeDefinition, item: ItemSelection) =>
-        shape.name === item.name && item.type === "layer"; //||
+        shape.name === item.name &&
+        (item.type === "layer" || item.type === "folder");
 
       const collectVectorNames = (
         s: ShapeDefinition[],

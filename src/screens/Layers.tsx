@@ -18,35 +18,19 @@ import TextureMapCanvas, {
 } from "../animation/TextureMapCanvas";
 import Menu from "../components/Menu";
 import { MouseMode } from "../components/MouseControl";
-import ShapeList from "../components/ShapeList";
 import ToolbarButton from "../components/ToolbarButton";
 import ToolbarSeperator from "../components/ToolbarSeperator";
 import {
-  addFolder,
-  addLayer,
   addPoint,
-  canDelete,
-  canMoveDown,
-  canMoveUp,
   getLayerNames,
   getShape,
-  makeLayerName,
-  moveDown,
-  moveUp,
-  removeItem,
   removePoint,
-  renameLayer,
   updatePoint,
 } from "../lib/definitionHelpers";
-import {
-  ImageDefinition,
-  ItemSelection,
-  MutationVector,
-  ShapeDefinition,
-  Vec2,
-} from "../lib/types";
+import { ImageDefinition, ItemSelection, Vec2 } from "../lib/types";
 import { getTextureCoordinate, maxZoomFactor } from "../lib/webgl";
 import ScreenLayout from "../templates/ScreenLayout";
+import LayersMenu from "./layers/LayersMenu";
 
 interface LayersProps {
   imageDefinition: ImageDefinition;
@@ -89,24 +73,12 @@ const Layers: React.VFC<LayersProps> = ({
   );
   const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
 
-  const setItemSelected = useCallback(
-    (item: ShapeDefinition | MutationVector | null) => {
-      setLayerSelected(
-        item === null ? null : { name: item.name, type: "layer" }
-      );
-    },
-    [setLayerSelected]
-  );
-  const shapeSelected = layerSelected
-    ? getShape(imageDefinition, layerSelected.name)
-    : null;
-
   useEffect(() => {
-    if (shapeSelected === null || shapeSelected.type === "folder") {
+    if (layerSelected === null || layerSelected.type === "folder") {
       setMouseMode(MouseMode.Grab);
       setActiveCoord(null);
     }
-  }, [shapeSelected]);
+  }, [layerSelected]);
 
   useEffect(() => {
     if (!layerSelected) {
@@ -180,134 +152,11 @@ const Layers: React.VFC<LayersProps> = ({
   return (
     <ScreenLayout
       menus={[
-        <Menu
-          key="layers"
-          title="Layers"
-          size="large"
-          toolbarItems={[
-            <ToolbarButton
-              key="addLayer"
-              hint="Add layer"
-              icon="📄"
-              label="+"
-              size="small"
-              onClick={async () => {
-                const newSprite = await addLayer(
-                  updateImageDefinition,
-                  "New Layer",
-                  layerSelected?.name
-                );
-                setItemSelected(newSprite);
-              }}
-            />,
-            <ToolbarButton
-              key="addFolder"
-              hint="Add folder"
-              icon="📁"
-              label="+"
-              size="small"
-              onClick={async () => {
-                const newFolder = await addFolder(
-                  updateImageDefinition,
-                  "New Folder",
-                  layerSelected?.name
-                );
-                setItemSelected(newFolder);
-              }}
-            />,
-            <ToolbarButton
-              key="copy"
-              hint="Copy layer"
-              icon="📝"
-              size="small"
-              disabled={!(shapeSelected && shapeSelected.type === "sprite")}
-              label=""
-              onClick={async () => {
-                if (
-                  shapeSelected === null ||
-                  shapeSelected.type !== "sprite" ||
-                  layerSelected === null
-                ) {
-                  return;
-                }
-                const newSprite = await addLayer(
-                  updateImageDefinition,
-                  layerSelected.name,
-                  layerSelected.name,
-                  {
-                    points: ([] as Vec2[]).concat(shapeSelected.points),
-                  }
-                );
-                setItemSelected(newSprite);
-              }}
-            />,
-            <ToolbarButton
-              key="remove"
-              hint="Remove item"
-              icon="🗑"
-              size="small"
-              disabled={!canDelete(layerSelected, imageDefinition)}
-              label=""
-              onClick={() => {
-                if (layerSelected === null) {
-                  return;
-                }
-                setItemSelected(null);
-                updateImageDefinition((state) =>
-                  removeItem(state, layerSelected)
-                );
-              }}
-            />,
-            <ToolbarButton
-              key="moveUp"
-              hint="Move item down"
-              icon="⬆"
-              size="small"
-              disabled={!canMoveUp(layerSelected, imageDefinition)}
-              label=""
-              onClick={() => {
-                if (layerSelected === null) {
-                  return;
-                }
-                updateImageDefinition((state) => moveUp(state, layerSelected));
-              }}
-            />,
-            <ToolbarButton
-              key="moveDown"
-              hint="Move item up"
-              icon="⬇"
-              size="small"
-              disabled={!canMoveDown(layerSelected, imageDefinition)}
-              label=""
-              onClick={() => {
-                if (layerSelected === null) {
-                  return;
-                }
-                updateImageDefinition((state) =>
-                  moveDown(state, layerSelected)
-                );
-              }}
-            />,
-          ]}
-          items={
-            <ShapeList
-              shapes={imageDefinition.shapes}
-              layerSelected={layerSelected}
-              showPoints={true}
-              setItemSelected={setItemSelected}
-              onRename={(oldName, newName) => {
-                const layerName = makeLayerName(
-                  imageDefinition,
-                  newName,
-                  layerSelected ? layerSelected.name : null
-                );
-                updateImageDefinition((state) =>
-                  renameLayer(state, oldName, layerName)
-                );
-                setLayerSelected({ name: layerName, type: "layer" });
-              }}
-            />
-          }
+        <LayersMenu
+          imageDefinition={imageDefinition}
+          updateImageDefinition={updateImageDefinition}
+          layerSelected={layerSelected}
+          setLayerSelected={setLayerSelected}
         />,
         <Menu
           title={"Point Info"}
@@ -370,7 +219,7 @@ const Layers: React.VFC<LayersProps> = ({
           key="selectPoints"
           hint="Select point mode"
           icon="️🔧"
-          disabled={!shapeSelected || shapeSelected.type === "folder"}
+          disabled={!layerSelected || layerSelected.type === "folder"}
           active={mouseMode === MouseMode.Normal}
           label=""
           onClick={() => {
@@ -381,7 +230,7 @@ const Layers: React.VFC<LayersProps> = ({
           key="addPoints"
           hint="Add points mode"
           icon="✏️"
-          disabled={!shapeSelected || shapeSelected.type === "folder"}
+          disabled={!layerSelected || layerSelected.type === "folder"}
           active={mouseMode === MouseMode.Aim}
           label=""
           onClick={() => {

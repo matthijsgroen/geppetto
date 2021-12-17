@@ -872,7 +872,7 @@ export const canDelete = (
   if (selectedItem === null) {
     return false;
   }
-  if (selectedItem.type === "layer") {
+  if (selectedItem.type === "layer" || selectedItem.type === "folder") {
     const item = getShape(image, selectedItem.name);
     if (item?.type === "folder") {
       return item.items.length === 0;
@@ -890,7 +890,8 @@ export const removeItem = (
     selectedItem.type === "control" ? selectedItem.name : null;
 
   const result = visit(image, (item) =>
-    ((selectedItem.type === "layer" && isShapeDefinition(item)) ||
+    (((selectedItem.type === "layer" || selectedItem.type === "folder") &&
+      isShapeDefinition(item)) ||
       (selectedItem.type === "control" && isControlDefinition(item)) ||
       (selectedItem.type === "vector" && isMutationVector(item))) &&
     item.name === selectedItem.name
