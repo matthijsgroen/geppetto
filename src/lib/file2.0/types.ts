@@ -1,9 +1,4 @@
-import {
-  ControlDefinition,
-  ControlValues,
-  MutationVector,
-  Vec2,
-} from "../types";
+import { ControlDefinition, ControlValues, Vec2 } from "../types";
 
 export type Folder = {
   id: string;
@@ -19,31 +14,97 @@ export type Layer = {
 
 type WithID<T> = Omit<T, "name"> & { id: string };
 
-type LayerMutation = WithID<MutationVector> & {
-  parent: string;
-};
-
 type EasingFunction = "easeIn" | "easeOut" | "easeInOut" | "linear";
 
-type AnimationFrame = {
-  controlValues: ControlValues;
+type FrameAction = FrameControlAction | FrameLayerVisibilityAction | FrameEvent;
+
+type FrameControlAction = {
+  controlId: string;
   easingFunction: EasingFunction;
-  hideLayers: string[];
-  showLayers: string[];
-  event?: string;
+  controlValue: number;
+  time: number;
+};
+
+type FrameLayerVisibilityAction = {
+  layerId: string;
+  visible: boolean;
+  time: number;
+};
+
+type FrameEvent = {
+  event: string;
   time: number;
 };
 
 type Animation = {
-  name: string;
+  id: string;
   looping: boolean;
-  keyframes: AnimationFrame[];
+  keyframes: FrameAction[];
 };
 
+type BaseVector = {
+  id: string;
+  parentId: string;
+  origin: Vec2;
+};
+
+export type TranslationVector = BaseVector & {
+  type: "translate";
+  radius: number;
+};
+
+export type DeformationVector = BaseVector & {
+  type: "deform";
+  radius: number;
+};
+
+export type StretchVector = BaseVector & {
+  type: "stretch";
+};
+
+export type RotationVector = BaseVector & {
+  type: "rotate";
+};
+
+export type OpacityVector = BaseVector & {
+  type: "opacity";
+};
+
+export type Lightness = BaseVector & {
+  type: "lightness";
+};
+
+export type Saturation = BaseVector & {
+  type: "saturation";
+};
+
+export type Colorize = BaseVector & {
+  type: "colorize";
+};
+
+export type MutationVector = ShapeMutationVector | ColorMutationVector;
+
+export type ColorMutationVector = Lightness | Colorize | Saturation;
+
+export type ShapeMutationVector =
+  | TranslationVector
+  | DeformationVector
+  | StretchVector
+  | RotationVector
+  | OpacityVector;
+
 export type GeppettoImage = {
-  layerHierarchy: Folder[];
+  version: string;
+  metadata: {
+    width: number;
+    height: number;
+    zoom: number;
+    pan: [number, number];
+  };
   layers: Layer[];
-  mutations: LayerMutation[];
+  mutations: MutationVector[];
+
+  layerHierarchy: Folder[];
   defaultFrame: Record<string, Vec2>;
 
   layersHidden: string[];
@@ -53,6 +114,5 @@ export type GeppettoImage = {
   controlValues: ControlValues;
 
   animationHierarchy: Folder[];
-  animations: WithID<Animation>[];
-  version: string;
+  animations: Animation[];
 };

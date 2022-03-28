@@ -2,14 +2,20 @@ import { newDefinition } from "../definitionHelpers";
 import {
   FolderDefinition,
   ImageDefinition,
-  MutationVector,
+  MutationVector as V1MutationVector,
   ShapeDefinition,
   SpriteDefinition,
 } from "../types";
-import { Folder, GeppettoImage, Layer } from "./types";
+import { Folder, GeppettoImage, Layer, MutationVector } from "./types";
 
 export const newFile = (): GeppettoImage => ({
   version: "2.0",
+  metadata: {
+    width: 2048,
+    height: 1536,
+    zoom: 1.0,
+    pan: [0, 0],
+  },
   layerHierarchy: [],
   layers: [],
   layersHidden: [],
@@ -49,19 +55,55 @@ const getControlId = (result: GeppettoImage, name: string): string => {
   throw new Error(`Name "${name}" not found`);
 };
 
+const convertMutationTo2 = (
+  mutation: V1MutationVector,
+  id: string,
+  parentId: string
+): MutationVector => {
+  if ("radius" in mutation) {
+    return {
+      id,
+      parentId,
+      type: mutation.type,
+      origin: mutation.origin,
+      radius: mutation.radius,
+    };
+  }
+  return {
+    id,
+    parentId,
+    type: mutation.type,
+    origin: mutation.origin,
+  };
+};
+
+const convertMutationTo1 = (
+  mutation: MutationVector,
+  name: string
+): V1MutationVector => {
+  if ("radius" in mutation) {
+    return {
+      name,
+      type: mutation.type,
+      origin: mutation.origin,
+      radius: mutation.radius,
+    };
+  }
+  return {
+    name,
+    type: mutation.type,
+    origin: mutation.origin,
+  };
+};
+
 const populateMutations = (
   parentId: string,
-  mutations: MutationVector[],
+  mutations: V1MutationVector[],
   result: GeppettoImage
 ) => {
   for (const mutation of mutations) {
     const id = placeName(result, mutation.name);
-    result.mutations.push({
-      id,
-      parent: parentId,
-      type: mutation.type,
-      origin: mutation.origin,
-    });
+    result.mutations.push(convertMutationTo2(mutation, id, parentId));
   }
 };
 
@@ -142,14 +184,9 @@ const createShape = (
   name: geppettoImage.names[layer.id],
   type: "sprite",
   mutationVectors: geppettoImage.mutations
-    .filter((m) => m.parent === layer.id)
-    .map(
-      (mutation) =>
-        ({
-          name: geppettoImage.names[mutation.id],
-          type: mutation.type,
-          origin: mutation.origin,
-        } as MutationVector)
+    .filter((m) => m.parentId === layer.id)
+    .map((mutation) =>
+      convertMutationTo1(mutation, geppettoImage.names[mutation.id])
     ),
   points: layer.points,
   translate: layer.translate,
@@ -162,14 +199,9 @@ const createFolder = (
   name: geppettoImage.names[folder.id],
   type: "folder",
   mutationVectors: geppettoImage.mutations
-    .filter((m) => m.parent === folder.id)
-    .map(
-      (mutation) =>
-        ({
-          name: geppettoImage.names[mutation.id],
-          type: mutation.type,
-          origin: mutation.origin,
-        } as MutationVector)
+    .filter((m) => m.parentId === folder.id)
+    .map((mutation) =>
+      convertMutationTo1(mutation, geppettoImage.names[mutation.id])
     ),
   items: folder.children.map((childId) => {
     const isFolder = geppettoImage.layerHierarchy.find((f) => f.id === childId);
