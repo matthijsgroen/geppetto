@@ -87,7 +87,6 @@ export const v1Format: ImageDefinition = {
           time: 500,
           controlValues: {
             HeadRotate: 0.0,
-            HeadShift: 0.0,
           },
         },
         {

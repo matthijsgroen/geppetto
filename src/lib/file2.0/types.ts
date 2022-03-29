@@ -1,50 +1,62 @@
-import { ControlDefinition, ControlValues, Vec2 } from "../types";
+import { Vec2 } from "../types";
 
-export type Folder = {
+export type NodeType = "layerFolder" | "layer" | "mutation";
+export type TreeNode<Type extends string> = {
   id: string;
-  collapsed: boolean;
-  children: string[];
+  type: Type;
+  children?: TreeNode<Type>[];
 };
 
 export type Layer = {
-  id: string;
+  name: string;
+  visible: boolean;
   points: Vec2[];
   translate: Vec2;
 };
 
-type WithID<T> = Omit<T, "name"> & { id: string };
+export type Folder = {
+  name: string;
+  collapsed: boolean;
+};
+
+export type LayerFolder = Folder & {
+  visible: boolean;
+};
 
 type EasingFunction = "easeIn" | "easeOut" | "easeInOut" | "linear";
 
-type FrameAction = FrameControlAction | FrameLayerVisibilityAction | FrameEvent;
+export type FrameAction =
+  | FrameControlAction
+  | FrameLayerVisibilityAction
+  | FrameEvent;
 
-type FrameControlAction = {
+export type FrameControlAction = {
   controlId: string;
   easingFunction: EasingFunction;
   controlValue: number;
-  time: number;
+  start: number;
+  duration: number;
 };
 
-type FrameLayerVisibilityAction = {
+export type FrameLayerVisibilityAction = {
   layerId: string;
   visible: boolean;
-  time: number;
+  start: number;
 };
 
-type FrameEvent = {
+export type FrameEvent = {
   event: string;
-  time: number;
+  start: number;
 };
 
 type Animation = {
-  id: string;
+  name: string;
   looping: boolean;
-  keyframes: FrameAction[];
+  actions: FrameAction[];
 };
 
 type BaseVector = {
-  id: string;
-  parentId: string;
+  name: string;
   origin: Vec2;
 };
 
@@ -93,6 +105,14 @@ export type ShapeMutationVector =
   | RotationVector
   | OpacityVector;
 
+export type Keyframe = Record<string, Vec2>;
+
+export type ControlDefinition = {
+  name: string;
+  type: "slider";
+  steps: Keyframe[];
+};
+
 export type GeppettoImage = {
   version: string;
   metadata: {
@@ -101,18 +121,18 @@ export type GeppettoImage = {
     zoom: number;
     pan: [number, number];
   };
-  layers: Layer[];
-  mutations: MutationVector[];
+  layerHierarchy: TreeNode<NodeType>[];
+  layers: Record<string, Layer>;
+  mutations: Record<string, MutationVector>;
+  layerFolders: Record<string, LayerFolder>;
 
-  layerHierarchy: Folder[];
   defaultFrame: Record<string, Vec2>;
+  controlHierarchy: TreeNode<"controlFolder" | "control">[];
+  controlFolders: Record<string, Folder>;
+  controls: Record<string, ControlDefinition>;
+  controlValues: Record<string, number>;
 
-  layersHidden: string[];
-  names: Record<string, string>;
-
-  controls: WithID<ControlDefinition>[];
-  controlValues: ControlValues;
-
-  animationHierarchy: Folder[];
-  animations: Animation[];
+  animationHierarchy: TreeNode<"animationFolder" | "animation">[];
+  animationFolders: Record<string, Folder>;
+  animations: Record<string, Animation>;
 };
