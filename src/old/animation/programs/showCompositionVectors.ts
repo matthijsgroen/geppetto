@@ -10,7 +10,7 @@ import {
   Keyframe,
   MutationVectorTypes,
   ShapeDefinition,
-} from "../../lib/types";
+} from "../../../application/animation/file1-types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
   createShapeMutationList,

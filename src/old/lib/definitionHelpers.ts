@@ -7,8 +7,8 @@ import {
   MutationVectorTypes,
   ShapeDefinition,
   SpriteDefinition,
-  Vec2,
-} from "./types";
+} from "../../application/animation/file1-types";
+import { Vec2 } from "../../application/types";
 import {
   isControlDefinition,
   isMutationVector,
@@ -57,15 +57,6 @@ export const omitKeys = <T extends Record<string, unknown>>(
         {} as T
       )
     : object;
-
-export const newDefinition = (): ImageDefinition => ({
-  animations: [],
-  controlValues: {},
-  controls: [],
-  defaultFrame: {},
-  shapes: [],
-  version: "1.0",
-});
 
 export const updateVersionNumber = (
   version: string,

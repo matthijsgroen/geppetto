@@ -7,8 +7,12 @@ import Layers from "./screens/Layers";
 import Composition from "./screens/Composition";
 import Animation from "./screens/Animation";
 
-import { ImageDefinition, ShapeDefinition } from "./lib/types";
-import { newDefinition, updateVersionNumber } from "./lib/definitionHelpers";
+import {
+  ImageDefinition,
+  ShapeDefinition,
+} from "../application/animation/file1-types";
+import { newFile } from "../application/animation/file1";
+import { updateVersionNumber } from "./lib/definitionHelpers";
 import { compressFile } from "./lib/compressFile";
 
 const defaultTheme: DefaultTheme = {
@@ -53,7 +57,7 @@ const OUTPUT_VERSION_NUMBER = "1.1";
 const App: React.FC = () => {
   const [activeItem, setActiveItem] = useState(MenuItems.Layers);
   const [imageDefinition, setImageDefinition] = useState<ImageDefinition>(
-    newDefinition()
+    newFile()
   );
   const [baseFileName, setBaseFilename] = useState<string | null>(null);
   const [textureFileName, setTextureFilename] = useState<string | null>(null);
@@ -70,9 +74,7 @@ const App: React.FC = () => {
       setBaseFilename(baseName);
     });
     window.electron.onAnimationFileNew(() => {
-      setImageDefinition(
-        updateVersionNumber(OUTPUT_VERSION_NUMBER, newDefinition())
-      );
+      setImageDefinition(updateVersionNumber(OUTPUT_VERSION_NUMBER, newFile()));
       setBaseFilename(null);
     });
     window.electron.onAnimationFileNameChange((newName) => {

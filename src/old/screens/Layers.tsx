@@ -27,7 +27,11 @@ import {
   removePoint,
   updatePoint,
 } from "../lib/definitionHelpers";
-import { ImageDefinition, ItemSelection, Vec2 } from "../lib/types";
+import { Vec2 } from "../../application/types";
+import {
+  ImageDefinition,
+  ItemSelection,
+} from "../../application/animation/file1-types";
 import { getTextureCoordinate, maxZoomFactor } from "../lib/webgl";
 import ScreenLayout from "../templates/ScreenLayout";
 import LayersMenu from "./layers/LayersMenu";

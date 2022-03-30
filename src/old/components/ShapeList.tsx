@@ -4,7 +4,7 @@ import {
   MutationVector,
   MutationVectorTypes,
   ShapeDefinition,
-} from "../lib/types";
+} from "../../application/animation/file1-types";
 import MenuItem from "./MenuItem";
 
 const iconMapping: Record<MutationVectorTypes, string> = {

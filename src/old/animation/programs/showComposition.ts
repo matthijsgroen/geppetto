@@ -1,5 +1,8 @@
-import { fileredTriangles, flatten } from "../../lib/vertices";
-import { Keyframe, ShapeDefinition } from "../../lib/types";
+import { filteredTriangles, flatten } from "../../lib/vertices";
+import {
+  Keyframe,
+  ShapeDefinition,
+} from "../../../application/animation/file1-types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
   createShapeMutationList,
@@ -197,7 +200,7 @@ export const showComposition = (): {
     const sprites = flattenShapes(shapes);
     sprites.forEach((shape, index) => {
       const anchor = getAnchor(shape);
-      const shapeIndices = fileredTriangles(shape.points);
+      const shapeIndices = filteredTriangles(shape.points);
       const start = indices.length;
 
       const itemOffset = [...shape.translate, index * 0.1];

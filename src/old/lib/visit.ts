@@ -5,7 +5,7 @@ import {
   ControlDefinition,
   ShapeMutationVector,
   ColorMutationVector,
-} from "./types";
+} from "../../application/animation/file1-types";
 
 export type Visitor = (
   item: ShapeDefinition | MutationVector | ControlDefinition,

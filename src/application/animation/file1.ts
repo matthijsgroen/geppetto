@@ -1,17 +1,25 @@
-import { newDefinition } from "../definitionHelpers";
 import {
   AnimationFrame,
   ImageDefinition,
   Keyframe,
   MutationVector,
-} from "../types";
+} from "./file1-types";
 import {
   FrameAction,
   FrameControlAction,
   FrameEvent,
   GeppettoImage,
   TreeNode,
-} from "./types";
+} from "./file2-types";
+
+export const newFile = (): ImageDefinition => ({
+  animations: [],
+  controlValues: {},
+  controls: [],
+  defaultFrame: {},
+  shapes: [],
+  version: "1.0",
+});
 
 const convertMutations = (
   items: TreeNode<string>[],
@@ -157,10 +165,10 @@ const convertAnimations = (
   }
 };
 
-export const convertV2toV1 = (
+export const convertFromV2 = (
   geppettoImage: GeppettoImage
 ): ImageDefinition => {
-  const result: ImageDefinition = { ...newDefinition(), version: "1.1" };
+  const result: ImageDefinition = { ...newFile(), version: "1.1" };
 
   result.shapes = convertShapes(
     geppettoImage.layerHierarchy,

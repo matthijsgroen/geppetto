@@ -1,4 +1,8 @@
-import { ItemSelection, Keyframe, ShapeDefinition } from "../../lib/types";
+import {
+  ItemSelection,
+  Keyframe,
+  ShapeDefinition,
+} from "../../../application/animation/file1-types";
 import { flatten, verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {

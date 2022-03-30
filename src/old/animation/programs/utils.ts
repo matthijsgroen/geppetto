@@ -1,4 +1,8 @@
-import { ShapeDefinition, SpriteDefinition, Vec2 } from "../../lib/types";
+import { Vec2 } from "../../../application/types";
+import {
+  ShapeDefinition,
+  SpriteDefinition,
+} from "../../../application/animation/file1-types";
 
 export const flattenShapes = (shapes: ShapeDefinition[]): SpriteDefinition[] =>
   flattenTree(shapes).filter(

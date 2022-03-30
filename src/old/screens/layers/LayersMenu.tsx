@@ -15,14 +15,14 @@ import {
   removeItem,
   renameLayer,
 } from "../../lib/definitionHelpers";
+import { Vec2 } from "../../../application/types";
 import {
   ImageDefinition,
   ItemSelection,
   MutationVector,
   ShapeDefinition,
   SpriteDefinition,
-  Vec2,
-} from "../../lib/types";
+} from "../../../application/animation/file1-types";
 
 type Props = {
   imageDefinition: ImageDefinition;

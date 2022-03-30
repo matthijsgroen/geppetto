@@ -1,10 +1,9 @@
+import { addLayer, addVector, updateVectorData } from "./definitionHelpers";
+import { newFile } from "../../application/animation/file1";
 import {
-  addLayer,
-  addVector,
-  newDefinition,
-  updateVectorData,
-} from "./definitionHelpers";
-import { ImageDefinition, MutationVector } from "./types";
+  ImageDefinition,
+  MutationVector,
+} from "../../application/animation/file1-types";
 
 const mutationState = (initial: ImageDefinition) => {
   let state = initial;
@@ -19,7 +18,7 @@ const mutationState = (initial: ImageDefinition) => {
 
 describe("addLayer", () => {
   it("adds a layer to an empty image", async () => {
-    const emptyImage = newDefinition();
+    const emptyImage = newFile();
     const test = mutationState(emptyImage);
 
     expect(test.getState().shapes).toHaveLength(0);
@@ -37,7 +36,7 @@ describe("addLayer", () => {
   });
 
   it("renames layers to ensure unique names", async () => {
-    const emptyImage = newDefinition();
+    const emptyImage = newFile();
     const test = mutationState(emptyImage);
     await addLayer(test.mutator, "First Layer");
 
@@ -56,7 +55,7 @@ describe("addLayer", () => {
   });
 
   it("supports setting data directly", async () => {
-    const emptyImage = newDefinition();
+    const emptyImage = newFile();
     const test = mutationState(emptyImage);
 
     expect(test.getState().shapes).toHaveLength(0);
@@ -85,7 +84,7 @@ describe("addLayer", () => {
 
   describe("tree placement", () => {
     it("sets an item to the top by default", async () => {
-      const emptyImage = newDefinition();
+      const emptyImage = newFile();
       const test = mutationState(emptyImage);
       await addLayer(test.mutator, "First Layer");
 
@@ -96,7 +95,7 @@ describe("addLayer", () => {
     });
 
     it("supports setting an item after another one", async () => {
-      const emptyImage = newDefinition();
+      const emptyImage = newFile();
       const test = mutationState(emptyImage);
       await addLayer(test.mutator, "Second Layer");
       // New layers are put to the top by default
@@ -125,7 +124,7 @@ describe("updateVectorData", () => {
     ])(
       "updates the default name on type change for %s",
       async (mutationType, newName) => {
-        const emptyImage = newDefinition();
+        const emptyImage = newFile();
         const test = mutationState(emptyImage);
         const layer = await addLayer(test.mutator, "First Layer");
         await addVector(test.mutator, layer, "New Mutator");
@@ -156,7 +155,7 @@ describe("updateVectorData", () => {
     ])(
       "updates the default name on type change for %s with counter",
       async (mutationType, newName) => {
-        const emptyImage = newDefinition();
+        const emptyImage = newFile();
         const test = mutationState(emptyImage);
         const layer = await addLayer(test.mutator, "First Layer");
         await addVector(test.mutator, layer, "New Mutator (213)");

@@ -1,4 +1,4 @@
-import { GeppettoImage } from "../types";
+import { GeppettoImage } from "../file2-types";
 
 export const v2Format: GeppettoImage = {
   version: "2.0",

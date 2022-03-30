@@ -3,7 +3,10 @@ import Menu from "../components/Menu";
 import SelectControl, { Option } from "../components/SelectControl";
 import SliderControl from "../components/SliderControl";
 import { updateValue } from "../lib/definitionHelpers";
-import { ControlDefinition, ImageDefinition } from "../lib/types";
+import {
+  ControlDefinition,
+  ImageDefinition,
+} from "../../application/animation/file1-types";
 import { isControlDefinition, visit } from "../lib/visit";
 
 interface ControlInfoPanelProps {

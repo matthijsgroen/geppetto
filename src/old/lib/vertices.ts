@@ -1,13 +1,17 @@
 import Delaunator from "delaunator";
-import { Keyframe, MutationVector, Vec2, Vec3, Vec4 } from "./types";
+import { Vec2, Vec3, Vec4 } from "../../application/types";
+import {
+  Keyframe,
+  MutationVector,
+} from "../../application/animation/file1-types";
 
 export const verticesFromPoints = (points: number[][]): number[] =>
-  fileredTriangles(points).reduce(
+  filteredTriangles(points).reduce(
     (result, index) => result.concat(points[index]),
     [] as number[]
   );
 
-export const fileredTriangles = (points: number[][]): number[] =>
+export const filteredTriangles = (points: number[][]): number[] =>
   Delaunator.from(points).triangles;
 
 export const mix = (a: number, b: number, factor: number): number =>

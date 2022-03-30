@@ -15,9 +15,9 @@ import {
   ControlValues,
   ImageDefinition,
   PlayStatus,
-  State,
-} from "../lib/types";
+} from "../../application/animation/file1-types";
 import ScreenLayout from "../templates/ScreenLayout";
+import { State } from "../components/types";
 
 interface AnimationProps {
   imageDefinition: ImageDefinition;

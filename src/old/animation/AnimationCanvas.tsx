@@ -1,6 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { WebGLRenderer } from "../lib/webgl";
-import { ControlValues, ImageDefinition, PlayStatus } from "../lib/types";
+import {
+  ControlValues,
+  ImageDefinition,
+  PlayStatus,
+} from "../../application/animation/file1-types";
 import WebGLCanvas from "./WebGLCanvas";
 import {
   AnimationControls,

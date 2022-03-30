@@ -1,5 +1,5 @@
-import { AnimationFrame, ImageDefinition, MutationVector } from "../types";
-import { FrameAction, GeppettoImage, NodeType, TreeNode } from "./types";
+import { AnimationFrame, ImageDefinition, MutationVector } from "./file1-types";
+import { FrameAction, GeppettoImage, NodeType, TreeNode } from "./file2-types";
 
 export const newFile = (): GeppettoImage => ({
   version: "2.0",
@@ -199,7 +199,7 @@ const populateAnimations = (
   return result;
 };
 
-export const convertV1toV2 = (imageDef: ImageDefinition): GeppettoImage => {
+export const convertFromV1 = (imageDef: ImageDefinition): GeppettoImage => {
   const result: GeppettoImage = newFile();
   let id = 0;
   const createId = () => {

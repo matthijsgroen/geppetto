@@ -1,8 +1,11 @@
 import React, { Dispatch, SetStateAction } from "react";
 import Menu from "../components/Menu";
-import Vect2InputControl from "../components/Vec2InputControl";
+import Vec2InputControl from "../components/Vec2InputControl";
 import { updateSpriteData } from "../lib/definitionHelpers";
-import { ImageDefinition, ShapeDefinition } from "../lib/types";
+import {
+  ImageDefinition,
+  ShapeDefinition,
+} from "../../application/animation/file1-types";
 
 interface LayerInfoPanelProps {
   shapeSelected: ShapeDefinition;
@@ -22,7 +25,7 @@ const LayerInfoPanel: React.VFC<LayerInfoPanelProps> = ({
     collapsable={true}
     size="minimal"
     items={[
-      <Vect2InputControl
+      <Vec2InputControl
         key={"offset"}
         title={"offset"}
         disabled={shapeSelected === null || shapeSelected.type === "folder"}

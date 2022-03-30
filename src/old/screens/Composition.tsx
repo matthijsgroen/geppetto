@@ -51,8 +51,8 @@ import {
   Keyframe,
   MutationVector,
   ShapeDefinition,
-  State,
-} from "../lib/types";
+} from "../../application/animation/file1-types";
+import { State } from "../components/types";
 import ScreenLayout from "../templates/ScreenLayout";
 import ControlInfoPanel from "./ControlInfoPanel";
 import LayerInfoPanel from "./LayerInfoPanel";
