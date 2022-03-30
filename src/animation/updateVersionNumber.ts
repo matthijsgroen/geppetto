@@ -1,12 +1,6 @@
-type VersionFromFile<File> = File extends { version: infer Version }
-  ? Version
-  : unknown;
-
-export const updateVersionNumber = <
-  File extends { version: VersionFromFile<File> }
->(
+export const updateVersionNumber = <File extends { version: unknown }>(
   imageDef: File,
-  version: VersionFromFile<File>
+  version: File["version"]
 ): File => ({
   ...imageDef,
   version,
