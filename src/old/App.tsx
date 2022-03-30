@@ -9,8 +9,8 @@ import Animation from "./screens/Animation";
 
 import { ImageDefinition, ShapeDefinition } from "../animation/file1/types";
 import { newFile } from "../animation/file1/new";
-import { updateVersionNumber } from "./lib/definitionHelpers";
 import { compressFile } from "./lib/compressFile";
+import { updateVersionNumber } from "../animation/updateVersionNumber";
 
 const defaultTheme: DefaultTheme = {
   colors: {
@@ -67,11 +67,11 @@ const App: React.FC = () => {
     if (!window.electron) return;
 
     window.electron.onAnimationFileLoaded((image, baseName) => {
-      setImageDefinition(updateVersionNumber(OUTPUT_VERSION_NUMBER, image));
+      setImageDefinition(updateVersionNumber(image, OUTPUT_VERSION_NUMBER));
       setBaseFilename(baseName);
     });
     window.electron.onAnimationFileNew(() => {
-      setImageDefinition(updateVersionNumber(OUTPUT_VERSION_NUMBER, newFile()));
+      setImageDefinition(updateVersionNumber(newFile(), OUTPUT_VERSION_NUMBER));
       setBaseFilename(null);
     });
     window.electron.onAnimationFileNameChange((newName) => {

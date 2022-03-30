@@ -114,7 +114,7 @@ export type ControlDefinition = {
 };
 
 export type GeppettoImage = {
-  version: string;
+  version: `2.${number}`;
   metadata: {
     width: number;
     height: number;

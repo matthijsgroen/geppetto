@@ -117,10 +117,10 @@ export type Animation = {
 };
 
 export type ImageDefinition = {
+  version: `1.${number}`;
   shapes: ShapeDefinition[];
   defaultFrame: Keyframe;
   controls: ControlDefinition[];
   controlValues: ControlValues;
   animations: Animation[];
-  version: string;
 };

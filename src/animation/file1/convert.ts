@@ -12,6 +12,7 @@ import {
   TreeNode,
 } from "../file2/types";
 import { newFile } from "./new";
+import { updateVersionNumber } from "../updateVersionNumber";
 
 const convertMutations = (
   items: TreeNode<string>[],
@@ -160,7 +161,7 @@ const convertAnimations = (
 export const convertFromV2 = (
   geppettoImage: GeppettoImage
 ): ImageDefinition => {
-  const result: ImageDefinition = { ...newFile(), version: "1.1" };
+  const result: ImageDefinition = updateVersionNumber(newFile(), "1.1");
 
   result.shapes = convertShapes(
     geppettoImage.layerHierarchy,

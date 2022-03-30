@@ -58,14 +58,6 @@ export const omitKeys = <T extends Record<string, unknown>>(
       )
     : object;
 
-export const updateVersionNumber = (
-  version: string,
-  imageDef: ImageDefinition
-): ImageDefinition => ({
-  ...imageDef,
-  version,
-});
-
 export const getLayerNames = (layers: ShapeDefinition[]): string[] =>
   layers.reduce(
     (result, layer) =>
