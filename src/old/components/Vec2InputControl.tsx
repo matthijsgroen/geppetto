@@ -1,5 +1,5 @@
 import React from "react";
-import { Vec2 } from "src/lib/types";
+import { Vec2 } from "../lib/types";
 import { Control, ControlLabel } from "./Control";
 import {
   NumberInput,

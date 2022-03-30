@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { WebGLRenderer } from "src/lib/webgl";
+import { WebGLRenderer } from "../lib/webgl";
 import { ControlValues, ImageDefinition, PlayStatus } from "../lib/types";
 import WebGLCanvas from "./WebGLCanvas";
 import {

@@ -1,3 +1,4 @@
+import { Vec2 } from "geppetto-player";
 import { interpolateFloat, mixVec2, mixHueVec2 } from "./vertices";
 
 describe("interpolateFloat", () => {
@@ -23,7 +24,7 @@ describe("interpolateFloat", () => {
 });
 
 describe("mixVec2", () => {
-  it.each([
+  it.each<[Vec2 | undefined, Vec2 | undefined, number, Vec2]>([
     [[1, 1], [0, 0], 0.5, [0.5, 0.5]],
     [[0, 0], [0.5, 0.5], 0.5, [0.25, 0.25]],
     [[1, 1], [0, 0], 0.25, [0.75, 0.75]],
@@ -39,7 +40,7 @@ describe("mixVec2", () => {
 });
 
 describe("mixHueVec2", () => {
-  it.each([
+  it.each<[Vec2, Vec2, number, Vec2]>([
     [[1, 1], [0, 0], 0.5, [0, 0.5]],
     [[1, 1], [0.2, 0], 0.5, [0.1, 0.5]],
     [[1, 1], [0.2, 0], 1.0, [0.2, 0]],

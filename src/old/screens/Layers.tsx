@@ -5,13 +5,13 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import LayerMouseControl from "src/components/LayerMouseControl";
+import LayerMouseControl from "../components/LayerMouseControl";
 import {
   defaultStepFn,
   StepSize,
   UpDown,
-} from "src/components/NumberInputControl";
-import Vec2InputControl from "src/components/Vec2InputControl";
+} from "../components/NumberInputControl";
+import Vec2InputControl from "../components/Vec2InputControl";
 import TextureMapCanvas, {
   GridSettings,
   GRID_SIZES,

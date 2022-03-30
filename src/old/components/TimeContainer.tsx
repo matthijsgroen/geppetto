@@ -2,8 +2,8 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarSeperator from "./ToolbarSeperator";
-import { ImageDefinition, PlayStatus } from "src/lib/types";
-import { makeAnimationName, omitKeys } from "src/lib/definitionHelpers";
+import { ImageDefinition, PlayStatus } from "../lib/types";
+import { makeAnimationName, omitKeys } from "../lib/definitionHelpers";
 import { Toolbar } from "./Toolbar";
 import RenameableLabel from "./RenameableLabel";
 

@@ -6,17 +6,17 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import LayerMouseControl from "src/components/LayerMouseControl";
-import MenuItem from "src/components/MenuItem";
-import { ToolbarLabel, ToolbarSpacer } from "src/components/Toolbar";
-import ToolbarMeter from "src/components/ToolbarMeter";
+import LayerMouseControl from "../components/LayerMouseControl";
+import MenuItem from "../components/MenuItem";
+import { ToolbarLabel, ToolbarSpacer } from "../components/Toolbar";
+import ToolbarMeter from "../components/ToolbarMeter";
 import {
   combineKeyFrames,
   defaultValueForVector,
   mixVec2,
   mixHueVec2,
-} from "src/lib/vertices";
-import { isMutationVector, isShapeMutationVector, visit } from "src/lib/visit";
+} from "../lib/vertices";
+import { isMutationVector, isShapeMutationVector, visit } from "../lib/visit";
 import CompositionCanvas from "../animation/CompositionCanvas";
 import Menu from "../components/Menu";
 import { MouseMode } from "../components/MouseControl";

@@ -1,4 +1,4 @@
-import { fileredTriangles, flatten } from "src/lib/vertices";
+import { fileredTriangles, flatten } from "../../lib/vertices";
 import { Keyframe, ShapeDefinition } from "../../lib/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {

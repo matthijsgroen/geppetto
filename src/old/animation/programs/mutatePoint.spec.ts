@@ -4,7 +4,7 @@ import {
   ShapeDefinition,
   SpriteDefinition,
   TranslationVector,
-} from "src/lib/types";
+} from "../../lib/types";
 import { createShapeMutationList } from "./mutatePoint";
 
 const dummyTranslateMutation = (name = "Mutator1"): TranslationVector => ({

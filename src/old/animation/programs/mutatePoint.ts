@@ -3,12 +3,12 @@ import {
   MutationVectorTypes,
   ShapeDefinition,
   Vec4,
-} from "src/lib/types";
+} from "../../lib/types";
 import {
   isShapeDefinition,
   isMutationVector,
   visitShapes,
-} from "src/lib/visit";
+} from "../../lib/visit";
 
 export const MAX_MUTATION_VECTORS = 60;
 export const MAX_CONTROLS = 20;

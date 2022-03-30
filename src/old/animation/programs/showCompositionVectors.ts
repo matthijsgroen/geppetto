@@ -1,10 +1,10 @@
-import { vectorNamesFromShape } from "src/lib/definitionHelpers";
-import { flatten } from "src/lib/vertices";
+import { vectorNamesFromShape } from "../../lib/definitionHelpers";
+import { flatten } from "../../lib/vertices";
 import {
   isShapeDefinition,
   isShapeMutationVector,
   visitShapes,
-} from "src/lib/visit";
+} from "../../lib/visit";
 import {
   ItemSelection,
   Keyframe,

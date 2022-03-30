@@ -1,30 +1,30 @@
 import React, { Dispatch, SetStateAction } from "react";
-import Button, { ButtonType } from "src/components/Button";
-import { Control, ControlLabel } from "src/components/Control";
-import Menu from "src/components/Menu";
-import NumberInputControl from "src/components/NumberInputControl";
-import SelectControl from "src/components/SelectControl";
-import { iconForType } from "src/components/ShapeList";
-import SliderControl from "src/components/SliderControl";
-import ToggleInputControl from "src/components/ToggleControl";
-import Vec2InputControl from "src/components/Vec2InputControl";
+import Button, { ButtonType } from "../components/Button";
+import { Control, ControlLabel } from "../components/Control";
+import Menu from "../components/Menu";
+import NumberInputControl from "../components/NumberInputControl";
+import SelectControl from "../components/SelectControl";
+import { iconForType } from "../components/ShapeList";
+import SliderControl from "../components/SliderControl";
+import ToggleInputControl from "../components/ToggleControl";
+import Vec2InputControl from "../components/Vec2InputControl";
 import {
   defaultNamesForMutations,
   omitKeys,
   updateVectorData,
-} from "src/lib/definitionHelpers";
+} from "../lib/definitionHelpers";
 import {
   ImageDefinition,
   MutationVector,
   MutationVectorTypes,
   Vec2,
-} from "src/lib/types";
-import { defaultValueForVector } from "src/lib/vertices";
+} from "../lib/types";
+import { defaultValueForVector } from "../lib/vertices";
 import {
   isControlDefinition,
   isShapeMutationVector,
   visit,
-} from "src/lib/visit";
+} from "../lib/visit";
 
 interface VectorInfoPanelProps {
   vectorSelected: MutationVector;

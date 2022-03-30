@@ -1,14 +1,14 @@
 import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
-import AnimationCanvas from "src/animation/AnimationCanvas";
-import { ControlStyle } from "src/components/Control";
-import LayerMouseControl from "src/components/LayerMouseControl";
-import Menu from "src/components/Menu";
-import NumberInputControl from "src/components/NumberInputControl";
-import SliderControl from "src/components/SliderControl";
-import TextInputControl from "src/components/TextInputControl";
-import { TimeContainer } from "src/components/TimeContainer";
-import ToolbarButton from "src/components/ToolbarButton";
-import { omitKeys } from "src/lib/definitionHelpers";
+import AnimationCanvas from "../animation/AnimationCanvas";
+import { ControlStyle } from "../components/Control";
+import LayerMouseControl from "../components/LayerMouseControl";
+import Menu from "../components/Menu";
+import NumberInputControl from "../components/NumberInputControl";
+import SliderControl from "../components/SliderControl";
+import TextInputControl from "../components/TextInputControl";
+import { TimeContainer } from "../components/TimeContainer";
+import ToolbarButton from "../components/ToolbarButton";
+import { omitKeys } from "../lib/definitionHelpers";
 import { MouseMode } from "../components/MouseControl";
 import {
   AnimationFrame,

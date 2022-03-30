@@ -1,5 +1,5 @@
 import React from "react";
-import { Toolbar } from "src/components/Toolbar";
+import { Toolbar } from "../components/Toolbar";
 import styled from "styled-components";
 
 const MenuContainer = styled.aside`

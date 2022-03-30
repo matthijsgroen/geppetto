@@ -1,7 +1,7 @@
 import MouseControl, { MouseMode } from "./MouseControl";
 import React, { FC, useCallback, useRef } from "react";
-import { State } from "src/lib/types";
-import { maxZoomFactor } from "src/lib/webgl";
+import { State } from "../lib/types";
+import { maxZoomFactor } from "../lib/webgl";
 
 export interface LayerMouseControlProps {
   mode: MouseMode;

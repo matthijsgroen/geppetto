@@ -1,10 +1,10 @@
 import React, { Dispatch, SetStateAction } from "react";
-import Menu from "src/components/Menu";
-import SelectControl, { Option } from "src/components/SelectControl";
-import SliderControl from "src/components/SliderControl";
-import { updateValue } from "src/lib/definitionHelpers";
-import { ControlDefinition, ImageDefinition } from "src/lib/types";
-import { isControlDefinition, visit } from "src/lib/visit";
+import Menu from "../components/Menu";
+import SelectControl, { Option } from "../components/SelectControl";
+import SliderControl from "../components/SliderControl";
+import { updateValue } from "../lib/definitionHelpers";
+import { ControlDefinition, ImageDefinition } from "../lib/types";
+import { isControlDefinition, visit } from "../lib/visit";
 
 interface ControlInfoPanelProps {
   controlSelected: ControlDefinition;

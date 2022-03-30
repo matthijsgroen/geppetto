@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction, useCallback } from "react";
-import Menu from "src/components/Menu";
-import ShapeList from "src/components/ShapeList";
-import ToolbarButton from "src/components/ToolbarButton";
+import Menu from "../../components/Menu";
+import ShapeList from "../../components/ShapeList";
+import ToolbarButton from "../../components/ToolbarButton";
 import {
   addFolder,
   addLayer,
@@ -14,7 +14,7 @@ import {
   moveUp,
   removeItem,
   renameLayer,
-} from "src/lib/definitionHelpers";
+} from "../../lib/definitionHelpers";
 import {
   ImageDefinition,
   ItemSelection,
@@ -22,7 +22,7 @@ import {
   ShapeDefinition,
   SpriteDefinition,
   Vec2,
-} from "src/lib/types";
+} from "../../lib/types";
 
 type Props = {
   imageDefinition: ImageDefinition;

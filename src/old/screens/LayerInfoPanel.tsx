@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction } from "react";
-import Menu from "src/components/Menu";
-import Vect2InputControl from "src/components/Vec2InputControl";
-import { updateSpriteData } from "src/lib/definitionHelpers";
-import { ImageDefinition, ShapeDefinition } from "src/lib/types";
+import Menu from "../components/Menu";
+import Vect2InputControl from "../components/Vec2InputControl";
+import { updateSpriteData } from "../lib/definitionHelpers";
+import { ImageDefinition, ShapeDefinition } from "../lib/types";
 
 interface LayerInfoPanelProps {
   shapeSelected: ShapeDefinition;
