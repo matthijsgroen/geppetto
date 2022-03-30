@@ -1,4 +1,4 @@
-import { Vec2 } from "../../application/types";
+import { Vec2 } from "../../types";
 
 export enum ShaderType {
   Vertex,

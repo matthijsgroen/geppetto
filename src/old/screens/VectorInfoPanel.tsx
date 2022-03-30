@@ -13,12 +13,12 @@ import {
   omitKeys,
   updateVectorData,
 } from "../lib/definitionHelpers";
-import { Vec2 } from "../../application/types";
+import { Vec2 } from "../../types";
 import {
   ImageDefinition,
   MutationVector,
   MutationVectorTypes,
-} from "../../application/animation/file1-types";
+} from "../../animation/file1/types";
 import { defaultValueForVector } from "../lib/vertices";
 import {
   isControlDefinition,

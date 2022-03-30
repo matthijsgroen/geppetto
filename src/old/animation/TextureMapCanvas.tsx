@@ -1,9 +1,6 @@
 import React, { useEffect, useMemo } from "react";
-import { Vec2 } from "../../application/types";
-import {
-  ItemSelection,
-  ShapeDefinition,
-} from "../../application/animation/file1-types";
+import { Vec2 } from "../../types";
+import { ItemSelection, ShapeDefinition } from "../../animation/file1/types";
 import { showLayerPoints } from "./programs/showLayerPoints";
 import { showTexture } from "./programs/showTexture";
 import { showGrid } from "./programs/showGrid";

@@ -1,4 +1,4 @@
-import { ShapeDefinition } from "../../../application/animation/file1-types";
+import { ShapeDefinition } from "../../../animation/file1/types";
 import { verticesFromPoints } from "../../lib/vertices";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes } from "./utils";

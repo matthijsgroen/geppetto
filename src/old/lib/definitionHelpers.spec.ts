@@ -1,9 +1,6 @@
 import { addLayer, addVector, updateVectorData } from "./definitionHelpers";
-import { newFile } from "../../application/animation/file1";
-import {
-  ImageDefinition,
-  MutationVector,
-} from "../../application/animation/file1-types";
+import { newFile } from "../../animation/file1/new";
+import { ImageDefinition, MutationVector } from "../../animation/file1/types";
 
 const mutationState = (initial: ImageDefinition) => {
   let state = initial;

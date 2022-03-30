@@ -3,23 +3,15 @@ import {
   ImageDefinition,
   Keyframe,
   MutationVector,
-} from "./file1-types";
+} from "./types";
 import {
   FrameAction,
   FrameControlAction,
   FrameEvent,
   GeppettoImage,
   TreeNode,
-} from "./file2-types";
-
-export const newFile = (): ImageDefinition => ({
-  animations: [],
-  controlValues: {},
-  controls: [],
-  defaultFrame: {},
-  shapes: [],
-  version: "1.0",
-});
+} from "../file2/types";
+import { newFile } from "./new";
 
 const convertMutations = (
   items: TreeNode<string>[],

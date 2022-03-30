@@ -1,8 +1,5 @@
 import { filteredTriangles, flatten } from "../../lib/vertices";
-import {
-  Keyframe,
-  ShapeDefinition,
-} from "../../../application/animation/file1-types";
+import { Keyframe, ShapeDefinition } from "../../../animation/file1/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import {
   createShapeMutationList,

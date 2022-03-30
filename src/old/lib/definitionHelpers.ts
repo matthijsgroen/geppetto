@@ -7,8 +7,8 @@ import {
   MutationVectorTypes,
   ShapeDefinition,
   SpriteDefinition,
-} from "../../application/animation/file1-types";
-import { Vec2 } from "../../application/types";
+} from "../../animation/file1/types";
+import { Vec2 } from "../../types";
 import {
   isControlDefinition,
   isMutationVector,

@@ -3,7 +3,7 @@ import {
   ItemSelection,
   Keyframe,
   ShapeDefinition,
-} from "../../application/animation/file1-types";
+} from "../../animation/file1/types";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
 import { showCompositionVectors } from "./programs/showCompositionVectors";

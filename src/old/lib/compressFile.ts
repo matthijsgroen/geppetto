@@ -4,7 +4,7 @@ import {
   renameLayer,
   renameVector,
 } from "./definitionHelpers";
-import { ImageDefinition } from "../../application/animation/file1-types";
+import { ImageDefinition } from "../../animation/file1/types";
 
 const NAME_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 

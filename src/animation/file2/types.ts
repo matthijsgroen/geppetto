@@ -1,4 +1,4 @@
-import { Vec2 } from "../types";
+import { Vec2 } from "../../types";
 
 export type NodeType = "layerFolder" | "layer" | "mutation";
 export type TreeNode<Type extends string> = {

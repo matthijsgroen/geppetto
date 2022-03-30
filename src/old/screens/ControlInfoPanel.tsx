@@ -6,7 +6,7 @@ import { updateValue } from "../lib/definitionHelpers";
 import {
   ControlDefinition,
   ImageDefinition,
-} from "../../application/animation/file1-types";
+} from "../../animation/file1/types";
 import { isControlDefinition, visit } from "../lib/visit";
 
 interface ControlInfoPanelProps {

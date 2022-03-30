@@ -1,5 +1,5 @@
-import { Vec2 } from "../../../application/types";
-import { ShapeDefinition } from "../../../application/animation/file1-types";
+import { Vec2 } from "../../../types";
+import { ShapeDefinition } from "../../../animation/file1/types";
 import { createProgram, WebGLRenderer } from "../../lib/webgl";
 import { flattenShapes } from "./utils";
 

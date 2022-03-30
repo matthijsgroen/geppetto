@@ -1,9 +1,6 @@
 import Delaunator from "delaunator";
-import { Vec2, Vec3, Vec4 } from "../../application/types";
-import {
-  Keyframe,
-  MutationVector,
-} from "../../application/animation/file1-types";
+import { Vec2, Vec3, Vec4 } from "../../types";
+import { Keyframe, MutationVector } from "../../animation/file1/types";
 
 export const verticesFromPoints = (points: number[][]): number[] =>
   filteredTriangles(points).reduce(

@@ -15,7 +15,7 @@ import {
   ControlValues,
   ImageDefinition,
   PlayStatus,
-} from "../../application/animation/file1-types";
+} from "../../animation/file1/types";
 import ScreenLayout from "../templates/ScreenLayout";
 import { State } from "../components/types";
 

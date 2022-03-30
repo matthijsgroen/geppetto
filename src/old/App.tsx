@@ -7,11 +7,8 @@ import Layers from "./screens/Layers";
 import Composition from "./screens/Composition";
 import Animation from "./screens/Animation";
 
-import {
-  ImageDefinition,
-  ShapeDefinition,
-} from "../application/animation/file1-types";
-import { newFile } from "../application/animation/file1";
+import { ImageDefinition, ShapeDefinition } from "../animation/file1/types";
+import { newFile } from "../animation/file1/new";
 import { updateVersionNumber } from "./lib/definitionHelpers";
 import { compressFile } from "./lib/compressFile";
 

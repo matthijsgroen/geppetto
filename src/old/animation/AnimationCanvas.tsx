@@ -4,7 +4,7 @@ import {
   ControlValues,
   ImageDefinition,
   PlayStatus,
-} from "../../application/animation/file1-types";
+} from "../../animation/file1/types";
 import WebGLCanvas from "./WebGLCanvas";
 import {
   AnimationControls,

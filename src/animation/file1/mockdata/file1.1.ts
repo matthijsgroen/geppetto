@@ -1,4 +1,4 @@
-import { ImageDefinition } from "../file1-types";
+import { ImageDefinition } from "../types";
 
 export const v1Format: ImageDefinition = {
   version: "1.1",

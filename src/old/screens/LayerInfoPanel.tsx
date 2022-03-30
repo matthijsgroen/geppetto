@@ -2,10 +2,7 @@ import React, { Dispatch, SetStateAction } from "react";
 import Menu from "../components/Menu";
 import Vec2InputControl from "../components/Vec2InputControl";
 import { updateSpriteData } from "../lib/definitionHelpers";
-import {
-  ImageDefinition,
-  ShapeDefinition,
-} from "../../application/animation/file1-types";
+import { ImageDefinition, ShapeDefinition } from "../../animation/file1/types";
 
 interface LayerInfoPanelProps {
   shapeSelected: ShapeDefinition;

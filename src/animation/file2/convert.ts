@@ -1,29 +1,10 @@
-import { AnimationFrame, ImageDefinition, MutationVector } from "./file1-types";
-import { FrameAction, GeppettoImage, NodeType, TreeNode } from "./file2-types";
-
-export const newFile = (): GeppettoImage => ({
-  version: "2.0",
-  metadata: {
-    width: 2048,
-    height: 1536,
-    zoom: 1.0,
-    pan: [0, 0],
-  },
-  layerHierarchy: [],
-  layerFolders: {},
-  layers: {},
-  mutations: {},
-
-  controlHierarchy: [],
-  controlFolders: {},
-  controls: {},
-  defaultFrame: {},
-  controlValues: {},
-
-  animationHierarchy: [],
-  animationFolders: {},
-  animations: {},
-});
+import {
+  AnimationFrame,
+  ImageDefinition,
+  MutationVector,
+} from "../file1/types";
+import { newFile } from "./new";
+import { FrameAction, GeppettoImage, NodeType, TreeNode } from "./types";
 
 const populateMutations = (
   mutations: MutationVector[],

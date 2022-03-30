@@ -1,9 +1,9 @@
-import { Vec4 } from "../../../application/types";
+import { Vec4 } from "../../../types";
 import {
   MutationVector,
   MutationVectorTypes,
   ShapeDefinition,
-} from "../../../application/animation/file1-types";
+} from "../../../animation/file1/types";
 import {
   isShapeDefinition,
   isMutationVector,
