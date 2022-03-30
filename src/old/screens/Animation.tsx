@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import AnimationCanvas from "../animation/AnimationCanvas";
-import { ControlStyle } from "../components/Control";
+import { ControlStyle } from "../components/Toolbar";
 import LayerMouseControl from "../components/LayerMouseControl";
 import Menu from "../components/Menu";
 import NumberInputControl from "../components/NumberInputControl";

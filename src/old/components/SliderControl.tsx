@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Control, ControlLabel, ControlStyle } from "./Control";
+import { Control, ControlLabel } from "./Control";
+import { ControlStyle } from "./Toolbar";
 
 const Slider = styled.input.attrs({ type: "range" })`
   width: 100px;

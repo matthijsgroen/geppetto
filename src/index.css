@@ -4,13 +4,14 @@ body,
   margin: 0;
   width: 100%;
   height: 100%;
-  background: black;
+  background: var(--colors-background);
   font: caption;
   font-size: 14px;
   user-select: none;
 }
 
-:root {
+:root,
+.dark-theme {
   --colors-background-destructive: #911;
   --colors-background-secondary: #444;
   --colors-background-selected: #666;
@@ -36,4 +37,17 @@ body,
     --colors-text-destructive: #eee;
     --colors-text: #333;
   }
+}
+
+.light-theme {
+  --colors-background-destructive: #911;
+  --colors-background-secondary: #ddd;
+  --colors-background-selected: #bbe;
+  --colors-background: #eee;
+  --colors-item-container-background: #ccc;
+  --colors-item-selected: #bbe;
+  --colors-item-special: #366;
+  --colors-text-selected: black;
+  --colors-text-destructive: #eee;
+  --colors-text: #333;
 }
