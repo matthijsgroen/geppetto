@@ -13,3 +13,4 @@ export const ToolBar = styled.div`
     margin-left: 0.25rem;
   }
 `;
+ToolBar.displayName = "ToolBar";

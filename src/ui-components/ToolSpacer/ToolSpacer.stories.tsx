@@ -2,19 +2,19 @@ import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { ToolBar } from "../ToolBar/ToolBar";
 import { Icon } from "../Icon/Icon";
 import { ToolButton } from "../ToolButton/ToolButton";
-import { ToolSeparator } from "./ToolSeparator";
+import { ToolSpacer } from "./ToolSpacer";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "Components/ToolSeparator",
-  component: ToolSeparator,
-} as ComponentMeta<typeof ToolSeparator>;
+  title: "Components/ToolSpacer",
+  component: ToolSpacer,
+} as ComponentMeta<typeof ToolSpacer>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ToolSeparator> = () => (
+const Template: ComponentStory<typeof ToolSpacer> = () => (
   <ToolBar>
     <ToolButton icon={<Icon>💡</Icon>} />
-    <ToolSeparator />
+    <ToolSpacer />
     <ToolButton icon={<Icon>🚨</Icon>} />
   </ToolBar>
 );
