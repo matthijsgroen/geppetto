@@ -4,9 +4,9 @@ import { Control, ControlLabel } from "./Control";
 
 export const TextInput = styled.input.attrs({ type: "text", size: 20 })`
   width: 15em;
-  color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.itemContainerBackground};
-  border: 1px solid ${({ theme }) => theme.colors.backgroundSecondary};
+  color: ${({ theme }) => theme.colors.textDefault};
+  background-color: ${({ theme }) => theme.colors.controlDefault};
+  border: 1px solid ${({ theme }) => theme.colors.controlEdge};
   flex: 0;
 `;
 

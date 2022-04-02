@@ -4,7 +4,7 @@ import { Control, ControlLabel } from "./Control";
 
 export const ToggleInput = styled.input.attrs({ type: "checkbox" })`
   text-align: right;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textDefault};
   flex: 0;
 `;
 

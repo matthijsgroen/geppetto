@@ -5,16 +5,16 @@ export { ControlStyle } from "./Toolbar";
 export const Control = styled.div<{ controlStyle?: ControlStyle }>`
   color: ${({ theme, controlStyle }) =>
     controlStyle === ControlStyle.Selected
-      ? theme.colors.textSelected
-      : theme.colors.text};
+      ? theme.colors.textActive
+      : theme.colors.textDefault};
   background-color: ${({ theme, controlStyle }) =>
     controlStyle === ControlStyle.Selected
-      ? theme.colors.backgroundSelected
+      ? theme.colors.controlActive
       : controlStyle === ControlStyle.Highlighted
-      ? theme.colors.background
-      : theme.colors.itemContainerBackground};
+      ? theme.colors.controlHighlight
+      : theme.colors.controlDefault};
   padding: 0.5rem 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.text};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.textDefault};
   display: flex;
 `;
 

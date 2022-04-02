@@ -42,19 +42,19 @@ const MenuContainer = styled.div<{
 `;
 
 const MenuHeader = styled.div`
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textDefault};
   background-color: ${({ theme }) => theme.colors.background};
   font-size: 1rem;
   line-height: 1.5rem;
   font-weight: normal;
   margin: 0;
   padding: 0 1rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.text};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.textDefault};
   display: flex;
 `;
 
 const MenuTitle = styled.h1`
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textDefault};
   pointer-events: none;
   cursor: default;
   font-size: 1rem;
@@ -70,7 +70,7 @@ const CollapseButton = styled.button.attrs({ type: "button" })<{
 }>`
   background-color: ${({ theme }) => theme.colors.background};
   border-radius: 50%;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textDefault};
   font-size: 16px;
   outline: none;
   border: none;

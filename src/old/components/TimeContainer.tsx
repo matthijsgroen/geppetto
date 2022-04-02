@@ -45,19 +45,19 @@ const TimeLineContainer = styled.div`
   width: min-content;
   min-width: 100%;
   grid-template-columns: 250px 1fr;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textDefault};
 `;
 
 const Label = styled.div<{ _isActive?: boolean }>`
   border-right: 1px solid
     ${({ theme, _isActive }) =>
-      _isActive ? theme.colors.textSelected : theme.colors.backgroundSecondary};
+      _isActive ? theme.colors.textActive : theme.colors.controlActive};
   background-color: ${({ theme, _isActive }) =>
     _isActive
-      ? theme.colors.backgroundSelected
+      ? theme.colors.controlActive
       : theme.colors.itemContainerBackground};
   color: ${({ theme, _isActive }) =>
-    _isActive ? theme.colors.textSelected : theme.colors.text};
+    _isActive ? theme.colors.textActive : theme.colors.textDefault};
   line-height: 1.5rem;
   position: sticky;
   left: 0px;
@@ -135,14 +135,14 @@ const FrameDot = styled.div<{
   background-color: ${({ theme, selected, _hasEvent }) =>
     _hasEvent
       ? selected
-        ? theme.colors.itemSelected
-        : theme.colors.itemSpecial
+        ? theme.colors.controlActive
+        : theme.colors.controlDefault
       : selected
-      ? theme.colors.backgroundSelected
+      ? theme.colors.controlActive
       : theme.colors.backgroundSecondary};
   border: 1px solid
     ${({ theme, selected }) =>
-      selected ? theme.colors.textSelected : theme.colors.backgroundSelected};
+      selected ? theme.colors.textActive : theme.colors.controlActive};
   position: absolute;
   top: 0px;
   left: ${(props) => props._pos * 100}%;
@@ -165,7 +165,7 @@ const TimeLinePlayer = styled.div<{
 
   ::before {
     height: 1.4rem;
-    border-left: 2px solid ${({ theme }) => theme.colors.backgroundSelected};
+    border-left: 2px solid ${({ theme }) => theme.colors.controlActive};
     animation-name: ${TimeLoopAnimation};
     animation-duration: ${({ duration }) => duration}ms;
     animation-play-state: running;

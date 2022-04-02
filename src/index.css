@@ -13,34 +13,53 @@ body,
 :root,
 .dark-theme {
   --colors-background-destructive: #911;
-  --colors-background-secondary: #444;
-  --colors-background-selected: #666;
-  --colors-background: #333;
-  --colors-item-container-background: #111;
-  --colors-item-selected: #669;
-  --colors-item-special: #336;
-  --colors-text-selected: white;
   --colors-text-destructive: white;
-  --colors-text: #999;
+
+  /* --colors-background-selected: #666; */
+  --colors-background: #333;
+  --colors-background-secondary: #444;
+
+  /* --colors-item-container-background: #111; */
+  /* --colors-item-selected: #669; */
+  /* --colors-item-special: #336; */
+  /* --colors-text-selected: white; */
+
+  --colors-control-default: #555;
+  --colors-control-edge: #eeeeee4d;
+  --colors-control-highlight: #464;
+  --colors-control-active: #484;
+  --colors-control-focus: #4a4;
+
+  --colors-text-default: #eee;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     --colors-background-destructive: #911;
-    --colors-background-secondary: #ddd;
-    --colors-background-selected: #bbe;
-    --colors-background: #eee;
+    --colors-text-destructive: #eee;
+
+    /* --colors-background-selected: #bbe; */
+    /* --colors-background: #eee;
     --colors-item-container-background: #ccc;
     --colors-item-selected: #bbe;
     --colors-item-special: #366;
     --colors-text-selected: black;
-    --colors-text-destructive: #eee;
-    --colors-text: #333;
+    --colors-text: #333; */
+
+  --colors-background: #eee;
+  --colors-background-secondary: #ddd;
+
+  --colors-control-default: #eee;
+  --colors-control-edge: #33333334;
+  --colors-control-active: #bbe;
+  --colors-control-focus: #66e;
+
+  --colors-text-default: #333;
   }
 }
 
 .light-theme {
-  --colors-background-destructive: #911;
+  /* --colors-background-destructive: #911;
   --colors-background-secondary: #ddd;
   --colors-background-selected: #bbe;
   --colors-background: #eee;
@@ -49,5 +68,14 @@ body,
   --colors-item-special: #366;
   --colors-text-selected: black;
   --colors-text-destructive: #eee;
-  --colors-text: #333;
+  */
+  --colors-background: #eee;
+
+  --colors-control-default: #eee;
+  --colors-control-edge: #33333334;
+  --colors-control-highlight: #cce;
+  --colors-control-active: #bbe;
+  --colors-control-focus: #66e;
+
+  --colors-text-default: #333;
 }

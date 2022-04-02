@@ -18,19 +18,21 @@ const Icon = styled.button.attrs({ type: "button" })<IconProps>`
   height: 42px;
   display: flex;
   color: ${(props) =>
-    props.isActive ? props.theme.colors.textSelected : props.theme.colors.text};
+    props.isActive
+      ? props.theme.colors.textActive
+      : props.theme.colors.textDefault};
   font-size: 1.5rem;
   background-color: ${(props) =>
     props.isActive
-      ? props.theme.colors.backgroundSelected
-      : props.theme.colors.backgroundSecondary};
+      ? props.theme.colors.controlActive
+      : props.theme.colors.controlDefault};
   align-items: center;
   justify-content: center;
   border: none;
   border-left: 2px solid
     ${(props) =>
       props.isActive
-        ? props.theme.colors.textSelected
+        ? props.theme.colors.textActive
         : props.theme.colors.backgroundSecondary};
   outline: none;
   text-shadow: #000 0px 0px 1px;

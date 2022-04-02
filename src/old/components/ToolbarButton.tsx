@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { Icon } from "./Icon";
+import { Icon } from "../../ui-components/Icon/Icon";
 
 interface ToolbarButtonProps {
   icon: string;
@@ -21,7 +21,9 @@ interface IconProps {
 const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
   display: flex;
   color: ${(props) =>
-    props.isActive ? props.theme.colors.textSelected : props.theme.colors.text};
+    props.isActive
+      ? props.theme.colors.textActive
+      : props.theme.colors.textDefault};
   opacity: ${(props) => (props.isDisabled ? "0.2" : "1")};
   font-size: ${(props) => (props.size === "small" ? "1rem" : "1.5rem")};
   ${(props) =>
@@ -35,16 +37,14 @@ const IconButton = styled.button.attrs({ type: "button" })<IconProps>`
     props.isDisabled
       ? "transparent"
       : props.isActive
-      ? props.theme.colors.backgroundSelected
-      : props.theme.colors.backgroundSecondary};
+      ? props.theme.colors.controlActive
+      : props.theme.colors.controlDefault};
   align-items: center;
   justify-content: center;
   border: none;
   border-left: 2px solid
     ${(props) =>
-      props.isDisabled
-        ? "transparent"
-        : props.theme.colors.backgroundSecondary};
+      props.isDisabled ? "transparent" : props.theme.colors.controlActive};
   outline: none;
 `;
 

@@ -3,6 +3,7 @@ import { defaultTheme } from "../src/application/theme/default";
 import "../src/index.css";
 
 export const parameters = {
+  backgrounds: { disable: true },
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {
     matchers: {

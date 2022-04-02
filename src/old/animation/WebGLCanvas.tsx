@@ -25,7 +25,7 @@ const FPSIndicator = styled.div`
   position: absolute;
   top: 0;
   right: 10px;
-  color: ${({ theme }) => theme.colors.text};
+  color: ${({ theme }) => theme.colors.textDefault};
 `;
 
 const startWebGL = async (

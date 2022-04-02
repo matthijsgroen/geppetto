@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Icon } from "./Icon";
+import { Icon } from "../../ui-components/Icon/Icon";
 import RenameableLabel from "./RenameableLabel";
 
 interface MenuItemProps {
@@ -22,7 +22,7 @@ const Item = styled.div<{
   renaming: boolean;
 }>`
   background: ${({ selected, theme }) =>
-    selected ? theme.colors.itemSelected : "none"};
+    selected ? theme.colors.controlActive : "none"};
   box-sizing: border-box;
   min-width: 100%;
   width: max-content;
@@ -31,7 +31,7 @@ const Item = styled.div<{
   padding-top: 0.1rem;
   padding-bottom: 0.1rem;
   color: ${({ selected, theme }) =>
-    selected ? theme.colors.textSelected : theme.colors.text};
+    selected ? theme.colors.textActive : theme.colors.textDefault};
   opacity: ${({ selected, dimmed }) => (selected ? 1 : dimmed ? 0.3 : 1.0)};
   font: menu;
   font-size: 1rem;

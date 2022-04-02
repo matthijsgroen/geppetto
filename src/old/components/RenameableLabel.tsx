@@ -6,13 +6,13 @@ const RenameInput = styled.input.attrs({
   autoFocus: true,
 })`
   background: ${({ theme }) => theme.colors.backgroundSecondary};
-  color: ${({ theme }) => theme.colors.textSelected};
+  color: ${({ theme }) => theme.colors.textActive};
   font-size: 1rem;
   font-weight: normal;
   width: max-content;
   padding: 0.2rem;
   outline: none;
-  border: 1px solid ${({ theme }) => theme.colors.textSelected};
+  border: 1px solid ${({ theme }) => theme.colors.textActive};
 `;
 
 interface RenameableLabelProps {

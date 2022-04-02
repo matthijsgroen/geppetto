@@ -5,9 +5,9 @@ import { Control, ControlLabel } from "./Control";
 export const NumberInput = styled.input.attrs({ type: "number", size: 6 })`
   text-align: right;
   width: 5em;
-  color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.itemContainerBackground};
-  border: 1px solid ${({ theme }) => theme.colors.backgroundSecondary};
+  color: ${({ theme }) => theme.colors.textDefault};
+  background-color: ${({ theme }) => theme.colors.controlDefault};
+  border: 1px solid ${({ theme }) => theme.colors.controlEdge};
   flex: 0;
 `;
 

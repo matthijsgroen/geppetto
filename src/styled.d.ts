@@ -5,16 +5,27 @@ import "styled-components";
 declare module "styled-components" {
   export interface DefaultTheme {
     colors: {
+      backgroundDestructive: string;
+      textDestructive: string;
+
       background: string;
       backgroundSecondary: string;
-      backgroundDestructive: string;
+
       itemContainerBackground: string;
-      text: string;
-      textDestructive: string;
-      backgroundSelected: string;
-      textSelected: string;
-      itemSelected: string;
-      itemSpecial: string;
+      // text: string;
+      // backgroundSelected: string;
+      // itemSelected: string;
+      // itemSpecial: string;
+
+      textDefault: string;
+      textActive: string;
+      textFocus: string;
+
+      controlDefault: string;
+      controlEdge: string;
+      controlHighlight: string;
+      controlActive: string;
+      controlFocus: string;
     };
   }
 }

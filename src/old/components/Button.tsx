@@ -12,7 +12,7 @@ export default styled.button.attrs({
   color: ${({ theme, buttonType }) =>
     buttonType === ButtonType.Destructive
       ? theme.colors.textDestructive
-      : theme.colors.textSelected};
+      : theme.colors.textActive};
   background-color: ${({ theme, buttonType }) =>
     buttonType === ButtonType.Destructive
       ? theme.colors.backgroundDestructive

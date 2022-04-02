@@ -8,8 +8,8 @@ export enum ControlStyle {
 
 export const Toolbar = styled.div`
   flex: 0;
-  color: ${({ theme }) => theme.colors.text};
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  color: ${({ theme }) => theme.colors.textDefault};
+  background-color: ${({ theme }) => theme.colors.controlDefault};
   font-weight: normal;
   display: flex;
   flex-direction: row;
@@ -25,8 +25,8 @@ export const Toolbar = styled.div`
 export const ToolbarLabel = styled.p<{ controlStyle?: ControlStyle }>`
   color: ${({ theme, controlStyle }) =>
     controlStyle === ControlStyle.Selected
-      ? theme.colors.textSelected
-      : theme.colors.text};
+      ? theme.colors.textActive
+      : theme.colors.textDefault};
   padding: 0.75rem 1rem;
   margin: 0;
   overflow: hidden;

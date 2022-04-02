@@ -1,15 +1,15 @@
-import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-
+import { expect } from "@storybook/jest";
+import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { ToolButton } from "./ToolButton";
+import { Icon } from "../Icon/Icon";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
-  title: "Elements/ToolButton",
+  title: "Components/ToolButton",
   component: ToolButton,
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
-    backgroundColor: { control: "color" },
+    icon: { control: false },
   },
 } as ComponentMeta<typeof ToolButton>;
 
@@ -18,23 +18,38 @@ const Template: ComponentStory<typeof ToolButton> = (args) => (
   <ToolButton {...args} />
 );
 
-export const Primary = Template.bind({});
-// More on args: https://storybook.js.org/docs/react/writing-stories/args
-Primary.args = {
-  label: "Button",
+export const Default = Template.bind({});
+Default.args = {
+  icon: <Icon>💡</Icon>,
+};
+Default.play = async ({ args, canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await userEvent.click(canvas.getByRole("button"));
+  await waitFor(() => expect(args.onClick).toHaveBeenCalled());
 };
 
-export const Secondary = Template.bind({});
-Secondary.args = {
-  label: "Button",
+export const Active = Template.bind({});
+Active.args = {
+  icon: <Icon>💡</Icon>,
+  active: true,
 };
 
-export const Large = Template.bind({});
-Large.args = {
-  label: "Button",
+export const Disabled = Template.bind({});
+Disabled.args = {
+  icon: <Icon>💡</Icon>,
+  disabled: true,
+};
+Disabled.play = async ({ args, canvasElement }) => {
+  const canvas = within(canvasElement);
+
+  await userEvent.click(canvas.getByRole("button"));
+  await waitFor(() => expect(args.onClick).not.toHaveBeenCalled());
 };
 
-export const Small = Template.bind({});
-Small.args = {
-  label: "Button",
+export const ActiveDisabled = Template.bind({});
+ActiveDisabled.args = {
+  icon: <Icon>💡</Icon>,
+  disabled: true,
+  active: true,
 };
