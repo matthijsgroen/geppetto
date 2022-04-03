@@ -67,12 +67,7 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
       // modify the size based on the drag delta
       const delta = horizontal ? data.deltaX : data.deltaY;
       setSize((previousSize) =>
-        previousSize === null
-          ? null
-          : Math.max(
-              minSize,
-              Math.min(previousSize - delta * factor, maxSize || 4000)
-            )
+        previousSize === null ? null : previousSize - delta * factor
       );
     },
     [direction]
@@ -97,12 +92,13 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
     [styles.resizeContentVertical]: !horizontal,
   });
 
+  const clipSize = Math.max(minSize, Math.min(size || 0, maxSize || Infinity));
   const contentStyle =
     size === null
       ? {}
       : horizontal
-      ? { width: size + "px" }
-      : { height: size + "px" };
+      ? { width: clipSize + "px" }
+      : { height: clipSize + "px" };
 
   const content = [
     <div
