@@ -1,15 +1,17 @@
 import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { Icon } from "./Icon";
+import { Icon as IconElement } from "./Icon";
 
 export default {
   title: "Elements/Icon",
-  component: Icon,
-} as ComponentMeta<typeof Icon>;
+  component: IconElement,
+} as ComponentMeta<typeof IconElement>;
 
-const Template: ComponentStory<typeof Icon> = (args) => <Icon {...args} />;
+const Template: ComponentStory<typeof IconElement> = (args) => (
+  <IconElement {...args} />
+);
 
-export const Normal = Template.bind({});
-Normal.args = {
+export const Icon = Template.bind({});
+Icon.args = {
   children: "️💡",
 };

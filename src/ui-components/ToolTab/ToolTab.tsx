@@ -5,6 +5,7 @@ type ToolTabProps = {
   icon?: React.ReactChild;
   active?: boolean;
   disabled?: boolean;
+  tooltip?: string;
   onClick?: () => void;
 };
 
@@ -13,6 +14,7 @@ const TabButton = styled.button.attrs({ type: "button" })<{
 }>`
   font: caption;
   display: inline-block;
+  background-color: ${(props) => props.theme.colors.controlDefault};
   color: ${(props) =>
     props.isActive
       ? props.theme.colors.textActive
@@ -46,9 +48,15 @@ export const ToolTab: React.VFC<ToolTabProps> = ({
   label,
   disabled,
   active,
+  tooltip,
   onClick,
 }) => (
-  <TabButton onClick={onClick} disabled={disabled} isActive={active}>
+  <TabButton
+    onClick={onClick}
+    disabled={disabled}
+    isActive={active}
+    title={tooltip}
+  >
     {icon} {label}
   </TabButton>
 );

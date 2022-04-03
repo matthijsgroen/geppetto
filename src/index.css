@@ -31,6 +31,8 @@ body,
   --colors-control-focus: #4a4;
 
   --colors-text-default: #eee;
+  --colors-text-active: #5b5;
+
 }
 
 @media (prefers-color-scheme: light) {
@@ -55,6 +57,7 @@ body,
   --colors-control-focus: #66e;
 
   --colors-text-default: #333;
+  --colors-text-active: #669;
   }
 }
 
@@ -78,4 +81,5 @@ body,
   --colors-control-focus: #66e;
 
   --colors-text-default: #333;
+  --colors-text-active: #669;
 }

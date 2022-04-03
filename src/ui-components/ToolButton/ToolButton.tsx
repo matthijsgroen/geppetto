@@ -4,6 +4,7 @@ type ToolButtonProps = {
   icon?: React.ReactChild;
   active?: boolean;
   disabled?: boolean;
+  tooltip?: string;
   onClick?: () => void;
 };
 
@@ -52,6 +53,7 @@ export const ToolButton: React.FC<ToolButtonProps> = ({
   icon,
   active,
   disabled,
+  tooltip,
   onClick,
 }) => (
   <StyledButton
@@ -59,6 +61,7 @@ export const ToolButton: React.FC<ToolButtonProps> = ({
     size={"medium"}
     isActive={active}
     disabled={disabled}
+    title={tooltip}
   >
     {icon}
   </StyledButton>
