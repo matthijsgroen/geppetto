@@ -20,8 +20,9 @@ export enum ResizeDirection {
 
 type ResizePanelProps = {
   direction: ResizeDirection;
+  minSize?: number;
+  maxSize?: number;
   style?: CSSProperties;
-  handleClass?: string;
   borderClass?: string;
   containerClass?: string;
 };
@@ -33,9 +34,10 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
   children,
   direction,
   style,
-  handleClass,
   borderClass,
   containerClass,
+  minSize = 10,
+  maxSize,
 }) => {
   const [size, setSize] = useState<number | null>(null);
 
@@ -52,8 +54,6 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
       .children[0] as HTMLElement).getBoundingClientRect();
     const initialSize = horizontal ? actualContent.width : actualContent.height;
     setSize(initialSize);
-
-    // this.validateSize();
   }, []);
 
   const onDrag = useCallback(
@@ -69,28 +69,20 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
       setSize((previousSize) =>
         previousSize === null
           ? null
-          : Math.max(10, previousSize - delta * factor)
+          : Math.max(
+              minSize,
+              Math.min(previousSize - delta * factor, maxSize || 4000)
+            )
       );
     },
     [direction]
   );
-
-  //   const onDragEnd = (e, ui) => {
-  // this.validateSize();
-  //   };
 
   const containerStyle = { ...style };
   if (size !== 0) {
     containerStyle.flexGrow = 0;
     containerStyle[horizontal ? "width" : "height"] = "auto";
   }
-
-  const handleClasses =
-    handleClass ||
-    className({
-      [styles.resizeHandleHorizontal]: horizontal,
-      [styles.resizeHandleVertical]: !horizontal,
-    });
 
   const resizeBarClasses =
     borderClass ||
@@ -125,11 +117,7 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
 
   const handle = (
     <DraggableCore key="handle" onDrag={onDrag}>
-      <div className={resizeBarClasses}>
-        <div className={handleClasses}>
-          <span />
-        </div>
-      </div>
+      <div className={resizeBarClasses}></div>
     </DraggableCore>
   );
 

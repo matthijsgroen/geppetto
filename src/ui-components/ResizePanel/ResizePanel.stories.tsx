@@ -25,14 +25,23 @@ export default {
   },
   args: {
     direction: ResizeDirection.East,
+    minSize: 40,
+    maxSize: 400,
   },
 } as ComponentMeta<typeof ResizePanel>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof ResizePanel> = (args) => (
   <div className={styles.storyPanel}>
-    <ResizePanel direction={args.direction}>
-      <div>
+    <ResizePanel {...args}>
+      <div
+        style={{
+          padding: "10px",
+          backgroundColor: "var(--colors-control-default)",
+          color: "var(--colors-text-default)",
+          width: "100%",
+        }}
+      >
         <p>Resizable panel</p>
       </div>
     </ResizePanel>
