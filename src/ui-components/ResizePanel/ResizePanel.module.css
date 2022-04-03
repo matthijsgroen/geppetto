@@ -1,0 +1,117 @@
+.storyPanel {
+  height: 10em;
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.content {
+  flex-grow: 2;
+  background: gray;
+}
+
+.container {
+  display: flex;
+  align-items: stretch;
+}
+.containerHorizontal {
+  flex-flow: row nowrap;
+}
+.containerVertical {
+  flex-flow: column nowrap;
+}
+
+.resizeContent {
+  flex-grow: 1;
+  align-self: stretch;
+  display: flex;
+}
+.resizeContentVertical {
+  flex-flow: column;
+}
+.resizeContentHorizontal {
+  flex-flow: row;
+}
+
+.resizeBarHorizontal {
+  cursor: ew-resize;
+  width: 20px;
+  margin-left: -10px;
+  margin-right: -10px;
+  background: transparent;
+  display: flex;
+  z-index: 10;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.resizeBarVertical {
+  cursor: ns-resize;
+  height: 20px;
+  margin-top: -10px;
+  margin-bottom: -10px;
+  background: transparent;
+  display: flex;
+  z-index: 10;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+.resizeHandleHorizontal {
+  cursor: ew-resize;
+  width: 12px;
+  height: 50px;
+  background: white;
+  border: 2px solid lightgray;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 10;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.resizeHandleVertical {
+  cursor: ns-resize;
+  width: 50px;
+  height: 12px;
+  border-radius: 8px;
+  background: white;
+  border: 2px solid lightgray;
+  z-index: 10;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.resizeHandleHorizontal > span,
+.resizeHandleVertical > span {
+  display: inline-block;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: sans-serif;
+  letter-spacing: 1px;
+  color: #b3b3b3;
+  text-shadow: 1px 0 1px rgb(90, 90, 90);
+}
+.resizeHandleHorizontal > span {
+  line-height: 4px;
+}
+.resizeHandleVertical > span {
+  text-align: center;
+  line-height: 12px;
+  margin-top: -3px;
+}
+.resizeHandleHorizontal > span::after {
+  content: ". . . . . . . .";
+}
+.resizeHandleVertical > span::after {
+  content: "......";
+}
