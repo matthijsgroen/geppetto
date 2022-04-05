@@ -1,7 +1,9 @@
 import styled, { css } from "styled-components";
+import { Label } from "../Label/Label";
 
 type ToolButtonProps = {
   icon?: React.ReactChild;
+  label?: string;
   active?: boolean;
   disabled?: boolean;
   tooltip?: string;
@@ -26,7 +28,7 @@ const StyledButton = styled.button.attrs({ type: "button" })<StyledButtonProps>`
     props.size === "medium"
       ? css`
           height: 32px;
-          width: 32px;
+          min-width: 32px;
         `
       : ""}
   background-color: ${(props) =>
@@ -36,6 +38,7 @@ const StyledButton = styled.button.attrs({ type: "button" })<StyledButtonProps>`
   align-items: center;
   border: none;
   border-radius: 10px;
+  white-space: nowrap;
   outline: 2px solid transparent;
 
   &:disabled {
@@ -51,9 +54,10 @@ const StyledButton = styled.button.attrs({ type: "button" })<StyledButtonProps>`
 
 export const ToolButton: React.FC<ToolButtonProps> = ({
   icon,
-  active,
+  active = false,
   disabled,
   tooltip,
+  label,
   onClick,
 }) => (
   <StyledButton
@@ -63,6 +67,6 @@ export const ToolButton: React.FC<ToolButtonProps> = ({
     disabled={disabled}
     title={tooltip}
   >
-    {icon}
+    {icon} {label && <Label active={active}>{label}</Label>}
   </StyledButton>
 );

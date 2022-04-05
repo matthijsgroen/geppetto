@@ -1,0 +1,9 @@
+.label {
+  font: caption;
+  padding: 0 0.25em;
+  color: var(--colors-text-default);
+}
+
+.active {
+  color: var(--colors-text-active);
+}

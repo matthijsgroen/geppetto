@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Label } from "../Label/Label";
 
 type ToolTabProps = {
   label?: React.ReactChild;
@@ -21,7 +22,8 @@ const TabButton = styled.button.attrs({ type: "button" })<{
       : props.theme.colors.textDefault};
   font-size: 1rem;
 
-  height: 42px;
+  height: 40px;
+  margin-top: 2px;
 
   align-items: center;
   border: none;
@@ -31,6 +33,7 @@ const TabButton = styled.button.attrs({ type: "button" })<{
 
   outline: 2px solid transparent;
   padding: 0 1rem;
+  white-space: nowrap;
 
   &:disabled {
     opacity: 0.5;
@@ -57,6 +60,6 @@ export const ToolTab: React.VFC<ToolTabProps> = ({
     isActive={active}
     title={tooltip}
   >
-    {icon} {label}
+    {icon} {label && <Label active={active}>{label}</Label>}
   </TabButton>
 );

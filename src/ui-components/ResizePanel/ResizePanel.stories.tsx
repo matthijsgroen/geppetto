@@ -32,21 +32,33 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof ResizePanel> = (args) => (
-  <div className={styles.storyPanel}>
+  <div
+    style={{
+      height: "10em",
+      display: "flex",
+      flexFlow: "row nowrap",
+    }}
+  >
     <ResizePanel {...args}>
       <div
         style={{
           padding: "10px",
           backgroundColor: "var(--colors-control-default)",
           color: "var(--colors-text-default)",
-          width: "100%",
+          width: "max-content",
         }}
       >
         <p>Resizable panel</p>
       </div>
     </ResizePanel>
     <div
-      className={className({ [styles.panel]: true, [styles.content]: true })}
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexGrow: 2,
+        background: "gray",
+      }}
     >
       <p>Other content</p>
     </div>
