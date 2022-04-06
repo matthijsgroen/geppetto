@@ -3,11 +3,9 @@ import styled from "styled-components";
 
 const ToolBarInner = styled.div`
   flex: 0;
-  background-color: ${({ theme }) => theme.colors.controlDefault};
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 3rem;
   min-width: fit-content;
 
   padding: 0 0.2rem;
@@ -17,6 +15,9 @@ const ToolBarInner = styled.div`
 `;
 
 const ToolBarOuter = styled.div`
+  background-color: ${({ theme }) => theme.colors.controlDefault};
+  height: 3rem;
+
   overflow-x: scroll;
   overflow-y: visible;
   -ms-overflow-style: none; /* IE and Edge */

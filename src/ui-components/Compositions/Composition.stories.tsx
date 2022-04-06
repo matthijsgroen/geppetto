@@ -56,11 +56,9 @@ const Template: Story = () => (
       <ResizePanel direction={ResizeDirection.East}>
         <div
           style={{
-            padding: "10px",
-            backgroundColor: "var(--colors-control-default)",
-            color: "var(--colors-text-default)",
-            width: "calc(100% - 20px)",
-            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
           }}
         >
           <ToolBar>
@@ -87,7 +85,17 @@ const Template: Story = () => (
               tooltip="Move item down"
             />
           </ToolBar>
-          <p>Resizable panel, Needs treeview</p>
+          <div
+            style={{
+              padding: "10px",
+              backgroundColor: "var(--colors-control-default)",
+              color: "var(--colors-text-default)",
+              width: "calc(100% - 20px)",
+              height: "calc(100% - 20px)",
+            }}
+          >
+            <p>Resizable panel, Needs treeview</p>
+          </div>
         </div>
       </ResizePanel>
       <div

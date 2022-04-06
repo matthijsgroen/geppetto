@@ -45,7 +45,7 @@ const Template: ComponentStory<typeof ResizePanel> = (args) => (
           padding: "10px",
           backgroundColor: "var(--colors-control-default)",
           color: "var(--colors-text-default)",
-          width: "max-content",
+          width: "calc(100% - 20px)",
         }}
       >
         <p>Resizable panel</p>

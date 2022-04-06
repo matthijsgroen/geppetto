@@ -21,7 +21,7 @@ export const globalTypes = {
     toolbar: {
       icon: "circlehollow",
       // Array of plain string values or MenuItem shape (see below)
-      items: ["light", "dark"],
+      items: ["light", "dark", "both"],
       // Property that specifies if the name of the item will be displayed
       showName: false,
     },
@@ -29,12 +29,24 @@ export const globalTypes = {
 };
 
 const withThemeProvider = (Story, context) => {
+  const theme = context.globals.theme;
+  if (theme === "both") {
+    return (
+      <ThemeProvider theme={defaultTheme}>
+        <div className="light-theme background">
+          <Story {...context} />
+        </div>
+        <div className="dark-theme background">
+          <Story {...context} />
+        </div>
+      </ThemeProvider>
+    );
+  }
+
   const body = document.getElementsByTagName("body")[0];
 
   body.classList.remove("light-theme", "dark-theme");
-  body.classList.add(
-    context.globals.theme === "light" ? "light-theme" : "dark-theme"
-  );
+  body.classList.add(theme === "light" ? "light-theme" : "dark-theme");
 
   return (
     <ThemeProvider theme={defaultTheme}>

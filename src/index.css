@@ -32,7 +32,6 @@ body,
 
   --colors-text-default: #eee;
   --colors-text-active: #5b5;
-
 }
 
 @media (prefers-color-scheme: light) {
@@ -48,16 +47,16 @@ body,
     --colors-text-selected: black;
     --colors-text: #333; */
 
-  --colors-background: #eee;
-  --colors-background-secondary: #ddd;
+    --colors-background: #eee;
+    --colors-background-secondary: #ddd;
 
-  --colors-control-default: #eee;
-  --colors-control-edge: #33333334;
-  --colors-control-active: #bbe;
-  --colors-control-focus: #66e;
+    --colors-control-default: #eee;
+    --colors-control-edge: #33333334;
+    --colors-control-active: #bbe;
+    --colors-control-focus: #66e;
 
-  --colors-text-default: #333;
-  --colors-text-active: #669;
+    --colors-text-default: #333;
+    --colors-text-active: #669;
   }
 }
 
@@ -82,4 +81,8 @@ body,
 
   --colors-text-default: #333;
   --colors-text-active: #669;
+}
+
+.background {
+  background-color: var(--colors-background);
 }
