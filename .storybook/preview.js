@@ -33,10 +33,10 @@ const withThemeProvider = (Story, context) => {
   if (theme === "both") {
     return (
       <ThemeProvider theme={defaultTheme}>
-        <div className="light-theme background">
+        <div className="light-theme story-background">
           <Story {...context} />
         </div>
-        <div className="dark-theme background">
+        <div className="dark-theme story-background">
           <Story {...context} />
         </div>
       </ThemeProvider>

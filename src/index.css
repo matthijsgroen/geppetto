@@ -83,6 +83,6 @@ body,
   --colors-text-active: #669;
 }
 
-.background {
+.story-background {
   background-color: var(--colors-background);
 }

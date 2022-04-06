@@ -7,6 +7,7 @@ const ToolBarInner = styled.div`
   flex-direction: row;
   align-items: center;
   min-width: fit-content;
+  height: 3rem;
 
   padding: 0 0.2rem;
   > * + * {
