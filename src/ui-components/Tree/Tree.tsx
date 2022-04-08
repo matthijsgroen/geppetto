@@ -34,11 +34,11 @@ const renderItem: TreeRenderProps<TreeData>["renderItem"] = ({
   arrow,
 }) => {
   const InteractiveComponent = context.isRenaming ? "div" : "button";
-  const type = context.isRenaming ? undefined : "button";
+  const type: "button" | undefined = context.isRenaming ? undefined : "button";
   // TODO have only root li component create all the classes
   return (
     <li
-      {...(context.itemContainerWithChildrenProps as any)}
+      {...context.itemContainerWithChildrenProps}
       className={cx(
         "rct-tree-item-li",
         item.hasChildren && "rct-tree-item-li-hasChildren",
@@ -50,7 +50,7 @@ const renderItem: TreeRenderProps<TreeData>["renderItem"] = ({
       )}
     >
       <div
-        {...(context.itemContainerWithoutChildrenProps as any)}
+        {...context.itemContainerWithoutChildrenProps}
         style={{ paddingLeft: `${(depth + 1) * renderDepthOffset}px` }}
         className={cx(
           "rct-tree-item-title-container",
@@ -67,8 +67,8 @@ const renderItem: TreeRenderProps<TreeData>["renderItem"] = ({
         {arrow}
         <Icon>{item.data.icon}</Icon>
         <InteractiveComponent
+          {...context.interactiveElementProps}
           type={type}
-          {...(context.interactiveElementProps as any)}
           className={cx(
             "rct-tree-item-button",
             item.hasChildren && "rct-tree-item-button-hasChildren",
