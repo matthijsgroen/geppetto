@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import styled from "styled-components";
 import { Label } from "../Label/Label";
 
@@ -8,6 +9,7 @@ type ToolTabProps = {
   disabled?: boolean;
   tooltip?: string;
   onClick?: () => void;
+  onKeyDown?: () => void;
 };
 
 const TabButton = styled.button.attrs({ type: "button" })<{
@@ -46,20 +48,20 @@ const TabButton = styled.button.attrs({ type: "button" })<{
   }
 `;
 
-export const ToolTab: React.VFC<ToolTabProps> = ({
-  icon,
-  label,
-  disabled,
-  active,
-  tooltip,
-  onClick,
-}) => (
-  <TabButton
-    onClick={onClick}
-    disabled={disabled}
-    isActive={active}
-    title={tooltip}
-  >
-    {icon} {label && <Label active={active}>{label}</Label>}
-  </TabButton>
+export const ToolTab = forwardRef<HTMLButtonElement, ToolTabProps>(
+  (
+    { icon, label, disabled, active, tooltip, onClick, onKeyDown: onKeydown },
+    ref
+  ) => (
+    <TabButton
+      onClick={onClick}
+      onKeyDown={onKeydown}
+      disabled={disabled}
+      isActive={active}
+      title={tooltip}
+      ref={ref}
+    >
+      {icon} {label && <Label active={active}>{label}</Label>}
+    </TabButton>
+  )
 );

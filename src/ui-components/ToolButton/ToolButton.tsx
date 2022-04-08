@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import styled, { css } from "styled-components";
 import { Label } from "../Label/Label";
 
@@ -9,6 +10,7 @@ type ToolButtonProps = {
   tooltip?: string;
   size?: "default" | "small";
   onClick?: () => void;
+  onKeyDown?: () => void;
 };
 
 type StyledButtonProps = {
@@ -56,22 +58,30 @@ const StyledButton = styled.button.attrs({ type: "button" })<StyledButtonProps>`
   }
 `;
 
-export const ToolButton: React.FC<ToolButtonProps> = ({
-  icon,
-  active = false,
-  size = "default",
-  disabled,
-  tooltip,
-  label,
-  onClick,
-}) => (
-  <StyledButton
-    onClick={onClick}
-    size={size}
-    isActive={active}
-    disabled={disabled}
-    title={tooltip}
-  >
-    {icon} {label && <Label active={active}>{label}</Label>}
-  </StyledButton>
+export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
+  (
+    {
+      icon,
+      active = false,
+      size = "default",
+      disabled,
+      tooltip,
+      label,
+      onClick,
+      onKeyDown,
+    },
+    ref
+  ) => (
+    <StyledButton
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      size={size}
+      isActive={active}
+      disabled={disabled}
+      title={tooltip}
+      ref={ref}
+    >
+      {icon} {label && <Label active={active}>{label}</Label>}
+    </StyledButton>
+  )
 );

@@ -8,6 +8,7 @@ import {
   ResizePanel,
   ResizeDirection,
   Tree,
+  Panel,
 } from "../";
 import { storyTreeDataProvider } from "../Tree/Tree.stories";
 
@@ -87,17 +88,9 @@ const Template: Story = () => (
               tooltip="Move item down"
             />
           </ToolBar>
-          <div
-            style={{
-              padding: "10px",
-              backgroundColor: "var(--colors-control-default)",
-              color: "var(--colors-text-default)",
-              width: "calc(100% - 20px)",
-              height: "calc(100% - 20px)",
-            }}
-          >
+          <Panel padding={10}>
             <Tree dataProvider={storyTreeDataProvider} />
-          </div>
+          </Panel>
         </div>
       </ResizePanel>
       <div
