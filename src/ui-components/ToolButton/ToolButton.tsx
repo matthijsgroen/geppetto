@@ -1,6 +1,7 @@
-import { forwardRef } from "react";
+import { forwardRef, useContext } from "react";
 import styled, { css } from "styled-components";
 import { Label } from "../Label/Label";
+import { ToolbarContext } from "../ToolBar/ToolBarContext";
 
 type ToolButtonProps = {
   icon?: React.ReactChild;
@@ -43,7 +44,7 @@ const StyledButton = styled.button.attrs({ type: "button" })<StyledButtonProps>`
       : props.theme.colors.controlDefault};
   align-items: center;
   border: none;
-  border-radius: 10px;
+  border-radius: ${(props) => (props.size === "default" ? 10 : 5)}px;
   white-space: nowrap;
   outline: 2px solid transparent;
 
@@ -63,7 +64,7 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
     {
       icon,
       active = false,
-      size = "default",
+      size,
       disabled,
       tooltip,
       label,
@@ -71,17 +72,26 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
       onKeyDown,
     },
     ref
-  ) => (
-    <StyledButton
-      onClick={onClick}
-      onKeyDown={onKeyDown}
-      size={size}
-      isActive={active}
-      disabled={disabled}
-      title={tooltip}
-      ref={ref}
-    >
-      {icon} {label && <Label active={active}>{label}</Label>}
-    </StyledButton>
-  )
+  ) => {
+    const toolbarSize = useContext(ToolbarContext);
+    const useSize = size === undefined ? toolbarSize : size ?? "default";
+    return (
+      <StyledButton
+        onClick={onClick}
+        onKeyDown={onKeyDown}
+        size={useSize}
+        isActive={active}
+        disabled={disabled}
+        title={tooltip}
+        ref={ref}
+      >
+        {icon}{" "}
+        {label && (
+          <Label active={active} size={useSize}>
+            {label}
+          </Label>
+        )}
+      </StyledButton>
+    );
+  }
 );

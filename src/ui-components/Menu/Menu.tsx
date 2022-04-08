@@ -2,6 +2,8 @@ export {
   Menu,
   MenuItem,
   MenuButton,
+  MenuRadioGroup,
+  MenuGroup,
   SubMenu,
   MenuDivider,
   MenuHeader,

@@ -1,13 +1,16 @@
 import React from "react";
 import styled from "styled-components";
+import { ToolbarContext } from "./ToolBarContext";
 
-const ToolBarInner = styled.div`
+export type ToolBarSize = "default" | "small";
+
+const ToolBarInner = styled.div<{ size: ToolBarSize }>`
   flex: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
   min-width: fit-content;
-  height: 3rem;
+  height: ${(props) => (props.size === "default" ? 3 : 2.25)}rem;
 
   padding: 0 0.2rem;
   > * + * {
@@ -15,9 +18,9 @@ const ToolBarInner = styled.div`
   }
 `;
 
-const ToolBarOuter = styled.div`
+const ToolBarOuter = styled.div<{ size: ToolBarSize }>`
   background-color: ${({ theme }) => theme.colors.controlDefault};
-  height: 3rem;
+  height: ${(props) => (props.size === "default" ? 3 : 2.25)}rem;
 
   overflow-x: scroll;
   overflow-y: visible;
@@ -28,8 +31,17 @@ const ToolBarOuter = styled.div`
   }
 `;
 
-export const ToolBar: React.FC = ({ children }) => (
-  <ToolBarOuter>
-    <ToolBarInner>{children}</ToolBarInner>
-  </ToolBarOuter>
+type ToolBarProps = {
+  size?: ToolBarSize;
+};
+
+export const ToolBar: React.FC<ToolBarProps> = ({
+  children,
+  size = "default",
+}) => (
+  <ToolbarContext.Provider value={size}>
+    <ToolBarOuter size={size}>
+      <ToolBarInner size={size}>{children}</ToolBarInner>
+    </ToolBarOuter>
+  </ToolbarContext.Provider>
 );

@@ -13,8 +13,14 @@ export default {
 } as ComponentMeta<typeof Menu>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-export const Default: ComponentStory<typeof Menu> = (args) => (
-  <Menu menuButton={<ToolButton icon={<Icon>🧵</Icon>} />} transition>
+export const Default: ComponentStory<typeof Menu> = () => (
+  <Menu
+    portal={true}
+    menuButton={({ open }) => (
+      <ToolButton icon={<Icon>🧵</Icon>} active={open} />
+    )}
+    transition
+  >
     <MenuItem>New File</MenuItem>
     <MenuItem>Save</MenuItem>
     <MenuDivider />

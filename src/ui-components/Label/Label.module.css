@@ -4,6 +4,10 @@
   color: var(--colors-text-default);
 }
 
+.small {
+  font-size: 0.75rem;
+}
+
 .active {
   color: var(--colors-text-active);
 }
