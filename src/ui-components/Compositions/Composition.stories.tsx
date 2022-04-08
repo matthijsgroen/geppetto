@@ -7,7 +7,9 @@ import {
   ToolTab,
   ResizePanel,
   ResizeDirection,
+  Tree,
 } from "../";
+import { storyTreeDataProvider } from "../Tree/Tree.stories";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -94,7 +96,7 @@ const Template: Story = () => (
               height: "calc(100% - 20px)",
             }}
           >
-            <p>Resizable panel, Needs treeview</p>
+            <Tree dataProvider={storyTreeDataProvider} />
           </div>
         </div>
       </ResizePanel>

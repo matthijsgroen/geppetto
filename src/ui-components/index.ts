@@ -1,7 +1,10 @@
+export { Label } from "./Label/Label";
+export { Icon } from "./Icon/Icon";
+
 export { ToolBar } from "./ToolBar/ToolBar";
 export { ToolButton } from "./ToolButton/ToolButton";
 export { ToolSpacer } from "./ToolSpacer/ToolSpacer";
 export { ToolSeparator } from "./ToolSeparator/ToolSeparator";
 export { ToolTab } from "./ToolTab/ToolTab";
-export { Icon } from "./Icon/Icon";
 export { ResizePanel, ResizeDirection } from "./ResizePanel/ResizePanel";
+export { Tree } from "./Tree/Tree";

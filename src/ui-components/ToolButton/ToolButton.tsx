@@ -7,6 +7,7 @@ type ToolButtonProps = {
   active?: boolean;
   disabled?: boolean;
   tooltip?: string;
+  size?: "default" | "small";
   onClick?: () => void;
 };
 
@@ -14,7 +15,7 @@ type StyledButtonProps = {
   isDisabled?: boolean;
   isActive?: boolean;
   isFocus?: boolean;
-  size: "small" | "medium";
+  size: "default" | "small";
 };
 
 const StyledButton = styled.button.attrs({ type: "button" })<StyledButtonProps>`
@@ -23,14 +24,17 @@ const StyledButton = styled.button.attrs({ type: "button" })<StyledButtonProps>`
     props.isActive
       ? props.theme.colors.textActive
       : props.theme.colors.textDefault};
-  font-size: ${(props) => (props.size === "small" ? "0.5rem" : "1rem")};
+  font-size: ${(props) => (props.size === "default" ? "1rem" : "0.75rem")};
   ${(props) =>
-    props.size === "medium"
+    props.size === "default"
       ? css`
           height: 32px;
           min-width: 32px;
         `
-      : ""}
+      : css`
+          height: 24px;
+          min-width: 24px;
+        `}
   background-color: ${(props) =>
     props.isActive
       ? props.theme.colors.controlActive
@@ -55,6 +59,7 @@ const StyledButton = styled.button.attrs({ type: "button" })<StyledButtonProps>`
 export const ToolButton: React.FC<ToolButtonProps> = ({
   icon,
   active = false,
+  size = "default",
   disabled,
   tooltip,
   label,
@@ -62,7 +67,7 @@ export const ToolButton: React.FC<ToolButtonProps> = ({
 }) => (
   <StyledButton
     onClick={onClick}
-    size={"medium"}
+    size={size}
     isActive={active}
     disabled={disabled}
     title={tooltip}

@@ -17,7 +17,7 @@
   --rct-color-nonfocustree-item-focused-border: var(--colors-control-focus);
 
   --rct-color-search-highlight-bg: #a2aed2;
-  --rct-color-drag-between-line-bg: #0366d6;
+  --rct-color-drag-between-line-bg: var(--colors-control-focus);
   --rct-color-arrow: var(--colors-text-default);
 
   --rct-item-height: 2rem;
@@ -29,4 +29,16 @@
   --rct-color-renaming-input-submitbutton-text: inherit;
   --rct-color-renaming-input-submitbutton-text-hover: #ffffff;
   --rct-color-renaming-input-submitbutton-text-active: #ffffff;
+}
+
+:global(.rct-tree-item-button) {
+  font: caption;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:global(.rct-tree-item-title-container) {
+  padding-right: 0.25rem;
 }

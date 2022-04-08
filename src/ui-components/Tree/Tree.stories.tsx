@@ -4,15 +4,17 @@ import {
   TreeItem,
   TreeItemIndex,
 } from "react-complex-tree";
+import { Icon } from "../Icon/Icon";
+import { ToolButton } from "../ToolButton/ToolButton";
 import { Tree, TreeData, TreeDataProvider } from "./Tree";
 
-const items: Record<TreeItemIndex, TreeItem<TreeData>> = {
+const treeItems: Record<TreeItemIndex, TreeItem<TreeData>> = {
   root: {
     index: "root",
     canMove: true,
     hasChildren: true,
     children: ["child1", "child2"],
-    data: { name: "Root item" },
+    data: { name: "Root item", icon: "🥕" },
     canRename: true,
   },
   child1: {
@@ -20,7 +22,11 @@ const items: Record<TreeItemIndex, TreeItem<TreeData>> = {
     canMove: true,
     hasChildren: false,
     children: [],
-    data: { name: "Child item 1" },
+    data: {
+      name: "Child item 1",
+      icon: "📄",
+      itemTools: <ToolButton size={"small"} icon={<Icon>👁</Icon>} />,
+    },
     canRename: true,
   },
   child2: {
@@ -28,27 +34,31 @@ const items: Record<TreeItemIndex, TreeItem<TreeData>> = {
     canMove: true,
     hasChildren: true,
     children: ["child3", "child4"],
-    data: { name: "Child item 2" },
+    data: {
+      name: "Child item 2",
+      icon: "📁",
+      itemTools: <ToolButton size={"small"} icon={<Icon>👁</Icon>} />,
+    },
     canRename: true,
   },
   child3: {
     index: "child3",
     canMove: true,
     hasChildren: false,
-    data: { name: "Mutation" },
+    data: { name: "Mutation", icon: "🟢" },
     canRename: true,
   },
   child4: {
     index: "child4",
     canMove: true,
     hasChildren: false,
-    data: { name: "Mutation 2" },
+    data: { name: "Mutation 2", icon: "🔵" },
     canRename: true,
   },
 };
 
-const provider: TreeDataProvider = new StaticTreeDataProvider(
-  items,
+export const storyTreeDataProvider: TreeDataProvider = new StaticTreeDataProvider(
+  treeItems,
   (item, newName) => ({
     ...item,
     data: { ...item.data, name: newName },
@@ -60,7 +70,7 @@ export default {
   title: "Components/Tree",
   component: Tree,
   args: {
-    dataProvider: provider,
+    dataProvider: storyTreeDataProvider,
   },
   argTypes: {
     dataProvider: { control: false },
