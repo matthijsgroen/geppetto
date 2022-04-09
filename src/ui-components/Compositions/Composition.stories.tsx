@@ -75,6 +75,7 @@ const Template: Story = () => (
         direction="bottom"
         align="center"
         arrow
+        transition
       >
         <MenuRadioGroup value={32}>
           <MenuItem type="radio" value={8}>
