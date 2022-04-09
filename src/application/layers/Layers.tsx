@@ -1,58 +1,44 @@
+import { useEffect, useMemo } from "react";
 import { GeppettoImage } from "src/animation/file2/types";
 import {
   Column,
   Icon,
   Menu,
-  MenuDivider,
-  MenuHeader,
   MenuItem,
   MenuRadioGroup,
   Panel,
   ResizeDirection,
   ResizePanel,
   Row,
-  SubMenu,
   ToolBar,
   ToolButton,
   ToolSeparator,
   ToolTab,
+  Tree,
 } from "src/ui-components";
 import { UseState } from "../types";
+import { treeDataProvider } from "./TreeDataProvider";
 
 type LayersProps = {
   zoomState: UseState<number>;
   panXState: UseState<number>;
   panYState: UseState<number>;
   fileState: UseState<GeppettoImage>;
+  menu?: React.ReactChild;
 };
 
-export const Layers: React.VFC<LayersProps> = () => {
+export const Layers: React.VFC<LayersProps> = ({ fileState, menu }) => {
+  const [fileData] = fileState;
+
+  const treeData = useMemo(() => treeDataProvider(fileData), []);
+  useEffect(() => {
+    treeData.updateActiveTree && treeData.updateActiveTree(fileData);
+  }, [fileData]);
+
   return (
     <Column>
       <ToolBar>
-        <Menu
-          portal={true}
-          transition
-          menuButton={({ open }) => (
-            <ToolButton icon={<Icon>🍔</Icon>} active={open} />
-          )}
-        >
-          <MenuItem>New</MenuItem>
-          <MenuItem>Open</MenuItem>
-          <MenuItem>Load texture</MenuItem>
-          <MenuItem>Reload texture</MenuItem>
-          <MenuItem disabled>Save</MenuItem>
-          <MenuItem>Save as...</MenuItem>
-          <MenuDivider />
-          <MenuHeader>Edit</MenuHeader>
-          <SubMenu label="Edit">
-            <MenuItem>Cut</MenuItem>
-            <MenuItem>Copy</MenuItem>
-            <MenuItem>Paste</MenuItem>
-          </SubMenu>
-          <MenuItem>Print...</MenuItem>
-        </Menu>
-
+        {menu}
         <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
         <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} />
         <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} />
@@ -97,7 +83,6 @@ export const Layers: React.VFC<LayersProps> = () => {
         </Menu>
         <ToolButton icon={<Icon>🧲</Icon>} tooltip="Toggle magnetic grid" />
       </ToolBar>
-
       <Row>
         <ResizePanel direction={ResizeDirection.East} style={{ width: "20vw" }}>
           <div
@@ -139,9 +124,7 @@ export const Layers: React.VFC<LayersProps> = () => {
                 tooltip="Move item down"
               />
             </ToolBar>
-            <Panel padding={5}>
-              {/* <Tree dataProvider={storyTreeDataProvider} /> */}
-            </Panel>
+            <Panel padding={5}>{<Tree dataProvider={treeData} />}</Panel>
           </div>
         </ResizePanel>
         <div
