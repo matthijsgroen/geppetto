@@ -21,7 +21,7 @@
     "react-draggable": "^4.4.4",
     "react-scripts": "5.0.0",
     "styled-components": "^5.3.3",
-    "typescript": "^4.2.0"
+    "typescript": "^4.6.2"
   },
   "scripts": {
     "electron-dev": "concurrently -s first -k \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\"",
@@ -122,8 +122,8 @@
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
     "@types/styled-components": "^5.1.7",
-    "@typescript-eslint/eslint-plugin": "^4.14.0",
-    "@typescript-eslint/parser": "^4.14.0",
+    "@typescript-eslint/eslint-plugin": "^5.18.0",
+    "@typescript-eslint/parser": "^5.18.0",
     "concurrently": "^5.3.0",
     "electron": "^16.0.0",
     "electron-builder": "^22.13.1",

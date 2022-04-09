@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { GeppettoImage } from "src/animation/file2/types";
 import { ThemeProvider } from "styled-components";
-import { newFile } from "../animation/file2/new";
 import { Layers } from "./layers/Layers";
 import { defaultTheme } from "./theme/default";
+// import { v2Format } from "../animation/file2/mockdata/file2.0";
+import { newFile } from "src/animation/file2/new";
+import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
 
 const updateWindowTitle = (
   animFile: string | null,
@@ -19,17 +21,23 @@ const updateWindowTitle = (
 const App: React.FC = () => {
   const fileState = useState<GeppettoImage>(newFile());
 
+  const fileName = useState<string | null>(null);
+  const textureFileName = useState<string | null>(null);
+
   const zoomState = useState(1.0);
   const panXState = useState(0.0);
   const panYState = useState(0.0);
 
   useEffect(() => {
-    updateWindowTitle(null, null);
-  }, []);
+    updateWindowTitle(fileName[0], textureFileName[0]);
+  }, [fileName[0], textureFileName[0]]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Layers
+        menu={
+          <ApplicationMenu fileNameState={fileName} fileState={fileState} />
+        }
         zoomState={zoomState}
         panXState={panXState}
         panYState={panYState}

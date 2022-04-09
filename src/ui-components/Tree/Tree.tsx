@@ -5,6 +5,7 @@ import {
   TreeRenderProps,
 } from "react-complex-tree";
 import "react-complex-tree/lib/style.css";
+import { GeppettoImage } from "src/animation/file2/types";
 import { Icon } from "../";
 import "./Tree.module.css";
 
@@ -14,7 +15,9 @@ export type TreeData = {
   itemTools?: React.ReactChild;
 };
 
-export type TreeDataProvider = ComplexTreeDataProvider<TreeData>;
+export type TreeDataProvider = ComplexTreeDataProvider<TreeData> & {
+  updateActiveTree?: (tree: GeppettoImage) => void;
+};
 
 type TreeProps = {
   dataProvider: TreeDataProvider;

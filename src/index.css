@@ -48,10 +48,10 @@ body,
     --colors-text: #333; */
 
     --colors-background: #eee;
-    --colors-background-secondary: #ddd;
 
     --colors-control-default: #eee;
     --colors-control-edge: #33333334;
+    --colors-control-highlight: #cce;
     --colors-control-active: #bbe;
     --colors-control-focus: #66e;
 
@@ -85,4 +85,8 @@ body,
 
 .story-background {
   background-color: var(--colors-background);
+}
+
+#root {
+  display: flex;
 }

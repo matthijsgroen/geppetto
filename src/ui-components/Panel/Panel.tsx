@@ -8,8 +8,10 @@ const StyledPanel = styled.div<{ padding: number }>`
   padding: ${(props) => props.padding}px;
   background-color: ${(props) => props.theme.colors.controlDefault};
   color: ${(props) => props.theme.colors.textDefault};
-  width: calc(100% - ${(props) => props.padding * 2}px);
-  height: calc(100% - ${(props) => props.padding * 2}px);
+  flex: 1;
+  flex-direction: column;
+  display: flex;
+  overflow: hidden;
 `;
 
 export const Panel: React.FC<PanelProps> = ({ children, padding = 0 }) => (
