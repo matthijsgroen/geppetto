@@ -1,4 +1,4 @@
-import { addInHierarchy, addFirst, PlacementInfo } from "./hierarchy";
+import { addInHierarchy, PlacementInfo } from "./hierarchy";
 import { GeppettoImage, Layer, LayerFolder, NodeType, TreeNode } from "./types";
 
 const getNewShapeId = (image: GeppettoImage): string =>
@@ -24,9 +24,11 @@ export const addShape = (
     translate: [0, 0],
   };
   const newNode: TreeNode<"layer"> = { id: newId, type: "layer" };
-  const layerHierarchy: TreeNode<NodeType>[] = position
-    ? addInHierarchy(image.layerHierarchy, newNode, position)
-    : addFirst(image.layerHierarchy, newNode);
+  const layerHierarchy: TreeNode<NodeType>[] = addInHierarchy(
+    image.layerHierarchy,
+    newNode,
+    position
+  );
 
   return [
     {
@@ -53,9 +55,11 @@ export const addFolder = (
     collapsed: false,
   };
   const newNode: TreeNode<"layerFolder"> = { id: newId, type: "layerFolder" };
-  const layerHierarchy: TreeNode<NodeType>[] = position
-    ? addInHierarchy(image.layerHierarchy, newNode, position)
-    : addFirst(image.layerHierarchy, newNode);
+  const layerHierarchy: TreeNode<NodeType>[] = addInHierarchy(
+    image.layerHierarchy,
+    newNode,
+    position
+  );
 
   return [
     {
