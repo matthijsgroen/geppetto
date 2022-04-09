@@ -1,4 +1,4 @@
-import { addAfter, addFirst } from "./hierarchy";
+import { addInHierarchy, addFirst, PlacementInfo } from "./hierarchy";
 import { GeppettoImage, Layer, LayerFolder, NodeType, TreeNode } from "./types";
 
 const getNewShapeId = (image: GeppettoImage): string =>
@@ -14,7 +14,7 @@ const getNewShapeId = (image: GeppettoImage): string =>
 export const addShape = (
   image: GeppettoImage,
   shapeName: string,
-  { after = undefined }: { after?: string } = {}
+  position?: PlacementInfo
 ): [GeppettoImage, Layer] => {
   const newId = getNewShapeId(image);
   const layer: Layer = {
@@ -24,8 +24,8 @@ export const addShape = (
     translate: [0, 0],
   };
   const newNode: TreeNode<"layer"> = { id: newId, type: "layer" };
-  const layerHierarchy: TreeNode<NodeType>[] = after
-    ? addAfter(image.layerHierarchy, newNode, after)
+  const layerHierarchy: TreeNode<NodeType>[] = position
+    ? addInHierarchy(image.layerHierarchy, newNode, position)
     : addFirst(image.layerHierarchy, newNode);
 
   return [
@@ -44,7 +44,7 @@ export const addShape = (
 export const addFolder = (
   image: GeppettoImage,
   folderName: string,
-  { after = undefined }: { after?: string } = {}
+  position?: PlacementInfo
 ): [GeppettoImage, LayerFolder] => {
   const newId = getNewShapeId(image);
   const folder: LayerFolder = {
@@ -53,8 +53,8 @@ export const addFolder = (
     collapsed: false,
   };
   const newNode: TreeNode<"layerFolder"> = { id: newId, type: "layerFolder" };
-  const layerHierarchy: TreeNode<NodeType>[] = after
-    ? addAfter(image.layerHierarchy, newNode, after)
+  const layerHierarchy: TreeNode<NodeType>[] = position
+    ? addInHierarchy(image.layerHierarchy, newNode, position)
     : addFirst(image.layerHierarchy, newNode);
 
   return [
