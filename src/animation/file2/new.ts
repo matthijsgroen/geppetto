@@ -8,18 +8,18 @@ export const newFile = (): GeppettoImage => ({
     zoom: 1.0,
     pan: [0, 0],
   },
-  layerHierarchy: {},
+  layerHierarchy: { root: { type: "root", children: [] } },
   layerFolders: {},
   layers: {},
   mutations: {},
 
-  controlHierarchy: {},
+  controlHierarchy: { root: { type: "root", children: [] } },
   controlFolders: {},
   controls: {},
   defaultFrame: {},
   controlValues: {},
 
-  animationHierarchy: {},
+  animationHierarchy: { root: { type: "root", children: [] } },
   animationFolders: {},
   animations: {},
 });

@@ -1,26 +1,15 @@
 import { newFile } from "./new";
 import { addFolder, addShape } from "./shapes";
-import { TreeNode } from "./types";
-
-const getChild = <T extends string>(
-  node: TreeNode<T>,
-  [head, ...tail]: number[]
-): TreeNode<T> | undefined =>
-  head !== undefined
-    ? node.children
-      ? getChild(node.children[head], tail)
-      : undefined
-    : node;
 
 describe("shapes", () => {
   describe("addShape", () => {
     it("creates a shape as first element", () => {
       const file = newFile();
 
-      const [image, result] = addShape(file, "New shape");
-      expect(image.layerHierarchy[0]).toEqual({
-        id: "0",
+      const [image, result, newId] = addShape(file, "New shape");
+      expect(image.layerHierarchy["0"]).toEqual({
         type: "layer",
+        parentId: "root",
       });
 
       expect(result).toEqual({
@@ -29,6 +18,7 @@ describe("shapes", () => {
         points: [],
         translate: [0, 0],
       });
+      expect(newId).toEqual("0");
     });
 
     describe("positioning", () => {
@@ -41,7 +31,7 @@ describe("shapes", () => {
         });
 
         expect(result.layerHierarchy[1]).toEqual({
-          id: "1",
+          parentId: "root",
           type: "layer",
         });
 
@@ -61,7 +51,7 @@ describe("shapes", () => {
 
       const [image, result] = addFolder(file, "New folder");
       expect(image.layerHierarchy[0]).toEqual({
-        id: "0",
+        parentId: "root",
         type: "layerFolder",
       });
 
@@ -82,7 +72,7 @@ describe("shapes", () => {
         });
 
         expect(result.layerHierarchy[1]).toEqual({
-          id: "1",
+          parentId: "root",
           type: "layerFolder",
         });
 
@@ -96,13 +86,12 @@ describe("shapes", () => {
       it("can place a folder inside another", () => {
         const file = newFile();
         const [firstFolder] = addFolder(file, "New shape");
-
-        const [result, folder] = addFolder(firstFolder, "New folder", {
+        const [result, folder, newId] = addFolder(firstFolder, "New folder", {
           parent: "0",
         });
 
-        expect(getChild(result.layerHierarchy[0], [0])).toEqual({
-          id: "1",
+        expect(result.layerHierarchy[newId]).toEqual({
+          parentId: "0",
           type: "layerFolder",
         });
 
@@ -120,13 +109,13 @@ describe("shapes", () => {
           parent: "0",
         });
 
-        const [result, folder] = addFolder(nestedFolder, "New folder", {
+        const [result, folder, newId] = addFolder(nestedFolder, "New folder", {
           parent: "0",
           after: "1",
         });
 
-        expect(getChild(result.layerHierarchy[0], [1])).toEqual({
-          id: "2",
+        expect(result.layerHierarchy[newId]).toEqual({
+          parentId: "0",
           type: "layerFolder",
         });
 

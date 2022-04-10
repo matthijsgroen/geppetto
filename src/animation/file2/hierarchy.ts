@@ -2,7 +2,7 @@ import { Hierarchy, RootNode, TreeNode } from "./types";
 
 export type PlacementInfo = { after?: string; parent?: string };
 
-const getNewId = (tree: Record<string, unknown>): string => {
+export const getNewId = (tree: Record<string, unknown>): string => {
   let id = 0;
   while (tree[id]) {
     id++;

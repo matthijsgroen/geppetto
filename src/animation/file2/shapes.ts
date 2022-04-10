@@ -1,15 +1,5 @@
 import { addInHierarchy, PlacementInfo } from "./hierarchy";
-import { GeppettoImage, Layer, LayerFolder, NodeType, TreeNode } from "./types";
-
-const getNewShapeId = (image: GeppettoImage): string =>
-  `${
-    Math.max(
-      ...Object.keys(image.mutations).map((n) => Number(n)),
-      ...Object.keys(image.layers).map((n) => Number(n)),
-      ...Object.keys(image.layerFolders).map((n) => Number(n)),
-      -1
-    ) + 1
-  }`;
+import { GeppettoImage, Layer, LayerFolder, NodeType } from "./types";
 
 const getUniqueName = (
   name: string,
@@ -30,8 +20,7 @@ export const addShape = (
   image: GeppettoImage,
   shapeName: string,
   position?: PlacementInfo
-): [GeppettoImage, Layer] => {
-  const newId = getNewShapeId(image);
+): [GeppettoImage, Layer, string] => {
   const newName = getUniqueName(shapeName, image.layers);
   const layer: Layer = {
     name: newName,
@@ -39,10 +28,9 @@ export const addShape = (
     points: [],
     translate: [0, 0],
   };
-  const newNode: TreeNode<"layer"> = { id: newId, type: "layer" };
-  const layerHierarchy: TreeNode<NodeType>[] = addInHierarchy(
+  const [layerHierarchy, newId] = addInHierarchy(
     image.layerHierarchy,
-    newNode,
+    { type: "layer" },
     position
   );
 
@@ -56,6 +44,7 @@ export const addShape = (
       },
     },
     layer,
+    newId,
   ];
 };
 
@@ -63,18 +52,16 @@ export const addFolder = (
   image: GeppettoImage,
   folderName: string,
   position?: PlacementInfo
-): [GeppettoImage, LayerFolder] => {
-  const newId = getNewShapeId(image);
+): [GeppettoImage, LayerFolder, string] => {
   const newName = getUniqueName(folderName, image.layerFolders);
   const folder: LayerFolder = {
     name: newName,
     visible: true,
     collapsed: false,
   };
-  const newNode: TreeNode<"layerFolder"> = { id: newId, type: "layerFolder" };
-  const layerHierarchy: TreeNode<NodeType>[] = addInHierarchy(
+  const [layerHierarchy, newId] = addInHierarchy(
     image.layerHierarchy,
-    newNode,
+    { type: "layerFolder" },
     position
   );
 
@@ -88,6 +75,7 @@ export const addFolder = (
       },
     },
     folder,
+    newId,
   ];
 };
 
