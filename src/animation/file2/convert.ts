@@ -4,13 +4,13 @@ import {
   MutationVector,
 } from "../file1/types";
 import { newFile } from "./new";
-import { FrameAction, GeppettoImage, NodeType, TreeNode } from "./types";
+import { FrameAction, GeppettoImage, Hierarchy, NodeType } from "./types";
 
 const populateMutations = (
   mutations: MutationVector[],
   target: GeppettoImage,
   createId: () => string,
-  result: Record<string, TreeNode<NodeType>>,
+  result: Hierarchy<NodeType>,
   parentId: string
 ): string[] => {
   const ids: string[] = [];
@@ -33,7 +33,7 @@ const populateShapes = (
   shapes: ImageDefinition["shapes"],
   target: GeppettoImage,
   createId: () => string,
-  result: Record<string, TreeNode<NodeType>>,
+  result: Hierarchy<NodeType>,
   parentId: string | null = null
 ): string[] => {
   const childIds: string[] = [];
@@ -42,7 +42,7 @@ const populateShapes = (
       const id = createId();
       result[id] = {
         type: "layerFolder",
-        ...(parentId !== null ? { parentId } : {}),
+        parentId: parentId !== null ? parentId : "root",
         children: [
           ...populateMutations(
             shape.mutationVectors,
@@ -73,7 +73,7 @@ const populateShapes = (
 
       result[id] = {
         type: "layer",
-        ...(parentId !== null ? { parentId } : {}),
+        parentId: parentId !== null ? parentId : "root",
         ...(mutations.length > 0 ? { children: mutations } : undefined),
       };
       childIds.push(id);
@@ -113,14 +113,15 @@ const populateControls = (
   controls: ImageDefinition["controls"],
   target: GeppettoImage,
   createId: () => string
-): Record<string, TreeNode<"controlFolder" | "control">> => {
-  const result: Record<string, TreeNode<"control">> = {};
+): Hierarchy<"controlFolder" | "control"> => {
+  const result: Hierarchy<"control"> = {};
   const ids: string[] = [];
   for (const control of controls) {
     const id = createId();
     ids.push(id);
     result[id] = {
       type: "control",
+      parentId: "root",
     };
 
     target.controls[id] = {
@@ -179,14 +180,15 @@ const populateAnimations = (
   animations: ImageDefinition["animations"],
   target: GeppettoImage,
   createId: () => string
-): Record<string, TreeNode<"animationFolder" | "animation">> => {
-  const result: Record<string, TreeNode<"animation">> = {};
+): Hierarchy<"animationFolder" | "animation"> => {
+  const result: Hierarchy<"animation"> = {};
   const ids: string[] = [];
   for (const animation of animations) {
     const id = createId();
     ids.push(id);
     result[id] = {
       type: "animation",
+      parentId: "root",
     };
 
     target.animations[id] = {

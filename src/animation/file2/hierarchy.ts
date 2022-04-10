@@ -1,98 +1,99 @@
-import { TreeNode } from "./types";
+import { Hierarchy, RootNode, TreeNode } from "./types";
 
 export type PlacementInfo = { after?: string; parent?: string };
 
-const addFirst = <T extends string>(
-  tree: TreeNode<T>[],
-  newNode: TreeNode<T>
-): TreeNode<T>[] => [newNode, ...tree];
+const getNewId = (tree: Record<string, unknown>): string => {
+  let id = 0;
+  while (tree[id]) {
+    id++;
+  }
+  return `${id}`;
+};
 
-const addInHierarchyRec = <T extends string>(
-  tree: TreeNode<T>[],
-  newNode: TreeNode<T>,
-  position: PlacementInfo
-): TreeNode<T>[] =>
-  tree.reduce<TreeNode<T>[]>((result, item) => {
-    if (item.id === position.after) {
-      return result.concat(item, newNode);
-    }
-    if (item.id === position.parent) {
-      const parent = {
-        ...item,
-        children: addInHierarchyRec(item.children || [], newNode, position),
-      };
-      const placed = parent.children.find((c) => c === newNode);
-      if (!placed) {
-        parent.children = addFirst(parent.children, newNode);
-      }
-      return result.concat(parent);
-    }
-    return result.concat(
-      item.children
-        ? {
-            ...item,
-            children: addInHierarchyRec(item.children, newNode, position),
-          }
-        : item
-    );
-  }, []);
+const addFirst = <T extends string>(
+  tree: Hierarchy<T>,
+  newNode: Omit<TreeNode<T>, "parentId">,
+  parentId: string | null
+): [hierarchy: Hierarchy<T>, newId: string] => {
+  const pId = parentId ? parentId : "root";
+  const newId = getNewId(tree);
+  return [
+    {
+      ...tree,
+      [pId]: {
+        ...tree[pId],
+        children: [newId].concat(tree[pId].children ?? []),
+      },
+      [newId]: { ...newNode, parentId: pId },
+    },
+    newId,
+  ];
+};
 
 export const addInHierarchy = <T extends string>(
-  tree: TreeNode<T>[],
-  newNode: TreeNode<T>,
-  position?: PlacementInfo
-): TreeNode<T>[] => {
-  if (position === undefined) {
-    return addFirst(tree, newNode);
-  }
+  tree: Hierarchy<T>,
+  newNode: Omit<TreeNode<T>, "parentId">,
+  position: PlacementInfo = {}
+): [hierarchy: Hierarchy<T>, newId: string] => {
   if (position.after) {
-    const after = position.after;
-    const element = tree.find((n) => (n.children || []).includes(after));
-    console.log(element);
+    const after = tree[position.after] as TreeNode<T>;
+    if (after) {
+      const parentId = after.parentId;
+      const newId = getNewId(tree);
+      const parent = tree[parentId];
+      return [
+        {
+          ...tree,
+          [parentId]: {
+            ...parent,
+            children: (parent.children || []).reduce<string[]>(
+              (r, e) =>
+                e === position.after ? r.concat(e, newId) : r.concat(e),
+              []
+            ),
+          },
+          [newId]: { ...newNode, parentId },
+        },
+        newId,
+      ];
+    }
   }
-  // : addInHierarchyRec(tree, newNode, position);
+  if (position.parent) {
+    const parentId = position.parent;
+    const parent = tree[parentId];
+    if (parent) {
+      const newId = getNewId(tree);
+      return [
+        {
+          ...tree,
+          [parentId]: {
+            ...parent,
+            children: [newId].concat(parent.children || []),
+          },
+          [newId]: { ...newNode, parentId },
+        },
+        newId,
+      ];
+    }
+  }
+  return addFirst(tree, newNode, null);
 };
+
+export const isRootNode = <T extends string>(
+  node: TreeNode<T> | RootNode
+): node is RootNode => node.type === "root";
 
 export const findInHierarchy = <T extends string>(
-  tree: TreeNode<T>[],
+  tree: Hierarchy<T>,
   id: number | string
-): TreeNode<T> | undefined => {
-  let result: TreeNode<T> | undefined = undefined;
-  tree.find((v) => {
-    if (v.id === id) {
-      result = v;
-      return true;
-    }
-    if (v.children) {
-      const found = findInHierarchy(v.children, id);
-      if (found) {
-        result = found;
-        return true;
-      }
-    }
-  });
-  return result;
-};
+): TreeNode<T> | RootNode | undefined => tree[`${id}`];
 
 export const findParentId = <T extends string>(
-  tree: TreeNode<T>[],
+  tree: Hierarchy<T>,
   id: number | string
 ): string | null => {
-  let result: string | null = null;
-  tree.find((v) => {
-    if (v.children) {
-      for (const child of v.children) {
-        if (child.id === id) {
-          result = v.id;
-          return true;
-        }
-      }
-      const parentId = findParentId(v.children, id);
-      if (parentId !== null) {
-        result = parentId;
-        return true;
-      }
-    }
-  });
-  return result;
+  const item = findInHierarchy(tree, id);
+  if (item === undefined) return null;
+  if (!isRootNode(item)) return item.parentId;
+  return null;
 };

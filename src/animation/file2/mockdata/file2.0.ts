@@ -10,13 +10,13 @@ export const v2Format: GeppettoImage = {
   },
   layerHierarchy: {
     root: { type: "root", children: ["0", "1", "6"] },
-    "0": { type: "layer" },
-    "1": { type: "layerFolder", children: ["2", "5"] },
+    "0": { type: "layer", parentId: "root" },
+    "1": { type: "layerFolder", parentId: "root", children: ["2", "5"] },
     "2": { type: "layer", parentId: "1", children: ["3", "4"] },
     "3": { type: "mutation", parentId: "2" },
     "4": { type: "mutation", parentId: "2" },
     "5": { type: "layer", parentId: "1" },
-    "6": { type: "layer" },
+    "6": { type: "layer", parentId: "root" },
   },
   layerFolders: {
     "1": {
@@ -82,8 +82,8 @@ export const v2Format: GeppettoImage = {
   },
   controlHierarchy: {
     root: { type: "root", children: ["0", "1"] },
-    "0": { type: "control" },
-    "1": { type: "control" },
+    "0": { type: "control", parentId: "root" },
+    "1": { type: "control", parentId: "root" },
   },
   controls: {
     "0": {
@@ -108,7 +108,7 @@ export const v2Format: GeppettoImage = {
 
   animationHierarchy: {
     root: { type: "root", children: ["0"] },
-    "0": { type: "animation" },
+    "0": { type: "animation", parentId: "root" },
   },
   animationFolders: {},
   animations: {

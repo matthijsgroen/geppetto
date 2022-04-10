@@ -9,13 +9,13 @@ import {
   FrameControlAction,
   FrameEvent,
   GeppettoImage,
-  TreeNode,
+  Hierarchy,
 } from "../file2/types";
 import { newFile } from "./new";
 import { updateVersionNumber } from "../updateVersionNumber";
 
 const convertMutations = (
-  items: Record<string, TreeNode<string>>,
+  items: Hierarchy<string>,
   children: string[] | undefined,
   source: GeppettoImage
 ): MutationVector[] => {
@@ -37,7 +37,7 @@ const convertMutations = (
 };
 
 const convertShapes = (
-  items: Record<string, TreeNode<string>>,
+  items: Hierarchy<string>,
   source: GeppettoImage,
   target: ImageDefinition,
   parentId: string | null
@@ -73,7 +73,7 @@ const convertShapes = (
 };
 
 const convertControls = (
-  items: Record<string, TreeNode<string>>,
+  items: Hierarchy<string>,
   source: GeppettoImage,
   target: ImageDefinition
 ) => {
@@ -104,7 +104,7 @@ const isControlAction = (frame: FrameAction): frame is FrameControlAction =>
   "controlId" in frame;
 
 const convertAnimations = (
-  items: Record<string, TreeNode<string>>,
+  items: Hierarchy<string>,
   source: GeppettoImage,
   target: ImageDefinition
 ) => {
