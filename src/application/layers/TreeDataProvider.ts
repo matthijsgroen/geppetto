@@ -60,7 +60,7 @@ export const treeDataProvider = (
       const layerData = activeTree.layers[itemId];
       return {
         index: itemId,
-        canMove: false,
+        canMove: true,
         hasChildren: childIds.length > 0,
         children: childIds,
         data: { name: layerData.name, icon: "📄", type: item.type },
@@ -94,29 +94,24 @@ export const treeDataProvider = (
     };
   };
 
-  let listeners: ((changedItemIds: (string | number)[]) => void)[] = [];
+  let listeners: ((changedItemIds: TreeItemIndex[]) => void)[] = [];
+  let bufferedChanges: TreeItemIndex[] = [];
 
   return {
+    addChangedId: (id: string) => bufferedChanges.push(id),
     updateActiveTree: (tree: GeppettoImage) => {
-      const updatedItems: TreeItemIndex[] = ["root"];
+      const updatedItems: TreeItemIndex[] = ["root", ...bufferedChanges];
 
-      for (const [key, value] of Object.entries(tree.layers)) {
-        if (activeTree.layers[key] !== value) {
-          updatedItems.push(key);
-        }
-      }
-      for (const [key, value] of Object.entries(tree.layerFolders)) {
-        if (activeTree.layerFolders[key] !== value) {
-          updatedItems.push(key);
-        }
-      }
-      for (const [key, value] of Object.entries(tree.mutations)) {
-        if (activeTree.mutations[key] !== value) {
-          updatedItems.push(key);
+      for (const pool of [tree.layers, tree.layerFolders, tree.mutations]) {
+        for (const [key, value] of Object.entries(pool)) {
+          if (pool[key] !== value) {
+            updatedItems.push(key);
+          }
         }
       }
 
       activeTree = tree;
+      bufferedChanges = [];
       listeners.forEach((l) => {
         l(updatedItems);
       });

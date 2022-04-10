@@ -19,13 +19,14 @@ describe("hierarchy", () => {
       ]);
     });
 
-    it("can place item after another", () => {
+    it.only("can place item after another", () => {
       const result = addInHierarchy(
         hierarchy,
         { id: "1", type: "item" },
         { after: "0" }
       );
       expect(result).toEqual([
+        { id: "", type: "root", children: ["0", "1", "2"] },
         { id: "0", type: "item" },
         { id: "1", type: "item" },
         { id: "2", type: "item" },
@@ -40,7 +41,31 @@ describe("hierarchy", () => {
       );
       expect(result).toEqual([
         { id: "0", type: "item" },
-        { id: "2", type: "item", children: [{ id: "1", type: "item" }] },
+        { id: "2", type: "item", children: ["1"] },
+        { id: "1", type: "item", parentId: "2" },
+      ]);
+    });
+
+    it("can place item inside another (multiple levels deep)", () => {
+      const init = addInHierarchy(
+        hierarchy,
+        { id: "1", type: "item" },
+        { parent: "2" }
+      );
+      const result = addInHierarchy(
+        init,
+        { id: "3", type: "item" },
+        { parent: "1" }
+      );
+      expect(result).toEqual([
+        { id: "0", type: "item" },
+        {
+          id: "2",
+          type: "item",
+          children: [
+            { id: "1", type: "item", children: [{ id: "3", type: "item" }] },
+          ],
+        },
       ]);
     });
 

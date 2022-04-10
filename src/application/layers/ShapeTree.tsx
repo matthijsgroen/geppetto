@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { DraggingPosition } from "react-complex-tree";
+import { findParentId, PlacementInfo } from "src/animation/file2/hierarchy";
 import { addFolder, addShape, rename } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
@@ -21,43 +23,81 @@ type ShapeTreeProps = {
 };
 
 type LayerItem = TreeItem<TreeData<"layer" | "layerFolder" | "mutation">>;
+const yes = () => true;
 
 export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
   const [fileData, setFileData] = fileState;
-  const [selectedItems, setSelectedItems] = useState<TreeItemIndex[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const treeData = useMemo(
     () => treeDataProvider(fileData, { showMutations: false }),
     []
   );
   useEffect(() => {
-    console.log("Update active tree");
     treeData.updateActiveTree && treeData.updateActiveTree(fileData);
   }, [fileData]);
 
   const addShapeAction = useToolAction(() => {
-    const [updatedImage] = addShape(fileData, "New Shape");
+    let position: PlacementInfo | undefined = undefined;
+    const targetId = selectedItems[0];
+    const folder = fileData.layerFolders[targetId];
+    const item = fileData.layers[targetId];
+    if (selectedItems.length === 1 && folder) {
+      position = { parent: targetId };
+      treeData.addChangedId && treeData.addChangedId(targetId);
+    }
+    if (selectedItems.length === 1 && item) {
+      const parentId = findParentId(fileData.layerHierarchy, targetId);
+      if (parentId) {
+        position = { after: targetId, parent: parentId };
+        treeData.addChangedId && treeData.addChangedId(parentId);
+      }
+    }
+    const [updatedImage] = addShape(fileData, "New Shape", position);
     setFileData(updatedImage);
-  }, [fileData]);
+  }, [fileData, selectedItems]);
 
   const addFolderAction = useToolAction(() => {
-    const [updatedImage] = addFolder(fileData, "New folder");
+    let position: PlacementInfo | undefined = undefined;
+    const targetId = selectedItems[0];
+    const folder = fileData.layerFolders[targetId];
+    const item = fileData.layers[targetId];
+    if (selectedItems.length === 1 && folder) {
+      position = { parent: targetId };
+      treeData.addChangedId && treeData.addChangedId(targetId);
+    }
+    if (selectedItems.length === 1 && item) {
+      const parentId = findParentId(fileData.layerHierarchy, targetId);
+      if (parentId) {
+        position = { after: targetId, parent: parentId };
+        treeData.addChangedId && treeData.addChangedId(parentId);
+      }
+    }
+    const [updatedImage] = addFolder(fileData, "New folder", position);
     setFileData(updatedImage);
-  }, [fileData]);
+  }, [fileData, selectedItems]);
+
+  const onDrop = useCallback((items: LayerItem[], target: DraggingPosition) => {
+    console.log("Drop", items, target);
+  }, []);
 
   return (
     <>
       <UncontrolledTreeEnvironment
         dataProvider={treeData}
         onSelectItems={useCallback((items: TreeItemIndex[]) => {
-          setSelectedItems(items);
+          setSelectedItems(items.map((e) => `${e}`));
         }, [])}
         canRename={true}
+        canDrag={yes}
+        canDragAndDrop={true}
+        canReorderItems={true}
         onRenameItem={useCallback((item: LayerItem, newName: string) => {
           setFileData((fileData) =>
             rename(fileData, `${item.index}`, item.data.type, newName)
           );
         }, [])}
+        onDrop={onDrop}
       >
         <ToolBar size="small">
           <ToolButton

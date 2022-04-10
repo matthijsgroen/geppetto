@@ -46,7 +46,7 @@ describe("shapes", () => {
         });
 
         expect(shape).toEqual({
-          name: "New shape",
+          name: "New shape (1)",
           visible: true,
           points: [],
           translate: [0, 0],
@@ -87,7 +87,7 @@ describe("shapes", () => {
         });
 
         expect(folder).toEqual({
-          name: "New folder",
+          name: "New folder (1)",
           visible: true,
           collapsed: false,
         });

@@ -21,6 +21,7 @@ export type TreeDataProvider<Type extends string> = ComplexTreeDataProvider<
   TreeData<Type>
 > & {
   updateActiveTree?: (tree: GeppettoImage) => void;
+  addChangedId?: (id: string) => void;
 };
 
 const renderDepthOffset = 16;

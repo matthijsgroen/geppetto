@@ -2,9 +2,9 @@ import { Vec2 } from "../../types";
 
 export type NodeType = "layerFolder" | "layer" | "mutation";
 export type TreeNode<Type extends string> = {
-  id: string;
-  type: Type;
-  children?: TreeNode<Type>[];
+  type: Type | "root";
+  parentId?: string;
+  children?: string[];
 };
 
 export type Layer = {
@@ -121,18 +121,18 @@ export type GeppettoImage = {
     zoom: number;
     pan: [number, number];
   };
-  layerHierarchy: TreeNode<NodeType>[];
+  layerHierarchy: Record<string, TreeNode<NodeType>>;
   layers: Record<string, Layer>;
   mutations: Record<string, MutationVector>;
   layerFolders: Record<string, LayerFolder>;
 
   defaultFrame: Record<string, Vec2>;
-  controlHierarchy: TreeNode<"controlFolder" | "control">[];
+  controlHierarchy: Record<string, TreeNode<"controlFolder" | "control">>;
   controlFolders: Record<string, Folder>;
   controls: Record<string, ControlDefinition>;
   controlValues: Record<string, number>;
 
-  animationHierarchy: TreeNode<"animationFolder" | "animation">[];
+  animationHierarchy: Record<string, TreeNode<"animationFolder" | "animation">>;
   animationFolders: Record<string, Folder>;
   animations: Record<string, Animation>;
 };

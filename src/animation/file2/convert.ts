@@ -9,40 +9,52 @@ import { FrameAction, GeppettoImage, NodeType, TreeNode } from "./types";
 const populateMutations = (
   mutations: MutationVector[],
   target: GeppettoImage,
-  createId: () => string
-): TreeNode<"mutation">[] => {
-  const result: TreeNode<"mutation">[] = [];
+  createId: () => string,
+  result: Record<string, TreeNode<NodeType>>,
+  parentId: string
+): string[] => {
+  const ids: string[] = [];
   for (const mutation of mutations) {
     const id = createId();
-    result.push({
-      id,
+    result[id] = {
+      parentId,
       type: "mutation",
-    });
+    };
+    ids.push(id);
 
     target.mutations[id] = {
       ...mutation,
     };
   }
-  return result;
+  return ids;
 };
 
 const populateShapes = (
   shapes: ImageDefinition["shapes"],
   target: GeppettoImage,
-  createId: () => string
-): TreeNode<NodeType>[] => {
-  const result: TreeNode<NodeType>[] = [];
+  createId: () => string,
+  result: Record<string, TreeNode<NodeType>>,
+  parentId: string | null = null
+): string[] => {
+  const childIds: string[] = [];
   for (const shape of shapes) {
     if (shape.type === "folder") {
       const id = createId();
-      result.push({
-        id,
+      result[id] = {
         type: "layerFolder",
+        ...(parentId !== null ? { parentId } : {}),
         children: [
-          ...populateMutations(shape.mutationVectors, target, createId),
-          ...populateShapes(shape.items, target, createId),
+          ...populateMutations(
+            shape.mutationVectors,
+            target,
+            createId,
+            result,
+            id
+          ),
+          ...populateShapes(shape.items, target, createId, result, id),
         ],
-      });
+      };
+      childIds.push(id);
 
       target.layerFolders[id] = {
         name: shape.name,
@@ -54,14 +66,17 @@ const populateShapes = (
       const mutations = populateMutations(
         shape.mutationVectors,
         target,
-        createId
+        createId,
+        result,
+        id
       );
 
-      result.push({
-        id,
+      result[id] = {
         type: "layer",
+        ...(parentId !== null ? { parentId } : {}),
         ...(mutations.length > 0 ? { children: mutations } : undefined),
-      });
+      };
+      childIds.push(id);
 
       target.layers[id] = {
         name: shape.name,
@@ -71,7 +86,7 @@ const populateShapes = (
       };
     }
   }
-  return result;
+  return childIds;
 };
 
 const getMutationId = (target: GeppettoImage, name: string) => {
@@ -98,14 +113,15 @@ const populateControls = (
   controls: ImageDefinition["controls"],
   target: GeppettoImage,
   createId: () => string
-): TreeNode<"controlFolder" | "control">[] => {
-  const result: TreeNode<"control">[] = [];
+): Record<string, TreeNode<"controlFolder" | "control">> => {
+  const result: Record<string, TreeNode<"control">> = {};
+  const ids: string[] = [];
   for (const control of controls) {
     const id = createId();
-    result.push({
-      id,
+    ids.push(id);
+    result[id] = {
       type: "control",
-    });
+    };
 
     target.controls[id] = {
       name: control.name,
@@ -121,6 +137,7 @@ const populateControls = (
       ),
     };
   }
+  result["root"] = { type: "root", children: ids };
   return result;
 };
 
@@ -162,14 +179,15 @@ const populateAnimations = (
   animations: ImageDefinition["animations"],
   target: GeppettoImage,
   createId: () => string
-): TreeNode<"animationFolder" | "animation">[] => {
-  const result: TreeNode<"animation">[] = [];
+): Record<string, TreeNode<"animationFolder" | "animation">> => {
+  const result: Record<string, TreeNode<"animation">> = {};
+  const ids: string[] = [];
   for (const animation of animations) {
     const id = createId();
-    result.push({
-      id,
+    ids.push(id);
+    result[id] = {
       type: "animation",
-    });
+    };
 
     target.animations[id] = {
       name: animation.name,
@@ -177,6 +195,7 @@ const populateAnimations = (
       actions: convertKeyframes(animation.keyframes, target),
     };
   }
+  result["root"] = { type: "root", children: ids };
   return result;
 };
 
@@ -189,7 +208,14 @@ export const convertFromV1 = (imageDef: ImageDefinition): GeppettoImage => {
     return result;
   };
 
-  result.layerHierarchy = populateShapes(imageDef.shapes, result, createId);
+  const childIds = populateShapes(
+    imageDef.shapes,
+    result,
+    createId,
+    result.layerHierarchy,
+    null
+  );
+  result.layerHierarchy["root"] = { type: "root", children: childIds };
 
   id = 0;
   result.controlHierarchy = populateControls(

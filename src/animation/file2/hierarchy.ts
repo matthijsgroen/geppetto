@@ -10,7 +10,6 @@ const addFirst = <T extends string>(
 const addInHierarchyRec = <T extends string>(
   tree: TreeNode<T>[],
   newNode: TreeNode<T>,
-  parent: TreeNode<T> | null,
   position: PlacementInfo
 ): TreeNode<T>[] =>
   tree.reduce<TreeNode<T>[]>((result, item) => {
@@ -20,12 +19,7 @@ const addInHierarchyRec = <T extends string>(
     if (item.id === position.parent) {
       const parent = {
         ...item,
-        children: addInHierarchyRec(
-          item.children || [],
-          newNode,
-          item,
-          position
-        ),
+        children: addInHierarchyRec(item.children || [], newNode, position),
       };
       const placed = parent.children.find((c) => c === newNode);
       if (!placed) {
@@ -35,7 +29,10 @@ const addInHierarchyRec = <T extends string>(
     }
     return result.concat(
       item.children
-        ? addInHierarchyRec(item.children, newNode, parent, position)
+        ? {
+            ...item,
+            children: addInHierarchyRec(item.children, newNode, position),
+          }
         : item
     );
   }, []);
@@ -44,10 +41,17 @@ export const addInHierarchy = <T extends string>(
   tree: TreeNode<T>[],
   newNode: TreeNode<T>,
   position?: PlacementInfo
-): TreeNode<T>[] =>
-  position === undefined
-    ? addFirst(tree, newNode)
-    : addInHierarchyRec(tree, newNode, null, position);
+): TreeNode<T>[] => {
+  if (position === undefined) {
+    return addFirst(tree, newNode);
+  }
+  if (position.after) {
+    const after = position.after;
+    const element = tree.find((n) => (n.children || []).includes(after));
+    console.log(element);
+  }
+  // : addInHierarchyRec(tree, newNode, position);
+};
 
 export const findInHierarchy = <T extends string>(
   tree: TreeNode<T>[],
@@ -63,6 +67,29 @@ export const findInHierarchy = <T extends string>(
       const found = findInHierarchy(v.children, id);
       if (found) {
         result = found;
+        return true;
+      }
+    }
+  });
+  return result;
+};
+
+export const findParentId = <T extends string>(
+  tree: TreeNode<T>[],
+  id: number | string
+): string | null => {
+  let result: string | null = null;
+  tree.find((v) => {
+    if (v.children) {
+      for (const child of v.children) {
+        if (child.id === id) {
+          result = v.id;
+          return true;
+        }
+      }
+      const parentId = findParentId(v.children, id);
+      if (parentId !== null) {
+        result = parentId;
         return true;
       }
     }

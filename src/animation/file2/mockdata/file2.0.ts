@@ -8,25 +8,16 @@ export const v2Format: GeppettoImage = {
     zoom: 1.0,
     pan: [0, 0],
   },
-  layerHierarchy: [
-    { id: "0", type: "layer" },
-    {
-      id: "1",
-      type: "layerFolder",
-      children: [
-        {
-          id: "2",
-          type: "layer",
-          children: [
-            { id: "3", type: "mutation" },
-            { id: "4", type: "mutation" },
-          ],
-        },
-        { id: "5", type: "layer" },
-      ],
-    },
-    { id: "6", type: "layer" },
-  ],
+  layerHierarchy: {
+    root: { type: "root", children: ["0", "1", "6"] },
+    "0": { type: "layer" },
+    "1": { type: "layerFolder", children: ["2", "5"] },
+    "2": { type: "layer", parentId: "1", children: ["3", "4"] },
+    "3": { type: "mutation", parentId: "2" },
+    "4": { type: "mutation", parentId: "2" },
+    "5": { type: "layer", parentId: "1" },
+    "6": { type: "layer" },
+  },
   layerFolders: {
     "1": {
       name: "body",
@@ -89,10 +80,11 @@ export const v2Format: GeppettoImage = {
       radius: -1,
     },
   },
-  controlHierarchy: [
-    { id: "0", type: "control" },
-    { id: "1", type: "control" },
-  ],
+  controlHierarchy: {
+    root: { type: "root", children: ["0", "1"] },
+    "0": { type: "control" },
+    "1": { type: "control" },
+  },
   controls: {
     "0": {
       name: "HeadRotate",
@@ -114,7 +106,10 @@ export const v2Format: GeppettoImage = {
     "1": 0.5,
   },
 
-  animationHierarchy: [{ id: "0", type: "animation" }],
+  animationHierarchy: {
+    root: { type: "root", children: ["0"] },
+    "0": { type: "animation" },
+  },
   animationFolders: {},
   animations: {
     "0": {

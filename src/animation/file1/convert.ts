@@ -15,13 +15,19 @@ import { newFile } from "./new";
 import { updateVersionNumber } from "../updateVersionNumber";
 
 const convertMutations = (
-  items: TreeNode<string>[],
+  items: Record<string, TreeNode<string>>,
+  children: string[] | undefined,
   source: GeppettoImage
 ): MutationVector[] => {
+  if (children === undefined) {
+    return [];
+  }
   const result: MutationVector[] = [];
-  for (const item of items) {
+  for (const itemId of children) {
+    const item = items[itemId];
+    if (!item) continue;
     if (item.type === "mutation") {
-      const mutation = source.mutations[item.id];
+      const mutation = source.mutations[itemId];
       result.push({
         ...mutation,
       });
@@ -31,39 +37,35 @@ const convertMutations = (
 };
 
 const convertShapes = (
-  items: TreeNode<string>[],
+  items: Record<string, TreeNode<string>>,
   source: GeppettoImage,
-  target: ImageDefinition
+  target: ImageDefinition,
+  parentId: string | null
 ): ImageDefinition["shapes"] => {
   const result: ImageDefinition["shapes"] = [];
-  for (const item of items) {
+  const parent = items[parentId === null ? "root" : parentId];
+
+  for (const childId of parent?.children || []) {
+    const item = items[childId];
+    if (!item) continue;
+
     if (item.type === "layer") {
-      const layer = source.layers[item.id];
+      const layer = source.layers[childId];
       result.push({
         name: layer.name,
         type: "sprite",
-        mutationVectors: convertMutations(
-          (item.children || []).filter((i) => i.type === "mutation"),
-          source
-        ),
+        mutationVectors: convertMutations(items, item.children, source),
         points: layer.points,
         translate: layer.translate,
       });
     }
     if (item.type === "layerFolder") {
-      const folder = source.layerFolders[item.id];
+      const folder = source.layerFolders[childId];
       result.push({
         name: folder.name,
         type: "folder",
-        mutationVectors: convertMutations(
-          (item.children || []).filter((i) => i.type === "mutation"),
-          source
-        ),
-        items: convertShapes(
-          (item.children || []).filter((i) => i.type !== "mutation"),
-          source,
-          target
-        ),
+        mutationVectors: convertMutations(items, item.children, source),
+        items: convertShapes(items, source, target, childId),
       });
     }
   }
@@ -71,13 +73,13 @@ const convertShapes = (
 };
 
 const convertControls = (
-  items: TreeNode<string>[],
+  items: Record<string, TreeNode<string>>,
   source: GeppettoImage,
   target: ImageDefinition
 ) => {
-  for (const item of items) {
+  for (const [itemId, item] of Object.entries(items)) {
     if (item.type === "control") {
-      const control = source.controls[item.id];
+      const control = source.controls[itemId];
 
       target.controls.push({
         name: control.name,
@@ -92,9 +94,6 @@ const convertControls = (
         }),
       });
     }
-    if (item.children) {
-      convertControls(item.children, source, target);
-    }
   }
 };
 
@@ -105,13 +104,13 @@ const isControlAction = (frame: FrameAction): frame is FrameControlAction =>
   "controlId" in frame;
 
 const convertAnimations = (
-  items: TreeNode<string>[],
+  items: Record<string, TreeNode<string>>,
   source: GeppettoImage,
   target: ImageDefinition
 ) => {
-  for (const item of items) {
+  for (const [itemId, item] of Object.entries(items)) {
     if (item.type === "animation") {
-      const animation = source.animations[item.id];
+      const animation = source.animations[itemId];
 
       const keyframes: AnimationFrame[] = [];
 
@@ -152,9 +151,6 @@ const convertAnimations = (
         keyframes,
       });
     }
-    if (item.children) {
-      convertAnimations(item.children, source, target);
-    }
   }
 };
 
@@ -166,7 +162,8 @@ export const convertFromV2 = (
   result.shapes = convertShapes(
     geppettoImage.layerHierarchy,
     geppettoImage,
-    result
+    result,
+    null
   );
   convertControls(geppettoImage.controlHierarchy, geppettoImage, result);
 
