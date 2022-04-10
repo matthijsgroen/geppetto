@@ -1,23 +1,14 @@
-import { useEffect, useMemo } from "react";
+import React from "react";
 import { GeppettoImage } from "src/animation/file2/types";
 import {
   Column,
-  Icon,
-  Menu,
-  MenuItem,
-  MenuRadioGroup,
-  Panel,
   ResizeDirection,
   ResizePanel,
   Row,
   ToolBar,
-  ToolButton,
-  ToolSeparator,
-  ToolTab,
-  Tree,
 } from "src/ui-components";
 import { UseState } from "../types";
-import { treeDataProvider } from "./TreeDataProvider";
+import { ShapeTree } from "./ShapeTree";
 
 type LayersProps = {
   zoomState: UseState<number>;
@@ -28,21 +19,11 @@ type LayersProps = {
 };
 
 export const Layers: React.VFC<LayersProps> = ({ fileState, menu }) => {
-  const [fileData] = fileState;
-
-  const treeData = useMemo(
-    () => treeDataProvider(fileData, { showMutations: false }),
-    []
-  );
-  useEffect(() => {
-    treeData.updateActiveTree && treeData.updateActiveTree(fileData);
-  }, [fileData]);
-
   return (
     <Column>
       <ToolBar>
         {menu}
-        <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
+        {/* <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
         <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} />
         <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} />
         <ToolSeparator />
@@ -84,7 +65,7 @@ export const Layers: React.VFC<LayersProps> = ({ fileState, menu }) => {
             </MenuItem>
           </MenuRadioGroup>
         </Menu>
-        <ToolButton icon={<Icon>🧲</Icon>} tooltip="Toggle magnetic grid" />
+        <ToolButton icon={<Icon>🧲</Icon>} tooltip="Toggle magnetic grid" /> */}
       </ToolBar>
       <Row>
         <ResizePanel direction={ResizeDirection.East} style={{ width: "20vw" }}>
@@ -95,39 +76,7 @@ export const Layers: React.VFC<LayersProps> = ({ fileState, menu }) => {
               width: "100%",
             }}
           >
-            <ToolBar size="small">
-              <ToolButton
-                icon={<Icon>📄</Icon>}
-                label="+"
-                tooltip="Add layer"
-              />
-              <ToolButton
-                icon={<Icon>📁</Icon>}
-                label="+"
-                tooltip="Add folder"
-              />
-              <ToolButton
-                icon={<Icon>📑</Icon>}
-                disabled={true}
-                tooltip="Copy layer"
-              />
-              <ToolButton
-                icon={<Icon>🗑</Icon>}
-                disabled={true}
-                tooltip="Remove item"
-              />
-              <ToolButton
-                icon={<Icon>⬆</Icon>}
-                disabled={true}
-                tooltip="Move item up"
-              />
-              <ToolButton
-                icon={<Icon>⬇</Icon>}
-                disabled={true}
-                tooltip="Move item down"
-              />
-            </ToolBar>
-            <Panel padding={5}>{<Tree dataProvider={treeData} />}</Panel>
+            <ShapeTree fileState={fileState} />
           </div>
         </ResizePanel>
         <div

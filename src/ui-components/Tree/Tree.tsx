@@ -1,9 +1,9 @@
 import {
-  UncontrolledTreeEnvironment,
   Tree as ComplexTree,
   TreeDataProvider as ComplexTreeDataProvider,
   TreeRenderProps,
 } from "react-complex-tree";
+
 import "react-complex-tree/lib/style.css";
 import { GeppettoImage } from "src/animation/file2/types";
 import { Icon } from "../";
@@ -17,10 +17,6 @@ export type TreeData = {
 
 export type TreeDataProvider = ComplexTreeDataProvider<TreeData> & {
   updateActiveTree?: (tree: GeppettoImage) => void;
-};
-
-type TreeProps = {
-  dataProvider: TreeDataProvider;
 };
 
 const renderDepthOffset = 16;
@@ -91,19 +87,11 @@ const renderItem: TreeRenderProps<TreeData>["renderItem"] = ({
   );
 };
 
-export const Tree: React.VFC<TreeProps> = ({ dataProvider }) => {
-  return (
-    <UncontrolledTreeEnvironment
-      dataProvider={dataProvider}
-      getItemTitle={(item) => item.data.name}
-      viewState={{}}
-    >
-      <ComplexTree
-        treeId="tree-1"
-        rootItem="root"
-        treeLabel="Tree Example"
-        renderItem={renderItem}
-      />
-    </UncontrolledTreeEnvironment>
-  );
-};
+export const Tree: React.VFC = () => (
+  <ComplexTree
+    treeId="tree-1"
+    rootItem="root"
+    treeLabel="Tree Example"
+    renderItem={renderItem}
+  />
+);

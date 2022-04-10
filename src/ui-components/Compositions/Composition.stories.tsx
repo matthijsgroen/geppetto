@@ -15,8 +15,9 @@ import {
   MenuHeader,
   MenuDivider,
   MenuRadioGroup,
+  UncontrolledTreeEnvironment,
 } from "../";
-import { storyTreeDataProvider } from "../Tree/Tree.stories";
+import { storyTreeDataProvider } from "../Tree/storybookTreeDataProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -144,7 +145,9 @@ const Template: Story = () => (
             />
           </ToolBar>
           <Panel padding={5}>
-            <Tree dataProvider={storyTreeDataProvider} />
+            <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider}>
+              <Tree />
+            </UncontrolledTreeEnvironment>
           </Panel>
         </div>
       </ResizePanel>

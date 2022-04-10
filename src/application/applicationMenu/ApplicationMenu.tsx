@@ -58,8 +58,6 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
             fileNameState[1](file.name);
             return;
           }
-
-          // console.log(image);
         });
       } catch (e) {
         // user abort
@@ -76,12 +74,12 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
         <ToolButton icon={<Icon>🍔</Icon>} active={open} />
       )}
     >
-      <MenuItem>New</MenuItem>
+      {/* <MenuItem>New</MenuItem> */}
       <MenuItem onClick={openFile}>Open</MenuItem>
-      <MenuItem>Load texture</MenuItem>
+      {/* <MenuItem>Load texture</MenuItem>
       <MenuItem>Reload texture</MenuItem>
       <MenuItem disabled>Save</MenuItem>
-      <MenuItem>Save as...</MenuItem>
+      <MenuItem>Save as...</MenuItem> */}
     </Menu>
   );
 };
