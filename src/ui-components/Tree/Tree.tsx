@@ -54,7 +54,7 @@ const renderItem: TreeRenderProps<TreeData>["renderItem"] = ({
     >
       <div
         {...context.itemContainerWithoutChildrenProps}
-        style={{ paddingLeft: `${(depth + 1) * renderDepthOffset}px` }}
+        style={{ paddingLeft: `${depth * renderDepthOffset}px` }}
         className={cx(
           "rct-tree-item-title-container",
           item.hasChildren && "rct-tree-item-title-container-hasChildren",

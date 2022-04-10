@@ -30,7 +30,10 @@ type LayersProps = {
 export const Layers: React.VFC<LayersProps> = ({ fileState, menu }) => {
   const [fileData] = fileState;
 
-  const treeData = useMemo(() => treeDataProvider(fileData), []);
+  const treeData = useMemo(
+    () => treeDataProvider(fileData, { showMutations: false }),
+    []
+  );
   useEffect(() => {
     treeData.updateActiveTree && treeData.updateActiveTree(fileData);
   }, [fileData]);

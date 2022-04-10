@@ -15,10 +15,12 @@ export const iconMapping: Record<MutationVector["type"], string> = {
   saturation: "🟩",
 };
 
-export const treeDataProvider = (file: GeppettoImage): TreeDataProvider => {
+export const treeDataProvider = (
+  file: GeppettoImage,
+  { showMutations = true } = {}
+): TreeDataProvider => {
   let activeTree = file;
   const getItem = (itemId: string | number) => {
-    console.log("get", itemId);
     if (itemId === TREE_ROOT) {
       return {
         index: TREE_ROOT,
@@ -41,7 +43,9 @@ export const treeDataProvider = (file: GeppettoImage): TreeDataProvider => {
       };
     }
 
-    const childIds = (item.children || []).map((node) => node.id);
+    const childIds = (item.children || [])
+      .filter((e) => showMutations || e.type !== "mutation")
+      .map((node) => node.id);
 
     if (item.type === "layer") {
       const layerData = activeTree.layers[itemId];
@@ -83,7 +87,6 @@ export const treeDataProvider = (file: GeppettoImage): TreeDataProvider => {
     updateActiveTree: (tree: GeppettoImage) => {
       activeTree = tree;
       listeners.forEach((l) => {
-        console.log("update listener");
         l(["root"]);
       });
     },
@@ -91,7 +94,6 @@ export const treeDataProvider = (file: GeppettoImage): TreeDataProvider => {
     getTreeItems: async (itemIds) => itemIds.map((id) => getItem(id)),
     onDidChangeTreeData: (listener) => {
       listeners = listeners.concat(listener);
-      console.log("registering listener");
       return {
         dispose: () => {
           listeners = listeners.filter((l) => l !== listener);

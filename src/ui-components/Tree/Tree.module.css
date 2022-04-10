@@ -7,9 +7,9 @@
   --rct-color-tree-bg: var(--colors-control-edge);
   --rct-color-tree-focus-outline: var(--colors-control-focus);
 
-  --rct-color-focustree-item-selected-bg: var(--colors-control-highlight);
+  --rct-color-focustree-item-selected-bg: var(--colors-control-active);
   --rct-color-focustree-item-selected-text: var(--colors-text-default);
-  --rct-color-focustree-item-focused-border: transparent;
+  --rct-color-focustree-item-focused-border: var(--colors-control-focus);
   --rct-color-focustree-item-draggingover-bg: #ebf0f4;
   --rct-color-focustree-item-draggingover-color: inherit;
 
