@@ -45,7 +45,6 @@ export const addShape = (
     newNode,
     position
   );
-  console.log(newId, layer);
 
   return [
     {
@@ -90,4 +89,34 @@ export const addFolder = (
     },
     folder,
   ];
+};
+
+type RenameableItems<O> = Pick<
+  O,
+  {
+    [P in keyof O]: O[P] extends Record<string, { name: string }> ? P : never;
+  }[keyof O]
+>;
+
+const typeToGroupKey: Record<NodeType, keyof RenameableItems<GeppettoImage>> = {
+  layer: "layers",
+  layerFolder: "layerFolders",
+  mutation: "mutations",
+};
+
+export const rename = (
+  image: GeppettoImage,
+  itemId: string,
+  itemType: NodeType,
+  newName: string
+): GeppettoImage => {
+  const groupKey = typeToGroupKey[itemType];
+
+  return {
+    ...image,
+    [groupKey]: {
+      ...image[groupKey],
+      [itemId]: { ...image[groupKey][itemId], name: newName },
+    },
+  };
 };

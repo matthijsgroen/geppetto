@@ -3,16 +3,17 @@ import {
   TreeItem,
   TreeItemIndex,
 } from "react-complex-tree";
+import { NodeType } from "src/animation/file2/types";
 import { Icon, ToolButton } from "..";
 import { TreeData, TreeDataProvider } from "./Tree";
 
-const treeItems: Record<TreeItemIndex, TreeItem<TreeData>> = {
+const treeItems: Record<TreeItemIndex, TreeItem<TreeData<NodeType>>> = {
   root: {
     index: "root",
     canMove: true,
     hasChildren: true,
     children: ["child1", "child2"],
-    data: { name: "Root item", icon: "🥕" },
+    data: { name: "Root item", icon: "🥕", type: "layerFolder" },
     canRename: true,
   },
   child1: {
@@ -24,6 +25,7 @@ const treeItems: Record<TreeItemIndex, TreeItem<TreeData>> = {
       name: "Child item 1",
       icon: "📄",
       itemTools: <ToolButton size={"small"} icon={<Icon>👁</Icon>} />,
+      type: "layer",
     },
     canRename: true,
   },
@@ -36,6 +38,7 @@ const treeItems: Record<TreeItemIndex, TreeItem<TreeData>> = {
       name: "Child item 2",
       icon: "📁",
       itemTools: <ToolButton size={"small"} icon={<Icon>👁</Icon>} />,
+      type: "layerFolder",
     },
     canRename: true,
   },
@@ -43,19 +46,19 @@ const treeItems: Record<TreeItemIndex, TreeItem<TreeData>> = {
     index: "child3",
     canMove: true,
     hasChildren: false,
-    data: { name: "Mutation", icon: "🟢" },
+    data: { name: "Mutation", icon: "🟢", type: "mutation" },
     canRename: true,
   },
   child4: {
     index: "child4",
     canMove: true,
     hasChildren: false,
-    data: { name: "Mutation 2", icon: "🔵" },
+    data: { name: "Mutation 2", icon: "🔵", type: "mutation" },
     canRename: true,
   },
 };
 
-export const storyTreeDataProvider: TreeDataProvider = new StaticTreeDataProvider(
+export const storyTreeDataProvider: TreeDataProvider<NodeType> = new StaticTreeDataProvider(
   treeItems,
   (item, newName) => ({
     ...item,

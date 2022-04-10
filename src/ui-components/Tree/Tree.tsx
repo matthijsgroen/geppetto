@@ -3,20 +3,23 @@ import {
   TreeDataProvider as ComplexTreeDataProvider,
   TreeRenderProps,
 } from "react-complex-tree";
-export type { TreeItem } from "react-complex-tree";
+export type { TreeItem, TreeItemIndex } from "react-complex-tree";
 
 import "react-complex-tree/lib/style.css";
 import { GeppettoImage } from "src/animation/file2/types";
 import { Icon } from "../";
 import "./Tree.module.css";
 
-export type TreeData = {
+export type TreeData<Type extends string> = {
   name: string;
+  type: Type;
   icon: string;
   itemTools?: React.ReactChild;
 };
 
-export type TreeDataProvider = ComplexTreeDataProvider<TreeData> & {
+export type TreeDataProvider<Type extends string> = ComplexTreeDataProvider<
+  TreeData<Type>
+> & {
   updateActiveTree?: (tree: GeppettoImage) => void;
 };
 
@@ -25,7 +28,7 @@ const renderDepthOffset = 16;
 const cx = (...classNames: Array<string | undefined | false>) =>
   classNames.filter((cn) => !!cn).join(" ");
 
-const renderItem: TreeRenderProps<TreeData>["renderItem"] = ({
+const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
   item,
   depth,
   children,

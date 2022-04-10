@@ -1,6 +1,15 @@
 import { findInHierarchy } from "src/animation/file2/hierarchy";
-import { GeppettoImage, MutationVector } from "src/animation/file2/types";
-import { TreeDataProvider } from "../../ui-components/Tree/Tree";
+import {
+  GeppettoImage,
+  MutationVector,
+  NodeType,
+} from "src/animation/file2/types";
+import {
+  TreeDataProvider,
+  TreeItem,
+  TreeData,
+  TreeItemIndex,
+} from "../../ui-components/Tree/Tree";
 
 const TREE_ROOT = "root";
 
@@ -18,16 +27,16 @@ export const iconMapping: Record<MutationVector["type"], string> = {
 export const treeDataProvider = (
   file: GeppettoImage,
   { showMutations = true } = {}
-): TreeDataProvider => {
+): TreeDataProvider<NodeType> => {
   let activeTree = file;
-  const getItem = (itemId: string | number) => {
+  const getItem = (itemId: string | number): TreeItem<TreeData<NodeType>> => {
     if (itemId === TREE_ROOT) {
       return {
         index: TREE_ROOT,
         canMove: false,
         hasChildren: true,
         children: activeTree.layerHierarchy.map((node) => node.id),
-        data: { name: "Root item", icon: "🥕" },
+        data: { name: "Root item", icon: "🥕", type: "layerFolder" },
         canRename: false,
       };
     }
@@ -38,7 +47,7 @@ export const treeDataProvider = (
         index: itemId,
         canMove: false,
         hasChildren: false,
-        data: { name: "Not found", icon: "🛑" },
+        data: { name: "Not found", icon: "🛑", type: "layer" },
         canRename: true,
       };
     }
@@ -54,7 +63,7 @@ export const treeDataProvider = (
         canMove: false,
         hasChildren: childIds.length > 0,
         children: childIds,
-        data: { name: layerData.name, icon: "📄" },
+        data: { name: layerData.name, icon: "📄", type: item.type },
         canRename: true,
       };
     }
@@ -65,7 +74,7 @@ export const treeDataProvider = (
         canMove: false,
         hasChildren: childIds.length > 0,
         children: childIds,
-        data: { name: layerFolderData.name, icon: "📁" },
+        data: { name: layerFolderData.name, icon: "📁", type: item.type },
         canRename: true,
       };
     }
@@ -76,7 +85,11 @@ export const treeDataProvider = (
       canMove: false,
       hasChildren: childIds.length > 0,
       children: childIds,
-      data: { name: mutationData.name, icon: iconMapping[mutationData.type] },
+      data: {
+        name: mutationData.name,
+        icon: iconMapping[mutationData.type],
+        type: item.type,
+      },
       canRename: true,
     };
   };
@@ -85,9 +98,27 @@ export const treeDataProvider = (
 
   return {
     updateActiveTree: (tree: GeppettoImage) => {
+      const updatedItems: TreeItemIndex[] = ["root"];
+
+      for (const [key, value] of Object.entries(tree.layers)) {
+        if (activeTree.layers[key] !== value) {
+          updatedItems.push(key);
+        }
+      }
+      for (const [key, value] of Object.entries(tree.layerFolders)) {
+        if (activeTree.layerFolders[key] !== value) {
+          updatedItems.push(key);
+        }
+      }
+      for (const [key, value] of Object.entries(tree.mutations)) {
+        if (activeTree.mutations[key] !== value) {
+          updatedItems.push(key);
+        }
+      }
+
       activeTree = tree;
       listeners.forEach((l) => {
-        l(["root"]);
+        l(updatedItems);
       });
     },
     getTreeItem: async (itemId) => getItem(itemId),

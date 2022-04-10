@@ -8,7 +8,7 @@ export { ToolSeparator } from "./ToolSeparator/ToolSeparator";
 export { ToolTab } from "./ToolTab/ToolTab";
 export { ResizePanel, ResizeDirection } from "./ResizePanel/ResizePanel";
 export { Tree } from "./Tree/Tree";
-export type { TreeItem, TreeData } from "./Tree/Tree";
+export type { TreeItem, TreeData, TreeItemIndex } from "./Tree/Tree";
 export { UncontrolledTreeEnvironment } from "./Tree/UncontrolledTreeEnvironment";
 export { Panel } from "./Panel/Panel";
 export { Column } from "./Column/Column";
