@@ -1,4 +1,9 @@
-import { forwardRef, useContext } from "react";
+import {
+  forwardRef,
+  useContext,
+  MouseEventHandler,
+  KeyboardEventHandler,
+} from "react";
 import styled, { css } from "styled-components";
 import { Label } from "../Label/Label";
 import { ToolbarContext } from "../ToolBar/ToolBarContext";
@@ -10,8 +15,8 @@ type ToolButtonProps = {
   disabled?: boolean;
   tooltip?: string;
   size?: "default" | "small";
-  onClick?: () => void;
-  onKeyDown?: () => void;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
 };
 
 type StyledButtonProps = {

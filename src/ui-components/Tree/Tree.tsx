@@ -3,6 +3,7 @@ import {
   TreeDataProvider as ComplexTreeDataProvider,
   TreeRenderProps,
 } from "react-complex-tree";
+export type { TreeItem } from "react-complex-tree";
 
 import "react-complex-tree/lib/style.css";
 import { GeppettoImage } from "src/animation/file2/types";

@@ -11,14 +11,30 @@ const getNewShapeId = (image: GeppettoImage): string =>
     ) + 1
   }`;
 
+const getUniqueName = (
+  name: string,
+  existingItems: Record<string, { name: string }>
+) => {
+  const names = Object.values(existingItems).map((i) => i.name);
+  if (!names.includes(name)) {
+    return name;
+  }
+  let counter = 1;
+  while (names.includes(`${name} (${counter})`)) {
+    counter++;
+  }
+  return `${name} (${counter})`;
+};
+
 export const addShape = (
   image: GeppettoImage,
   shapeName: string,
   position?: PlacementInfo
 ): [GeppettoImage, Layer] => {
   const newId = getNewShapeId(image);
+  const newName = getUniqueName(shapeName, image.layers);
   const layer: Layer = {
-    name: shapeName,
+    name: newName,
     visible: true,
     points: [],
     translate: [0, 0],
@@ -29,6 +45,7 @@ export const addShape = (
     newNode,
     position
   );
+  console.log(newId, layer);
 
   return [
     {
@@ -49,8 +66,9 @@ export const addFolder = (
   position?: PlacementInfo
 ): [GeppettoImage, LayerFolder] => {
   const newId = getNewShapeId(image);
+  const newName = getUniqueName(folderName, image.layerFolders);
   const folder: LayerFolder = {
-    name: folderName,
+    name: newName,
     visible: true,
     collapsed: false,
   };

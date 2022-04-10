@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { addFolder, addShape } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
   Icon,
@@ -6,8 +7,11 @@ import {
   ToolBar,
   ToolButton,
   Tree,
+  TreeData,
+  TreeItem,
   UncontrolledTreeEnvironment,
 } from "../../ui-components";
+import { useToolAction } from "../hooks/useToolAction";
 import { UseState } from "../types";
 import { treeDataProvider } from "./TreeDataProvider";
 
@@ -16,7 +20,10 @@ type ShapeTreeProps = {
 };
 
 export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
-  const [fileData] = fileState;
+  const [fileData, setFileData] = fileState;
+  const [focusedItem, setFocusedItem] = useState<TreeItem<TreeData> | null>(
+    null
+  );
 
   const treeData = useMemo(
     () => treeDataProvider(fileData, { showMutations: false }),
@@ -25,27 +32,41 @@ export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
   useEffect(() => {
     treeData.updateActiveTree && treeData.updateActiveTree(fileData);
   }, [fileData]);
-  const addShape = useCallback(() => {
-    console.log("Add shape");
-  }, []);
+
+  const addShapeAction = useToolAction(() => {
+    const [updatedImage] = addShape(fileData, "New Shape");
+    setFileData(updatedImage);
+  }, [fileData]);
+
+  const addFolderAction = useToolAction(() => {
+    const [updatedImage] = addFolder(fileData, "New folder");
+    setFileData(updatedImage);
+  }, [fileData]);
 
   return (
-    <div>
-      <UncontrolledTreeEnvironment dataProvider={treeData}>
+    <>
+      <UncontrolledTreeEnvironment
+        dataProvider={treeData}
+        onFocusItem={useCallback((item: TreeItem<TreeData>) => {
+          setFocusedItem(item);
+        }, [])}
+      >
         <ToolBar size="small">
           <ToolButton
             icon={<Icon>📄</Icon>}
             label="+"
             tooltip="Add layer"
-            onClick={addShape}
-            onKeyDown={addShape}
+            onClick={addShapeAction}
+            onKeyDown={addShapeAction}
+          />
+          <ToolButton
+            icon={<Icon>📁</Icon>}
+            label="+"
+            tooltip="Add folder"
+            onClick={addFolderAction}
+            onKeyDown={addFolderAction}
           />
           {/* 
-              <ToolButton
-                icon={<Icon>📁</Icon>}
-                label="+"
-                tooltip="Add folder"
-              />
               <ToolButton
                 icon={<Icon>📑</Icon>}
                 disabled={true}
@@ -69,6 +90,6 @@ export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
         </ToolBar>
         <Panel padding={5}>{<Tree />}</Panel>
       </UncontrolledTreeEnvironment>
-    </div>
+    </>
   );
 };
