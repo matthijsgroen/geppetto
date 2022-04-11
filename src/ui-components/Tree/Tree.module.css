@@ -10,8 +10,8 @@
   --rct-color-focustree-item-selected-bg: var(--colors-control-active);
   --rct-color-focustree-item-selected-text: var(--colors-text-default);
   --rct-color-focustree-item-focused-border: var(--colors-control-focus);
-  --rct-color-focustree-item-draggingover-bg: #ebf0f4;
-  --rct-color-focustree-item-draggingover-color: inherit;
+  --rct-color-focustree-item-draggingover-bg: var(--colors-control-active);
+  --rct-color-focustree-item-draggingover-color: var(--colors-text-active);
 
   --rct-color-nonfocustree-item-selected-bg: var(--colors-control-active);
   --rct-color-nonfocustree-item-selected-text: var(--colors-text-default);

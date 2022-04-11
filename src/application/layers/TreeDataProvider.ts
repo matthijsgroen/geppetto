@@ -35,13 +35,13 @@ export const treeDataProvider = (
         index: TREE_ROOT,
         canMove: false,
         hasChildren: true,
-        children: activeTree.layerHierarchy.map((node) => node.id),
+        children: activeTree.layerHierarchy["root"].children,
         data: { name: "Root item", icon: "🥕", type: "layerFolder" },
         canRename: false,
       };
     }
 
-    const item = findInHierarchy(activeTree.layerHierarchy, itemId);
+    const item = findInHierarchy(activeTree.layerHierarchy, `${itemId}`);
     if (!item) {
       return {
         index: itemId,
@@ -52,9 +52,9 @@ export const treeDataProvider = (
       };
     }
 
-    const childIds = (item.children || [])
-      .filter((e) => showMutations || e.type !== "mutation")
-      .map((node) => node.id);
+    const childIds = (item.children || []).filter(
+      (e) => showMutations || activeTree.layerHierarchy[e].type !== "mutation"
+    );
 
     if (item.type === "layer") {
       const layerData = activeTree.layers[itemId];
@@ -71,7 +71,7 @@ export const treeDataProvider = (
       const layerFolderData = activeTree.layerFolders[itemId];
       return {
         index: itemId,
-        canMove: false,
+        canMove: true,
         hasChildren: childIds.length > 0,
         children: childIds,
         data: { name: layerFolderData.name, icon: "📁", type: item.type },
@@ -82,13 +82,13 @@ export const treeDataProvider = (
 
     return {
       index: itemId,
-      canMove: false,
+      canMove: true,
       hasChildren: childIds.length > 0,
       children: childIds,
       data: {
         name: mutationData.name,
         icon: iconMapping[mutationData.type],
-        type: item.type,
+        type: "mutation",
       },
       canRename: true,
     };
@@ -98,7 +98,7 @@ export const treeDataProvider = (
   let bufferedChanges: TreeItemIndex[] = [];
 
   return {
-    addChangedId: (id: string) => bufferedChanges.push(id),
+    addChangedId: (...ids: string[]) => bufferedChanges.push(...ids),
     updateActiveTree: (tree: GeppettoImage) => {
       const updatedItems: TreeItemIndex[] = ["root", ...bufferedChanges];
 

@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { DraggingPosition } from "react-complex-tree";
-import { findParentId, PlacementInfo } from "src/animation/file2/hierarchy";
+import {
+  findParentId,
+  isRootNode,
+  moveInHierarchy,
+  PlacementInfo,
+} from "src/animation/file2/hierarchy";
 import { addFolder, addShape, rename } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
@@ -77,8 +82,73 @@ export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
     setFileData(updatedImage);
   }, [fileData, selectedItems]);
 
+  const canDropAt = useCallback(
+    (_items: LayerItem[], target: DraggingPosition) => {
+      // target cannot be a layer (only for mutations)
+      if (target.targetType === "item") {
+        const targetItem = fileData.layerHierarchy[target.targetItem];
+        return targetItem.type === "layerFolder" || targetItem.type === "root";
+      }
+      return true;
+    },
+    [fileData]
+  );
+
   const onDrop = useCallback((items: LayerItem[], target: DraggingPosition) => {
-    console.log("Drop", items, target);
+    items.reverse();
+    const updatedItems: string[] = [];
+    if (target.targetType === "item") {
+      const targetId = `${target.targetItem}`;
+      updatedItems.push(targetId);
+      setFileData((fileData) => {
+        const result = { ...fileData };
+        for (const item of items) {
+          result.layerHierarchy = moveInHierarchy(
+            result.layerHierarchy,
+            `${item.index}`,
+            { parent: targetId }
+          );
+          const node = fileData.layerHierarchy[`${item.index}`];
+          if (!isRootNode(node)) {
+            updatedItems.push(node.parentId);
+          }
+        }
+        return result;
+      });
+    } else {
+      setFileData((fileData) => {
+        const parent = fileData.layerHierarchy[`${target.parentItem}`];
+        if (!parent.children) {
+          return fileData;
+        }
+        const targetId =
+          target.linePosition === "bottom"
+            ? parent.children[target.childIndex - 1]
+            : parent.children[target.childIndex];
+
+        const result = { ...fileData };
+        for (const item of items) {
+          result.layerHierarchy = moveInHierarchy(
+            result.layerHierarchy,
+            `${item.index}`,
+            target.linePosition === "bottom"
+              ? { after: targetId }
+              : { before: targetId }
+          );
+          const dest = result.layerHierarchy[`${item.index}`];
+          if (!isRootNode(dest)) {
+            updatedItems.push(dest.parentId);
+          }
+          const source = fileData.layerHierarchy[`${item.index}`];
+          if (!isRootNode(source)) {
+            updatedItems.push(source.parentId);
+          }
+        }
+
+        return result;
+      });
+    }
+    treeData.addChangedId && treeData.addChangedId(...updatedItems);
   }, []);
 
   return (
@@ -90,6 +160,7 @@ export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
         }, [])}
         canRename={true}
         canDrag={yes}
+        canDropAt={canDropAt}
         canDragAndDrop={true}
         canReorderItems={true}
         onRenameItem={useCallback((item: LayerItem, newName: string) => {
@@ -98,6 +169,8 @@ export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
           );
         }, [])}
         onDrop={onDrop}
+        canDropOnItemWithChildren={true}
+        canDropOnItemWithoutChildren={true}
       >
         <ToolBar size="small">
           <ToolButton
