@@ -1,7 +1,6 @@
 import MouseControl, { MouseMode } from "./MouseControl";
 import React, { FC, useCallback, useRef } from "react";
 import { UseState } from "../types";
-import { maxZoomFactor } from "./lib/webgl";
 
 export interface LayerMouseControlProps {
   mode: MouseMode;
@@ -9,7 +8,7 @@ export interface LayerMouseControlProps {
   zoomState: UseState<number>;
   panXState: UseState<number>;
   panYState: UseState<number>;
-  texture: HTMLImageElement | null;
+  maxZoomFactor: number;
 
   onClick?: (event: React.MouseEvent) => void;
   handleDrag?: (
@@ -27,7 +26,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   zoomState,
   panXState,
   panYState,
-  texture,
+  maxZoomFactor,
 }) => {
   const [zoom, setZoom] = zoomState;
   const [panX, setPanX] = panXState;
@@ -110,13 +109,13 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   const mouseWheel = useCallback(
     (delta: number) => {
       const z = Math.min(
-        maxZoomFactor(texture),
+        maxZoomFactor,
         Math.max(0.1, zoomRef.current - delta / 100)
       );
       zoomRef.current = z;
       setZoom(z);
     },
-    [setZoom, texture]
+    [setZoom, maxZoomFactor]
   );
 
   return (

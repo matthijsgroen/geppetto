@@ -17,10 +17,11 @@ import {
   ToolTab,
 } from "src/ui-components";
 import { UseState } from "../types";
-import LayerMouseControl from "../webgl/LayerMouseControl";
-import { MouseMode } from "../webgl/MouseControl";
+import LayerMouseControl from "../canvas/LayerMouseControl";
+import { MouseMode } from "../canvas/MouseControl";
 import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
 import { ShapeTree } from "./ShapeTree";
+import { maxZoomFactor } from "../webgl/lib/webgl";
 
 type LayersProps = {
   zoomState: UseState<number>;
@@ -48,6 +49,7 @@ export const Layers: React.VFC<LayersProps> = ({
     magnetic: false,
     size: 32,
   });
+  const maxZoom = maxZoomFactor(textureState[0]);
 
   return (
     <Column>
@@ -136,7 +138,7 @@ export const Layers: React.VFC<LayersProps> = ({
           ) : (
             <LayerMouseControl
               mode={mouseMode}
-              texture={textureState[0]}
+              maxZoomFactor={maxZoom}
               panXState={panXState}
               panYState={panYState}
               zoomState={zoomState}
