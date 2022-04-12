@@ -14727,6 +14727,13 @@ raw-loader@^4.0.2:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
 
+raw.macro@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/raw.macro/-/raw.macro-0.4.2.tgz#1954f9a36465d9400a76b8b68438e4ec8582acd6"
+  integrity sha512-Z+zKtCweyJ3lGYdUNq/BQwfzqQE2wrXjz0RNEes5nDniPpjvBw64sKYFXStJSfmZUmiBxv4DsN1lto982UAhFQ==
+  dependencies:
+    babel-plugin-macros "^2.8.0"
+
 rc@^1.2.8:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
