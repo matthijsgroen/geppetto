@@ -121,10 +121,13 @@ export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
         if (!parent.children) {
           return fileData;
         }
+        const childIds = parent.children.filter(
+          (id) => fileData.layerHierarchy[id].type !== "mutation"
+        );
         const targetId =
           target.linePosition === "bottom"
-            ? parent.children[target.childIndex - 1]
-            : parent.children[target.childIndex];
+            ? childIds[target.childIndex - 1]
+            : childIds[target.childIndex];
 
         const result = { ...fileData };
         for (const item of items) {

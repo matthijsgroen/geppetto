@@ -21,6 +21,7 @@ export enum ResizeDirection {
 type ResizePanelProps = {
   direction: ResizeDirection;
   minSize?: number;
+  defaultSize?: number;
   maxSize?: number;
   style?: CSSProperties;
   borderClass?: string;
@@ -36,10 +37,13 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
   style,
   borderClass,
   containerClass,
+  defaultSize,
   minSize = 10,
   maxSize,
 }) => {
-  const [size, setSize] = useState<number | null>(null);
+  const [size, setSize] = useState<number | null>(
+    defaultSize === undefined ? null : defaultSize
+  );
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);

@@ -68,7 +68,7 @@ export const Layers: React.VFC<LayersProps> = ({ fileState, menu }) => {
         <ToolButton icon={<Icon>🧲</Icon>} tooltip="Toggle magnetic grid" /> */}
       </ToolBar>
       <Row>
-        <ResizePanel direction={ResizeDirection.East} style={{ width: "20vw" }}>
+        <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
           <div
             style={{
               display: "flex",
