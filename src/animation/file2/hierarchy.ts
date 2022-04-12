@@ -234,3 +234,26 @@ export const moveInHierarchy = <T extends string>(
   );
   return result;
 };
+
+export const visualizeTree = <T extends string>(
+  hierarchy: Hierarchy<T>,
+  omitTypes: string[] = [],
+  nodeId = "root",
+  depth = 0
+): string[] => {
+  const result: string[] = [];
+  const node = hierarchy[nodeId];
+  if (omitTypes.includes(node.type)) return [];
+  result.push(
+    `${Array(depth * 2)
+      .fill(" ")
+      .join("")}${node.type}`
+  );
+  if (node.children) {
+    for (const childId of node.children) {
+      result.push(...visualizeTree(hierarchy, omitTypes, childId, depth + 1));
+    }
+  }
+
+  return result;
+};

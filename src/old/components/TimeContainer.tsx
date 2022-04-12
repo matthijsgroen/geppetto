@@ -93,15 +93,15 @@ const TimeHeader = styled.div<{
   _scale: number;
   _maxLength: number;
 }>`
-  border-top: 1px solid ${({ theme }) => theme.colors.backgroundSecondary};
+  border-top: 1px solid ${({ theme }) => theme.colors.backgroundWorkspace};
   background-color: ${({ theme }) => theme.colors.background};
   background-image: repeating-linear-gradient(
     90deg,
     transparent,
     transparent ${(props) => props._scale - 1}px,
-    ${({ theme }) => theme.colors.backgroundSecondary}
+    ${({ theme }) => theme.colors.backgroundWorkspace}
       ${(props) => props._scale - 1}px,
-    ${({ theme }) => theme.colors.backgroundSecondary}
+    ${({ theme }) => theme.colors.backgroundWorkspace}
       ${(props) => props._scale}px
   );
   border-bottom: 2px solid
@@ -139,7 +139,7 @@ const FrameDot = styled.div<{
         : theme.colors.controlDefault
       : selected
       ? theme.colors.controlActive
-      : theme.colors.backgroundSecondary};
+      : theme.colors.backgroundWorkspace};
   border: 1px solid
     ${({ theme, selected }) =>
       selected ? theme.colors.textActive : theme.colors.controlActive};
@@ -186,15 +186,15 @@ const TimeLine = styled.div<{
 }>`
   width: ${(props) => Math.round((props._maxLength / 1000.0) * props._scale)}px;
   height: 1.5rem;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.backgroundSecondary};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.backgroundWorkspace};
   position: relative;
   background-image: repeating-linear-gradient(
       90deg,
       transparent,
       transparent ${(props) => props._scale - 1}px,
-      ${({ theme }) => theme.colors.backgroundSecondary}
+      ${({ theme }) => theme.colors.backgroundWorkspace}
         ${(props) => props._scale - 1}px,
-      ${({ theme }) => theme.colors.backgroundSecondary}
+      ${({ theme }) => theme.colors.backgroundWorkspace}
         ${(props) => props._scale}px
     ),
     linear-gradient(

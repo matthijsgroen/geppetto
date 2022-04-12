@@ -33,7 +33,7 @@ const Icon = styled.button.attrs({ type: "button" })<IconProps>`
     ${(props) =>
       props.isActive
         ? props.theme.colors.textActive
-        : props.theme.colors.backgroundSecondary};
+        : props.theme.colors.backgroundWorkspace};
   outline: none;
   text-shadow: #000 0px 0px 1px;
 

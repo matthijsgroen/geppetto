@@ -20,6 +20,7 @@ const updateWindowTitle = (
 
 const App: React.FC = () => {
   const fileState = useState<GeppettoImage>(newFile());
+  const textureFileState = useState<HTMLImageElement | null>(null);
 
   const fileName = useState<string | null>(null);
   const textureFileName = useState<string | null>(null);
@@ -36,12 +37,18 @@ const App: React.FC = () => {
     <ThemeProvider theme={defaultTheme}>
       <Layers
         menu={
-          <ApplicationMenu fileNameState={fileName} fileState={fileState} />
+          <ApplicationMenu
+            fileNameState={fileName}
+            fileState={fileState}
+            textureFileNameState={textureFileName}
+            textureFileState={textureFileState}
+          />
         }
         zoomState={zoomState}
         panXState={panXState}
         panYState={panYState}
         fileState={fileState}
+        textureState={textureFileState}
       />
     </ThemeProvider>
   );

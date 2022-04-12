@@ -9,7 +9,7 @@ declare module "styled-components" {
       textDestructive: string;
 
       background: string;
-      backgroundSecondary: string;
+      backgroundWorkspace: string;
 
       itemContainerBackground: string;
       // text: string;

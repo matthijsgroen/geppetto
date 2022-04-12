@@ -1,0 +1,73 @@
+:root,
+.dark-theme {
+  --colors-background-destructive: #911;
+  --colors-text-destructive: white;
+  /* --colors-background-selected: #666; */
+  --colors-background: #333;
+
+  /* --colors-item-container-background: #111; */
+  /* --colors-item-selected: #669; */
+  /* --colors-item-special: #336; */
+  /* --colors-text-selected: white; */
+  --colors-background-workspace: #333;
+
+  --colors-control-default: #555;
+  --colors-control-edge: #eeeeee4d;
+  --colors-control-highlight: #464;
+  --colors-control-active: #484;
+  --colors-control-focus: #4a4;
+
+  --colors-text-default: #eee;
+  --colors-text-active: #5b5;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --colors-background-destructive: #911;
+    --colors-text-destructive: #eee;
+    --colors-background: #eee;
+
+    /* --colors-background-selected: #bbe; */
+    /* --colors-background: #eee;
+    --colors-item-container-background: #ccc;
+    --colors-item-selected: #bbe;
+    --colors-item-special: #366;
+    --colors-text-selected: black;
+    --colors-text: #333; */
+
+    --colors-background-workspace: #a9a9a9;
+
+    --colors-control-default: #eee;
+    --colors-control-edge: #33333334;
+    --colors-control-highlight: #cce;
+    --colors-control-active: #bbe;
+    --colors-control-focus: #66e;
+
+    --colors-text-default: #333;
+    --colors-text-active: #669;
+  }
+}
+
+.light-theme {
+  --colors-background: #eee;
+  /* --colors-background-destructive: #911;
+  --colors-background-secondary: #ddd;
+  --colors-background-selected: #bbe;
+  --colors-background: #eee;
+  --colors-item-container-background: #ccc;
+  --colors-item-selected: #bbe;
+  --colors-item-special: #366;
+  --colors-text-selected: black;
+  --colors-text-destructive: #eee;
+  */
+  --colors-background-workspace: #a9a9a9;
+
+  --colors-control-default: #eee;
+  --colors-control-edge: #33333334;
+  --colors-control-highlight: #cce;
+  --colors-control-active: #bbe;
+  --colors-control-focus: #66e;
+
+  --colors-text-default: #333;
+  --colors-text-active: #669;
+}

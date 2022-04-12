@@ -3,7 +3,7 @@ import styled from "styled-components";
 const IconContainer = styled.aside`
   flex: 0 0 42px;
   height: 100%;
-  background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+  background-color: ${({ theme }) => theme.colors.backgroundWorkspace};
   width: 100%;
   display: flex;
   flex-direction: column;

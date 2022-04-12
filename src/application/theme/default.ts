@@ -1,9 +1,10 @@
 import { DefaultTheme } from "styled-components";
+import "./theme.css";
 
 export const defaultTheme: DefaultTheme = {
   colors: {
     background: "var(--colors-background)",
-    backgroundSecondary: "var(--colors-background-secondary)",
+    backgroundWorkspace: "var(--colors-background-workspace)",
 
     backgroundDestructive: "var(--colors-background-destructive)",
     textDestructive: "var(--colors-text-destructive)",

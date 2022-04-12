@@ -5,7 +5,7 @@ const RenameInput = styled.input.attrs({
   type: "text",
   autoFocus: true,
 })`
-  background: ${({ theme }) => theme.colors.backgroundSecondary};
+  background: ${({ theme }) => theme.colors.backgroundWorkspace};
   color: ${({ theme }) => theme.colors.textActive};
   font-size: 1rem;
   font-weight: normal;

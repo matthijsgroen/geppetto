@@ -16,7 +16,7 @@ export default styled.button.attrs({
   background-color: ${({ theme, buttonType }) =>
     buttonType === ButtonType.Destructive
       ? theme.colors.backgroundDestructive
-      : theme.colors.backgroundSecondary};
+      : theme.colors.backgroundWorkspace};
   border: none;
   border-radius: 0.5rem;
 `;

@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { GeppettoImage } from "src/animation/file2/types";
 import {
   Column,
+  Icon,
+  Menu,
+  MenuHeader,
+  MenuItem,
+  MenuRadioGroup,
+  Panel,
   ResizeDirection,
   ResizePanel,
   Row,
   ToolBar,
+  ToolButton,
+  ToolSeparator,
+  ToolTab,
 } from "src/ui-components";
 import { UseState } from "../types";
+import LayerMouseControl from "../webgl/LayerMouseControl";
+import { MouseMode } from "../webgl/MouseControl";
+import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
 import { ShapeTree } from "./ShapeTree";
 
 type LayersProps = {
@@ -15,22 +27,43 @@ type LayersProps = {
   panXState: UseState<number>;
   panYState: UseState<number>;
   fileState: UseState<GeppettoImage>;
+  textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
 };
 
-export const Layers: React.VFC<LayersProps> = ({ fileState, menu }) => {
+export const Layers: React.VFC<LayersProps> = ({
+  fileState,
+  textureState,
+  menu,
+}) => {
+  const zoomState = useState(1.0);
+  const panXState = useState(0.0);
+  const panYState = useState(0.0);
+  const [zoom] = zoomState;
+  const [panX] = panXState;
+  const [panY] = panYState;
+  const [mouseMode /*setMouseMode*/] = useState(MouseMode.Grab);
+  const [gridSettings, setGridSettings] = useState<GridSettings>({
+    enabled: false,
+    magnetic: false,
+    size: 32,
+  });
+
   return (
     <Column>
       <ToolBar>
         {menu}
-        {/* <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
-        <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} />
-        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} />
+        <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
+        <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} disabled />
+        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
         <ToolSeparator />
-
         <ToolButton active icon={<Icon>✋</Icon>} tooltip="Move mode" />
-        <ToolButton icon={<Icon>🔧</Icon>} tooltip="Adjust point mode" />
-        <ToolButton icon={<Icon>✏️</Icon>} tooltip="Add point mode" />
+        <ToolButton
+          icon={<Icon>🔧</Icon>}
+          tooltip="Adjust point mode"
+          disabled
+        />
+        <ToolButton icon={<Icon>✏️</Icon>} tooltip="Add point mode" disabled />
         <ToolSeparator />
         <ToolButton
           icon={<Icon>🗑</Icon>}
@@ -38,58 +71,91 @@ export const Layers: React.VFC<LayersProps> = ({ fileState, menu }) => {
           tooltip="Remove selected point"
         />
         <ToolSeparator />
-        <ToolButton icon={<Icon>📏</Icon>} tooltip="Toggle grid visibility" />
+        <ToolButton
+          icon={<Icon>📏</Icon>}
+          tooltip="Toggle grid visibility"
+          active={gridSettings.enabled}
+          onClick={useCallback(() => {
+            setGridSettings((settings) => ({
+              ...settings,
+              enabled: !settings.enabled,
+            }));
+          }, [])}
+        />
         <Menu
           portal
-          menuButton={({ open }) => <ToolButton active={open} label="32" />}
+          menuButton={({ open }) => (
+            <ToolButton active={open} label={`${gridSettings.size}`} />
+          )}
           direction="bottom"
           align="center"
           arrow
           transition
         >
-          <MenuRadioGroup value={32}>
-            <MenuItem type="radio" value={8}>
-              8
-            </MenuItem>
-            <MenuItem type="radio" value={16}>
-              16
-            </MenuItem>
-            <MenuItem type="radio" value={32}>
-              32
-            </MenuItem>
-            <MenuItem type="radio" value={64}>
-              64
-            </MenuItem>
-            <MenuItem type="radio" value={128}>
-              128
-            </MenuItem>
+          <MenuHeader>Grid size</MenuHeader>
+          <MenuRadioGroup value={gridSettings.size}>
+            {[8, 16, 32, 64, 128].map((size) => (
+              <MenuItem
+                type="radio"
+                value={size}
+                key={`grid${size}`}
+                onClick={useCallback(() => {
+                  setGridSettings((settings) => ({
+                    ...settings,
+                    size,
+                    enabled: true,
+                  }));
+                }, [])}
+              >
+                {size}
+              </MenuItem>
+            ))}
           </MenuRadioGroup>
         </Menu>
-        <ToolButton icon={<Icon>🧲</Icon>} tooltip="Toggle magnetic grid" /> */}
+        <ToolButton
+          icon={<Icon>🧲</Icon>}
+          tooltip="Toggle magnetic grid"
+          active={gridSettings.magnetic}
+          onClick={useCallback(() => {
+            setGridSettings((settings) => ({
+              ...settings,
+              magnetic: !settings.magnetic,
+            }));
+          }, [])}
+        />
       </ToolBar>
       <Row>
         <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-            }}
-          >
+          <Column>
             <ShapeTree fileState={fileState} />
-          </div>
+          </Column>
         </ResizePanel>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexGrow: 2,
-            background: "gray",
-          }}
-        >
-          <p>Other content</p>
-        </div>
+        <Panel workspace center>
+          {textureState[0] === null ? (
+            <p>No texture loaded</p>
+          ) : (
+            <LayerMouseControl
+              mode={mouseMode}
+              texture={textureState[0]}
+              panXState={panXState}
+              panYState={panYState}
+              zoomState={zoomState}
+              // onClick={mouseClick}
+            >
+              <TextureMapCanvas
+                image={textureState[0]}
+                shapes={[]}
+                zoom={zoom}
+                panX={panX}
+                panY={panY}
+                grid={gridSettings}
+                activeLayer={null}
+                activeCoord={null}
+                showFPS={false}
+              />
+            </LayerMouseControl>
+          )}
+        </Panel>
       </Row>
     </Column>
   );
