@@ -1,31 +1,28 @@
 {
   "short_name": "Geppetto",
   "name": "Geppetto",
-  "description": "WebGL animation toolkit to create beautiful animations that also allow real-time control.",
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64",
+      "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
     },
     {
-      "src": "icon192.png",
+      "src": "logo192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "icon512.png",
+      "src": "logo512.png",
       "type": "image/png",
       "sizes": "512x512"
     },
     {
-      "src": "logo1024.png",
-      "type": "image/png",
-      "sizes": "1024x1024"
+      "src": "geppetto.svg",
+      "sizes": "any"
     }
   ],
-  "id": "/app/",
-  "start_url": ".?utm_source=app",
+  "start_url": ".",
   "display": "minimal-ui",
   "theme_color": "#e79b62",
   "background_color": "#ffffff",

@@ -1,15 +1,10 @@
 {
   "files": {
-    "main.css": "./static/css/main.6d8e1176.css",
-    "main.js": "./static/js/main.0b2e31ef.js",
-    "service-worker.js": "./service-worker.js",
-    "static/media/geppetto.svg": "./static/media/geppetto.97e75e1f385c6958e4eb0ca96b66898a.svg",
+    "main.css": "./static/css/main.a4293af7.css",
+    "main.js": "./static/js/main.26c6c536.js",
     "index.html": "./index.html",
-    "main.6d8e1176.css.map": "./static/css/main.6d8e1176.css.map",
-    "main.0b2e31ef.js.map": "./static/js/main.0b2e31ef.js.map"
+    "main.a4293af7.css.map": "./static/css/main.a4293af7.css.map",
+    "main.26c6c536.js.map": "./static/js/main.26c6c536.js.map"
   },
-  "entrypoints": [
-    "static/css/main.6d8e1176.css",
-    "static/js/main.0b2e31ef.js"
-  ]
+  "entrypoints": ["static/css/main.a4293af7.css", "static/js/main.26c6c536.js"]
 }
