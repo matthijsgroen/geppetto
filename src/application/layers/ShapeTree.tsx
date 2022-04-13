@@ -5,7 +5,7 @@ import {
   isRootNode,
   moveInHierarchy,
   PlacementInfo,
-} from "src/animation/file2/hierarchy";
+} from "../../animation/file2/hierarchy";
 import { addFolder, addShape, rename } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import {

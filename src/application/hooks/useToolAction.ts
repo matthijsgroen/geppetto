@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 
 export const useToolAction = (
   action: () => void,
@@ -8,7 +8,12 @@ export const useToolAction = (
 ) => void) =>
   useCallback(
     (e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => {
-      if ("code" in e && !["Enter", "Space"].includes(e.code)) {
+      if (
+        "code" in e.nativeEvent &&
+        !["Enter", "Space"].includes(
+          (e as React.KeyboardEvent).nativeEvent.code
+        )
+      ) {
         return;
       }
 

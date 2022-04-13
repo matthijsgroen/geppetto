@@ -1,9 +1,9 @@
-import { findInHierarchy } from "src/animation/file2/hierarchy";
+import { findInHierarchy } from "../../animation/file2/hierarchy";
 import {
   GeppettoImage,
   MutationVector,
   NodeType,
-} from "src/animation/file2/types";
+} from "../../animation/file2/types";
 import {
   TreeDataProvider,
   TreeItem,

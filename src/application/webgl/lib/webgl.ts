@@ -176,7 +176,7 @@ export const getTextureCoordinate = (
 };
 
 export const zoomFactor = (texture: HTMLImageElement | null): number =>
-  texture ? (texture.height / screen.height) * 2.0 : 1.0;
+  texture ? (texture.height / window.screen.height) * 2.0 : 1.0;
 
 export const maxZoomFactor = (texture: HTMLImageElement | null): number =>
   zoomFactor(texture) * 4.0;

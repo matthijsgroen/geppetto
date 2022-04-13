@@ -1,3 +1,6 @@
+import "@szhsin/react-menu/dist/index.css";
+import "@szhsin/react-menu/dist/transitions/slide.css";
+import "./menu.css";
 export {
   Menu,
   MenuItem,
@@ -8,6 +11,3 @@ export {
   MenuDivider,
   MenuHeader,
 } from "@szhsin/react-menu";
-import "@szhsin/react-menu/dist/index.css";
-import "@szhsin/react-menu/dist/transitions/slide.css";
-import "./menu.css";

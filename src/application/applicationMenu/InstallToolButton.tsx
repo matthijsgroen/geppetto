@@ -1,4 +1,4 @@
-import { Icon, ToolButton } from "src/ui-components";
+import { Icon, ToolButton } from "../../ui-components";
 
 interface BeforeInstallPromptEvent extends Event {
   platforms: string[];

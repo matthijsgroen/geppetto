@@ -3,8 +3,8 @@ import { Icon, Menu, MenuItem, ToolButton } from "../../ui-components";
 import { UseState } from "../types";
 import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
 import { verifyFile as verifyVersion2 } from "../../animation/file2/verifyFile";
-import { convertFromV1 } from "src/animation/file2/convert";
-import { GeppettoImage } from "src/animation/file2/types";
+import { convertFromV1 } from "../../animation/file2/convert";
+import { GeppettoImage } from "../../animation/file2/types";
 
 declare global {
   interface Window {

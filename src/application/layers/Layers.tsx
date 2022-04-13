@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { GeppettoImage } from "src/animation/file2/types";
+import { GeppettoImage } from "../../animation/file2/types";
 import {
   Column,
   Icon,
@@ -16,7 +16,7 @@ import {
   ToolSeparator,
   ToolSpacer,
   ToolTab,
-} from "src/ui-components";
+} from "../../ui-components";
 import { UseState } from "../types";
 import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
@@ -103,13 +103,13 @@ export const Layers: React.VFC<LayersProps> = ({
                 type="radio"
                 value={size}
                 key={`grid${size}`}
-                onClick={useCallback(() => {
+                onClick={() => {
                   setGridSettings((settings) => ({
                     ...settings,
                     size,
                     enabled: true,
                   }));
-                }, [])}
+                }}
               >
                 {size}
               </MenuItem>

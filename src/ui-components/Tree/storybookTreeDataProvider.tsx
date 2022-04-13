@@ -3,7 +3,7 @@ import {
   TreeItem,
   TreeItemIndex,
 } from "react-complex-tree";
-import { NodeType } from "src/animation/file2/types";
+import { NodeType } from "../../animation/file2/types";
 import { Icon, ToolButton } from "..";
 import { TreeData, TreeDataProvider } from "./Tree";
 
