@@ -11,6 +11,7 @@
 # production
 /build
 /dist
+/old-electron-dist
 /src/data
 
 /images
