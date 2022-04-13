@@ -14,6 +14,7 @@ import {
   ToolBar,
   ToolButton,
   ToolSeparator,
+  ToolSpacer,
   ToolTab,
 } from "src/ui-components";
 import { UseState } from "../types";
@@ -22,6 +23,7 @@ import { MouseMode } from "../canvas/MouseControl";
 import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
 import { ShapeTree } from "./ShapeTree";
 import { maxZoomFactor } from "../webgl/lib/webgl";
+import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 
 type LayersProps = {
   zoomState: UseState<number>;
@@ -125,6 +127,8 @@ export const Layers: React.VFC<LayersProps> = ({
             }));
           }, [])}
         />
+        <ToolSpacer />
+        <InstallToolButton />
       </ToolBar>
       <Row>
         <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
