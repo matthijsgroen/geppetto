@@ -1,31 +1,11 @@
+import raw from "raw.macro";
 import { ShapeDefinition } from "../../../animation/file1/types";
 import { verticesFromPoints } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import { flattenShapes } from "./utils";
 
-const textureMapVertexShader = `
-  attribute vec2 coordinates;
-  uniform vec4 viewport;
-  uniform vec4 scale;
-
-  mat4 viewportScale = mat4(
-    2.0 / viewport.x, 0, 0, 0,   
-    0, -2.0 / viewport.y, 0, 0,    
-    0, 0, 1, 0,    
-    -1, +1, 0, 1
-  );
-
-  void main() {
-    vec4 pos = viewportScale * vec4((coordinates * scale.x) + viewport.ba, 0.0, 1.0);
-    gl_Position = vec4((pos.xy  + scale.ba) * scale.y, pos.z, 1.0);
-  }
-`;
-
-const textureMapFragmentShader = `
-  void main(void) {
-    gl_FragColor = vec4(1.0, 1.0, 1.0, 0.1);
-  }
-`;
+const textureMapVertexShader = raw("./showTextureMap.vert");
+const textureMapFragmentShader = raw("./showTextureMap.frag");
 
 type Element = { start: number; amount: number };
 const STRIDE = 2;

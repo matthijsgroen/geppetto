@@ -2,42 +2,10 @@ import { Vec2 } from "../../../types";
 import { ShapeDefinition } from "../../../animation/file1/types";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import { flattenShapes } from "./utils";
+import raw from "raw.macro";
 
-const textureMapVertexShader = `
-  attribute vec3 coordinates;
-  uniform vec4 viewport;
-  uniform vec4 scale;
-
-  varying lowp float selected;
-
-  mat4 viewportScale = mat4(
-    2.0 / viewport.x, 0, 0, 0,   
-    0, -2.0 / viewport.y, 0, 0,    
-    0, 0, 1, 0,    
-    -1, +1, 0, 1
-  );
-
-  void main() {
-    vec4 pos = viewportScale * vec4((coordinates.xy * scale.x) + viewport.ba, 0.0, 1.0);
-    gl_Position = vec4((pos.xy  + scale.ba) * scale.y, pos.z, 1.0);
-    gl_PointSize = 4.0 * scale.x * scale.y;
-    if (coordinates.z > 0.0) {
-      gl_PointSize = 6.0 * scale.x * scale.y;
-    }
-    selected = coordinates.z;
-  }
-`;
-
-const textureMapFragmentShader = `
-  varying lowp float selected;
-
-  void main(void) {
-    gl_FragColor = vec4(1.0, 1.0, 1.0, 0.1);
-    if (selected > 0.0) {
-      gl_FragColor = vec4(1.0, 1.0, 0.4, 0.1);
-    }
-  }
-`;
+const layerPointsVertexShader = raw("./showLayerPoints.vert");
+const layerPointsFragmentShader = raw("./showLayerPoints.frag");
 
 export const showLayerPoints = (): {
   setImage(image: HTMLImageElement): void;
@@ -128,16 +96,16 @@ export const showLayerPoints = (): {
       coordSelected = coord;
       populateShapes();
     },
-    renderer(initgl: WebGLRenderingContext, { getSize }) {
-      gl = initgl;
+    renderer(initGl: WebGLRenderingContext, { getSize }) {
+      gl = initGl;
       vertexBuffer = gl.createBuffer();
       indexBuffer = gl.createBuffer();
       populateShapes();
 
       const [shaderProgram, programCleanup] = createProgram(
         gl,
-        textureMapVertexShader,
-        textureMapFragmentShader
+        layerPointsVertexShader,
+        layerPointsFragmentShader
       );
 
       return {
@@ -189,13 +157,13 @@ export const showLayerPoints = (): {
 
           elements.forEach((element) => {
             if (element.name === layerSelected && element.amount > 0) {
-              initgl.drawArrays(initgl.POINTS, element.start, element.amount);
+              initGl.drawArrays(initGl.POINTS, element.start, element.amount);
             }
           });
         },
         cleanup() {
-          initgl.deleteBuffer(vertexBuffer);
-          initgl.deleteBuffer(indexBuffer);
+          initGl.deleteBuffer(vertexBuffer);
+          initGl.deleteBuffer(indexBuffer);
           programCleanup();
         },
       };

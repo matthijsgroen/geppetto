@@ -1,31 +1,8 @@
+import raw from "raw.macro";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 
-const textureVertexShader = `
-  attribute vec2 coordinates;
-  uniform mediump vec4 scale;
-
-  void main() {
-    gl_Position = vec4((coordinates + scale.ba) * scale.y, 0.09, 1.0);
-  }
-`;
-
-const textureFragmentShader = `
-  precision mediump float;
-
-  uniform mediump vec3 backgroundColor;
-  uniform mediump vec4 scale;
-  uniform mediump vec3 uViewport;
-
-  void main(void) {
-    int xRow = int(mod(gl_FragCoord.x - uViewport.x, uViewport.z));
-    int yRow = int(mod(gl_FragCoord.y - uViewport.y, uViewport.z));
-
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
-    if (xRow == 0 || yRow == 0) {
-      gl_FragColor = vec4(backgroundColor, 1.0);
-    }
-  }
-`;
+const textureVertexShader = raw("./showGrid.vert");
+const textureFragmentShader = raw("./showGrid.frag");
 
 export const showGrid = (): {
   setImage(image: HTMLImageElement): void;
