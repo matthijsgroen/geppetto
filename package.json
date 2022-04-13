@@ -99,8 +99,8 @@
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.2.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "raw.macro": "^0.4.2",
     "prettier": "^2.2.1",
+    "raw.macro": "^0.4.2",
     "webpack": "^5.70.0"
   },
   "jest": {
