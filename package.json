@@ -8,7 +8,7 @@
     "Guido Theelen <guidotheelen@gmail.com> (https://github.com/guidotheelen)"
   ],
   "private": true,
-  "homepage": "/app/",
+  "homepage": "/app",
   "dependencies": {
     "@szhsin/react-menu": "^3.0.0",
     "delaunator": "^5.0.0",
