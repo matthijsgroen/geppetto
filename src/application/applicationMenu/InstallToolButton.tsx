@@ -8,10 +8,10 @@ interface BeforeInstallPromptEvent extends Event {
 
 let deferedInstallPrompt: BeforeInstallPromptEvent;
 
-window.addEventListener("beforeinstallprompt", (e: Event) => {
+window.addEventListener("beforeinstallprompt", (event: Event) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
-  e.preventDefault();
-  deferedInstallPrompt = e as BeforeInstallPromptEvent;
+  event.preventDefault();
+  deferedInstallPrompt = event as BeforeInstallPromptEvent;
 });
 
 export const InstallToolButton: React.VFC = () =>
