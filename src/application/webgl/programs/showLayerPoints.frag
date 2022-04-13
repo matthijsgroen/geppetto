@@ -1,4 +1,3 @@
-
 varying lowp float selected;
 
 void main(void) {
