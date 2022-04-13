@@ -2,8 +2,8 @@
 
 ![Geppetto logo](./public/logo192.png)
 
-Geppetto is a free and open animation tool to create and embed webGL animations in a web site. This is the repository for the desktop app to create the animations.
-Made with [Create React App](https://github.com/facebook/create-react-app) and [Electron](https://electronjs.org/).
+Geppetto is a free and open animation tool to create and embed webGL animations in a web site. This is the repository for the browser app to create the animations.
+Made with [Create React App](https://github.com/facebook/create-react-app).
 
 - [Geppetto website](https://geppetto.js.org/)
 - [Geppetto JavaScript Player library](https://github.com/matthijsgroen/geppetto-player)
@@ -11,7 +11,7 @@ Made with [Create React App](https://github.com/facebook/create-react-app) and [
 
 ## What is Geppetto?
 
-Geppetto consists of two parts. A [desktop application](https://github.com/matthijsgroen/geppetto/releases/latest) to define animated images, and a [JavaScript library](https://github.com/matthijsgroen/geppetto-player) to play them.
+Geppetto consists of two parts. A [web application](https://github.com/matthijsgroen/geppetto/releases/latest) to define animated images, and a [JavaScript library](https://github.com/matthijsgroen/geppetto-player) to play them.
 
 ## How does it work?
 
@@ -25,17 +25,15 @@ These animations (the created .json file and your texture .png) can then be load
 
 Yarn scripts to get started with this repo:
 
-- `yarn electron-dev` Starts electron in develoment mode
+- `yarn start` Starts the web app in develoment mode
 - `yarn test` Running tests
-- `yarn electron-pack` Create production builds
+- `yarn build` Create production builds
 
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-
-To learn Electron, check out the [Electron documentation](https://electronjs.org/).
 
 ## Special thanks
 
