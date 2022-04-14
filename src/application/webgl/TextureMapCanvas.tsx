@@ -42,12 +42,15 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   const pointsProgram = useMemo(() => showLayerPoints(), []);
   const gridProgram = useMemo(() => showGrid(), []);
 
-  const renderers = [
-    textureProgram.renderer,
-    gridProgram.renderer,
-    textureMapProgram.renderer,
-    pointsProgram.renderer,
-  ];
+  const renderers = useMemo(
+    () => [
+      textureProgram.renderer,
+      gridProgram.renderer,
+      textureMapProgram.renderer,
+      pointsProgram.renderer,
+    ],
+    []
+  );
 
   useEffect(() => {
     if (image) {
@@ -56,12 +59,12 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
       pointsProgram.setImage(image);
       gridProgram.setImage(image);
     }
-  }, [image]);
+  }, [image, textureProgram, textureMapProgram, pointsProgram, gridProgram]);
 
   useEffect(() => {
     textureMapProgram.setShapes(shapes);
     pointsProgram.setShapes(shapes);
-  }, [shapes]);
+  }, [shapes, textureMapProgram, pointsProgram]);
   textureMapProgram.setZoom(zoom);
   textureProgram.setZoom(zoom);
   pointsProgram.setZoom(zoom);

@@ -48,9 +48,11 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
         e.preventDefault();
         onWheel(e.deltaY);
       };
-      ref.current.addEventListener("wheel", handler, { passive: false });
+      const elem = ref.current;
+      elem.addEventListener("wheel", handler, { passive: false });
+
       return () => {
-        ref.current?.removeEventListener("wheel", handler);
+        elem.removeEventListener("wheel", handler);
       };
     }
   }, [ref, onWheel]);
@@ -66,7 +68,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
           }
           onMouseDown && onMouseDown(e);
         },
-        [onMouseDown]
+        [onMouseDown, mode]
       )}
       onMouseUp={useCallback(
         (e) => {

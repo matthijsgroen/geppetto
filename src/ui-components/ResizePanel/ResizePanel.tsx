@@ -58,7 +58,7 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
       .children[0] as HTMLElement).getBoundingClientRect();
     const initialSize = horizontal ? actualContent.width : actualContent.height;
     setSize(initialSize);
-  }, []);
+  }, [horizontal]);
 
   const onDrag = useCallback(
     (_e: DraggableEvent, data: DraggableData) => {
@@ -74,7 +74,7 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
         previousSize === null ? null : previousSize - delta * factor
       );
     },
-    [direction]
+    [direction, horizontal]
   );
 
   const containerStyle = { ...style };

@@ -106,7 +106,7 @@ const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
         cleanup && cleanup();
       };
     }
-  }, []);
+  }, [renderers]);
 
   return (
     <CanvasContainer ref={containerRef}>

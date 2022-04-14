@@ -22,25 +22,25 @@ const App: React.FC = () => {
   const fileState = useState<GeppettoImage>(newFile());
   const textureFileState = useState<HTMLImageElement | null>(null);
 
-  const fileName = useState<string | null>(null);
-  const textureFileName = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [textureFileName, setTextureFileName] = useState<string | null>(null);
 
   const zoomState = useState(1.0);
   const panXState = useState(0.0);
   const panYState = useState(0.0);
 
   useEffect(() => {
-    updateWindowTitle(fileName[0], textureFileName[0]);
-  }, [fileName[0], textureFileName[0]]);
+    updateWindowTitle(fileName, textureFileName);
+  }, [fileName, textureFileName]);
 
   return (
     <ThemeProvider theme={defaultTheme}>
       <Layers
         menu={
           <ApplicationMenu
-            fileNameState={fileName}
+            fileNameState={[fileName, setFileName]}
             fileState={fileState}
-            textureFileNameState={textureFileName}
+            textureFileNameState={[textureFileName, setTextureFileName]}
             textureFileState={textureFileState}
           />
         }

@@ -92,7 +92,7 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
     } else {
       alert("Sorry no support for local filesystem");
     }
-  }, []);
+  }, [fileNameState, fileState]);
 
   const openTextureFile = useCallback(async () => {
     if (window.showOpenFilePicker) {
@@ -117,7 +117,7 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
     } else {
       alert("Sorry no support for local filesystem");
     }
-  }, []);
+  }, [textureFileNameState, textureFileState]);
   return (
     <Menu
       portal={true}
