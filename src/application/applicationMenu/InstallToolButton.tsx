@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Icon, ToolButton } from "../../ui-components";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -15,5 +16,8 @@ window.addEventListener("beforeinstallprompt", (event: Event) => {
   deferedInstallPrompt = event as BeforeInstallPromptEvent;
 });
 
-export const InstallToolButton: React.VFC = () =>
-  deferedInstallPrompt ? <ToolButton icon={<Icon>🖥</Icon>} /> : null;
+export const InstallToolButton: React.FC = () => {
+  const [canInstall, setCanInstall] = useState<boolean>(!!deferedInstallPrompt);
+
+  return canInstall ? <ToolButton icon={<Icon>🖥</Icon>} /> : null;
+};

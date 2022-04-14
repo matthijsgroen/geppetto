@@ -49,7 +49,12 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
       textureMapProgram.renderer,
       pointsProgram.renderer,
     ],
-    []
+    [
+      textureMapProgram.renderer,
+      textureProgram.renderer,
+      pointsProgram.renderer,
+      gridProgram.renderer,
+    ]
   );
 
   useEffect(() => {

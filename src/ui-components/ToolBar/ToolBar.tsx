@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import styled from "styled-components";
 import { ToolbarContext } from "./ToolBarContext";
 
@@ -31,9 +31,9 @@ const ToolBarOuter = styled.div<{ size: ToolBarSize }>`
   }
 `;
 
-type ToolBarProps = {
+type ToolBarProps = PropsWithChildren<{
   size?: ToolBarSize;
-};
+}>;
 
 export const ToolBar: React.FC<ToolBarProps> = ({
   children,

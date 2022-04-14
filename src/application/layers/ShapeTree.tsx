@@ -6,6 +6,7 @@ import {
   moveInHierarchy,
   PlacementInfo,
 } from "../../animation/file2/hierarchy";
+import { newFile } from "../../animation/file2/new";
 import { addFolder, addShape, rename } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
@@ -30,17 +31,17 @@ type ShapeTreeProps = {
 type LayerItem = TreeItem<TreeData<"layer" | "layerFolder" | "mutation">>;
 const yes = () => true;
 
-export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
+export const ShapeTree: React.FC<ShapeTreeProps> = ({ fileState }) => {
   const [fileData, setFileData] = fileState;
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
   const treeData = useMemo(
-    () => treeDataProvider(fileData, { showMutations: false }),
+    () => treeDataProvider(newFile(), { showMutations: false }),
     []
   );
   useEffect(() => {
     treeData.updateActiveTree && treeData.updateActiveTree(fileData);
-  }, [fileData]);
+  }, [fileData, treeData]);
 
   const addShapeAction = useToolAction(() => {
     let position: PlacementInfo | undefined = undefined;
@@ -94,65 +95,68 @@ export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
     [fileData]
   );
 
-  const onDrop = useCallback((items: LayerItem[], target: DraggingPosition) => {
-    items.reverse();
-    const updatedItems: string[] = [];
-    if (target.targetType === "item") {
-      const targetId = `${target.targetItem}`;
-      updatedItems.push(targetId);
-      setFileData((fileData) => {
-        const result = { ...fileData };
-        for (const item of items) {
-          result.layerHierarchy = moveInHierarchy(
-            result.layerHierarchy,
-            `${item.index}`,
-            { parent: targetId }
-          );
-          const node = fileData.layerHierarchy[`${item.index}`];
-          if (!isRootNode(node)) {
-            updatedItems.push(node.parentId);
+  const onDrop = useCallback(
+    (items: LayerItem[], target: DraggingPosition) => {
+      items.reverse();
+      const updatedItems: string[] = [];
+      if (target.targetType === "item") {
+        const targetId = `${target.targetItem}`;
+        updatedItems.push(targetId);
+        setFileData((fileData) => {
+          const result = { ...fileData };
+          for (const item of items) {
+            result.layerHierarchy = moveInHierarchy(
+              result.layerHierarchy,
+              `${item.index}`,
+              { parent: targetId }
+            );
+            const node = fileData.layerHierarchy[`${item.index}`];
+            if (!isRootNode(node)) {
+              updatedItems.push(node.parentId);
+            }
           }
-        }
-        return result;
-      });
-    } else {
-      setFileData((fileData) => {
-        const parent = fileData.layerHierarchy[`${target.parentItem}`];
-        if (!parent.children) {
-          return fileData;
-        }
-        const childIds = parent.children.filter(
-          (id) => fileData.layerHierarchy[id].type !== "mutation"
-        );
-        const targetId =
-          target.linePosition === "bottom"
-            ? childIds[target.childIndex - 1]
-            : childIds[target.childIndex];
-
-        const result = { ...fileData };
-        for (const item of items) {
-          result.layerHierarchy = moveInHierarchy(
-            result.layerHierarchy,
-            `${item.index}`,
+          return result;
+        });
+      } else {
+        setFileData((fileData) => {
+          const parent = fileData.layerHierarchy[`${target.parentItem}`];
+          if (!parent.children) {
+            return fileData;
+          }
+          const childIds = parent.children.filter(
+            (id) => fileData.layerHierarchy[id].type !== "mutation"
+          );
+          const targetId =
             target.linePosition === "bottom"
-              ? { after: targetId }
-              : { before: targetId }
-          );
-          const dest = result.layerHierarchy[`${item.index}`];
-          if (!isRootNode(dest)) {
-            updatedItems.push(dest.parentId);
-          }
-          const source = fileData.layerHierarchy[`${item.index}`];
-          if (!isRootNode(source)) {
-            updatedItems.push(source.parentId);
-          }
-        }
+              ? childIds[target.childIndex - 1]
+              : childIds[target.childIndex];
 
-        return result;
-      });
-    }
-    treeData.addChangedId && treeData.addChangedId(...updatedItems);
-  }, []);
+          const result = { ...fileData };
+          for (const item of items) {
+            result.layerHierarchy = moveInHierarchy(
+              result.layerHierarchy,
+              `${item.index}`,
+              target.linePosition === "bottom"
+                ? { after: targetId }
+                : { before: targetId }
+            );
+            const dest = result.layerHierarchy[`${item.index}`];
+            if (!isRootNode(dest)) {
+              updatedItems.push(dest.parentId);
+            }
+            const source = fileData.layerHierarchy[`${item.index}`];
+            if (!isRootNode(source)) {
+              updatedItems.push(source.parentId);
+            }
+          }
+
+          return result;
+        });
+      }
+      treeData.addChangedId && treeData.addChangedId(...updatedItems);
+    },
+    [treeData, setFileData]
+  );
 
   return (
     <>
@@ -166,11 +170,14 @@ export const ShapeTree: React.VFC<ShapeTreeProps> = ({ fileState }) => {
         canDropAt={canDropAt}
         canDragAndDrop={true}
         canReorderItems={true}
-        onRenameItem={useCallback((item: LayerItem, newName: string) => {
-          setFileData((fileData) =>
-            rename(fileData, `${item.index}`, item.data.type, newName)
-          );
-        }, [])}
+        onRenameItem={useCallback(
+          (item: LayerItem, newName: string) => {
+            setFileData((fileData) =>
+              rename(fileData, `${item.index}`, item.data.type, newName)
+            );
+          },
+          [setFileData]
+        )}
         onDrop={onDrop}
         canDropOnItemWithChildren={true}
         canDropOnItemWithoutChildren={true}

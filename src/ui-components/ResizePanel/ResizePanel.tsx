@@ -1,8 +1,27 @@
-import { CSSProperties, useCallback, useEffect, useRef, useState } from "react";
+import {
+  CSSProperties,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import styles from "./ResizePanel.module.css";
 import { className } from "../className";
 import React from "react";
-import { DraggableCore, DraggableData, DraggableEvent } from "react-draggable";
+import {
+  DraggableCore,
+  DraggableData,
+  DraggableEvent,
+  DraggableCoreProps,
+} from "react-draggable";
+
+const Draggable: React.FC<PropsWithChildren<Partial<DraggableCoreProps>>> = ({
+  children,
+  ...props
+}) => {
+  return <DraggableCore {...props}>{children}</DraggableCore>;
+};
 
 /**
  * Implementation based on: https://github.com/bjgrosse/react-resize-panel/blob/master/src/ResizePanel.js
@@ -18,7 +37,7 @@ export enum ResizeDirection {
   East,
 }
 
-type ResizePanelProps = {
+type ResizePanelProps = PropsWithChildren<{
   direction: ResizeDirection;
   minSize?: number;
   defaultSize?: number;
@@ -26,7 +45,7 @@ type ResizePanelProps = {
   style?: CSSProperties;
   borderClass?: string;
   containerClass?: string;
-};
+}>;
 
 const isHorizontal = (direction: ResizeDirection) =>
   ResizeDirection.East === direction || direction === ResizeDirection.West;
@@ -54,8 +73,9 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
     if (!content) {
       return;
     }
-    const actualContent = (content
-      .children[0] as HTMLElement).getBoundingClientRect();
+    const actualContent = (
+      content.children[0] as HTMLElement
+    ).getBoundingClientRect();
     const initialSize = horizontal ? actualContent.width : actualContent.height;
     setSize(initialSize);
   }, [horizontal]);
@@ -116,9 +136,9 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
   ];
 
   const handle = (
-    <DraggableCore key="handle" onDrag={onDrag}>
+    <Draggable key="handle" onDrag={onDrag}>
       <div className={resizeBarClasses}></div>
-    </DraggableCore>
+    </Draggable>
   );
 
   // Insert the handle at the beginning of the content

@@ -1,10 +1,11 @@
+import { PropsWithChildren } from "react";
 import { className } from "../className";
 import styles from "./Label.module.css";
 
-type LabelProps = {
+type LabelProps = PropsWithChildren<{
   active?: boolean;
   size?: "default" | "small";
-};
+}>;
 
 export const Label: React.FC<LabelProps> = ({
   children,

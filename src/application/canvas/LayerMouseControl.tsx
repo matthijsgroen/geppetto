@@ -1,8 +1,8 @@
 import MouseControl, { MouseMode } from "./MouseControl";
-import React, { FC, useCallback, useRef } from "react";
+import React, { FC, PropsWithChildren, useCallback, useRef } from "react";
 import { UseState } from "../types";
 
-export interface LayerMouseControlProps {
+export type LayerMouseControlProps = PropsWithChildren<{
   mode: MouseMode;
 
   zoomState: UseState<number>;
@@ -16,7 +16,7 @@ export interface LayerMouseControlProps {
     deltaX: number,
     deltaY: number
   ) => boolean;
-}
+}>;
 
 const LayerMouseControl: FC<LayerMouseControlProps> = ({
   children,

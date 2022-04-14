@@ -1,10 +1,11 @@
+import { PropsWithChildren } from "react";
 import styled, { css } from "styled-components";
 
-type PanelProps = {
+type PanelProps = PropsWithChildren<{
   padding?: number;
   workspace?: boolean;
   center?: boolean;
-};
+}>;
 
 const StyledPanel = styled.div<{
   padding: number;

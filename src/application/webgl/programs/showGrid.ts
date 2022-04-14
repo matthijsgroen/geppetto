@@ -46,36 +46,6 @@ export const showGrid = (): {
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
 
-      const setImageDimensions = () => {
-        if (!img) {
-          return;
-        }
-        const [canvasWidth, canvasHeight] = getSize();
-        const landscape = img.width / canvasWidth > img.height / canvasHeight;
-
-        const [x, y] = landscape
-          ? [1.0, (img.height / img.width) * (canvasWidth / canvasHeight)]
-          : [(img.width / img.height) * (canvasHeight / canvasWidth), 1.0];
-
-        const pixDensity = landscape
-          ? img.width / canvasWidth
-          : img.height / canvasHeight;
-
-        updateVector(0, 0, [-x, y]);
-        updateVector(1, 0, [-x, -y]);
-        updateVector(2, 0, [x, -y]);
-        updateVector(3, 0, [x, y]);
-
-        gl.uniform3f(
-          gl.getUniformLocation(shaderProgram, "uViewport"),
-          ((-x + pan[0]) * zoom + 1) * (canvasWidth / 2),
-          ((y + pan[1]) * zoom + 1) * (canvasHeight / 2),
-          (zoom / pixDensity) * grid
-        );
-      };
-
-      setImageDimensions();
-
       const vertexBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
       gl.bufferData(
@@ -99,6 +69,37 @@ export const showGrid = (): {
         textureVertexShader,
         textureFragmentShader
       );
+
+      const uViewPort = gl.getUniformLocation(shaderProgram, "uViewport");
+      const setImageDimensions = () => {
+        if (!img) {
+          return;
+        }
+        const [canvasWidth, canvasHeight] = getSize();
+        const landscape = img.width / canvasWidth > img.height / canvasHeight;
+
+        const [x, y] = landscape
+          ? [1.0, (img.height / img.width) * (canvasWidth / canvasHeight)]
+          : [(img.width / img.height) * (canvasHeight / canvasWidth), 1.0];
+
+        const pixDensity = landscape
+          ? img.width / canvasWidth
+          : img.height / canvasHeight;
+
+        updateVector(0, 0, [-x, y]);
+        updateVector(1, 0, [-x, -y]);
+        updateVector(2, 0, [x, -y]);
+        updateVector(3, 0, [x, y]);
+
+        gl.uniform3f(
+          uViewPort,
+          ((-x + pan[0]) * zoom + 1) * (canvasWidth / 2),
+          ((y + pan[1]) * zoom + 1) * (canvasHeight / 2),
+          (zoom / pixDensity) * grid
+        );
+      };
+      gl.useProgram(shaderProgram);
+      setImageDimensions();
 
       return {
         render() {

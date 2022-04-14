@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled from "styled-components";
 
 export enum MouseMode {
@@ -31,14 +31,9 @@ interface MouseEventsProps {
   onWheel?: (delta: number) => void;
 }
 
-const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
-  children,
-  mode,
-  onMouseDown,
-  onMouseMove,
-  onMouseUp,
-  onWheel,
-}) => {
+const MouseControl: React.FC<
+  React.PropsWithChildren<MouseControlProps & MouseEventsProps>
+> = ({ children, mode, onMouseDown, onMouseMove, onMouseUp, onWheel }) => {
   const [isGrabbing, setIsGrabbing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -60,7 +55,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
       ref={ref}
       mode={isGrabbing ? MouseMode.Grabbing : mode}
       onMouseDown={useCallback(
-        (e) => {
+        (e: React.MouseEvent<HTMLDivElement>) => {
           if (mode === MouseMode.Grab) {
             setIsGrabbing(true);
           }
@@ -69,7 +64,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
         [onMouseDown]
       )}
       onMouseUp={useCallback(
-        (e) => {
+        (e: React.MouseEvent<HTMLDivElement>) => {
           setIsGrabbing(false);
           onMouseUp && onMouseUp(e);
         },

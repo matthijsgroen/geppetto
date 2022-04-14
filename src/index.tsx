@@ -1,15 +1,15 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import "./index.css";
-// import App from "./old/App";
 import App from "./application/App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
-ReactDOM.render(
+const rootNode = document.getElementById("root")!;
+const root = ReactDOM.createRoot(rootNode);
+root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
 
 /**
