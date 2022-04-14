@@ -20,5 +20,6 @@ export const useToolAction = (
       e.preventDefault();
       action();
     },
-    deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [...deps, action]
   );

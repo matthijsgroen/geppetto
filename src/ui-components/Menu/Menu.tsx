@@ -3,6 +3,7 @@ import "@szhsin/react-menu/dist/transitions/slide.css";
 import "./menu.css";
 export {
   Menu,
+  ControlledMenu,
   MenuItem,
   MenuButton,
   MenuRadioGroup,
@@ -10,4 +11,5 @@ export {
   SubMenu,
   MenuDivider,
   MenuHeader,
+  useMenuState,
 } from "@szhsin/react-menu";

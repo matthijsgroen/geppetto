@@ -1,5 +1,11 @@
-import { useEffect, useState } from "react";
-import { Icon, ToolButton } from "../../ui-components";
+import { useEffect, useRef, useState } from "react";
+import {
+  Icon,
+  ToolButton,
+  ControlledMenu,
+  useMenuState,
+  Label,
+} from "../../ui-components";
 
 interface BeforeInstallPromptEvent extends Event {
   platforms: string[];
@@ -7,19 +13,22 @@ interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
 }
 
-let deferedInstallPrompt: BeforeInstallPromptEvent;
+let deferredInstallPrompt: BeforeInstallPromptEvent;
 let notifyInstallReady: (() => void)[] = [];
 
 window.addEventListener("beforeinstallprompt", (event: Event) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
   event.preventDefault();
-  deferedInstallPrompt = event as BeforeInstallPromptEvent;
+  deferredInstallPrompt = event as BeforeInstallPromptEvent;
   console.log("Before Install event!");
   notifyInstallReady.forEach((l) => l());
 });
 
 export const InstallToolButton: React.FC = () => {
-  const [canInstall, setCanInstall] = useState<boolean>(!!deferedInstallPrompt);
+  const anchor = useRef(null);
+  const [canInstall, setCanInstall] = useState<boolean>(
+    !!deferredInstallPrompt
+  );
   useEffect(() => {
     const listener = () => {
       setCanInstall(true);
@@ -29,13 +38,36 @@ export const InstallToolButton: React.FC = () => {
       notifyInstallReady = notifyInstallReady.filter((l) => l !== listener);
     };
   }, [setCanInstall]);
+  const [{ state }, toggleMenu] = useMenuState();
+  useEffect(() => {
+    toggleMenu(true);
+    const timer = setTimeout(() => {
+      toggleMenu(false);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [toggleMenu]);
 
   return canInstall ? (
-    <ToolButton
-      icon={<Icon>🖥</Icon>}
-      onClick={() => {
-        deferedInstallPrompt.prompt();
-      }}
-    />
+    <>
+      <ToolButton
+        icon={<Icon>🖥</Icon>}
+        tooltip={"Install Geppetto as desktop application"}
+        onClick={() => {
+          deferredInstallPrompt.prompt();
+        }}
+        ref={anchor}
+      />
+      <ControlledMenu
+        captureFocus={false}
+        anchorRef={anchor}
+        portal
+        position={"anchor"}
+        arrow
+        state={state}
+        role="tooltip"
+      >
+        <Label>Install Geppetto as desktop application</Label>
+      </ControlledMenu>
+    </>
   ) : null;
 };
