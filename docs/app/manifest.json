@@ -23,7 +23,7 @@
       "sizes": "any"
     }
   ],
-  "id": "/app/index.html",
+  "id": "/app/",
   "start_url": ".",
   "display": "minimal-ui",
   "theme_color": "#e79b62",
