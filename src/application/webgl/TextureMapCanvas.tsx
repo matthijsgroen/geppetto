@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo } from "react";
 import { Vec2 } from "../../types";
-import { ItemSelection, ShapeDefinition } from "../../animation/file1/types";
+import { ItemSelection } from "../../animation/file1/types";
 import { showLayerPoints } from "./programs/showLayerPoints";
 import { showTexture } from "./programs/showTexture";
 import { showGrid } from "./programs/showGrid";
 import { showTextureMap } from "./programs/showTextureMap";
 import WebGLCanvas from "./WebGLCanvas";
+import { Layer } from "../../animation/file2/types";
 
 export type GridSettings = {
   size: number;
@@ -15,7 +16,7 @@ export type GridSettings = {
 
 export interface TextureMapCanvasProps {
   image: HTMLImageElement | null;
-  shapes: ShapeDefinition[];
+  shapes: Layer[];
   grid: GridSettings;
   zoom?: number;
   panX: number;
@@ -68,7 +69,7 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
 
   useEffect(() => {
     textureMapProgram.setShapes(shapes);
-    pointsProgram.setShapes(shapes);
+    pointsProgram.setShapes([]);
   }, [shapes, textureMapProgram, pointsProgram]);
   textureMapProgram.setZoom(zoom);
   textureProgram.setZoom(zoom);

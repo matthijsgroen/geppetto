@@ -34,7 +34,7 @@ type LayersProps = {
   menu?: React.ReactChild;
 };
 
-export const Layers: React.VFC<LayersProps> = ({
+export const Layers: React.FC<LayersProps> = ({
   fileState,
   textureState,
   menu,
@@ -150,7 +150,7 @@ export const Layers: React.VFC<LayersProps> = ({
             >
               <TextureMapCanvas
                 image={textureState[0]}
-                shapes={[]}
+                shapes={Object.values(fileState[0].layers)}
                 zoom={zoom}
                 panX={panX}
                 panY={panY}

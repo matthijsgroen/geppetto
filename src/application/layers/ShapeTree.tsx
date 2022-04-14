@@ -14,6 +14,7 @@ import {
   Panel,
   ToolBar,
   ToolButton,
+  ToolSeparator,
   Tree,
   TreeData,
   TreeItem,
@@ -199,17 +200,10 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ fileState }) => {
             onKeyDown={addFolderAction}
             disabled={selectedItems.length > 1}
           />
+          <ToolSeparator />
+          <ToolButton icon={<Icon>📑</Icon>} disabled tooltip="Copy layer" />
+          <ToolButton icon={<Icon>🗑</Icon>} disabled tooltip="Remove item" />
           {/* 
-              <ToolButton
-                icon={<Icon>📑</Icon>}
-                disabled={true}
-                tooltip="Copy layer"
-              />
-              <ToolButton
-                icon={<Icon>🗑</Icon>}
-                disabled={true}
-                tooltip="Remove item"
-              />
               <ToolButton
                 icon={<Icon>⬆</Icon>}
                 disabled={true}

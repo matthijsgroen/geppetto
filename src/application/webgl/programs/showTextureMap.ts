@@ -1,8 +1,7 @@
 import raw from "raw.macro";
-import { ShapeDefinition } from "../../../animation/file1/types";
+import { Layer } from "../../../animation/file2/types";
 import { verticesFromPoints } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
-import { flattenShapes } from "./utils";
 
 const textureMapVertexShader = raw("./showTextureMap.vert");
 const textureMapFragmentShader = raw("./showTextureMap.frag");
@@ -12,12 +11,13 @@ const STRIDE = 2;
 
 export const showTextureMap = (): {
   setImage(image: HTMLImageElement): void;
-  setShapes(shapes: ShapeDefinition[]): void;
+  setShapes(layers: Layer[]): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
-  let shapes: ShapeDefinition[] | null = null;
+  let shapes: Layer[] | null = null;
+
   let img: HTMLImageElement | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
@@ -30,9 +30,8 @@ export const showTextureMap = (): {
   const populateShapes = () => {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
     elements = [];
-    const sprites = flattenShapes(shapes);
 
-    const vertices = sprites.reduce((coordList, shape) => {
+    const vertices = shapes.reduce((coordList, shape) => {
       const list = verticesFromPoints(shape.points);
       elements.push({
         start: coordList.length / STRIDE,
@@ -63,7 +62,7 @@ export const showTextureMap = (): {
     setImage(image: HTMLImageElement) {
       img = image;
     },
-    setShapes(s: ShapeDefinition[]) {
+    setShapes(s: Layer[]) {
       shapes = s;
       populateShapes();
     },
@@ -73,8 +72,8 @@ export const showTextureMap = (): {
     setPan(x: number, y: number) {
       pan = [x, y];
     },
-    renderer(initgl: WebGLRenderingContext, { getSize }) {
-      gl = initgl;
+    renderer(initGl: WebGLRenderingContext, { getSize }) {
+      gl = initGl;
       vertexBuffer = gl.createBuffer();
       indexBuffer = gl.createBuffer();
       populateShapes();
@@ -135,14 +134,14 @@ export const showTextureMap = (): {
           elements.forEach((element) => {
             if (element.amount > 0) {
               for (let i = 0; i < element.amount; i += 3) {
-                initgl.drawArrays(initgl.LINE_LOOP, element.start + i, 3);
+                initGl.drawArrays(initGl.LINE_LOOP, element.start + i, 3);
               }
             }
           });
         },
         cleanup() {
-          initgl.deleteBuffer(vertexBuffer);
-          initgl.deleteBuffer(indexBuffer);
+          initGl.deleteBuffer(vertexBuffer);
+          initGl.deleteBuffer(indexBuffer);
           programCleanup();
         },
       };
