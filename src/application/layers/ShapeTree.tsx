@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { DraggingPosition } from "react-complex-tree";
 import {
   findParentId,
@@ -27,14 +27,18 @@ import { treeDataProvider } from "./TreeDataProvider";
 
 type ShapeTreeProps = {
   fileState: UseState<GeppettoImage>;
+  selectedItemsState: UseState<string[]>;
 };
 
 type LayerItem = TreeItem<TreeData<"layer" | "layerFolder" | "mutation">>;
 const yes = () => true;
 
-export const ShapeTree: React.FC<ShapeTreeProps> = ({ fileState }) => {
+export const ShapeTree: React.FC<ShapeTreeProps> = ({
+  fileState,
+  selectedItemsState,
+}) => {
   const [fileData, setFileData] = fileState;
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = selectedItemsState;
 
   const treeData = useMemo(
     () => treeDataProvider(newFile(), { showMutations: false }),
@@ -163,9 +167,13 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ fileState }) => {
     <>
       <UncontrolledTreeEnvironment
         dataProvider={treeData}
-        onSelectItems={useCallback((items: TreeItemIndex[]) => {
-          setSelectedItems(items.map((e) => `${e}`));
-        }, [])}
+        onSelectItems={useCallback(
+          (items: TreeItemIndex[]) => {
+            const ids = items.map((e) => `${e}`);
+            setSelectedItems(ids);
+          },
+          [setSelectedItems]
+        )}
         canRename={true}
         canDrag={yes}
         canDropAt={canDropAt}

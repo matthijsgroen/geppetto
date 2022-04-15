@@ -1,42 +1,42 @@
 import { Vec2 } from "../../../types";
-import { ShapeDefinition } from "../../../animation/file1/types";
+import { Layer } from "../../../animation/file2/types";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
-import { flattenShapes } from "./utils";
 import raw from "raw.macro";
 
 const layerPointsVertexShader = raw("./showLayerPoints.vert");
 const layerPointsFragmentShader = raw("./showLayerPoints.frag");
 
+export type IDLayer = Layer & { id: string };
+
 export const showLayerPoints = (): {
   setImage(image: HTMLImageElement): void;
-  setShapes(shapes: ShapeDefinition[]): void;
+  setLayers(layers: IDLayer[]): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
-  setLayerSelected(layer: null | string): void;
+  setLayerSelected(layer: undefined | string): void;
   setActiveCoord(coord: null | Vec2): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 3;
 
-  let shapes: ShapeDefinition[] | null = null;
+  let layers: IDLayer[] | null = null;
   let img: HTMLImageElement | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
   let gl: WebGLRenderingContext | null = null;
   let zoom = 1.0;
   let pan = [0, 0];
-  let layerSelected: string | null = null;
+  let layerSelected: string | undefined = undefined;
   let coordSelected: Vec2 | null = null;
 
-  let elements: { start: number; amount: number; name: string }[] = [];
+  let elements: { start: number; amount: number; id: string }[] = [];
 
   const populateShapes = () => {
-    if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
+    if (!layers || !gl || !indexBuffer || !vertexBuffer) return;
     elements = [];
-    const sprites = flattenShapes(shapes);
 
-    const vertices = sprites.reduce((coordList, shape) => {
-      const list = shape.points.reduce(
+    const vertices = layers.reduce<number[]>((coordList, shape) => {
+      const list = shape.points.reduce<number[]>(
         (result, point) =>
           result
             .concat(point)
@@ -47,16 +47,16 @@ export const showLayerPoints = (): {
                 ? 1.0
                 : 0.0
             ),
-        [] as number[]
+        []
       );
       elements.push({
         start: coordList.length / stride,
         amount: list.length / stride,
-        name: shape.name,
+        id: shape.id,
       });
 
       return coordList.concat(list);
-    }, [] as number[]);
+    }, []);
 
     const indices = Array(vertices.length / stride)
       .fill(0)
@@ -79,8 +79,8 @@ export const showLayerPoints = (): {
     setImage(image) {
       img = image;
     },
-    setShapes(s) {
-      shapes = s;
+    setLayers(s) {
+      layers = s;
       populateShapes();
     },
     setZoom(newZoom) {
@@ -110,7 +110,7 @@ export const showLayerPoints = (): {
 
       return {
         render() {
-          if (!shapes || !img || !vertexBuffer || !indexBuffer || !gl) {
+          if (!layers || !img || !vertexBuffer || !indexBuffer || !gl) {
             return;
           }
           gl.useProgram(shaderProgram);
@@ -156,7 +156,7 @@ export const showLayerPoints = (): {
           );
 
           elements.forEach((element) => {
-            if (element.name === layerSelected && element.amount > 0) {
+            if (element.id === layerSelected && element.amount > 0) {
               initGl.drawArrays(initGl.POINTS, element.start, element.amount);
             }
           });

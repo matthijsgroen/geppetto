@@ -1,12 +1,10 @@
 import React, { useEffect, useMemo } from "react";
 import { Vec2 } from "../../types";
-import { ItemSelection } from "../../animation/file1/types";
-import { showLayerPoints } from "./programs/showLayerPoints";
+import { IDLayer, showLayerPoints } from "./programs/showLayerPoints";
 import { showTexture } from "./programs/showTexture";
 import { showGrid } from "./programs/showGrid";
 import { showTextureMap } from "./programs/showTextureMap";
 import WebGLCanvas from "./WebGLCanvas";
-import { Layer } from "../../animation/file2/types";
 
 export type GridSettings = {
   size: number;
@@ -16,25 +14,25 @@ export type GridSettings = {
 
 export interface TextureMapCanvasProps {
   image: HTMLImageElement | null;
-  shapes: Layer[];
+  layers: IDLayer[];
   grid: GridSettings;
   zoom?: number;
   panX: number;
   panY: number;
   activeCoord?: Vec2 | null;
-  activeLayer?: ItemSelection | null;
+  activeLayer?: string;
   onMouseMove?(coordinates: [number, number] | null): void;
   showFPS?: boolean;
 }
 
 const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   image,
-  shapes,
+  layers,
   zoom = 1.0,
   panX,
   panY,
   grid,
-  activeLayer = null,
+  activeLayer,
   activeCoord = null,
   showFPS,
 }) => {
@@ -68,9 +66,9 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   }, [image, textureProgram, textureMapProgram, pointsProgram, gridProgram]);
 
   useEffect(() => {
-    textureMapProgram.setShapes(shapes);
-    pointsProgram.setShapes([]);
-  }, [shapes, textureMapProgram, pointsProgram]);
+    textureMapProgram.setLayers(layers);
+    pointsProgram.setLayers(layers);
+  }, [layers, textureMapProgram, pointsProgram]);
   textureMapProgram.setZoom(zoom);
   textureProgram.setZoom(zoom);
   pointsProgram.setZoom(zoom);
@@ -80,7 +78,7 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   pointsProgram.setPan(panX, panY);
   gridProgram.setPan(panX, panY);
   gridProgram.setGrid(grid.enabled ? grid.size : 0);
-  pointsProgram.setLayerSelected(activeLayer ? activeLayer.name : null);
+  pointsProgram.setLayerSelected(activeLayer);
   pointsProgram.setActiveCoord(activeCoord);
 
   return <WebGLCanvas renderers={renderers} showFPS={showFPS} />;

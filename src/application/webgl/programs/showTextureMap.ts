@@ -11,7 +11,7 @@ const STRIDE = 2;
 
 export const showTextureMap = (): {
   setImage(image: HTMLImageElement): void;
-  setShapes(layers: Layer[]): void;
+  setLayers(layers: Layer[]): void;
   setZoom(zoom: number): void;
   setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
@@ -62,7 +62,7 @@ export const showTextureMap = (): {
     setImage(image: HTMLImageElement) {
       img = image;
     },
-    setShapes(s: Layer[]) {
+    setLayers(s: Layer[]) {
       shapes = s;
       populateShapes();
     },

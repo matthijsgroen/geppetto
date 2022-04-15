@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
   Column,
@@ -24,6 +24,7 @@ import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
 import { ShapeTree } from "./ShapeTree";
 import { maxZoomFactor } from "../webgl/lib/webgl";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
+import { IDLayer } from "../webgl/programs/showLayerPoints";
 
 type LayersProps = {
   zoomState: UseState<number>;
@@ -51,7 +52,15 @@ export const Layers: React.FC<LayersProps> = ({
     magnetic: false,
     size: 32,
   });
+
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
+  const layers = fileState[0].layers;
   const maxZoom = maxZoomFactor(textureState[0]);
+  const idLayers: IDLayer[] = useMemo(
+    () => Object.entries(layers).map(([id, layer]) => ({ id, ...layer })),
+    [layers]
+  );
 
   return (
     <Column>
@@ -133,7 +142,10 @@ export const Layers: React.FC<LayersProps> = ({
       <Row>
         <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
           <Column>
-            <ShapeTree fileState={fileState} />
+            <ShapeTree
+              fileState={fileState}
+              selectedItemsState={[selectedItems, setSelectedItems]}
+            />
           </Column>
         </ResizePanel>
         <Panel workspace center>
@@ -150,12 +162,12 @@ export const Layers: React.FC<LayersProps> = ({
             >
               <TextureMapCanvas
                 image={textureState[0]}
-                shapes={Object.values(fileState[0].layers)}
+                layers={idLayers}
                 zoom={zoom}
                 panX={panX}
                 panY={panY}
                 grid={gridSettings}
-                activeLayer={null}
+                activeLayer={undefined}
                 activeCoord={null}
                 showFPS={false}
               />
