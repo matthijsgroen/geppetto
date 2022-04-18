@@ -70,9 +70,9 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
         1.0,
         Math.max(
           panXRef.current +
-            (((deltaX - prevDeltaX) / canvasPos.width) *
-              window.devicePixelRatio) /
-              zoomRef.current,
+            ((deltaX - prevDeltaX) /
+              ((canvasPos.width * zoomRef.current) / 2)) *
+              window.devicePixelRatio,
           -1.0
         )
       );
@@ -82,11 +82,10 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
       const newPanY = Math.min(
         1.0,
         Math.max(
-          panYRef.current +
-            (((deltaY - prevDeltaY) / canvasPos.height) *
-              window.devicePixelRatio *
-              -1.0) /
-              zoomRef.current,
+          panYRef.current -
+            ((deltaY - prevDeltaY) /
+              ((canvasPos.height * zoomRef.current) / 2)) *
+              window.devicePixelRatio,
           -1.0
         )
       );
