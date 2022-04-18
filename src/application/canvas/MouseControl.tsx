@@ -21,6 +21,7 @@ type MouseControlProps = PropsWithChildren<{
 const MouseControlContainer = styled.div<MouseControlProps>`
   width: 100%;
   height: 100%;
+  box-sizing: border-box;
   cursor: ${(props) =>
     ({
       [MouseMode.Grab]: "grab",
@@ -28,6 +29,11 @@ const MouseControlContainer = styled.div<MouseControlProps>`
       [MouseMode.Normal]: "default",
       [MouseMode.Aim]: "crosshair",
     }[props.mode])};
+  border: 1px solid transparent;
+
+  &:focus {
+    border-color: ${(props) => props.theme.colors.controlFocus};
+  }
 `;
 
 interface MouseEventsProps {
@@ -67,6 +73,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
     <MouseControlContainer
       ref={ref}
       mode={isGrabbing ? MouseMode.Grabbing : mode}
+      tabIndex={0}
       onMouseDown={useCallback(
         (e: React.MouseEvent<HTMLDivElement>) => {
           if (mode === MouseMode.Grab) {
