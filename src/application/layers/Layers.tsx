@@ -62,6 +62,8 @@ export const Layers: React.FC<LayersProps> = ({
     [layers]
   );
 
+  const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
+
   return (
     <Column>
       <ToolBar>
@@ -167,7 +169,7 @@ export const Layers: React.FC<LayersProps> = ({
                 panX={panX}
                 panY={panY}
                 grid={gridSettings}
-                activeLayer={undefined}
+                activeLayer={activeLayer}
                 activeCoord={null}
                 showFPS={false}
               />
