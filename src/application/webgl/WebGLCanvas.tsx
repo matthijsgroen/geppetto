@@ -32,7 +32,7 @@ const startWebGL = async (
   node: HTMLCanvasElement,
   container: HTMLDivElement,
   renderers: WebGLRenderer[],
-  debugRef: HTMLElement
+  debugRef: React.RefObject<HTMLElement>
 ): Promise<() => void> => {
   const rect = container.getBoundingClientRect();
   node.width = rect.width * window.devicePixelRatio;
@@ -59,7 +59,9 @@ const startWebGL = async (
     api.render();
     const renderMs = +new Date() - st;
     slowest = Math.max(slowest, renderMs);
-    debugRef.textContent = `Frame: ${renderMs}ms Slowest: ${slowest}ms`;
+    if (debugRef.current) {
+      debugRef.current.textContent = `Frame: ${renderMs}ms Slowest: ${slowest}ms`;
+    }
     window.requestAnimationFrame(render);
   };
   window.requestAnimationFrame(render);
@@ -90,13 +92,13 @@ const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
       canvasRef.current &&
       containerRef &&
       containerRef.current &&
-      debugRef &&
-      debugRef.current
+      debugRef
+      // debugRef.current
     ) {
       const node = canvasRef.current;
       let cleanup: () => void;
 
-      startWebGL(node, containerRef.current, renderers, debugRef.current).then(
+      startWebGL(node, containerRef.current, renderers, debugRef).then(
         (result) => {
           cleanup = result;
         }
@@ -111,10 +113,12 @@ const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
   return (
     <CanvasContainer ref={containerRef}>
       <canvas ref={canvasRef} />
-      <FPSIndicator
-        ref={debugRef}
-        style={{ display: showFPS ? "block" : "none" }}
-      />
+      {showFPS && (
+        <FPSIndicator
+          ref={debugRef}
+          style={{ display: showFPS ? "block" : "none" }}
+        />
+      )}
     </CanvasContainer>
   );
 };
