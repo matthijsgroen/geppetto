@@ -22,9 +22,10 @@ import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
 import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
 import { ShapeTree } from "./ShapeTree";
-import { maxZoomFactor } from "../webgl/lib/webgl";
+import { getTextureCoordinate, maxZoomFactor } from "../webgl/lib/webgl";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { IDLayer } from "../webgl/programs/showLayerPoints";
+import { Vec2 } from "../../types";
 
 type LayersProps = {
   zoomState: UseState<number>;
@@ -34,6 +35,17 @@ type LayersProps = {
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
 };
+
+const snapToGrid = (gridSize: number, value: number) =>
+  Math.round(value / gridSize) * gridSize;
+
+const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
+  gridSettings.magnetic
+    ? [
+        snapToGrid(gridSettings.size, coord[0]),
+        snapToGrid(gridSettings.size, coord[1]),
+      ]
+    : coord;
 
 export const Layers: React.FC<LayersProps> = ({
   fileState,
@@ -46,7 +58,7 @@ export const Layers: React.FC<LayersProps> = ({
   const [zoom] = zoomState;
   const [panX] = panXState;
   const [panY] = panYState;
-  const [mouseMode /*setMouseMode*/] = useState(MouseMode.Grab);
+  const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
   const [gridSettings, setGridSettings] = useState<GridSettings>({
     enabled: false,
     magnetic: false,
@@ -54,15 +66,75 @@ export const Layers: React.FC<LayersProps> = ({
   });
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
+  const texture = textureState[0];
+  const file = fileState[0];
 
-  const layers = fileState[0].layers;
-  const maxZoom = maxZoomFactor(textureState[0]);
+  const layers = file.layers;
+  const maxZoom = maxZoomFactor(texture);
   const idLayers: IDLayer[] = useMemo(
     () => Object.entries(layers).map(([id, layer]) => ({ id, ...layer })),
     [layers]
   );
 
   const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
+
+  const mouseClick = useCallback(
+    (event: React.MouseEvent) => {
+      if (
+        (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
+        texture &&
+        activeLayer
+      ) {
+        const canvasPos = event.currentTarget.getBoundingClientRect();
+        const elementX = event.pageX - canvasPos.left;
+        const elementY = event.pageY - canvasPos.top;
+        const coord = getTextureCoordinate(
+          [canvasPos.width, canvasPos.height],
+          [texture.width, texture.height],
+          [panX, panY],
+          zoom,
+          [elementX, elementY]
+        );
+
+        // const shape = getShape(imageDefinition, layerSelected.name);
+        const shape = file.layers[activeLayer];
+        if (shape) {
+          const factor = maxZoom / zoom;
+          const closePoint = shape.points.find((p) => {
+            const dx = p[0] - coord[0];
+            const dy = p[1] - coord[1];
+
+            return dx > -factor && dx < factor && dy > -factor && dy < factor;
+          });
+
+          if (!closePoint && mouseMode === MouseMode.Aim) {
+            const gridCoord = alignOnGrid(gridSettings, coord);
+            // updateImageDefinition((state) =>
+            //   addPoint(state, layerSelected.name, gridCoord)
+            // );
+            setActiveCoord(gridCoord);
+          } else {
+            closePoint && setActiveCoord(closePoint);
+          }
+        }
+      }
+    },
+    [
+      activeLayer,
+      mouseMode,
+      panX,
+      panY,
+      setActiveCoord,
+      texture,
+      file.layers,
+      maxZoom,
+      // updateImageDefinition,
+      zoom,
+      // imageDefinition,
+      gridSettings,
+    ]
+  );
 
   return (
     <Column>
@@ -72,13 +144,32 @@ export const Layers: React.FC<LayersProps> = ({
         <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} disabled />
         <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
         <ToolSeparator />
-        <ToolButton active icon={<Icon>✋</Icon>} tooltip="Move mode" />
         <ToolButton
+          active={mouseMode === MouseMode.Grab}
+          icon={<Icon>✋</Icon>}
+          tooltip="Move mode"
+          onClick={useCallback(() => {
+            setMouseMode(MouseMode.Grab);
+          }, [setMouseMode])}
+        />
+        <ToolButton
+          active={mouseMode === MouseMode.Normal}
           icon={<Icon>🔧</Icon>}
           tooltip="Adjust point mode"
-          disabled
+          disabled={activeLayer === undefined}
+          onClick={useCallback(() => {
+            setMouseMode(MouseMode.Normal);
+          }, [setMouseMode])}
         />
-        <ToolButton icon={<Icon>✏️</Icon>} tooltip="Add point mode" disabled />
+        <ToolButton
+          active={mouseMode === MouseMode.Aim}
+          icon={<Icon>✏️</Icon>}
+          tooltip="Add point mode"
+          disabled={activeLayer === undefined}
+          onClick={useCallback(() => {
+            setMouseMode(MouseMode.Aim);
+          }, [setMouseMode])}
+        />
         <ToolSeparator />
         <ToolButton
           icon={<Icon>🗑</Icon>}
@@ -151,7 +242,7 @@ export const Layers: React.FC<LayersProps> = ({
           </Column>
         </ResizePanel>
         <Panel workspace center>
-          {textureState[0] === null ? (
+          {texture === null ? (
             <p>No texture loaded</p>
           ) : (
             <LayerMouseControl
@@ -160,17 +251,17 @@ export const Layers: React.FC<LayersProps> = ({
               panXState={panXState}
               panYState={panYState}
               zoomState={zoomState}
-              // onClick={mouseClick}
+              onClick={mouseClick}
             >
               <TextureMapCanvas
-                image={textureState[0]}
+                image={texture}
                 layers={idLayers}
                 zoom={zoom}
                 panX={panX}
                 panY={panY}
                 grid={gridSettings}
                 activeLayer={activeLayer}
-                activeCoord={null}
+                activeCoord={activeCoord}
                 showFPS={false}
               />
             </LayerMouseControl>

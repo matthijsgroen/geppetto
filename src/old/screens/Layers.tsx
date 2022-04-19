@@ -51,7 +51,7 @@ const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
       ]
     : coord;
 
-const Layers: React.VFC<LayersProps> = ({
+const Layers: React.FC<LayersProps> = ({
   texture,
   imageDefinition,
   updateImageDefinition,
@@ -69,9 +69,8 @@ const Layers: React.VFC<LayersProps> = ({
     size: 2,
   });
   const [activeCoord, setActiveCoord] = useState<null | [number, number]>(null);
-  const [layerSelected, setLayerSelected] = useState<null | ItemSelection>(
-    null
-  );
+  const [layerSelected, setLayerSelected] =
+    useState<null | ItemSelection>(null);
   const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
 
   useEffect(() => {
