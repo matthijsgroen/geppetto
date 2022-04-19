@@ -16,6 +16,7 @@ export const defaultTheme: DefaultTheme = {
     itemContainerBackground: "var(--colors-item-container-background)",
 
     textDefault: "var(--colors-text-default)",
+    textDimmed: "var(--colors-text-dimmed)",
     textActive: "var(--colors-text-active)",
     textFocus: "var(--colors-text-focus)",
 

@@ -18,6 +18,7 @@
   --colors-control-focus: #4a4;
 
   --colors-text-default: #eee;
+  --colors-text-dimmed: #888;
   --colors-text-active: #5b5;
 }
 
@@ -44,6 +45,7 @@
     --colors-control-focus: #66e;
 
     --colors-text-default: #333;
+    --colors-text-dimmed: #888;
     --colors-text-active: #669;
   }
 }
@@ -69,5 +71,6 @@
   --colors-control-focus: #66e;
 
   --colors-text-default: #333;
+  --colors-text-dimmed: #888;
   --colors-text-active: #669;
 }

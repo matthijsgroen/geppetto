@@ -1,0 +1,19 @@
+.shortcutDivider {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.shortcut {
+  color: var(--colors-text-dimmed);
+  font-size: 0.8rem;
+  align-self: center;
+}
+
+.disabled {
+  opacity: 60%;
+}
+
+.wide {
+  flex: 1;
+}

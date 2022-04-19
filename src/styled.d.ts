@@ -18,6 +18,7 @@ declare module "styled-components" {
       // itemSpecial: string;
 
       textDefault: string;
+      textDimmed: string;
       textActive: string;
       textFocus: string;
 
