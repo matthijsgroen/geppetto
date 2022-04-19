@@ -1,10 +1,11 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useEffect } from "react";
 import { Icon, Menu, MenuItem, ToolButton } from "../../ui-components";
 import { UseState } from "../types";
 import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
 import { verifyFile as verifyVersion2 } from "../../animation/file2/verifyFile";
 import { convertFromV1 } from "../../animation/file2/convert";
 import { GeppettoImage } from "../../animation/file2/types";
+import { shortcut } from "../../ui-components/Menu/shortcut";
 
 declare global {
   interface Window {
@@ -118,6 +119,34 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
       alert("Sorry no support for local filesystem");
     }
   }, [textureFileNameState, textureFileState]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.code === "KeyO" &&
+        event.shiftKey &&
+        (event.ctrlKey || event.metaKey)
+      ) {
+        openTextureFile();
+        event.preventDefault();
+      }
+      if (
+        event.code === "KeyO" &&
+        !event.shiftKey &&
+        (event.ctrlKey || event.metaKey)
+      ) {
+        openImageFile();
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
   return (
     <Menu
       portal={true}
@@ -127,8 +156,18 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
       )}
     >
       {/* <MenuItem>New</MenuItem> */}
-      <MenuItem onClick={openImageFile}>Open</MenuItem>
-      <MenuItem onClick={openTextureFile}>Load texture</MenuItem>
+      <MenuItem
+        onClick={openImageFile}
+        shortcut={shortcut({ key: "O", ctrlCmd: true })}
+      >
+        Open
+      </MenuItem>
+      <MenuItem
+        onClick={openTextureFile}
+        shortcut={shortcut({ key: "O", ctrlCmd: true, shift: true })}
+      >
+        Load texture
+      </MenuItem>
       {/* <MenuItem>Reload texture</MenuItem>
       <MenuItem disabled>Save</MenuItem>
       <MenuItem>Save as...</MenuItem> */}

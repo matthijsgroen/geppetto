@@ -5,6 +5,7 @@
 }
 
 .shortcut {
+  padding-left: 1em;
   color: var(--colors-text-dimmed);
   font-size: 0.8rem;
   align-self: center;
