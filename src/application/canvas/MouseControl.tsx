@@ -12,6 +12,7 @@ export enum MouseMode {
   Grab,
   Grabbing,
   Aim,
+  Target,
 }
 
 type MouseControlProps = PropsWithChildren<{
@@ -28,6 +29,7 @@ const MouseControlContainer = styled.div<MouseControlProps>`
       [MouseMode.Grabbing]: "grabbing",
       [MouseMode.Normal]: "default",
       [MouseMode.Aim]: "crosshair",
+      [MouseMode.Target]: "pointer",
     }[props.mode])};
   border: 1px solid transparent;
 
@@ -37,9 +39,9 @@ const MouseControlContainer = styled.div<MouseControlProps>`
 `;
 
 interface MouseEventsProps {
-  onMouseMove?: (event: React.MouseEvent<HTMLDivElement>) => void;
-  onMouseDown?: (event: React.MouseEvent<HTMLDivElement>) => void;
-  onMouseUp?: (event: React.MouseEvent<HTMLDivElement>) => void;
+  onMouseMove?: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseDown?: (event: React.MouseEvent<HTMLElement>) => void;
+  onMouseUp?: (event: React.MouseEvent<HTMLElement>) => void;
   onWheel?: (delta: number) => void;
 }
 

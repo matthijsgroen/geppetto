@@ -143,6 +143,24 @@ export const createProgram = (
   ];
 };
 
+export const mouseToTextureCoordinate = (
+  texture: { width: number; height: number },
+  zoom: number,
+  panning: Vec2,
+  event: React.MouseEvent<HTMLElement>
+): Vec2 => {
+  const canvasPos = event.currentTarget.getBoundingClientRect();
+  const elementX = event.pageX - canvasPos.left;
+  const elementY = event.pageY - canvasPos.top;
+  return getTextureCoordinate(
+    [canvasPos.width, canvasPos.height],
+    [texture.width, texture.height],
+    panning,
+    zoom,
+    [elementX, elementY]
+  );
+};
+
 export const getTextureCoordinate = (
   canvasSize: Vec2,
   textureSize: Vec2,
@@ -150,20 +168,22 @@ export const getTextureCoordinate = (
   zoom: number,
   coordinate: Vec2
 ): Vec2 => {
-  const [texW, texH] = textureSize;
-  const [canvW, canvH] = canvasSize;
+  const [textureWidth, textureHeight] = textureSize;
+  const [canvasWidth, canvasHeight] = canvasSize;
   const [panX, panY] = panning;
   const [coordX, coordY] = coordinate;
 
-  const landscape = texW / canvW > texH / canvH;
+  const landscape = textureWidth / canvasWidth > textureHeight / canvasHeight;
 
-  const scale = landscape ? canvW / texW : canvH / texH;
-  const scaledCanvasWidth = canvW / scale;
-  const scaledCanvasHeight = canvH / scale;
-  const relativeX = (coordX / canvW) * scaledCanvasWidth;
-  const relativeY = (coordY / canvH) * scaledCanvasHeight;
-  const halfH = texH / 2;
-  const halfW = texW / 2;
+  const scale = landscape
+    ? canvasWidth / textureWidth
+    : canvasHeight / textureHeight;
+  const scaledCanvasWidth = canvasWidth / scale;
+  const scaledCanvasHeight = canvasHeight / scale;
+  const relativeX = (coordX / canvasWidth) * scaledCanvasWidth;
+  const relativeY = (coordY / canvasHeight) * scaledCanvasHeight;
+  const halfH = textureHeight / 2;
+  const halfW = textureWidth / 2;
   const top =
     scaledCanvasHeight / 2 - halfH - (panY * scaledCanvasHeight * zoom) / 2;
   const left =

@@ -1,5 +1,11 @@
 import MouseControl, { MouseMode } from "./MouseControl";
-import React, { FC, PropsWithChildren, useCallback, useRef } from "react";
+import React, {
+  FC,
+  PropsWithChildren,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { UseState } from "../types";
 
 export type LayerMouseControlProps = PropsWithChildren<{
@@ -10,12 +16,13 @@ export type LayerMouseControlProps = PropsWithChildren<{
   panYState: UseState<number>;
   maxZoomFactor: number;
 
-  onClick?: (event: React.MouseEvent) => void;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   handleDrag?: (
     event: React.MouseEvent,
     deltaX: number,
     deltaY: number
   ) => boolean;
+  hoverCursor?: (event: React.MouseEvent<HTMLElement>) => MouseMode;
 }>;
 
 const LayerMouseControl: FC<LayerMouseControlProps> = ({
@@ -23,6 +30,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   mode,
   handleDrag,
   onClick,
+  hoverCursor,
   zoomState,
   panXState,
   panYState,
@@ -31,6 +39,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   const [zoom, setZoom] = zoomState;
   const [panX, setPanX] = panXState;
   const [panY, setPanY] = panYState;
+  const [cursorMode, setCursorMode] = useState(mode);
 
   const mouseDownRef = useRef<false | [number, number]>(false);
   const mouseMoveDeltaRef = useRef<[number, number]>([0, 0]);
@@ -49,8 +58,15 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   const panYRef = useRef(panY);
 
   const mouseMove = useCallback(
-    (event: React.MouseEvent) => {
-      if (!mouseDownRef.current) return;
+    (event: React.MouseEvent<HTMLElement>) => {
+      if (!mouseDownRef.current) {
+        // hovering
+        if (hoverCursor) {
+          setCursorMode(hoverCursor(event));
+        }
+
+        return;
+      }
 
       const canvasPos = event.currentTarget.getBoundingClientRect();
       const elementX = event.pageX - canvasPos.left;
@@ -88,11 +104,11 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
       panYRef.current = newPanY;
       setPanY(newPanY);
     },
-    [handleDrag, setPanX, setPanY]
+    [handleDrag, setPanX, setPanY, hoverCursor]
   );
 
   const mouseUp = useCallback(
-    (event: React.MouseEvent) => {
+    (event: React.MouseEvent<HTMLElement>) => {
       if (onClick) {
         onClick(event);
       }
@@ -115,7 +131,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
 
   return (
     <MouseControl
-      mode={mode}
+      mode={cursorMode}
       onMouseDown={mouseDown}
       onMouseMove={mouseMove}
       onMouseUp={mouseUp}

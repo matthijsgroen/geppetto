@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
   Column,
@@ -22,7 +22,7 @@ import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
 import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
 import { ShapeTree } from "./ShapeTree";
-import { getTextureCoordinate, maxZoomFactor } from "../webgl/lib/webgl";
+import { maxZoomFactor, mouseToTextureCoordinate } from "../webgl/lib/webgl";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { IDLayer } from "../webgl/programs/showLayerPoints";
 import { Vec2 } from "../../types";
@@ -58,6 +58,9 @@ export const Layers: React.FC<LayersProps> = ({
   const [zoom] = zoomState;
   const [panX] = panXState;
   const [panY] = panYState;
+  const zoomPanRef = useRef({ zoom, panX, panY });
+  zoomPanRef.current = { zoom, panX, panY };
+
   const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
   const [gridSettings, setGridSettings] = useState<GridSettings>({
     enabled: false,
@@ -80,24 +83,21 @@ export const Layers: React.FC<LayersProps> = ({
   const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
 
   const mouseClick = useCallback(
-    (event: React.MouseEvent) => {
+    (event: React.MouseEvent<HTMLElement>) => {
       if (
         (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
         texture &&
         activeLayer
       ) {
-        const canvasPos = event.currentTarget.getBoundingClientRect();
-        const elementX = event.pageX - canvasPos.left;
-        const elementY = event.pageY - canvasPos.top;
-        const coord = getTextureCoordinate(
-          [canvasPos.width, canvasPos.height],
-          [texture.width, texture.height],
-          [panX, panY],
+        const { zoom, panX, panY } = zoomPanRef.current;
+        const coord = mouseToTextureCoordinate(
+          texture,
           zoom,
-          [elementX, elementY]
+          [panX, panY],
+          event
         );
+        console.log(coord);
 
-        // const shape = getShape(imageDefinition, layerSelected.name);
         const shape = file.layers[activeLayer];
         if (shape) {
           const factor = maxZoom / zoom;
@@ -123,17 +123,49 @@ export const Layers: React.FC<LayersProps> = ({
     [
       activeLayer,
       mouseMode,
-      panX,
-      panY,
+      zoomPanRef,
       setActiveCoord,
       texture,
       file.layers,
       maxZoom,
       // updateImageDefinition,
-      zoom,
       // imageDefinition,
       gridSettings,
     ]
+  );
+
+  const hoverCursor = useCallback(
+    (event: React.MouseEvent<HTMLElement>): MouseMode => {
+      if (
+        (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
+        texture &&
+        activeLayer
+      ) {
+        const { zoom, panX, panY } = zoomPanRef.current;
+        const coord = mouseToTextureCoordinate(
+          texture,
+          zoom,
+          [panX, panY],
+          event
+        );
+
+        const shape = file.layers[activeLayer];
+        if (shape) {
+          const factor = maxZoom / zoom;
+          const closePoint = shape.points.find((p) => {
+            const dx = p[0] - coord[0];
+            const dy = p[1] - coord[1];
+
+            return dx > -factor && dx < factor && dy > -factor && dy < factor;
+          });
+          if (closePoint) {
+            return MouseMode.Target;
+          }
+        }
+      }
+      return mouseMode;
+    },
+    [mouseMode, activeLayer, file.layers, maxZoom, zoomPanRef, texture]
   );
 
   return (
@@ -252,6 +284,7 @@ export const Layers: React.FC<LayersProps> = ({
               panYState={panYState}
               zoomState={zoomState}
               onClick={mouseClick}
+              hoverCursor={hoverCursor}
             >
               <TextureMapCanvas
                 image={texture}
