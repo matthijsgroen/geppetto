@@ -5,7 +5,11 @@ import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
 import { verifyFile as verifyVersion2 } from "../../animation/file2/verifyFile";
 import { convertFromV1 } from "../../animation/file2/convert";
 import { GeppettoImage } from "../../animation/file2/types";
-import { shortcut } from "../../ui-components/Menu/shortcut";
+import {
+  isEvent,
+  Shortcut,
+  shortcutStr,
+} from "../../ui-components/Menu/shortcut";
 
 declare global {
   interface Window {
@@ -61,7 +65,10 @@ const loadTextureImage = async (
   });
 };
 
-export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
+const FILE_OPEN: Shortcut = { key: "KeyO", ctrlOrCmd: true };
+const TEXTURE_OPEN: Shortcut = { key: "KeyO", shift: true, ctrlOrCmd: true };
+
+export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   fileNameState,
   fileState,
   textureFileNameState,
@@ -122,20 +129,12 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.code === "KeyO" &&
-        event.shiftKey &&
-        (event.ctrlKey || event.metaKey)
-      ) {
-        openTextureFile();
+      if (isEvent(FILE_OPEN, event)) {
+        openImageFile();
         event.preventDefault();
       }
-      if (
-        event.code === "KeyO" &&
-        !event.shiftKey &&
-        (event.ctrlKey || event.metaKey)
-      ) {
-        openImageFile();
+      if (isEvent(TEXTURE_OPEN, event)) {
+        openTextureFile();
         event.preventDefault();
       }
     };
@@ -145,7 +144,7 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, []);
+  }, [openImageFile, openTextureFile]);
 
   return (
     <Menu
@@ -156,16 +155,10 @@ export const ApplicationMenu: React.VFC<ApplicationMenuProps> = ({
       )}
     >
       {/* <MenuItem>New</MenuItem> */}
-      <MenuItem
-        onClick={openImageFile}
-        shortcut={shortcut({ key: "O", ctrlCmd: true })}
-      >
+      <MenuItem onClick={openImageFile} shortcut={shortcutStr(FILE_OPEN)}>
         Open
       </MenuItem>
-      <MenuItem
-        onClick={openTextureFile}
-        shortcut={shortcut({ key: "O", ctrlCmd: true, shift: true })}
-      >
+      <MenuItem onClick={openTextureFile} shortcut={shortcutStr(TEXTURE_OPEN)}>
         Load texture
       </MenuItem>
       {/* <MenuItem>Reload texture</MenuItem>

@@ -2,47 +2,59 @@ const OPTION_KEY = "⎇";
 const CMD_KEY = "⌘";
 const SHIFT_KEY = "⇧";
 
-export const shortcut = (options: {
-  key: string;
-  ctrlCmd?: boolean;
+export type Shortcut = {
+  key: KeyboardEvent["code"];
+  ctrlOrCmd?: boolean;
   shift?: boolean;
   alt?: boolean;
   mac?: boolean;
-}): string => {
-  const isMacBrowser =
-    options.mac === undefined
-      ? /Mac|iPod|iPhone|iPad/.test(navigator.platform)
-      : options.mac;
+};
 
-  let ctrl = "";
-  if (options.ctrlCmd) {
-    if (isMacBrowser) {
-      ctrl = `${CMD_KEY} `;
-    } else {
-      ctrl = "Ctrl+";
-    }
+const MAC_PLATFORM = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+
+const isMac = (shortcut: Shortcut): boolean =>
+  shortcut.mac === undefined ? MAC_PLATFORM : shortcut.mac;
+
+const macShortcut = (shortcut: Shortcut): string => {
+  const cmd = shortcut.ctrlOrCmd ? `${CMD_KEY} ` : "";
+  const shift = shortcut.shift ? `${SHIFT_KEY} ` : "";
+  const option = shortcut.alt ? `${OPTION_KEY} ` : "";
+
+  let key = "";
+  if (shortcut.key.startsWith("Key")) {
+    key = shortcut.key.slice(3);
   }
 
-  let shift = "";
-  if (options.shift) {
-    if (isMacBrowser) {
-      shift = `${SHIFT_KEY} `;
-    } else {
-      shift = "Shift+";
-    }
-  }
+  return `${option}${shift}${cmd}${key}`;
+};
 
-  let alt = "";
-  if (options.alt) {
-    if (isMacBrowser) {
-      alt = `${OPTION_KEY} `;
-    } else {
-      alt = "Alt+";
-    }
-  }
-
+export const shortcutStr = (shortcut: Shortcut): string => {
+  const isMacBrowser = isMac(shortcut);
   if (isMacBrowser) {
-    return `${alt}${shift}${ctrl}${options.key}`;
+    return macShortcut(shortcut);
   }
-  return `${ctrl}${alt}${shift}${options.key}`;
+
+  const ctrl = shortcut.ctrlOrCmd ? "Ctrl+" : "";
+  const shift = shortcut.shift ? "Shift+" : "";
+  const alt = shortcut.alt ? "Alt+" : "";
+
+  let key = "";
+  if (shortcut.key.startsWith("Key")) {
+    key = shortcut.key.slice(3);
+  }
+
+  return `${ctrl}${alt}${shift}${key}`;
+};
+
+const f = (v: boolean | undefined): boolean => !!v;
+
+export const isEvent = (shortcut: Shortcut, event: KeyboardEvent): boolean => {
+  const isMacBrowser = isMac(shortcut);
+
+  if (event.code !== shortcut.key) return false;
+  if (event.shiftKey !== f(shortcut.shift)) return false;
+  if (shortcut.ctrlOrCmd && !isMacBrowser && !event.ctrlKey) return false;
+  if (shortcut.ctrlOrCmd && isMacBrowser && !event.metaKey) return false;
+
+  return true;
 };
