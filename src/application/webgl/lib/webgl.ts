@@ -1,5 +1,3 @@
-import { Vec2 } from "../../../types";
-
 export enum ShaderType {
   Vertex,
   Fragment,
@@ -142,61 +140,3 @@ export const createProgram = (
     },
   ];
 };
-
-export const mouseToTextureCoordinate = (
-  texture: { width: number; height: number },
-  zoom: number,
-  panning: Vec2,
-  event: React.MouseEvent<HTMLElement>
-): Vec2 => {
-  const canvasPos = event.currentTarget.getBoundingClientRect();
-  const elementX = event.pageX - canvasPos.left;
-  const elementY = event.pageY - canvasPos.top;
-  return getTextureCoordinate(
-    [canvasPos.width, canvasPos.height],
-    [texture.width, texture.height],
-    panning,
-    zoom,
-    [elementX, elementY]
-  );
-};
-
-export const getTextureCoordinate = (
-  canvasSize: Vec2,
-  textureSize: Vec2,
-  panning: Vec2,
-  zoom: number,
-  coordinate: Vec2
-): Vec2 => {
-  const [textureWidth, textureHeight] = textureSize;
-  const [canvasWidth, canvasHeight] = canvasSize;
-  const [panX, panY] = panning;
-  const [coordX, coordY] = coordinate;
-
-  const landscape = textureWidth / canvasWidth > textureHeight / canvasHeight;
-
-  const scale = landscape
-    ? canvasWidth / textureWidth
-    : canvasHeight / textureHeight;
-  const scaledCanvasWidth = canvasWidth / scale;
-  const scaledCanvasHeight = canvasHeight / scale;
-  const relativeX = (coordX / canvasWidth) * scaledCanvasWidth;
-  const relativeY = (coordY / canvasHeight) * scaledCanvasHeight;
-  const halfH = textureHeight / 2;
-  const halfW = textureWidth / 2;
-  const top =
-    scaledCanvasHeight / 2 - halfH - (panY * scaledCanvasHeight * zoom) / 2;
-  const left =
-    scaledCanvasWidth / 2 - halfW + (panX * scaledCanvasWidth * zoom) / 2;
-
-  const x = (relativeX - left - halfW) / zoom + halfW;
-  const y = (relativeY - top - halfH) / zoom + halfH;
-
-  return [Math.round(x), Math.round(y)];
-};
-
-export const zoomFactor = (texture: HTMLImageElement | null): number =>
-  texture ? (texture.height / window.screen.height) * 2.0 : 1.0;
-
-export const maxZoomFactor = (texture: HTMLImageElement | null): number =>
-  zoomFactor(texture) * 4.0;

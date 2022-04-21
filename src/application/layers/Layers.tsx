@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { GeppettoImage } from "../../animation/file2/types";
+import { GeppettoImage, Layer } from "../../animation/file2/types";
 import {
   Column,
   Icon,
@@ -22,7 +22,11 @@ import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
 import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
 import { ShapeTree } from "./ShapeTree";
-import { maxZoomFactor, mouseToTextureCoordinate } from "../webgl/lib/webgl";
+import {
+  getInitialScale,
+  maxZoomFactor,
+  mouseToTextureCoordinate,
+} from "../webgl/lib/canvas";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { IDLayer } from "../webgl/programs/showLayerPoints";
 import { Vec2 } from "../../types";
@@ -82,6 +86,26 @@ export const Layers: React.FC<LayersProps> = ({
 
   const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
 
+  const getClosestPoint = useCallback(
+    (element: HTMLElement, coord: Vec2, shape: Layer): Vec2 | undefined => {
+      if (!texture) return undefined;
+      const canvasPos = element.getBoundingClientRect();
+      const initialScale = getInitialScale(
+        [canvasPos.width, canvasPos.height],
+        [texture.width, texture.height]
+      );
+      const factor = initialScale * zoom;
+      const closePoint = shape.points.find((p) => {
+        const dx = p[0] - coord[0];
+        const dy = p[1] - coord[1];
+
+        return dx > -factor && dx < factor && dy > -factor && dy < factor;
+      });
+      return closePoint;
+    },
+    [texture, zoom]
+  );
+
   const mouseClick = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
       if (
@@ -96,17 +120,10 @@ export const Layers: React.FC<LayersProps> = ({
           [panX, panY],
           event
         );
-        console.log(coord);
 
         const shape = file.layers[activeLayer];
         if (shape) {
-          const factor = maxZoom / zoom;
-          const closePoint = shape.points.find((p) => {
-            const dx = p[0] - coord[0];
-            const dy = p[1] - coord[1];
-
-            return dx > -factor && dx < factor && dy > -factor && dy < factor;
-          });
+          const closePoint = getClosestPoint(event.currentTarget, coord, shape);
 
           if (!closePoint && mouseMode === MouseMode.Aim) {
             const gridCoord = alignOnGrid(gridSettings, coord);
@@ -127,10 +144,10 @@ export const Layers: React.FC<LayersProps> = ({
       setActiveCoord,
       texture,
       file.layers,
-      maxZoom,
       // updateImageDefinition,
       // imageDefinition,
       gridSettings,
+      getClosestPoint,
     ]
   );
 
@@ -148,16 +165,9 @@ export const Layers: React.FC<LayersProps> = ({
           [panX, panY],
           event
         );
-
         const shape = file.layers[activeLayer];
         if (shape) {
-          const factor = maxZoom / zoom;
-          const closePoint = shape.points.find((p) => {
-            const dx = p[0] - coord[0];
-            const dy = p[1] - coord[1];
-
-            return dx > -factor && dx < factor && dy > -factor && dy < factor;
-          });
+          const closePoint = getClosestPoint(event.currentTarget, coord, shape);
           if (closePoint) {
             return MouseMode.Target;
           }
@@ -165,7 +175,7 @@ export const Layers: React.FC<LayersProps> = ({
       }
       return mouseMode;
     },
-    [mouseMode, activeLayer, file.layers, maxZoom, zoomPanRef, texture]
+    [mouseMode, activeLayer, file.layers, zoomPanRef, texture, getClosestPoint]
   );
 
   return (
