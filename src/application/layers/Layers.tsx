@@ -47,6 +47,12 @@ type LayersProps = {
 const snapToGrid = (gridSize: number, value: number) =>
   Math.round(value / gridSize) * gridSize;
 
+const snapToGridDown = (gridSize: number, value: number) =>
+  Math.floor(value / gridSize) * gridSize;
+
+const snapToGridUp = (gridSize: number, value: number) =>
+  Math.ceil(value / gridSize) * gridSize;
+
 const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
   gridSettings.magnetic
     ? [
@@ -209,21 +215,39 @@ export const Layers: React.FC<LayersProps> = ({
       }
       if (activeLayer && activeCoord) {
         const newValue: Vec2 = [activeCoord[0], activeCoord[1]];
-        if (e.code === "ArrowLeft") {
-          newValue[0] -= 1;
+        if (e.shiftKey) {
+          if (e.code === "ArrowLeft" || e.code === "ArrowUp") {
+            const index = e.code === "ArrowLeft" ? 0 : 1;
+            newValue[index] = snapToGridDown(
+              gridSettings.size,
+              newValue[index]
+            );
+            if (newValue[index] === activeCoord[index]) {
+              newValue[index] -= gridSettings.size;
+            }
+          }
+          if (e.code === "ArrowRight" || e.code === "ArrowDown") {
+            const index = e.code === "ArrowRight" ? 0 : 1;
+            newValue[index] = snapToGridUp(gridSettings.size, newValue[index]);
+            if (newValue[index] === activeCoord[index]) {
+              newValue[index] += gridSettings.size;
+            }
+          }
+        } else {
+          if (e.code === "ArrowLeft") {
+            newValue[0] -= 1;
+          }
+          if (e.code === "ArrowRight") {
+            newValue[0] += 1;
+          }
+          if (e.code === "ArrowDown") {
+            newValue[1] += 1;
+          }
+          if (e.code === "ArrowUp") {
+            newValue[1] -= 1;
+          }
         }
-        if (e.code === "ArrowRight") {
-          newValue[0] += 1;
-        }
-        if (e.code === "ArrowDown") {
-          newValue[1] += 1;
-        }
-        if (e.code === "ArrowUp") {
-          newValue[1] -= 1;
-        }
-        console.log(newValue, activeCoord);
         if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
-          console.log("movement");
           setFile((image) =>
             movePoint(image, activeLayer, activeCoord, newValue)
           );
