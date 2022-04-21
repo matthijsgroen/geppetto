@@ -11,16 +11,6 @@ import {
   shortcutStr,
 } from "../../ui-components/Menu/shortcut";
 
-declare global {
-  interface Window {
-    showOpenFilePicker?: (options?: {
-      multiple?: boolean;
-      excludeAcceptAllOption?: boolean;
-      types?: { description?: string; accept: Record<string, string[]> }[];
-    }) => Promise<FileSystemFileHandle[]>;
-  }
-}
-
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
   fileState: UseState<GeppettoImage>;
@@ -67,6 +57,8 @@ const loadTextureImage = async (
 
 const FILE_OPEN: Shortcut = { key: "KeyO", ctrlOrCmd: true };
 const TEXTURE_OPEN: Shortcut = { key: "KeyO", shift: true, ctrlOrCmd: true };
+const FILE_SAVE_AS: Shortcut = { key: "KeyS", shift: true, ctrlOrCmd: true };
+const FILE_SAVE: Shortcut = { key: "KeyS", ctrlOrCmd: true };
 
 export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   fileNameState,
@@ -80,7 +72,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   const openImageFile = useCallback(async () => {
     if (window.showOpenFilePicker) {
       try {
-        const [file] = await window.showOpenFilePicker({
+        const [fileHandle] = await window.showOpenFilePicker({
           multiple: false,
           excludeAcceptAllOption: true,
           types: [
@@ -90,8 +82,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
             },
           ],
         });
-        fileRef.current = file;
-        const [filename, image] = await loadGeppettoImage(file);
+        fileRef.current = fileHandle;
+        const [filename, image] = await loadGeppettoImage(fileHandle);
         fileNameState[1](filename);
         fileState[1](image);
       } catch (e) {
@@ -101,6 +93,45 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       alert("Sorry no support for local filesystem");
     }
   }, [fileNameState, fileState]);
+
+  const saveImageFileAs = useCallback(async () => {
+    if (window.showSaveFilePicker) {
+      try {
+        const fileHandle = await window.showSaveFilePicker({
+          suggestedName: "animation.json",
+          excludeAcceptAllOption: true,
+          types: [
+            {
+              description: "JSON File",
+              accept: { "application/json": [".json"] },
+            },
+          ],
+        });
+        console.log("File chosen");
+        fileRef.current = fileHandle;
+        fileNameState[1](fileHandle.name);
+        const writable = await fileHandle.createWritable();
+        await writable.write(JSON.stringify(fileState[0]));
+        writable.close();
+      } catch (e) {
+        // user abort
+      }
+    } else {
+      alert("Sorry no support for local filesystem");
+    }
+  }, [fileNameState, fileState]);
+
+  const saveImageFile = useCallback(async () => {
+    if (fileRef.current) {
+      try {
+        const writable = await fileRef.current.createWritable();
+        await writable.write(JSON.stringify(fileState[0]));
+        writable.close();
+      } catch (e) {
+        // user abort
+      }
+    }
+  }, [fileState]);
 
   const openTextureFile = useCallback(async () => {
     if (window.showOpenFilePicker) {
@@ -137,6 +168,14 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         openTextureFile();
         event.preventDefault();
       }
+      if (isEvent(FILE_SAVE_AS, event)) {
+        saveImageFileAs();
+        event.preventDefault();
+      }
+      if (isEvent(FILE_SAVE, event)) {
+        saveImageFile();
+        event.preventDefault();
+      }
     };
 
     window.addEventListener("keydown", onKeyDown);
@@ -144,7 +183,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
     return () => {
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [openImageFile, openTextureFile]);
+  }, [openImageFile, openTextureFile, saveImageFileAs, saveImageFile]);
 
   return (
     <Menu
@@ -161,9 +200,17 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       <MenuItem onClick={openTextureFile} shortcut={shortcutStr(TEXTURE_OPEN)}>
         Load texture
       </MenuItem>
-      {/* <MenuItem>Reload texture</MenuItem>
-      <MenuItem disabled>Save</MenuItem>
-      <MenuItem>Save as...</MenuItem> */}
+      {/* <MenuItem>Reload texture</MenuItem>*/}
+      <MenuItem
+        disabled={fileRef.current === null}
+        onClick={saveImageFile}
+        shortcut={shortcutStr(FILE_SAVE)}
+      >
+        Save
+      </MenuItem>
+      <MenuItem onClick={saveImageFileAs} shortcut={shortcutStr(FILE_SAVE_AS)}>
+        Save as...
+      </MenuItem>
     </Menu>
   );
 };
