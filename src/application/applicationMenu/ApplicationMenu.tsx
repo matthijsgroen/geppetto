@@ -1,11 +1,18 @@
 import React, { useCallback, useRef, useEffect } from "react";
-import { Icon, Menu, ToolButton } from "../../ui-components";
+import {
+  Icon,
+  Menu,
+  ToolButton,
+  SubMenu,
+  Shortcut,
+  MenuDivider,
+  MenuItem,
+} from "../../ui-components";
 import { UseState } from "../types";
 import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
 import { verifyFile as verifyVersion2 } from "../../animation/file2/verifyFile";
 import { convertFromV1 } from "../../animation/file2/convert";
 import { GeppettoImage } from "../../animation/file2/types";
-import { Shortcut } from "../../ui-components/Menu/shortcut";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionMenuItem } from "../actions/ActionMenuItem";
 
@@ -214,12 +221,27 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         <ToolButton icon={<Icon>🍔</Icon>} active={open} />
       )}
     >
-      {/* <MenuItem>New</MenuItem> */}
-      <ActionMenuItem action={actions.openImageFile} />
-      <ActionMenuItem action={actions.openTextureFile} />
-      {/* <MenuItem>Reload texture</MenuItem>*/}
-      <ActionMenuItem action={actions.saveImageFile} />
-      <ActionMenuItem action={actions.saveImageFileAs} />
+      <SubMenu label="File">
+        {/* <MenuItem>New</MenuItem> */}
+        <ActionMenuItem action={actions.openImageFile} />
+        <ActionMenuItem action={actions.openTextureFile} />
+        <MenuDivider />
+        <MenuItem disabled>Reload texture</MenuItem>
+        <MenuDivider />
+        <ActionMenuItem action={actions.saveImageFile} />
+        <ActionMenuItem action={actions.saveImageFileAs} />
+        <MenuDivider />
+        <MenuItem disabled>Revert file</MenuItem>
+      </SubMenu>
+      <SubMenu label="Help">
+        <MenuItem disabled>Documentation</MenuItem>
+        <MenuItem disabled>Release notes</MenuItem>
+        <MenuDivider />
+        <MenuItem disabled>Report an issue</MenuItem>
+        <MenuDivider />
+        <MenuItem disabled>Support the developer</MenuItem>
+        <MenuItem disabled>About</MenuItem>
+      </SubMenu>
     </Menu>
   );
 };
