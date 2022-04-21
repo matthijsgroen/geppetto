@@ -31,11 +31,9 @@ import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { IDLayer } from "../webgl/programs/showLayerPoints";
 import { Vec2 } from "../../types";
 import { addPoint, deletePoint } from "../../animation/file2/shapes";
-import {
-  isEvent,
-  Shortcut,
-  shortcutStr,
-} from "../../ui-components/Menu/shortcut";
+import { Shortcut } from "../../ui-components/Menu/shortcut";
+import { useActionMap } from "../hooks/useActionMap";
+import { ActionToolButton } from "../actions/ActionToolButton";
 
 type LayersProps = {
   zoomState: UseState<number>;
@@ -186,19 +184,35 @@ export const Layers: React.FC<LayersProps> = ({
     [mouseMode, activeLayer, file.layers, zoomPanRef, texture, getClosestPoint]
   );
 
-  const deleteActivePoint = useCallback(() => {
-    if (!activeCoord || !activeLayer) return;
-    setFile((image) => deletePoint(image, activeLayer, activeCoord));
-    setActiveCoord(null);
-  }, [activeCoord, setFile, setActiveCoord, activeLayer]);
+  const { actions, triggerKeyboardAction } = useActionMap(
+    useCallback(
+      () => ({
+        deleteActivePoint: {
+          icon: "🗑",
+          tooltip: "Remove selected point",
+          shortcut: DELETE_POINT,
+          handler: () => {
+            if (!activeCoord || !activeLayer) return;
+            setFile((image) => deletePoint(image, activeLayer, activeCoord));
+            setActiveCoord(null);
+          },
+        },
+      }),
+      [activeCoord, setFile, setActiveCoord, activeLayer]
+    )
+  );
 
   const keyboardControl = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
-      if (isEvent(DELETE_POINT, e)) {
-        deleteActivePoint();
+      if (triggerKeyboardAction(e)) {
+        e.preventDefault();
+      }
+      console.log(e.code);
+      if (e.code === "") {
+        // setFile((image) => deletePoint(image, activeLayer, activeCoord));
       }
     },
-    [deleteActivePoint]
+    [triggerKeyboardAction]
   );
 
   return (
@@ -236,11 +250,9 @@ export const Layers: React.FC<LayersProps> = ({
           }, [setMouseMode])}
         />
         <ToolSeparator />
-        <ToolButton
-          icon={<Icon>🗑</Icon>}
+        <ActionToolButton
           disabled={activeCoord === null}
-          tooltip={`Remove selected point ${shortcutStr(DELETE_POINT)}`}
-          onClick={deleteActivePoint}
+          action={actions.deleteActivePoint}
         />
         <ToolSeparator />
         <ToolButton
