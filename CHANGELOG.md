@@ -5,12 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [UNRELEASED]
+
+### Added
+
+- New UI, all new components.
+- Fully workable in browser now, and still locally installable as PWA.
+- New file format, that is more extendible, and easier to edit (Old files will be automatically converted).
+
+### Fixed
+
+- Dragging the canvas matches the speed of the mouse now.
+- On the layer screen, when hovering over a point the mouse cursor now changes.
+
 ## [1.3.1] - 2021-11-29
 
 ### Fixed
 
 - Updated Geppetto to fix major error in animation screen when animation
-  did not had multiple controls controlling the same mutation
+  did not had multiple controls controlling the same mutation.
 
 ## [1.3.0] - 2021-11-17
 
