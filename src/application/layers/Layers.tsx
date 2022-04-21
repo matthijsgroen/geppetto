@@ -255,7 +255,13 @@ export const Layers: React.FC<LayersProps> = ({
         }
       }
     },
-    [triggerKeyboardAction, activeCoord, activeLayer, setFile]
+    [
+      triggerKeyboardAction,
+      activeCoord,
+      activeLayer,
+      setFile,
+      gridSettings.size,
+    ]
   );
 
   return (
