@@ -184,8 +184,9 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
             setFileData((fileData) =>
               rename(fileData, `${item.index}`, item.data.type, newName)
             );
+            treeData.addChangedId && treeData.addChangedId(`${item.index}`);
           },
-          [setFileData]
+          [setFileData, treeData]
         )}
         onDrop={onDrop}
         canDropOnItemWithChildren={true}
