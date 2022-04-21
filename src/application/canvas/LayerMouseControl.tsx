@@ -61,6 +61,9 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
 
   const mouseMove = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
+      if (mouseDownRef.current && event.buttons === 0) {
+        mouseDownRef.current = false;
+      }
       if (!mouseDownRef.current) {
         // hovering
         if (hoverCursor) {
