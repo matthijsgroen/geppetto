@@ -133,3 +133,17 @@ export const deletePoint = (
     if (index === -1) return;
     array.splice(index, 1);
   });
+
+export const movePoint = (
+  image: GeppettoImage,
+  layerId: string,
+  point: Vec2,
+  newPoint: Vec2
+) =>
+  produce(image, (draft) => {
+    const array = draft.layers[layerId].points;
+    const index = array.findIndex(
+      (p) => p[0] === point[0] && p[1] === point[1]
+    );
+    array[index] = newPoint;
+  });

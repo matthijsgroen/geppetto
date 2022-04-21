@@ -30,7 +30,7 @@ import {
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { IDLayer } from "../webgl/programs/showLayerPoints";
 import { Vec2 } from "../../types";
-import { addPoint, deletePoint } from "../../animation/file2/shapes";
+import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
 import { Shortcut } from "../../ui-components/Menu/shortcut";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionToolButton } from "../actions/ActionToolButton";
@@ -207,12 +207,31 @@ export const Layers: React.FC<LayersProps> = ({
       if (triggerKeyboardAction(e)) {
         e.preventDefault();
       }
-      console.log(e.code);
-      if (e.code === "") {
-        // setFile((image) => deletePoint(image, activeLayer, activeCoord));
+      if (activeLayer && activeCoord) {
+        const newValue: Vec2 = [activeCoord[0], activeCoord[1]];
+        if (e.code === "ArrowLeft") {
+          newValue[0] -= 1;
+        }
+        if (e.code === "ArrowRight") {
+          newValue[0] += 1;
+        }
+        if (e.code === "ArrowDown") {
+          newValue[1] += 1;
+        }
+        if (e.code === "ArrowUp") {
+          newValue[1] -= 1;
+        }
+        console.log(newValue, activeCoord);
+        if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
+          console.log("movement");
+          setFile((image) =>
+            movePoint(image, activeLayer, activeCoord, newValue)
+          );
+          setActiveCoord(newValue);
+        }
       }
     },
-    [triggerKeyboardAction]
+    [triggerKeyboardAction, activeCoord, activeLayer, setFile]
   );
 
   return (
