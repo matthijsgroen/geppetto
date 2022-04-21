@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Dragging the canvas matches the speed of the mouse now.
+- Dragging the canvas and releasing out of canvas no longer makes the canvas stick to the cursor.
 - On the layer screen, when hovering over a point the mouse cursor now changes.
 
 ## [1.3.1] - 2021-11-29
