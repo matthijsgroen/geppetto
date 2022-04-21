@@ -1,3 +1,5 @@
+import produce from "immer";
+import { Vec2 } from "../../types";
 import { addInHierarchy, PlacementInfo } from "./hierarchy";
 import { GeppettoImage, Layer, LayerFolder, NodeType } from "./types";
 
@@ -108,3 +110,26 @@ export const rename = (
     },
   };
 };
+
+export const addPoint = (
+  image: GeppettoImage,
+  layerId: string,
+  point: Vec2
+): GeppettoImage =>
+  produce(image, (draft) => {
+    draft.layers[layerId].points.push(point);
+  });
+
+export const deletePoint = (
+  image: GeppettoImage,
+  layerId: string,
+  point: Vec2
+): GeppettoImage =>
+  produce(image, (draft) => {
+    const array = draft.layers[layerId].points;
+    const index = array.findIndex(
+      (p) => p[0] === point[0] && p[1] === point[1]
+    );
+    if (index === -1) return;
+    array.splice(index, 1);
+  });

@@ -17,6 +17,7 @@ export type LayerMouseControlProps = PropsWithChildren<{
   maxZoomFactor: number;
 
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
   handleDrag?: (
     event: React.MouseEvent,
     deltaX: number,
@@ -30,6 +31,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   mode,
   handleDrag,
   onClick,
+  onKeyDown,
   hoverCursor,
   zoomState,
   panXState,
@@ -136,6 +138,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
       onMouseMove={mouseMove}
       onMouseUp={mouseUp}
       onWheel={mouseWheel}
+      onKeyDown={onKeyDown}
     >
       {children}
     </MouseControl>

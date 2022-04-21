@@ -42,6 +42,7 @@ interface MouseEventsProps {
   onMouseMove?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseDown?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseUp?: (event: React.MouseEvent<HTMLElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
   onWheel?: (delta: number) => void;
 }
 
@@ -52,6 +53,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
   onMouseMove,
   onMouseUp,
   onWheel,
+  onKeyDown,
 }) => {
   const [isGrabbing, setIsGrabbing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -93,6 +95,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
         [onMouseUp]
       )}
       onMouseMove={onMouseMove}
+      onKeyDown={onKeyDown}
     >
       {children}
     </MouseControlContainer>

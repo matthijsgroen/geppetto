@@ -10,6 +10,21 @@ describe("shortcutStr", () => {
       expect(result).toEqual("H");
     });
 
+    it("supports Delete", () => {
+      const result = mShort({ key: "Delete" });
+      expect(result).toEqual("⌦");
+    });
+
+    it("supports Delete or Backspace", () => {
+      const result = mShort({ key: "DelOrBackspace" });
+      expect(result).toEqual("⌫");
+    });
+
+    it("supports Backspace", () => {
+      const result = mShort({ key: "Backspace" });
+      expect(result).toEqual("⌫");
+    });
+
     it("supports shift", () => {
       const result = mShort({ key: "KeyH", shift: true });
       expect(result).toEqual("⇧ H");
@@ -58,6 +73,21 @@ describe("shortcutStr", () => {
     it("supports simple keys", () => {
       const result = short({ key: "KeyH" });
       expect(result).toEqual("H");
+    });
+
+    it("supports Delete", () => {
+      const result = short({ key: "Delete" });
+      expect(result).toEqual("Del");
+    });
+
+    it("supports Delete or Backspace", () => {
+      const result = short({ key: "DelOrBackspace" });
+      expect(result).toEqual("Del");
+    });
+
+    it("supports BackSpace", () => {
+      const result = short({ key: "Backspace" });
+      expect(result).toEqual("Backspace");
     });
 
     it("supports shift", () => {

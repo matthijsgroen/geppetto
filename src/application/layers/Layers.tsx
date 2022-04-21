@@ -30,6 +30,12 @@ import {
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { IDLayer } from "../webgl/programs/showLayerPoints";
 import { Vec2 } from "../../types";
+import { addPoint, deletePoint } from "../../animation/file2/shapes";
+import {
+  isEvent,
+  Shortcut,
+  shortcutStr,
+} from "../../ui-components/Menu/shortcut";
 
 type LayersProps = {
   zoomState: UseState<number>;
@@ -50,6 +56,8 @@ const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
         snapToGrid(gridSettings.size, coord[1]),
       ]
     : coord;
+
+const DELETE_POINT: Shortcut = { key: "DelOrBackspace" };
 
 export const Layers: React.FC<LayersProps> = ({
   fileState,
@@ -75,7 +83,7 @@ export const Layers: React.FC<LayersProps> = ({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
   const texture = textureState[0];
-  const file = fileState[0];
+  const [file, setFile] = fileState;
 
   const layers = file.layers;
   const maxZoom = maxZoomFactor(texture);
@@ -85,6 +93,9 @@ export const Layers: React.FC<LayersProps> = ({
   );
 
   const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
+  if (!activeLayer && activeCoord) {
+    setActiveCoord(null);
+  }
 
   const getClosestPoint = useCallback(
     (element: HTMLElement, coord: Vec2, shape: Layer): Vec2 | undefined => {
@@ -127,9 +138,7 @@ export const Layers: React.FC<LayersProps> = ({
 
           if (!closePoint && mouseMode === MouseMode.Aim) {
             const gridCoord = alignOnGrid(gridSettings, coord);
-            // updateImageDefinition((state) =>
-            //   addPoint(state, layerSelected.name, gridCoord)
-            // );
+            setFile((image) => addPoint(image, activeLayer, gridCoord));
             setActiveCoord(gridCoord);
           } else {
             closePoint && setActiveCoord(closePoint);
@@ -144,8 +153,7 @@ export const Layers: React.FC<LayersProps> = ({
       setActiveCoord,
       texture,
       file.layers,
-      // updateImageDefinition,
-      // imageDefinition,
+      setFile,
       gridSettings,
       getClosestPoint,
     ]
@@ -176,6 +184,21 @@ export const Layers: React.FC<LayersProps> = ({
       return mouseMode;
     },
     [mouseMode, activeLayer, file.layers, zoomPanRef, texture, getClosestPoint]
+  );
+
+  const deleteActivePoint = useCallback(() => {
+    if (!activeCoord || !activeLayer) return;
+    setFile((image) => deletePoint(image, activeLayer, activeCoord));
+    setActiveCoord(null);
+  }, [activeCoord, setFile, setActiveCoord, activeLayer]);
+
+  const keyboardControl = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (isEvent(DELETE_POINT, e)) {
+        deleteActivePoint();
+      }
+    },
+    [deleteActivePoint]
   );
 
   return (
@@ -215,8 +238,9 @@ export const Layers: React.FC<LayersProps> = ({
         <ToolSeparator />
         <ToolButton
           icon={<Icon>🗑</Icon>}
-          disabled
-          tooltip="Remove selected point"
+          disabled={activeCoord === null}
+          tooltip={`Remove selected point ${shortcutStr(DELETE_POINT)}`}
+          onClick={deleteActivePoint}
         />
         <ToolSeparator />
         <ToolButton
@@ -294,6 +318,7 @@ export const Layers: React.FC<LayersProps> = ({
               panYState={panYState}
               zoomState={zoomState}
               onClick={mouseClick}
+              onKeyDown={keyboardControl}
               hoverCursor={hoverCursor}
             >
               <TextureMapCanvas
