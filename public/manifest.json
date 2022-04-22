@@ -24,7 +24,7 @@
     }
   ],
   "id": "/app/",
-  "start_url": ".",
+  "start_url": ".?utm_source=app",
   "display": "minimal-ui",
   "theme_color": "#e79b62",
   "background_color": "#ffffff",

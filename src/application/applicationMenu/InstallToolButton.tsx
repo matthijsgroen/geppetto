@@ -20,8 +20,10 @@ window.addEventListener("beforeinstallprompt", (event: Event) => {
   // Prevent Chrome 67 and earlier from automatically showing the prompt
   event.preventDefault();
   deferredInstallPrompt = event as BeforeInstallPromptEvent;
-  console.log("Before Install event!");
-  notifyInstallReady.forEach((l) => l());
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("utm_source") !== "app") {
+    notifyInstallReady.forEach((l) => l());
+  }
 });
 
 export const InstallToolButton: React.FC = () => {
