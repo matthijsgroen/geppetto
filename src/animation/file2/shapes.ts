@@ -1,6 +1,6 @@
 import produce from "immer";
 import { Vec2 } from "../../types";
-import { addInHierarchy, PlacementInfo } from "./hierarchy";
+import { addInHierarchy, PlacementInfo, collectChildIds } from "./hierarchy";
 import { GeppettoImage, Layer, LayerFolder, NodeType } from "./types";
 
 const getUniqueName = (
@@ -146,4 +146,28 @@ export const movePoint = (
       (p) => p[0] === point[0] && p[1] === point[1]
     );
     array[index] = newPoint;
+  });
+
+export const removeShape = (
+  image: GeppettoImage,
+  shapeId: string
+): GeppettoImage =>
+  produce(image, (draft) => {
+    const affectedItems = collectChildIds(draft.layerHierarchy, shapeId).concat(
+      shapeId
+    );
+    for (const itemId of affectedItems) {
+      const item = draft.layerHierarchy[itemId];
+      if (item.type === "layer") {
+        delete draft.layers[itemId];
+      }
+      if (item.type === "mutation") {
+        // TODO: Check for each mutation if its part of a control / animation
+        delete draft.mutations[itemId];
+      }
+      if (item.type === "layerFolder") {
+        delete draft.layerFolders[itemId];
+      }
+      delete draft.layerHierarchy[itemId];
+    }
   });

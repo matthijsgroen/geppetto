@@ -13,8 +13,18 @@ root.render(
 );
 
 /**
- * Add Install to home screen using:
- * https://developer.chrome.com/blog/a2hs-updates/
+ * TODO: Add .register({
+ *   onUpdate: (registration) => {
+ *     // Trigger something in UI as 'Restart to update'
+ *     // when triggered, execute:
+ *     registration.waiting.postMessage({type: 'SKIP_WAITING'});
+ *     window.location.reload();
+ *   },
+ *   onSuccess: () => {
+ *     // notify that app can be used offline
+ *   },
+ *
+ * })
  */
 
 // If you want your app to work offline and load faster, you can change
