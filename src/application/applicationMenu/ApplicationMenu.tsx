@@ -220,7 +220,11 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       portal={true}
       transition
       menuButton={({ open }) => (
-        <ToolButton icon={<Icon>🍔</Icon>} active={open} />
+        <ToolButton
+          icon={<Icon>🍔</Icon>}
+          active={open}
+          notificationBadge={hasAppUpdate}
+        />
       )}
     >
       {hasAppUpdate && (
