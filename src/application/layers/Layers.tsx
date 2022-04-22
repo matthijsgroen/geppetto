@@ -17,7 +17,7 @@ import {
   ToolSpacer,
   ToolTab,
 } from "../../ui-components";
-import { UseState } from "../types";
+import { AppSection, UseState } from "../types";
 import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
 import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
@@ -40,6 +40,7 @@ type LayersProps = {
   panXState: UseState<number>;
   panYState: UseState<number>;
   fileState: UseState<GeppettoImage>;
+  onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
 };
@@ -66,6 +67,7 @@ const DELETE_POINT: Shortcut = { key: "DelOrBackspace" };
 export const Layers: React.FC<LayersProps> = ({
   fileState,
   textureState,
+  onSectionChange,
   menu,
 }) => {
   const zoomState = useState(1.0);
@@ -269,7 +271,11 @@ export const Layers: React.FC<LayersProps> = ({
       <ToolBar>
         {menu}
         <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
-        <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} disabled />
+        <ToolTab
+          icon={<Icon>🤷🏼</Icon>}
+          label={"Composition"}
+          onClick={() => onSectionChange && onSectionChange("composition")}
+        />
         <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
         <ToolSeparator />
         <ToolButton
