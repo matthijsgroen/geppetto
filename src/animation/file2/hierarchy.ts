@@ -141,7 +141,7 @@ export const findParentId = <T extends string>(
   return null;
 };
 
-const collectChildIds = (
+export const collectChildIds = (
   hierarchy: Hierarchy<string>,
   parentId: string
 ): string[] => {

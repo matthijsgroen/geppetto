@@ -7,7 +7,12 @@ import {
   PlacementInfo,
 } from "../../animation/file2/hierarchy";
 import { newFile } from "../../animation/file2/new";
-import { addFolder, addShape, rename } from "../../animation/file2/shapes";
+import {
+  addFolder,
+  addShape,
+  removeShape,
+  rename,
+} from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
   Icon,
@@ -86,6 +91,16 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
     }
     const [updatedImage] = addFolder(fileData, "New folder", position);
     setFileData(updatedImage);
+  }, [fileData, selectedItems]);
+
+  const removeItemAction = useToolAction(() => {
+    const item = selectedItems[0];
+
+    const source = fileData.layerHierarchy[`${item}`];
+    setFileData((value) => removeShape(value, item));
+    if (!isRootNode(source)) {
+      treeData.addChangedId && treeData.addChangedId(source.parentId);
+    }
   }, [fileData, selectedItems]);
 
   const canDropAt = useCallback(
@@ -211,18 +226,13 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
           />
           <ToolSeparator />
           <ToolButton icon={<Icon>📑</Icon>} disabled tooltip="Copy layer" />
-          <ToolButton icon={<Icon>🗑</Icon>} disabled tooltip="Remove item" />
-          {/* 
-              <ToolButton
-                icon={<Icon>⬆</Icon>}
-                disabled={true}
-                tooltip="Move item up"
-              />
-              <ToolButton
-                icon={<Icon>⬇</Icon>}
-                disabled={true}
-                tooltip="Move item down"
-              /> */}
+          <ToolButton
+            icon={<Icon>🗑</Icon>}
+            disabled={selectedItems.length !== 1}
+            onClick={removeItemAction}
+            onKeyDown={removeItemAction}
+            tooltip="Remove item"
+          />
         </ToolBar>
         <Panel padding={5}>{<Tree />}</Panel>
       </UncontrolledTreeEnvironment>
