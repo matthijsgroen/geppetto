@@ -1,0 +1,48 @@
+.toolbutton {
+  display: inline-block;
+  color: var(--colors-text-default);
+  font-size: 1rem;
+  height: 32px;
+  min-width: 32px;
+  background-color: var(--colors-control-default);
+  align-items: center;
+  border: none;
+  border-radius: 10px;
+  white-space: nowrap;
+  outline: 2px solid transparent;
+}
+
+.active {
+  color: var(--colors-text-active);
+  background-color: var(--colors-control-active);
+}
+
+.small {
+  font-size: 0.75rem;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 5px;
+}
+
+.notificationBadge::before {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: var(--colors-background-notification);
+  content: ".";
+  color: transparent;
+  position: absolute;
+  border-radius: 50%;
+  margin-left: 1.1rem;
+  margin-top: -0.7rem;
+}
+
+.toolbutton:disabled {
+  opacity: 0.5;
+}
+.toolbutton:focus {
+  outline-color: var(--colors-control-focus);
+}
+.toolbutton:hover:enabled {
+  background-color: var(--colors-control-highlight);
+}

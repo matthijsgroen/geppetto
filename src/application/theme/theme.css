@@ -10,6 +10,7 @@
   /* --colors-item-special: #336; */
   /* --colors-text-selected: white; */
   --colors-background-workspace: #333;
+  --colors-background-notification: lightgreen;
 
   --colors-control-default: #555;
   --colors-control-edge: #eeeeee4d;
@@ -37,6 +38,7 @@
     --colors-text: #333; */
 
     --colors-background-workspace: #a9a9a9;
+    --colors-background-notification: red;
 
     --colors-control-default: #eee;
     --colors-control-edge: #33333334;
@@ -63,6 +65,7 @@
   --colors-text-destructive: #eee;
   */
   --colors-background-workspace: #a9a9a9;
+  --colors-background-notification: red;
 
   --colors-control-default: #eee;
   --colors-control-edge: #33333334;

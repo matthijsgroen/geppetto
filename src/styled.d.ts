@@ -10,6 +10,7 @@ declare module "styled-components" {
 
       background: string;
       backgroundWorkspace: string;
+      backgroundNotification: string;
 
       itemContainerBackground: string;
       // text: string;

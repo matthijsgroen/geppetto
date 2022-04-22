@@ -5,6 +5,7 @@ export const defaultTheme: DefaultTheme = {
   colors: {
     background: "var(--colors-background)",
     backgroundWorkspace: "var(--colors-background-workspace)",
+    backgroundNotification: "var(--colors-background-notification)",
 
     backgroundDestructive: "var(--colors-background-destructive)",
     textDestructive: "var(--colors-text-destructive)",
