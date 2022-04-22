@@ -15,6 +15,7 @@ import { convertFromV1 } from "../../animation/file2/convert";
 import { GeppettoImage } from "../../animation/file2/types";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionMenuItem } from "../actions/ActionMenuItem";
+import { useAppUpdate } from "../hooks/useAppUpdate";
 
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
@@ -73,6 +74,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
 }) => {
   const fileRef = useRef<null | FileSystemFileHandle>(null);
   const textureFileRef = useRef<null | FileSystemFileHandle>(null);
+  const [hasAppUpdate, updater] = useAppUpdate();
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -221,6 +223,9 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         <ToolButton icon={<Icon>🍔</Icon>} active={open} />
       )}
     >
+      {hasAppUpdate && (
+        <MenuItem onClick={updater}>Restart for app update...</MenuItem>
+      )}
       <SubMenu label="File">
         {/* <MenuItem>New</MenuItem> */}
         <ActionMenuItem action={actions.openImageFile} />
