@@ -143,6 +143,7 @@ export const showTextureMap = (): {
           initGl.deleteBuffer(vertexBuffer);
           initGl.deleteBuffer(indexBuffer);
           programCleanup();
+          gl = null;
         },
       };
     },

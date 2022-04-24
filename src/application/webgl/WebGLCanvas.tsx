@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { WebGLRenderer, webGLScene } from "./lib/webgl";
 import styled from "styled-components";
 
@@ -32,13 +32,14 @@ const startWebGL = async (
   node: HTMLCanvasElement,
   container: HTMLDivElement,
   renderers: WebGLRenderer[],
-  debugRef: React.RefObject<HTMLElement>
+  debugRef: React.RefObject<HTMLElement>,
+  instId: string
 ): Promise<() => void> => {
   const rect = container.getBoundingClientRect();
   node.width = rect.width * window.devicePixelRatio;
   node.height = (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
 
-  const api = await webGLScene(node, renderers);
+  const api = await webGLScene(node, renderers, instId);
   api.render();
   let debounce: ReturnType<typeof setTimeout>;
   const onResize = () => {
@@ -52,9 +53,13 @@ const startWebGL = async (
   };
   window.addEventListener("resize", onResize);
   let renderLoop = true;
+
   let slowest = 0;
   const render = () => {
-    if (!renderLoop) return;
+    if (!renderLoop) {
+      api.cleanup();
+      return;
+    }
     const st = +new Date();
     api.render();
     const renderMs = +new Date() - st;
@@ -67,7 +72,6 @@ const startWebGL = async (
   window.requestAnimationFrame(render);
 
   return () => {
-    api.cleanup();
     renderLoop = false;
     window.removeEventListener("resize", onResize);
   };
@@ -78,6 +82,11 @@ export interface WebGLCanvasProps {
   showFPS?: boolean;
 }
 
+let instance = 0;
+const getInstance = () => {
+  return `inst${instance++}`;
+};
+
 const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
   renderers,
   showFPS = false,
@@ -86,8 +95,19 @@ const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const debugRef = useRef<HTMLDivElement>(null);
 
+  const [mounted, setMounted] = useState<boolean>(false);
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setMounted(true);
+    }, 10);
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
   useEffect(() => {
     if (
+      mounted &&
       canvasRef &&
       canvasRef.current &&
       containerRef &&
@@ -95,20 +115,26 @@ const WebGLCanvas: React.FC<WebGLCanvasProps> = ({
       debugRef
       // debugRef.current
     ) {
+      const instId = getInstance();
       const node = canvasRef.current;
+      let mounted = true;
       let cleanup: () => void;
 
-      startWebGL(node, containerRef.current, renderers, debugRef).then(
+      startWebGL(node, containerRef.current, renderers, debugRef, instId).then(
         (result) => {
           cleanup = result;
+          if (!mounted) {
+            cleanup();
+          }
         }
       );
       return () => {
+        mounted = false;
         // unmount
         cleanup && cleanup();
       };
     }
-  }, [renderers]);
+  }, [renderers, mounted]);
 
   return (
     <CanvasContainer ref={containerRef}>

@@ -22,7 +22,7 @@ export const showTexture = (): {
     verticesUpdated = true;
   };
 
-  let gl: WebGLRenderingContext;
+  let gl: WebGLRenderingContext | null = null;
   let img: HTMLImageElement | null = null;
   let texture: WebGLTexture | null = null;
   let zoom = 1.0;
@@ -65,7 +65,7 @@ export const showTexture = (): {
       setImageTexture();
 
       const setImageDimensions = () => {
-        if (!img) {
+        if (!img || !gl) {
           return;
         }
         const [canvasWidth, canvasHeight] = getSize();
@@ -108,7 +108,7 @@ export const showTexture = (): {
 
       return {
         render() {
-          if (!img) {
+          if (!img || !gl) {
             return;
           }
           gl.useProgram(shaderProgram);
@@ -176,10 +176,13 @@ export const showTexture = (): {
           gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
         },
         cleanup() {
-          gl.deleteTexture(texture);
-          gl.deleteBuffer(vertexBuffer);
-          gl.deleteBuffer(indexBuffer);
+          if (gl) {
+            gl.deleteTexture(texture);
+            gl.deleteBuffer(vertexBuffer);
+            gl.deleteBuffer(indexBuffer);
+          }
           programCleanup();
+          gl = null;
         },
       };
     },

@@ -57,7 +57,8 @@ export type WebGLRenderer = (
 
 export const webGLScene = async (
   element: HTMLCanvasElement,
-  programs: WebGLRenderer[]
+  programs: WebGLRenderer[],
+  instId: string
 ): Promise<RenderAPI> => {
   const gl = element.getContext("webgl", {
     premultipliedalpha: true,
@@ -98,14 +99,19 @@ export const webGLScene = async (
   const renders = await Promise.all<RenderAPI>(
     programs.map((program) => program(gl, api))
   );
+  let cleanedUp = false;
 
   return {
     render: () => {
+      if (cleanedUp) {
+        return;
+      }
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.viewport(0, 0, element.width, element.height);
       renders.forEach((item) => item.render());
     },
     cleanup: () => {
+      cleanedUp = true;
       renders.forEach((item) => item.cleanup());
     },
   };
@@ -128,7 +134,7 @@ export const createProgram = (
     console.error("Link failed: " + gl.getProgramInfoLog(program));
     console.error("vs info-log: " + gl.getShaderInfoLog(vertex));
     console.error("fs info-log: " + gl.getShaderInfoLog(fragment));
-    throw new Error("Could not initialise shade(rs");
+    throw new Error("Could not initialize shaders");
   }
 
   return [

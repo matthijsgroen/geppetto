@@ -24,7 +24,7 @@ export const showGrid = (): {
     verticesUpdated = true;
   };
 
-  let gl: WebGLRenderingContext;
+  let gl: WebGLRenderingContext | null = null;
   let img: HTMLImageElement | null = null;
   let zoom = 1.0;
   let grid = 1.0;
@@ -72,7 +72,7 @@ export const showGrid = (): {
 
       const uViewPort = gl.getUniformLocation(shaderProgram, "uViewport");
       const setImageDimensions = () => {
-        if (!img) {
+        if (!img || !gl) {
           return;
         }
         const [canvasWidth, canvasHeight] = getSize();
@@ -103,7 +103,7 @@ export const showGrid = (): {
 
       return {
         render() {
-          if (!img || grid === 0) {
+          if (!img || grid === 0 || !gl) {
             return;
           }
           gl.useProgram(shaderProgram);
@@ -147,9 +147,12 @@ export const showGrid = (): {
           gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
         },
         cleanup() {
-          gl.deleteBuffer(vertexBuffer);
-          gl.deleteBuffer(indexBuffer);
+          if (gl) {
+            gl.deleteBuffer(vertexBuffer);
+            gl.deleteBuffer(indexBuffer);
+          }
           programCleanup();
+          gl = null;
         },
       };
     },

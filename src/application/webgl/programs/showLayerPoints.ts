@@ -165,6 +165,7 @@ export const showLayerPoints = (): {
           initGl.deleteBuffer(vertexBuffer);
           initGl.deleteBuffer(indexBuffer);
           programCleanup();
+          gl = null;
         },
       };
     },

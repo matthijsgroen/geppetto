@@ -49,10 +49,10 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
       pointsProgram.renderer,
     ],
     [
-      textureMapProgram.renderer,
       textureProgram.renderer,
-      pointsProgram.renderer,
       gridProgram.renderer,
+      textureMapProgram.renderer,
+      pointsProgram.renderer,
     ]
   );
 
