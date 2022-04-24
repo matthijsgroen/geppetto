@@ -8,6 +8,7 @@ import { newFile } from "../animation/file2/new";
 import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
 import { AppSection } from "./types";
 import { Composition } from "./composition/Composition";
+import { AppContext } from "./applicationMenu/ApplicationContext";
 
 const updateWindowTitle = (
   animFile: string | null,
@@ -47,28 +48,30 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      {appSection === "layers" && (
-        <Layers
-          menu={applicationMenu}
-          zoomState={zoomState}
-          panXState={panXState}
-          panYState={panYState}
-          fileState={fileState}
-          textureState={textureFileState}
-          onSectionChange={setAppSection}
-        />
-      )}
-      {appSection === "composition" && (
-        <Composition
-          menu={applicationMenu}
-          zoomState={zoomState}
-          panXState={panXState}
-          panYState={panYState}
-          fileState={fileState}
-          textureState={textureFileState}
-          onSectionChange={setAppSection}
-        />
-      )}
+      <AppContext>
+        {appSection === "layers" && (
+          <Layers
+            menu={applicationMenu}
+            zoomState={zoomState}
+            panXState={panXState}
+            panYState={panYState}
+            fileState={fileState}
+            textureState={textureFileState}
+            onSectionChange={setAppSection}
+          />
+        )}
+        {appSection === "composition" && (
+          <Composition
+            menu={applicationMenu}
+            zoomState={zoomState}
+            panXState={panXState}
+            panYState={panYState}
+            fileState={fileState}
+            textureState={textureFileState}
+            onSectionChange={setAppSection}
+          />
+        )}
+      </AppContext>
     </ThemeProvider>
   );
 };

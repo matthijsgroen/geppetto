@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect } from "react";
+import React, { useCallback, useRef, useEffect, useContext } from "react";
 import {
   Icon,
   Menu,
@@ -16,6 +16,7 @@ import { GeppettoImage } from "../../animation/file2/types";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionMenuItem } from "../actions/ActionMenuItem";
 import { useAppUpdate } from "../hooks/useAppUpdate";
+import { ApplicationContext } from "./ApplicationContext";
 
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
@@ -202,6 +203,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
     )
   );
 
+  const { onMessage } = useContext(ApplicationContext);
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (triggerKeyboardAction(event)) {
@@ -210,10 +213,16 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
     };
 
     window.addEventListener("keydown", onKeyDown);
+    const unsubscribe = onMessage((message) => {
+      if (message === "textureOpen") {
+        actions.openTextureFile.handler();
+      }
+    });
     return () => {
       window.removeEventListener("keydown", onKeyDown);
+      unsubscribe();
     };
-  }, [triggerKeyboardAction]);
+  }, [triggerKeyboardAction, actions, onMessage]);
 
   return (
     <Menu
