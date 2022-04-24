@@ -235,6 +235,33 @@ export const moveInHierarchy = <T extends string>(
   return result;
 };
 
+const visitNode = <T extends string>(
+  hierarchy: Hierarchy<T>,
+  node: TreeNode<T>,
+  nodeId: string,
+  parents: string[],
+  visitor: (node: TreeNode<T>, nodeId: string, parents: string[]) => void
+): void => {
+  visitor(node, nodeId, parents);
+  if (node.children) {
+    for (const childId of node.children) {
+      const childNode = hierarchy[childId] as TreeNode<T>;
+      visitNode(hierarchy, childNode, childId, parents.concat(nodeId), visitor);
+    }
+  }
+};
+
+export const visit = <T extends string>(
+  hierarchy: Hierarchy<T>,
+  visitor: (node: TreeNode<T>, nodeId: string, parents: string[]) => void
+): void => {
+  const root = Object.values(hierarchy).find((n) => n.type === "root");
+  for (const nodeId of root?.children || []) {
+    const node = hierarchy[nodeId] as TreeNode<T>;
+    visitNode(hierarchy, node, nodeId, [], visitor);
+  }
+};
+
 export const visualizeTree = <T extends string>(
   hierarchy: Hierarchy<T>,
   omitTypes: string[] = [],

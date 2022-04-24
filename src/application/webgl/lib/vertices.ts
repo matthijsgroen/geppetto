@@ -90,11 +90,13 @@ export const combineKeyFrames = (
     b
   );
 
-export const flatten = (vectors: Vec2[] | Vec3[] | Vec4[]): number[] =>
-  ((vectors as unknown) as number[][]).reduce<number[]>(
-    (result, vec) => result.concat(vec),
-    []
-  );
+export const flatten = (vectors: Vec2[] | Vec3[] | Vec4[]): number[] => {
+  const result: number[] = [];
+  for (const vector of vectors as unknown as number[][]) {
+    result.push(...vector);
+  }
+  return result;
+};
 
 export const interpolateFloat = (
   track: Float32Array,

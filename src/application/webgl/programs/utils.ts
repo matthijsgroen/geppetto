@@ -1,25 +1,14 @@
-import { Vec2 } from "../../../types";
+import { Vec2, Vec4 } from "../../../types";
 import {
-  ShapeDefinition,
-  SpriteDefinition,
-} from "../../../animation/file1/types";
+  GeppettoImage,
+  Layer,
+  MutationVector,
+} from "../../../animation/file2/types";
+import { visit } from "../../../animation/file2/hierarchy";
 
-export const flattenShapes = (shapes: ShapeDefinition[]): SpriteDefinition[] =>
-  flattenTree(shapes).filter(
-    (shape) => shape.type === "sprite"
-  ) as SpriteDefinition[];
+export const MAX_MUTATION_VECTORS = 60;
 
-export const flattenTree = (shapes: ShapeDefinition[]): ShapeDefinition[] =>
-  shapes.reduce(
-    (result, shape) =>
-      result.concat(
-        shape,
-        shape.type === "sprite" ? [] : flattenShapes(shape.items)
-      ),
-    [] as ShapeDefinition[]
-  );
-
-export const getAnchor = (sprite: SpriteDefinition): Vec2 => {
+export const getAnchor = (sprite: Layer): Vec2 => {
   let minX = Infinity;
   let maxX = -Infinity;
   let minY = Infinity;
@@ -32,4 +21,82 @@ export const getAnchor = (sprite: SpriteDefinition): Vec2 => {
   });
 
   return [(minX + maxX) / 2, (minY + maxY) / 2];
+};
+
+export const vectorTypeMapping: Record<MutationVector["type"], number> = {
+  translate: 1,
+  stretch: 2,
+  rotate: 3,
+  deform: 4,
+  opacity: 5,
+  lightness: 6,
+  colorize: 7,
+  saturation: 8,
+};
+
+const mutatorToVec4 = (mutator: MutationVector): Vec4 => [
+  vectorTypeMapping[mutator.type],
+  mutator.origin[0],
+  mutator.origin[1],
+  mutator.type === "deform" || mutator.type === "translate"
+    ? mutator.radius
+    : -1,
+];
+
+export const createShapeMutationList = (
+  shapes: GeppettoImage
+): {
+  parentList: Float32Array;
+  vectorSettings: Vec4[];
+  shapeMutatorMapping: Record<string, number>;
+  mutatorMapping: Record<string, number>;
+} => {
+  const mutatorIndices: { id: string; index: number; parent: number }[] = [];
+  const mutators: Vec4[] = [];
+
+  const mutatorMapping: Record<string, number> = {};
+
+  // visit(shapes.layerHierarchy, (item, itemId, parents) => {
+  //   if (item.type === "mutation") {
+  //     const mutation = shapes.mutations[itemId];
+  //     const value = mutatorToVec4(mutation);
+  //     const index = mutators.length;
+  //     mutators.push(value);
+
+  //     const parentMutation = getParentMutation(parents, item);
+  //     const mutatorIndex =
+  //       parentMutation === null
+  //         ? -1
+  //         : mutatorIndices.findIndex((e) => e.id === parentMutation.name);
+  //     mutatorIndices.push({ id: itemId, index, parent: mutatorIndex });
+  //     mutatorMapping[itemId] = mutatorIndex;
+  //   }
+  // });
+
+  const shapeMutatorMapping: Record<string, number> = {};
+  visit(shapes.layerHierarchy, (item, itemId, parents) => {
+    if (item.type === "layer") {
+      // const parentMutation = getParentMutation(parents.concat(item));
+      // const parentMutation = null;
+      // const mutatorIndex =
+      //   parentMutation === null
+      //     ? -1
+      //     : mutatorIndices.findIndex((e) => e.id === parentMutation.name);
+      // shapeMutatorMapping[item.name] = mutatorIndex;
+      shapeMutatorMapping[itemId] = -1;
+    }
+  });
+
+  const parentList = new Float32Array(mutators.length);
+
+  mutatorIndices.forEach((item, index) => {
+    parentList[index] = item.parent;
+  });
+
+  return {
+    mutatorMapping,
+    parentList,
+    vectorSettings: mutators,
+    shapeMutatorMapping,
+  };
 };

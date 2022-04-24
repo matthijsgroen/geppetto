@@ -1,3 +1,4 @@
+import { useContext } from "react";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
   Column,
@@ -7,11 +8,17 @@ import {
   ResizePanel,
   Row,
   ToolBar,
+  ToolButton,
   ToolSpacer,
   ToolTab,
 } from "../../ui-components";
+import { ApplicationContext } from "../applicationMenu/ApplicationContext";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
+import LayerMouseControl from "../canvas/LayerMouseControl";
+import { MouseMode } from "../canvas/MouseControl";
 import { AppSection, UseState } from "../types";
+import CompositionCanvas from "../webgl/CompositionCanvas";
+import { maxZoomFactor } from "../webgl/lib/canvas";
 
 type CompositionProps = {
   zoomState: UseState<number>;
@@ -23,10 +30,28 @@ type CompositionProps = {
   menu?: React.ReactChild;
 };
 
+const hasPoints = (file: GeppettoImage) =>
+  Object.values(file.layers).some((l) => l.points.length > 2);
+
 export const Composition: React.FC<CompositionProps> = ({
   menu,
+  textureState,
+  fileState,
+  zoomState,
+  panXState,
+  panYState,
   onSectionChange,
 }) => {
+  const texture = textureState[0];
+  const [file] = fileState;
+
+  const maxZoom = maxZoomFactor(texture);
+  const { sendMessage } = useContext(ApplicationContext);
+
+  const [zoom] = zoomState;
+  const [panX] = panXState;
+  const [panY] = panYState;
+
   return (
     <Column>
       <ToolBar>
@@ -43,10 +68,41 @@ export const Composition: React.FC<CompositionProps> = ({
       </ToolBar>
       <Row>
         <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
-          <Column></Column>
+          <Column>
+            <Panel />
+          </Column>
         </ResizePanel>
         <Panel workspace center>
-          <p>No texture loaded</p>
+          {texture === null && (
+            <p>
+              No texture loaded{" "}
+              <ToolButton
+                icon={<Icon>🌅</Icon>}
+                onClick={() => sendMessage("textureOpen")}
+              />
+            </p>
+          )}
+          {texture && !hasPoints(file) && (
+            <p>No layers with a surface. Add a layer in the "Layers" screen.</p>
+          )}
+          {texture && hasPoints(file) && (
+            <LayerMouseControl
+              mode={MouseMode.Grab}
+              maxZoomFactor={maxZoom}
+              panXState={panXState}
+              panYState={panYState}
+              zoomState={zoomState}
+            >
+              <CompositionCanvas
+                image={texture}
+                file={file}
+                zoom={zoom}
+                panX={panX}
+                panY={panY}
+                vectorValues={{}}
+              />
+            </LayerMouseControl>
+          )}
         </Panel>
       </Row>
     </Column>
