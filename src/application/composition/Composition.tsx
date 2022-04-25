@@ -86,6 +86,7 @@ export const Composition: React.FC<CompositionProps> = ({
             >
               <CompositionCanvas
                 image={texture}
+                activeLayers={selectedItems}
                 file={file}
                 zoom={zoom}
                 panX={panX}

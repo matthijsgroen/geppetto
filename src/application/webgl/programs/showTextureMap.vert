@@ -1,3 +1,4 @@
+// vim: ts=2:sw=2
 
 attribute vec2 coordinates;
 uniform vec4 viewport;

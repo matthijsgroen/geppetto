@@ -1,3 +1,5 @@
+// vim: ts=2:sw=2
+
 attribute vec3 coordinates;
 uniform vec4 viewport;
 uniform vec4 scale;

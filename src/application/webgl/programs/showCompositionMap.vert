@@ -4,20 +4,12 @@
 #define PI_FRAC 0.017453292519943295
 
 uniform vec2 viewport;
-uniform vec3 basePosition;
 uniform vec3 translate;
+uniform vec3 basePosition;
 uniform vec4 scale;
 uniform float mutation;
 
 attribute vec2 coordinates;
-attribute vec2 aTextureCoord;
-
-varying lowp vec2 vTextureCoord;
-varying lowp float vOpacity;
-varying lowp float vBrightness;
-varying lowp float vSaturation;
-varying lowp float vTargetHue;
-varying lowp float vTargetSaturation;
 
 mat4 viewportScale = mat4(
   2.0 / viewport.x, 0, 0, 0,
@@ -111,23 +103,14 @@ mat3 mutatePoint(mat3 startValue, int mutationIndex) {
 }
 
 void main() {
-  mat3 value = mat3(
+  mat3 start = mat3(
     coordinates + translate.xy, 1.0,
-    1.0, 1.0, 0,
+    0, 0, 0,
     0, 0, 0
   );
-  mat3 deform = mutatePoint(value, int(mutation));
+  mat3 deform = mutatePoint(start, int(mutation));
   vec3 deformPos = deform[0];
-  vec3 deformColor = deform[1];
-  vec3 deformEffect = deform[2];
 
   vec4 pos = viewportScale * vec4((deformPos.xy + basePosition.xy) * scale.x, translate.z, 1.0);
-  gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z, 1.0);
-  vTextureCoord = aTextureCoord.xy;
-
-  vOpacity = deformPos.z;
-  vBrightness = deformColor.x;
-  vSaturation = deformColor.y;
-  vTargetHue = deformEffect.x;
-  vTargetSaturation = deformEffect.y;
+  gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z - 1.0, 1.0);
 }

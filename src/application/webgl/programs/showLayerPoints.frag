@@ -1,3 +1,5 @@
+// vim: ts=2:sw=2
+
 varying lowp float selected;
 
 void main(void) {
