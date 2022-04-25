@@ -219,6 +219,9 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       if (message === "textureOpen") {
         actions.openTextureFile.handler();
       }
+      if (message === "fileOpen") {
+        actions.openImageFile.handler();
+      }
     });
     return () => {
       window.removeEventListener("keydown", onKeyDown);

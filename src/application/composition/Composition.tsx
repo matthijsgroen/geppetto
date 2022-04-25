@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
   Column,
@@ -8,12 +8,11 @@ import {
   ResizePanel,
   Row,
   ToolBar,
-  ToolButton,
   ToolSpacer,
   ToolTab,
 } from "../../ui-components";
-import { ApplicationContext } from "../applicationMenu/ApplicationContext";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
+import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
 import { AppSection, UseState } from "../types";
@@ -30,9 +29,6 @@ type CompositionProps = {
   menu?: React.ReactChild;
 };
 
-const hasPoints = (file: GeppettoImage) =>
-  Object.values(file.layers).some((l) => l.points.length > 2);
-
 export const Composition: React.FC<CompositionProps> = ({
   menu,
   textureState,
@@ -46,7 +42,6 @@ export const Composition: React.FC<CompositionProps> = ({
   const [file] = fileState;
 
   const maxZoom = maxZoomFactor(texture);
-  const { sendMessage } = useContext(ApplicationContext);
 
   const [zoom] = zoomState;
   const [panX] = panXState;
@@ -73,18 +68,7 @@ export const Composition: React.FC<CompositionProps> = ({
           </Column>
         </ResizePanel>
         <Panel workspace center>
-          {texture === null && (
-            <p>
-              No texture loaded{" "}
-              <ToolButton
-                icon={<Icon>🌅</Icon>}
-                onClick={() => sendMessage("textureOpen")}
-              />
-            </p>
-          )}
-          {texture && !hasPoints(file) && (
-            <p>No layers with a surface. Add a layer in the "Layers" screen.</p>
-          )}
+          <StartupScreen file={file} texture={texture} screen={"composition"} />
           {texture && hasPoints(file) && (
             <LayerMouseControl
               mode={MouseMode.Grab}

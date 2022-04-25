@@ -171,3 +171,6 @@ export const removeShape = (
       delete draft.layerHierarchy[itemId];
     }
   });
+
+export const hasPoints = (file: GeppettoImage) =>
+  Object.values(file.layers).some((l) => l.points.length > 2);

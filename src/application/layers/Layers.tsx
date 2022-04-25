@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { GeppettoImage, Layer } from "../../animation/file2/types";
 import {
   Column,
@@ -40,7 +34,7 @@ import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
 import { Shortcut } from "../../ui-components/Menu/shortcut";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionToolButton } from "../actions/ActionToolButton";
-import { ApplicationContext } from "../applicationMenu/ApplicationContext";
+import { StartupScreen } from "../applicationMenu/Startup";
 
 type LayersProps = {
   zoomState: UseState<number>;
@@ -272,7 +266,6 @@ export const Layers: React.FC<LayersProps> = ({
       gridSettings.size,
     ]
   );
-  const { sendMessage } = useContext(ApplicationContext);
 
   return (
     <Column>
@@ -384,13 +377,7 @@ export const Layers: React.FC<LayersProps> = ({
         </ResizePanel>
         <Panel workspace center>
           {texture === null ? (
-            <p>
-              No texture loaded{" "}
-              <ToolButton
-                icon={<Icon>🌅</Icon>}
-                onClick={() => sendMessage("textureOpen")}
-              />
-            </p>
+            <StartupScreen file={file} texture={texture} screen={"layers"} />
           ) : (
             <LayerMouseControl
               mode={mouseMode}

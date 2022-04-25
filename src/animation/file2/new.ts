@@ -23,3 +23,6 @@ export const newFile = (): GeppettoImage => ({
   animationFolders: {},
   animations: {},
 });
+
+export const isNew = (file: GeppettoImage): boolean =>
+  JSON.stringify(file) === JSON.stringify(newFile());
