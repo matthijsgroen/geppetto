@@ -81,11 +81,9 @@ export const createShapeMutationList = (
   const shapeMutatorMapping: Record<string, number> = {};
   visit(layerHierarchy, (item, itemId) => {
     if (item.type === "layer") {
-      const parentMutation = getPreviousOfType(
-        layerHierarchy,
-        "mutation",
-        itemId
-      );
+      const parentMutation = item.children
+        ? item.children.slice(-1)[0]
+        : getPreviousOfType(layerHierarchy, "mutation", itemId);
       const mutatorIndex =
         parentMutation === null
           ? -1
