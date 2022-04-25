@@ -63,3 +63,4 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
     );
   }
 );
+ToolButton.displayName = "ToolButton";

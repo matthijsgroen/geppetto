@@ -45,3 +45,4 @@ export const ToolBar: React.FC<ToolBarProps> = ({
     </ToolBarOuter>
   </ToolbarContext.Provider>
 );
+ToolBar.displayName = "ToolBar";

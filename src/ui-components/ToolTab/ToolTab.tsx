@@ -65,3 +65,5 @@ export const ToolTab = forwardRef<HTMLButtonElement, ToolTabProps>(
     </TabButton>
   )
 );
+
+ToolTab.displayName = "ToolTab";
