@@ -1,4 +1,4 @@
-.toolbutton {
+.toolButton {
   display: inline-block;
   color: var(--colors-text-default);
   font-size: 1rem;
@@ -37,12 +37,12 @@
   margin-top: -0.7rem;
 }
 
-.toolbutton:disabled {
+.toolButton:disabled {
   opacity: 0.5;
 }
-.toolbutton:focus {
+.toolButton:focus {
   outline-color: var(--colors-control-focus);
 }
-.toolbutton:hover:enabled {
+.toolButton:hover:enabled {
   background-color: var(--colors-control-highlight);
 }

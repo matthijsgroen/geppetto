@@ -44,7 +44,7 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
         onClick={onClick}
         onKeyDown={onKeyDown}
         className={className({
-          [styles.toolbutton]: true,
+          [styles.toolButton]: true,
           [styles.active]: active,
           [styles.small]: useSize === "small",
           [styles.notificationBadge]: notificationBadge,
