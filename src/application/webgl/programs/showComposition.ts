@@ -5,6 +5,7 @@
 //   mutationValueShader,
 // } from "./mutatePoint";
 import raw from "raw.macro";
+import { visit } from "../../../animation/file2/hierarchy";
 import { GeppettoImage, Keyframe } from "../../../animation/file2/types";
 import { filteredTriangles, flatten } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
@@ -38,7 +39,7 @@ export const showComposition = (): {
 
   let vectorValues: Keyframe = {};
   let elements: {
-    name: string;
+    id: string;
     start: number;
     amount: number;
     mutator: number;
@@ -73,15 +74,24 @@ export const showComposition = (): {
     elements = [];
 
     gl.useProgram(program);
-    const sprites = Object.values(shapes.layers);
-    sprites.forEach((shape, index) => {
+
+    const image = shapes;
+    let index = 0;
+
+    visit(image.layerHierarchy, (node, nodeId) => {
+      if (node.type !== "layer") {
+        return;
+      }
+      const shape = image.layers[nodeId];
       const anchor = getAnchor(shape);
       const shapeIndices = filteredTriangles(shape.points);
       const start = indices.length;
 
       const itemOffset = [...shape.translate, index * 0.1];
+      index++;
+
       elements.push({
-        name: shape.name,
+        id: nodeId,
         start,
         amount: shapeIndices.length,
         mutator: 0,
@@ -90,21 +100,21 @@ export const showComposition = (): {
         z: -0.5 + itemOffset[2] * 0.001,
       });
       const offset = vertices.length / stride;
-      shape.points.forEach(([x, y]) => {
+      for (const [x, y] of shape.points) {
         vertices.push(x - anchor[0], y - anchor[1], x, y);
-      });
+      }
 
-      shapeIndices.forEach((index) => {
+      for (const index of shapeIndices) {
         indices.push(index + offset);
-      });
+      }
     });
 
     const { parentList, vectorSettings, mutatorMapping, shapeMutatorMapping } =
       createShapeMutationList(shapes);
 
-    elements.forEach((element) => {
-      element.mutator = shapeMutatorMapping[element.name];
-    });
+    for (const element of elements) {
+      element.mutator = shapeMutatorMapping[element.id];
+    }
 
     mutators = Object.keys(mutatorMapping);
 
@@ -129,6 +139,21 @@ export const showComposition = (): {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
 
+  const populateVectorValues = () => {
+    if (mutators.length === 0 || !program || !gl) return;
+    gl.useProgram(program);
+
+    const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
+    const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
+    Object.entries(vectorValues).forEach(([key, value]) => {
+      const index = mutators.indexOf(key);
+      if (index === -1) return;
+      mutationValues[index * 2] = value[0];
+      mutationValues[index * 2 + 1] = value[1];
+    });
+    gl.uniform2fv(uMutationValues, mutationValues);
+  };
+
   let cWidth = 0;
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
@@ -144,18 +169,7 @@ export const showComposition = (): {
     },
     setVectorValues(v) {
       vectorValues = v;
-      if (mutators.length === 0 || !program || !gl) return;
-      gl.useProgram(program);
-
-      const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
-      const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
-      Object.entries(vectorValues).forEach(([key, value]) => {
-        const index = mutators.indexOf(key);
-        if (index === -1) return;
-        mutationValues[index * 2] = value[0];
-        mutationValues[index * 2 + 1] = value[1];
-      });
-      gl.uniform2fv(uMutationValues, mutationValues);
+      populateVectorValues();
     },
     setZoom(newZoom) {
       zoom = newZoom;
@@ -191,6 +205,7 @@ export const showComposition = (): {
       );
       setImageTexture();
       populateShapes();
+      populateVectorValues();
       const translate = gl.getUniformLocation(shaderProgram, "translate");
       const mutation = gl.getUniformLocation(shaderProgram, "mutation");
 
@@ -201,10 +216,9 @@ export const showComposition = (): {
 
       return {
         render() {
-          if (!img || !shapes) {
+          if (!img || !shapes || !gl) {
             return;
           }
-          const gl = initGl;
           gl.useProgram(shaderProgram);
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -277,7 +291,7 @@ export const showComposition = (): {
             basePosition[2]
           );
 
-          elements.forEach((element) => {
+          for (const element of elements) {
             if (element.amount === 0) {
               return;
             }
@@ -290,7 +304,7 @@ export const showComposition = (): {
               gl.UNSIGNED_SHORT,
               element.start * 2
             );
-          });
+          }
         },
         cleanup() {
           const gl = initGl;

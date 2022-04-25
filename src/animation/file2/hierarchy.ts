@@ -262,6 +262,34 @@ export const visit = <T extends string>(
   }
 };
 
+export const getPreviousOfType = <T extends string>(
+  hierarchy: Hierarchy<T>,
+  type: T,
+  startId: keyof Hierarchy<T>
+): keyof Hierarchy<T> | null => {
+  let nodeId = startId;
+  let activeParent = hierarchy[nodeId];
+  while (activeParent && !isRootNode(activeParent)) {
+    activeParent = hierarchy[activeParent.parentId];
+    if (!activeParent.children) {
+      return null;
+    }
+    let lastOfType: string | null = null;
+
+    for (const childId of activeParent.children) {
+      if (childId === nodeId) break;
+      if (hierarchy[childId].type === type) {
+        lastOfType = childId;
+      }
+    }
+    if (lastOfType) {
+      return lastOfType;
+    }
+  }
+
+  return null;
+};
+
 export const visualizeTree = <T extends string>(
   hierarchy: Hierarchy<T>,
   omitTypes: string[] = [],

@@ -4,7 +4,7 @@ import {
   Layer,
   MutationVector,
 } from "../../../animation/file2/types";
-import { visit } from "../../../animation/file2/hierarchy";
+import { getPreviousOfType, visit } from "../../../animation/file2/hierarchy";
 
 export const MAX_MUTATION_VECTORS = 60;
 
@@ -55,35 +55,42 @@ export const createShapeMutationList = (
   const mutators: Vec4[] = [];
 
   const mutatorMapping: Record<string, number> = {};
+  const layerHierarchy = shapes.layerHierarchy;
 
-  // visit(shapes.layerHierarchy, (item, itemId, parents) => {
-  //   if (item.type === "mutation") {
-  //     const mutation = shapes.mutations[itemId];
-  //     const value = mutatorToVec4(mutation);
-  //     const index = mutators.length;
-  //     mutators.push(value);
+  visit(layerHierarchy, (item, itemId) => {
+    if (item.type === "mutation") {
+      const mutation = shapes.mutations[itemId];
+      const value = mutatorToVec4(mutation);
+      const index = mutators.length;
+      mutators.push(value);
 
-  //     const parentMutation = getParentMutation(parents, item);
-  //     const mutatorIndex =
-  //       parentMutation === null
-  //         ? -1
-  //         : mutatorIndices.findIndex((e) => e.id === parentMutation.name);
-  //     mutatorIndices.push({ id: itemId, index, parent: mutatorIndex });
-  //     mutatorMapping[itemId] = mutatorIndex;
-  //   }
-  // });
+      const parentMutation = getPreviousOfType(
+        layerHierarchy,
+        "mutation",
+        itemId
+      );
+      const mutatorIndex =
+        parentMutation === null
+          ? -1
+          : mutatorIndices.findIndex((e) => e.id === parentMutation);
+      mutatorIndices.push({ id: itemId, index, parent: mutatorIndex });
+      mutatorMapping[itemId] = mutatorIndex;
+    }
+  });
 
   const shapeMutatorMapping: Record<string, number> = {};
-  visit(shapes.layerHierarchy, (item, itemId, parents) => {
+  visit(layerHierarchy, (item, itemId) => {
     if (item.type === "layer") {
-      // const parentMutation = getParentMutation(parents.concat(item));
-      // const parentMutation = null;
-      // const mutatorIndex =
-      //   parentMutation === null
-      //     ? -1
-      //     : mutatorIndices.findIndex((e) => e.id === parentMutation.name);
-      // shapeMutatorMapping[item.name] = mutatorIndex;
-      shapeMutatorMapping[itemId] = -1;
+      const parentMutation = getPreviousOfType(
+        layerHierarchy,
+        "mutation",
+        itemId
+      );
+      const mutatorIndex =
+        parentMutation === null
+          ? -1
+          : mutatorIndices.findIndex((e) => e.id === parentMutation);
+      shapeMutatorMapping[itemId] = mutatorIndex;
     }
   });
 

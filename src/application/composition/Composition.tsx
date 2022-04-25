@@ -99,7 +99,7 @@ export const Composition: React.FC<CompositionProps> = ({
                 zoom={zoom}
                 panX={panX}
                 panY={panY}
-                vectorValues={{}}
+                vectorValues={file.defaultFrame}
               />
             </LayerMouseControl>
           )}

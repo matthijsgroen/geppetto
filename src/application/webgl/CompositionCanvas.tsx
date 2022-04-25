@@ -8,7 +8,7 @@ import WebGLCanvas from "./WebGLCanvas";
 export interface CompositionCanvasProps {
   image: HTMLImageElement | null;
   file: GeppettoImage;
-  vectorValues: GeppettoImage["controlValues"];
+  vectorValues: GeppettoImage["defaultFrame"];
   zoom: number;
   panX: number;
   panY: number;
@@ -49,11 +49,11 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
     // vectorMap.setShapes(shapes);
   }, [file, composition]);
 
-  // useEffect(() => {
-  //   composition.setVectorValues(vectorValues);
-  //   layer.setVectorValues(vectorValues);
-  //   vectorMap.setVectorValues(vectorValues);
-  // }, [vectorValues]);
+  useEffect(() => {
+    composition.setVectorValues(vectorValues);
+    //   layer.setVectorValues(controlValues);
+    //   vectorMap.setVectorValues(controlValues);
+  }, [vectorValues, composition]);
 
   // useEffect(() => {
   //   layer.setLayerSelected(activeLayer);
