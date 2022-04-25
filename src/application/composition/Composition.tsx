@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import {
@@ -18,6 +19,7 @@ import { MouseMode } from "../canvas/MouseControl";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
+import { ShapeTree } from "./ShapeTree";
 
 type CompositionProps = {
   zoomState: UseState<number>;
@@ -47,6 +49,8 @@ export const Composition: React.FC<CompositionProps> = ({
   const [panX] = panXState;
   const [panY] = panYState;
 
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
   return (
     <Column>
       <ToolBar>
@@ -64,7 +68,10 @@ export const Composition: React.FC<CompositionProps> = ({
       <Row>
         <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
           <Column>
-            <Panel />
+            <ShapeTree
+              fileState={fileState}
+              selectedItemsState={[selectedItems, setSelectedItems]}
+            />
           </Column>
         </ResizePanel>
         <Panel workspace center>

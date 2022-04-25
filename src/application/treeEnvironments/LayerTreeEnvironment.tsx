@@ -16,6 +16,7 @@ import { UseState } from "../types";
 type LayerTreeEnvironmentProps = {
   fileState: UseState<GeppettoImage>;
   selectedItemsState: UseState<string[]>;
+  showMutations?: boolean;
   children: React.ReactElement | React.ReactElement[] | null;
 };
 
@@ -26,13 +27,14 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   children,
   fileState,
   selectedItemsState,
+  showMutations = false,
 }) => {
   const [fileData, setFileData] = fileState;
   const [, setSelectedItems] = selectedItemsState;
 
   const treeData = useMemo(
-    () => treeDataProvider(newFile(), { showMutations: false }),
-    []
+    () => treeDataProvider(newFile(), { showMutations }),
+    [showMutations]
   );
   useEffect(() => {
     treeData.updateActiveTree && treeData.updateActiveTree(fileData);
@@ -60,6 +62,8 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         setFileData((fileData) => {
           const result = { ...fileData };
           for (const item of items) {
+            if (result.layerHierarchy[item.index].type === "mutation") continue;
+
             result.layerHierarchy = moveInHierarchy(
               result.layerHierarchy,
               `${item.index}`,
@@ -88,6 +92,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
 
           const result = { ...fileData };
           for (const item of items) {
+            if (result.layerHierarchy[item.index].type === "mutation") continue;
             result.layerHierarchy = moveInHierarchy(
               result.layerHierarchy,
               `${item.index}`,

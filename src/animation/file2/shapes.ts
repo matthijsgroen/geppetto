@@ -1,6 +1,11 @@
 import produce from "immer";
 import { Vec2 } from "../../types";
-import { addInHierarchy, PlacementInfo, collectChildIds } from "./hierarchy";
+import {
+  addInHierarchy,
+  PlacementInfo,
+  collectChildIds,
+  isRootNode,
+} from "./hierarchy";
 import { GeppettoImage, Layer, LayerFolder, NodeType } from "./types";
 
 const getUniqueName = (
@@ -167,6 +172,15 @@ export const removeShape = (
       }
       if (item.type === "layerFolder") {
         delete draft.layerFolders[itemId];
+      }
+      if (!isRootNode(item)) {
+        const parent = draft.layerHierarchy[item.parentId];
+        if (parent && parent.children) {
+          const selfIndex = parent.children.indexOf(shapeId);
+          if (selfIndex > -1) {
+            parent.children.splice(selfIndex, 1);
+          }
+        }
       }
       delete draft.layerHierarchy[itemId];
     }

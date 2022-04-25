@@ -53,7 +53,8 @@ export const treeDataProvider = (
     }
 
     const childIds = (item.children || []).filter(
-      (e) => showMutations || activeTree.layerHierarchy[e].type !== "mutation"
+      (childId) =>
+        showMutations || activeTree.layerHierarchy[childId].type !== "mutation"
     );
 
     if (item.type === "layer") {
@@ -110,7 +111,8 @@ export const treeDataProvider = (
 
       for (const pool of pools) {
         for (const [key, value] of Object.entries(activeTree[pool])) {
-          if (tree[pool][key] !== value) {
+          const newNode = tree[pool][key];
+          if (newNode !== value && newNode) {
             updatedItems.push(key);
           }
         }
