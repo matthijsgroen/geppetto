@@ -101,10 +101,16 @@ export const treeDataProvider = (
     addChangedId: (...ids: string[]) => bufferedChanges.push(...ids),
     updateActiveTree: (tree: GeppettoImage) => {
       const updatedItems: TreeItemIndex[] = ["root", ...bufferedChanges];
+      const pools = [
+        "layers",
+        "layerFolders",
+        "mutations",
+        "layerHierarchy",
+      ] as const;
 
-      for (const pool of [tree.layers, tree.layerFolders, tree.mutations]) {
-        for (const [key, value] of Object.entries(pool)) {
-          if (pool[key] !== value) {
+      for (const pool of pools) {
+        for (const [key, value] of Object.entries(activeTree[pool])) {
+          if (tree[pool][key] !== value) {
             updatedItems.push(key);
           }
         }
