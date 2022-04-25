@@ -51,7 +51,7 @@ export const createShapeMutationList = (
   shapeMutatorMapping: Record<string, number>;
   mutatorMapping: Record<string, number>;
 } => {
-  const mutatorIndices: { id: string; index: number; parent: number }[] = [];
+  const mutatorIndices: { id: string; parent: number }[] = [];
   const mutators: Vec4[] = [];
 
   const mutatorMapping: Record<string, number> = {};
@@ -73,8 +73,8 @@ export const createShapeMutationList = (
         parentMutation === null
           ? -1
           : mutatorIndices.findIndex((e) => e.id === parentMutation);
-      mutatorIndices.push({ id: itemId, index, parent: mutatorIndex });
-      mutatorMapping[itemId] = mutatorIndex;
+      mutatorIndices.push({ id: itemId, parent: mutatorIndex });
+      mutatorMapping[itemId] = index;
     }
   });
 

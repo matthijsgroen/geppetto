@@ -1,9 +1,3 @@
-// import {
-//   createShapeMutationList,
-//   MAX_MUTATION_VECTORS,
-//   mutationShader,
-//   mutationValueShader,
-// } from "./mutatePoint";
 import raw from "raw.macro";
 import { visit } from "../../../animation/file2/hierarchy";
 import { GeppettoImage, Keyframe } from "../../../animation/file2/types";
@@ -47,7 +41,7 @@ export const showComposition = (): {
     y: number;
     z: number;
   }[] = [];
-  let mutators: string[] = [];
+  let mutMapping: Record<string, number> = {};
   let zoom = 1.0;
   let scale = 1.0;
   let pan = [0, 0];
@@ -116,7 +110,7 @@ export const showComposition = (): {
       element.mutator = shapeMutatorMapping[element.id];
     }
 
-    mutators = Object.keys(mutatorMapping);
+    mutMapping = mutatorMapping;
 
     elements.sort((a, b) => (b.z || 0) - (a.z || 0));
 
@@ -140,14 +134,14 @@ export const showComposition = (): {
   };
 
   const populateVectorValues = () => {
-    if (mutators.length === 0 || !program || !gl) return;
+    if (Object.keys(mutMapping).length === 0 || !program || !gl) return;
     gl.useProgram(program);
 
     const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
     const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
     Object.entries(vectorValues).forEach(([key, value]) => {
-      const index = mutators.indexOf(key);
-      if (index === -1) return;
+      const index = mutMapping[key];
+      if (index === -1 || index === undefined) return;
       mutationValues[index * 2] = value[0];
       mutationValues[index * 2 + 1] = value[1];
     });
@@ -206,8 +200,11 @@ export const showComposition = (): {
       setImageTexture();
       populateShapes();
       populateVectorValues();
-      const translate = gl.getUniformLocation(shaderProgram, "translate");
-      const mutation = gl.getUniformLocation(shaderProgram, "mutation");
+      const translateLocation = gl.getUniformLocation(
+        shaderProgram,
+        "translate"
+      );
+      const mutationLocation = gl.getUniformLocation(shaderProgram, "mutation");
 
       const uBasePosition = gl.getUniformLocation(
         shaderProgram,
@@ -295,8 +292,8 @@ export const showComposition = (): {
             if (element.amount === 0) {
               return;
             }
-            gl.uniform3f(translate, element.x, element.y, element.z);
-            gl.uniform1f(mutation, element.mutator);
+            gl.uniform3f(translateLocation, element.x, element.y, element.z);
+            gl.uniform1f(mutationLocation, element.mutator);
 
             gl.drawElements(
               gl.TRIANGLES,
