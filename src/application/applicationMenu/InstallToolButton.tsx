@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import {
   Icon,
   ToolButton,
@@ -6,41 +6,12 @@ import {
   useMenuState,
   Label,
 } from "../../ui-components";
-
-interface BeforeInstallPromptEvent extends Event {
-  platforms: string[];
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-  prompt: () => Promise<void>;
-}
-
-let deferredInstallPrompt: BeforeInstallPromptEvent;
-let notifyInstallReady: (() => void)[] = [];
-
-window.addEventListener("beforeinstallprompt", (event: Event) => {
-  // Prevent Chrome 67 and earlier from automatically showing the prompt
-  event.preventDefault();
-  deferredInstallPrompt = event as BeforeInstallPromptEvent;
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("utm_source") !== "app") {
-    notifyInstallReady.forEach((l) => l());
-  }
-});
+import { useAppInstall } from "../hooks/useAppInstall";
 
 export const InstallToolButton: React.FC = () => {
   const anchor = useRef(null);
-  const [canInstall, setCanInstall] = useState<boolean>(
-    !!deferredInstallPrompt
-  );
-  useEffect(() => {
-    const listener = () => {
-      setCanInstall(true);
-    };
-    notifyInstallReady = notifyInstallReady.concat(listener);
-    return () => {
-      notifyInstallReady = notifyInstallReady.filter((l) => l !== listener);
-    };
-  }, [setCanInstall]);
   const [{ state }, toggleMenu] = useMenuState();
+  const [canInstall, installer] = useAppInstall();
   useEffect(() => {
     toggleMenu(true);
     const timer = setTimeout(() => {
@@ -54,9 +25,7 @@ export const InstallToolButton: React.FC = () => {
       <ToolButton
         icon={<Icon>🖥</Icon>}
         tooltip={"Install Geppetto as desktop application"}
-        onClick={() => {
-          deferredInstallPrompt.prompt();
-        }}
+        onClick={installer}
         ref={anchor}
       />
       <ControlledMenu

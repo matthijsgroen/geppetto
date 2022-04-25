@@ -17,6 +17,7 @@ import { useActionMap } from "../hooks/useActionMap";
 import { ActionMenuItem } from "../actions/ActionMenuItem";
 import { useAppUpdate } from "../hooks/useAppUpdate";
 import { ApplicationContext } from "./ApplicationContext";
+import { useAppInstall } from "../hooks/useAppInstall";
 
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
@@ -76,6 +77,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   const fileRef = useRef<null | FileSystemFileHandle>(null);
   const textureFileRef = useRef<null | FileSystemFileHandle>(null);
   const [hasAppUpdate, updater] = useAppUpdate();
+  const [canInstall, installer] = useAppInstall();
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -237,7 +239,10 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       )}
     >
       {hasAppUpdate && (
-        <MenuItem onClick={updater}>Restart for app update...</MenuItem>
+        <MenuItem onClick={updater}>↻ Restart for app update...</MenuItem>
+      )}
+      {canInstall && (
+        <MenuItem onClick={installer}>⇣ Install application locally</MenuItem>
       )}
       <SubMenu label="File">
         {/* <MenuItem>New</MenuItem> */}
