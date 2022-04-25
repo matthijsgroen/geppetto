@@ -3,7 +3,6 @@ import { GeppettoImage } from "../animation/file2/types";
 import { ThemeProvider } from "styled-components";
 import { Layers } from "./layers/Layers";
 import { defaultTheme } from "./theme/default";
-// import { v2Format } from "../animation/file2/mockdata/file2.0";
 import { newFile } from "../animation/file2/new";
 import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
 import { AppSection } from "./types";
