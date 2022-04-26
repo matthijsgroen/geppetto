@@ -11,6 +11,12 @@ export default {
   argTypes: {
     icon: { control: false },
   },
+  args: {
+    disabled: false,
+    active: false,
+    notificationBadge: false,
+    shadow: false,
+  },
 } as ComponentMeta<typeof ToolButton>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args

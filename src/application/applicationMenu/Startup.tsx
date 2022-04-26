@@ -23,6 +23,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
     return (
       <div>
         <h1>Welcome to Geppetto</h1>
+        <p>In this studio app you can build webGl animations</p>
         {isNew(file) && (
           <p>
             <ToolButton

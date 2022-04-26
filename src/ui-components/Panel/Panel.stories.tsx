@@ -8,6 +8,11 @@ export default {
   argTypes: {
     children: { control: false, table: false },
   },
+  args: {
+    padding: 0,
+    workspace: false,
+    center: false,
+  },
 } as ComponentMeta<typeof Panel>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args

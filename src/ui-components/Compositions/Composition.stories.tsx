@@ -23,12 +23,13 @@ import { Row } from "../Row/Row";
 import { storyTreeDataProvider } from "../Tree/storybookTreeDataProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const story = {
   title: "Compositions/Layers",
   argTypes: {
     children: { control: false, table: false },
   },
 };
+export default story;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: Story = () => (

@@ -12,6 +12,10 @@ export default {
     icon: { control: false },
     label: { control: "text" },
   },
+  args: {
+    disabled: false,
+    active: false,
+  },
 } as ComponentMeta<typeof ToolTab>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
