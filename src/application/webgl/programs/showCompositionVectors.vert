@@ -3,13 +3,18 @@
 #define MAX_MUT 60
 #define PI_FRAC 0.017453292519943295
 
+varying mediump vec4 vColor;
+varying mediump vec4 vCircle;
+varying mediump vec2 vViewport;
+uniform float mutation;
+
 uniform vec2 viewport;
 uniform vec3 translate;
 uniform vec3 basePosition;
 uniform vec4 scale;
-uniform float mutation;
 
 attribute vec2 coordinates;
+attribute vec4 color;
 
 mat4 viewportScale = mat4(
   2.0 / viewport.x, 0, 0, 0,
@@ -104,7 +109,7 @@ mat3 mutatePoint(mat3 startValue, int mutationIndex) {
 
 void main() {
   mat3 start = mat3(
-    coordinates + translate.xy, 1.0,
+    translate.xy, 1.0,
     0, 0, 0,
     0, 0, 0
   );
@@ -112,5 +117,37 @@ void main() {
   vec3 deformPos = deform[0];
 
   vec4 pos = viewportScale * vec4((deformPos.xy + basePosition.xy) * scale.x, translate.z, 1.0);
-  gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z - 1.0, 1.0);
+
+  int pointIndex = int(coordinates.x);
+  float radius = abs(coordinates.y);
+
+  vec2 spec = vec2(-1.0, -1.0);
+
+  if (pointIndex == 1) {
+    spec = vec2(1.0, -1.0);
+  }
+
+  if (pointIndex == 2) {
+    spec = vec2(-1.0, 1.0);
+  }
+
+  if (pointIndex == 3) {
+    spec = vec2(1.0, 1.0);
+  }
+
+  vec2 size = (vec4(spec.xy * radius, 1.0, 1.0) * viewportScale).xy;
+  if (coordinates.y > 0.0) {
+    size *= scale.y * scale.x;
+  } else {
+    size *= -coordinates.y;
+  }
+
+  vec2 center = (pos.xy + scale.ba) * scale.y;
+
+  gl_Position = vec4(center + size, pos.z - 1.0, 1.0);
+
+  vCircle = vec4(center, abs(size.x), abs(size.y));
+
+  vColor = color;
+  vViewport = viewport;
 }

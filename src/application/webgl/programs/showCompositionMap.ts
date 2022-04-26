@@ -1,5 +1,5 @@
 import raw from "raw.macro";
-import { visit } from "../../../animation/file2/hierarchy";
+import { collectChildIds, visit } from "../../../animation/file2/hierarchy";
 import { GeppettoImage, Keyframe } from "../../../animation/file2/types";
 import { flatten, verticesFromPoints } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
@@ -142,36 +142,11 @@ export const showCompositionMap = (): {
         layersSelected = [];
         return;
       }
-      layersSelected = layers;
-
-      // const checkMatch = (shape: ShapeDefinition, item: ItemSelection) =>
-      //   (shape.name === item.name &&
-      //     (item.type === "layer" || item.type === "folder")) ||
-      //   (item.type === "vector" &&
-      //     (shape.type === "sprite" || shape.type === "folder") &&
-      //     shape.mutationVectors &&
-      //     shape.mutationVectors.map((v) => v.name).includes(item.name));
-
-      // const collectSpriteNames = (
-      //   s: ShapeDefinition[],
-      //   collect = false
-      // ): string[] =>
-      //   s.reduce(
-      //     (result, shape) =>
-      //       shape.type === "sprite"
-      //         ? collect || checkMatch(shape, layer)
-      //           ? result.concat(shape.name)
-      //           : result
-      //         : result.concat(
-      //             collectSpriteNames(
-      //               shape.items,
-      //               collect || checkMatch(shape, layer)
-      //             )
-      //           ),
-      //     [] as string[]
-      //   );
-
-      // layersSelected = collectSpriteNames(shapes);
+      layersSelected = [];
+      for (const layerId of layers) {
+        layersSelected.push(layerId);
+        layersSelected.push(...collectChildIds(shapes.layerHierarchy, layerId));
+      }
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;

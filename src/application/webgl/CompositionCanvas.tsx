@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 import { GeppettoImage } from "../../animation/file2/types";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
-// import { showCompositionVectors } from "./programs/showCompositionVectors";
+import { showCompositionVectors } from "./programs/showCompositionVectors";
 import WebGLCanvas from "./WebGLCanvas";
 
 export interface CompositionCanvasProps {
@@ -28,39 +28,38 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
 }) => {
   const composition = useMemo(() => showComposition(), []);
   const layer = useMemo(() => showCompositionMap(), []);
-  // const vectorMap = useMemo(() => showCompositionVectors(), []);
-  // const renderers = [composition.renderer, layer.renderer, vectorMap.renderer];
+  const vectorMap = useMemo(() => showCompositionVectors(), []);
   const renderers = useMemo(
-    () => [composition.renderer, layer.renderer],
-    [composition.renderer, layer.renderer]
+    () => [composition.renderer, layer.renderer, vectorMap.renderer],
+    [composition.renderer, layer.renderer, vectorMap.renderer]
   );
 
   useEffect(() => {
     if (image) {
       composition.setImage(image);
       layer.setImage(image);
-      // vectorMap.setImage(image);
+      vectorMap.setImage(image);
     }
-  }, [image, composition, layer]);
+  }, [image, composition, layer, vectorMap]);
 
   useEffect(() => {
     composition.setShapes(file);
     layer.setShapes(file);
     layer.setLayerSelected(activeLayers);
-    // vectorMap.setLayerSelected(activeLayer);
-    // vectorMap.setShapes(shapes);
-  }, [file, composition, layer, activeLayers]);
+    vectorMap.setLayerSelected(activeLayers);
+    vectorMap.setShapes(file);
+  }, [file, composition, layer, vectorMap, activeLayers]);
 
   useEffect(() => {
     composition.setVectorValues(vectorValues);
     layer.setVectorValues(vectorValues);
-    //   vectorMap.setVectorValues(controlValues);
-  }, [vectorValues, composition, layer]);
+    vectorMap.setVectorValues(vectorValues);
+  }, [vectorValues, composition, layer, vectorMap]);
 
   useEffect(() => {
     layer.setLayerSelected(activeLayers);
-    //   vectorMap.setLayerSelected(activeLayer);
-  }, [activeLayers, layer]);
+    vectorMap.setLayerSelected(activeLayers);
+  }, [activeLayers, layer, vectorMap]);
 
   composition.setZoom(zoom);
   composition.setPan(panX, panY);
@@ -68,8 +67,8 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
   layer.setZoom(zoom);
   layer.setPan(panX, panY);
 
-  // vectorMap.setZoom(zoom);
-  // vectorMap.setPan(panX, panY);
+  vectorMap.setZoom(zoom);
+  vectorMap.setPan(panX, panY);
 
   return <WebGLCanvas renderers={renderers} showFPS={showFPS} />;
 };
