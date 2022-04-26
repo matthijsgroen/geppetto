@@ -1,0 +1,11 @@
+.shortcut {
+  padding-left: 1em;
+  color: var(--colors-text-dimmed);
+  font-size: 0.8rem;
+  font-family: system-ui;
+  align-self: center;
+}
+
+.disabled {
+  opacity: 60%;
+}

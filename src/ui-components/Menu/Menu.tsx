@@ -3,7 +3,8 @@ import "@szhsin/react-menu/dist/transitions/slide.css";
 import "./menu.css";
 import styles from "./menu.module.css";
 import { MenuItem as ReactMenuItem, MenuItemProps } from "@szhsin/react-menu";
-import { className } from "../className";
+import { Kbd } from "../Kbd/Kbd";
+import { Shortcut } from "../Kbd/shortcut";
 export {
   Menu,
   ControlledMenu,
@@ -16,7 +17,7 @@ export {
   useMenuState,
 } from "@szhsin/react-menu";
 
-type Props = { shortcut?: string } & MenuItemProps;
+type Props = { shortcut?: Shortcut } & MenuItemProps;
 
 export const MenuItem: React.FC<Props> = ({ shortcut, children, ...props }) => (
   <ReactMenuItem {...props}>
@@ -28,14 +29,7 @@ export const MenuItem: React.FC<Props> = ({ shortcut, children, ...props }) => (
           return (
             <div className={styles.shortcutDivider}>
               <span className={styles.wide}>{node}</span>
-              <span
-                className={className({
-                  [styles.shortcut]: true,
-                  [styles.disabled]: state.disabled,
-                })}
-              >
-                {shortcut}
-              </span>
+              <Kbd shortcut={shortcut} disabled={state.disabled} />
             </div>
           );
         }

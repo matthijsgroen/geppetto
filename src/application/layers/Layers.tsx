@@ -16,6 +16,7 @@ import {
   ToolSeparator,
   ToolSpacer,
   ToolTab,
+  Shortcut,
 } from "../../ui-components";
 import { AppSection, UseState } from "../types";
 import LayerMouseControl from "../canvas/LayerMouseControl";
@@ -31,7 +32,6 @@ import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { IDLayer } from "../webgl/programs/showLayerPoints";
 import { Vec2 } from "../../types";
 import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
-import { Shortcut } from "../../ui-components/Menu/shortcut";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionToolButton } from "../actions/ActionToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";

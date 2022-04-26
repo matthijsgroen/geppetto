@@ -1,6 +1,5 @@
 import { ComponentProps } from "react";
-import { Icon, ToolButton } from "../../ui-components";
-import { shortcutStr } from "../../ui-components/Menu/shortcut";
+import { Icon, ToolButton, shortcutStr } from "../../ui-components";
 import { Action } from "../hooks/useActionMap";
 
 type Props = { action: Action } & Omit<

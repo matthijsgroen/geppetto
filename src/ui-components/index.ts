@@ -14,4 +14,5 @@ export { Panel } from "./Panel/Panel";
 export { Column } from "./Column/Column";
 export { Row } from "./Row/Row";
 export * from "./Menu/Menu";
-export * from "./Menu/shortcut";
+export * from "./Kbd/shortcut";
+export * from "./Kbd/Kbd";

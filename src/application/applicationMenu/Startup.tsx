@@ -3,6 +3,7 @@ import { isNew } from "../../animation/file2/new";
 import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import { Icon, ToolButton } from "../../ui-components";
+import { Kbd } from "../../ui-components/Kbd/Kbd";
 import { ApplicationContext } from "./ApplicationContext";
 
 type StartupScreenProps = {
@@ -26,17 +27,23 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
           <p>
             <ToolButton
               icon={<Icon>📄</Icon>}
-              label={"Load file"}
+              label={"Load file..."}
               onClick={() => sendMessage("fileOpen")}
+              size="small"
+              shadow
             />
+            <Kbd shortcut={{ key: "KeyO", ctrlOrCmd: true }} />
           </p>
         )}
         <p>
           <ToolButton
             icon={<Icon>🌅</Icon>}
-            label={"Load texture"}
+            label={"Load texture..."}
             onClick={() => sendMessage("textureOpen")}
+            size="small"
+            shadow
           />
+          <Kbd shortcut={{ key: "KeyO", ctrlOrCmd: true, shift: true }} />
         </p>
       </div>
     );

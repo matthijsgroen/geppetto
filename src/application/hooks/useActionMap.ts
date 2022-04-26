@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { isEvent, Shortcut } from "../../ui-components/Menu/shortcut";
+import { isEvent, Shortcut } from "../../ui-components";
 
 export type Action = {
   caption?: string;
