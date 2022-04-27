@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { isNew } from "../../animation/file2/new";
 import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
-import { Icon, ToolButton } from "../../ui-components";
+import { Icon, Logo, ToolButton } from "../../ui-components";
 import { Kbd } from "../../ui-components/Kbd/Kbd";
 import { ApplicationContext } from "./ApplicationContext";
 
@@ -22,6 +22,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
   if (texture === null) {
     return (
       <div>
+        <Logo />
         <h1>Welcome to Geppetto</h1>
         <p>In this studio app you can build webGl animations</p>
         {isNew(file) && (

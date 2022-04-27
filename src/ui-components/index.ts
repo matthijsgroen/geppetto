@@ -19,3 +19,4 @@ export * from "./Kbd/shortcut";
 export * from "./Kbd/Kbd";
 export { ControlPanel } from "./Controls/ControlPanel";
 export { Control } from "./Controls/Control";
+export { Logo, LogoIcon } from "./Logo/Logo";

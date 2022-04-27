@@ -1,8 +1,12 @@
 import { Story } from "@storybook/react";
 import {
   Column,
+  Control,
+  ControlPanel,
   Icon,
   Kbd,
+  Logo,
+  LogoIcon,
   Menu,
   MenuDivider,
   MenuHeader,
@@ -20,8 +24,6 @@ import {
   ToolTab,
   Tree,
   UncontrolledTreeEnvironment,
-  ControlPanel,
-  Control,
 } from "../";
 import { storyTreeDataProvider } from "../Tree/storybookTreeDataProvider";
 
@@ -42,7 +44,7 @@ const Template: Story = () => (
         portal={true}
         transition
         menuButton={({ open }) => (
-          <ToolButton icon={<Icon>🍔</Icon>} active={open} notificationBadge />
+          <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
         )}
       >
         <MenuItem>↻ Restart for app update...</MenuItem>
@@ -116,7 +118,7 @@ const Template: Story = () => (
       <ResizePanel
         direction={ResizeDirection.East}
         minSize={100}
-        defaultSize={200}
+        defaultSize={250}
       >
         <Column>
           <ToolBar size="small">
@@ -137,6 +139,15 @@ const Template: Story = () => (
             <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider()}>
               <Tree treeId="layers" />
             </UncontrolledTreeEnvironment>
+            <Title>Opacity (4)</Title>
+            <ControlPanel>
+              <Control label="Value">
+                <input type="range" />
+              </Control>
+              <Control>
+                <ToolButton label={"Add mutation to control"} size={"small"} />
+              </Control>
+            </ControlPanel>
           </Panel>
           <ResizePanel
             direction={ResizeDirection.North}
@@ -179,6 +190,7 @@ const Template: Story = () => (
       </ResizePanel>
       <Panel center workspace>
         <div>
+          <Logo />
           <h1>Welcome to Geppetto</h1>
           <p>Some introduction text here...</p>
           <p>

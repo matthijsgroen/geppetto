@@ -1,12 +1,12 @@
 import React, { useCallback, useRef, useEffect, useContext } from "react";
 import {
-  Icon,
   Menu,
   ToolButton,
   SubMenu,
   Shortcut,
   MenuDivider,
   MenuItem,
+  LogoIcon,
 } from "../../ui-components";
 import { UseState } from "../types";
 import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
@@ -235,7 +235,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       transition
       menuButton={({ open }) => (
         <ToolButton
-          icon={<Icon>🍔</Icon>}
+          icon={<LogoIcon />}
           active={open}
           notificationBadge={hasAppUpdate}
         />
