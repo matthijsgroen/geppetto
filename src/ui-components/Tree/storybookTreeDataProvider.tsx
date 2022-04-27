@@ -58,10 +58,8 @@ const treeItems: Record<TreeItemIndex, TreeItem<TreeData<NodeType>>> = {
   },
 };
 
-export const storyTreeDataProvider: TreeDataProvider<NodeType> = new StaticTreeDataProvider(
-  treeItems,
-  (item, newName) => ({
+export const storyTreeDataProvider: () => TreeDataProvider<NodeType> = () =>
+  new StaticTreeDataProvider(treeItems, (item, newName) => ({
     ...item,
     data: { ...item.data, name: newName },
-  })
-);
+  }));

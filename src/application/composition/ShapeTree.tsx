@@ -65,7 +65,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
         />
         <ToolSeparator />
       </ToolBar>
-      <Panel padding={5}>{<Tree />}</Panel>
+      <Panel padding={5}>{<Tree treeId="composition" />}</Panel>
     </LayerTreeEnvironment>
   );
 };

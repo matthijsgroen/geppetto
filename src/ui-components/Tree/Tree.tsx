@@ -91,9 +91,13 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
   );
 };
 
-export const Tree: React.VFC = () => (
+type TreeProps = {
+  treeId: string;
+};
+
+export const Tree: React.FC<TreeProps> = ({ treeId }) => (
   <ComplexTree
-    treeId="tree-1"
+    treeId={treeId}
     rootItem="root"
     treeLabel="Tree Example"
     renderItem={renderItem}

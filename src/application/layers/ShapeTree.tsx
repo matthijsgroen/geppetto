@@ -98,7 +98,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
           tooltip="Remove item"
         />
       </ToolBar>
-      <Panel padding={5}>{<Tree />}</Panel>
+      <Panel padding={5}>{<Tree treeId="layers" />}</Panel>
     </LayerTreeEnvironment>
   );
 };

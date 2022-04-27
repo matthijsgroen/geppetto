@@ -137,10 +137,23 @@ const Template: Story = () => (
             />
           </ToolBar>
           <Panel padding={5}>
-            <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider}>
-              <Tree />
+            <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider()}>
+              <Tree treeId="layers" />
             </UncontrolledTreeEnvironment>
           </Panel>
+          <ResizePanel
+            direction={ResizeDirection.North}
+            minSize={100}
+            defaultSize={200}
+          >
+            <Panel padding={5}>
+              <UncontrolledTreeEnvironment
+                dataProvider={storyTreeDataProvider()}
+              >
+                <Tree treeId="controls" />
+              </UncontrolledTreeEnvironment>
+            </Panel>
+          </ResizePanel>
         </Column>
       </ResizePanel>
       <Panel center workspace>

@@ -10,12 +10,14 @@
   /* --colors-item-special: #336; */
   /* --colors-text-selected: white; */
   --colors-background-workspace: #333;
+  --colors-background-panel: #666;
   --colors-background-notification: lightgreen;
 
   --colors-control-default: #555;
   --colors-control-edge: #eeeeee4d;
   --colors-control-highlight: #464;
   --colors-control-active: #484;
+  --colors-control-active-dimmed: #484c;
   --colors-control-focus: #4a4;
 
   --colors-text-default: #eee;
@@ -38,11 +40,13 @@
     --colors-text: #333; */
 
     --colors-background-workspace: #a9a9a9;
+    --colors-background-panel: #d5d5d5;
     --colors-background-notification: red;
 
     --colors-control-default: #eee;
     --colors-control-edge: #33333334;
     --colors-control-highlight: #cce;
+    --colors-control-active-dimmed: #bbec;
     --colors-control-active: #bbe;
     --colors-control-focus: #66e;
 
@@ -65,12 +69,14 @@
   --colors-text-destructive: #eee;
   */
   --colors-background-workspace: #a9a9a9;
+  --colors-background-panel: #d5d5d5;
   --colors-background-notification: red;
 
   --colors-control-default: #eee;
   --colors-control-edge: #33333334;
   --colors-control-highlight: #cce;
   --colors-control-active: #bbe;
+  --colors-control-active-dimmed: #bbec;
   --colors-control-focus: #66e;
 
   --colors-text-default: #333;

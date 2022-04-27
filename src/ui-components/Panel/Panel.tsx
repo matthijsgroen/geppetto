@@ -16,7 +16,7 @@ const StyledPanel = styled.div<{
   background-color: ${(props) =>
     props.workspace
       ? props.theme.colors.backgroundWorkspace
-      : props.theme.colors.controlDefault};
+      : props.theme.colors.backgroundPanel};
   color: ${(props) => props.theme.colors.textDefault};
   flex: 1;
   flex-direction: column;
