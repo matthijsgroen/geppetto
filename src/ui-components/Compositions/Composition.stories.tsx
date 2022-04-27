@@ -146,7 +146,6 @@ const Template: Story = () => (
       <Panel center workspace>
         <div>
           <h1>Welcome to Geppetto</h1>
-
           <p>Some introduction text here...</p>
           <p>
             <ToolButton

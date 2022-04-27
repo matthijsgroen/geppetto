@@ -1,13 +1,13 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
-import { ToolTab } from "./ToolTab";
+import { ToolTab as ToolTabComponent } from "./ToolTab";
 import { Icon } from "../Icon/Icon";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: "Components/ToolTab",
-  component: ToolTab,
+  component: ToolTabComponent,
   argTypes: {
     icon: { control: false },
     label: { control: "text" },
@@ -16,19 +16,19 @@ export default {
     disabled: false,
     active: false,
   },
-} as ComponentMeta<typeof ToolTab>;
+} as ComponentMeta<typeof ToolTabComponent>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ToolTab> = (args) => (
-  <ToolTab {...args} />
+const Template: ComponentStory<typeof ToolTabComponent> = (args) => (
+  <ToolTabComponent {...args} />
 );
 
-export const Default = Template.bind({});
-Default.args = {
+export const ToolTab = Template.bind({});
+ToolTab.args = {
   icon: <Icon>💡</Icon>,
   label: "Canvas",
 };
-Default.play = async ({ args, canvasElement }) => {
+ToolTab.play = async ({ args, canvasElement }) => {
   const canvas = within(canvasElement);
 
   await userEvent.click(canvas.getByRole("button"));

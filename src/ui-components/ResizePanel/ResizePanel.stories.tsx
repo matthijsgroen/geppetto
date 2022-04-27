@@ -1,9 +1,8 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { className } from "../className";
-// import { expect } from "@storybook/jest";
-// import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { Column } from "../Column/Column";
+import { Panel } from "../Panel/Panel";
+import { Row } from "../Row/Row";
 import { ResizeDirection, ResizePanel } from "./ResizePanel";
-import styles from "./ResizePanel.module.css";
 
 const direction = {
   North: ResizeDirection.North,
@@ -24,45 +23,68 @@ export default {
     },
   },
   args: {
-    direction: ResizeDirection.East,
+    direction: direction.East,
     minSize: 40,
     maxSize: 400,
   },
 } as ComponentMeta<typeof ResizePanel>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ResizePanel> = (args) => (
-  <div
-    style={{
-      height: "10em",
-      display: "flex",
-      flexFlow: "row nowrap",
-    }}
-  >
-    <ResizePanel {...args}>
-      <div
-        style={{
-          padding: "10px",
-          backgroundColor: "var(--colors-control-default)",
-          color: "var(--colors-text-default)",
-          width: "calc(100% - 20px)",
-        }}
-      >
-        <p>Resizable panel</p>
-      </div>
-    </ResizePanel>
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexGrow: 2,
-        background: "gray",
-      }}
-    >
-      <p>Other content</p>
-    </div>
-  </div>
-);
+const Template: ComponentStory<typeof ResizePanel> = (args) => {
+  if (args.direction === ResizeDirection.East) {
+    return (
+      <Row>
+        <ResizePanel {...args}>
+          <Panel padding={10}>
+            <p>Resizable panel</p>
+          </Panel>
+        </ResizePanel>
+        <Panel workspace center>
+          <p>Other content</p>
+        </Panel>
+      </Row>
+    );
+  }
+  if (args.direction === ResizeDirection.North) {
+    return (
+      <Column>
+        <Panel workspace center>
+          <p>Other content</p>
+        </Panel>
+        <ResizePanel {...args}>
+          <Panel padding={10}>
+            <p>Resizable panel</p>
+          </Panel>
+        </ResizePanel>
+      </Column>
+    );
+  }
+  if (args.direction === ResizeDirection.South) {
+    return (
+      <Column>
+        <ResizePanel {...args}>
+          <Panel padding={10}>
+            <p>Resizable panel</p>
+          </Panel>
+        </ResizePanel>
+        <Panel workspace center>
+          <p>Other content</p>
+        </Panel>
+      </Column>
+    );
+  }
+  return (
+    <Row>
+      <Panel workspace center>
+        <p>Other content</p>
+      </Panel>
+      <ResizePanel {...args}>
+        <Panel padding={10}>
+          <p>Resizable panel</p>
+        </Panel>
+      </ResizePanel>
+    </Row>
+  );
+};
 
 export const Default = Template.bind({});

@@ -7,4 +7,5 @@ const Separator = styled.span`
     font-size 0;
 `;
 
-export const ToolSeparator: React.VFC = () => <Separator>|</Separator>;
+export const ToolSeparator: React.FC = () => <Separator>|</Separator>;
+ToolSeparator.displayName = "ToolSeparator";
