@@ -1,0 +1,41 @@
+.toolTab {
+  font: caption;
+  display: inline-block;
+  background-color: var(--colors-background-panel);
+  color: var(--colors-text-default);
+  font-size: 1rem;
+
+  height: 40px;
+  margin-top: 2px;
+
+  align-items: center;
+  border: none;
+  border-bottom: 3px solid transparent;
+
+  outline: 2px solid transparent;
+  padding: 0 1rem;
+  white-space: nowrap;
+}
+
+.active {
+  background-image: radial-gradient(
+    farthest-side,
+    var(--colors-control-default),
+    var(--colors-background-panel)
+  );
+  background-repeat: no-repeat;
+  background-position: 0em 1em;
+
+  color: var(--colors-text-active);
+  border-bottom: 3px solid var(--colors-control-active);
+}
+
+.toolTab:disabled {
+  opacity: 0.5;
+}
+.toolTab:focus {
+  outline-color: var(--colors-control-focus);
+}
+.toolTab:hover:enabled {
+  background: var(--colors-control-highlight);
+}

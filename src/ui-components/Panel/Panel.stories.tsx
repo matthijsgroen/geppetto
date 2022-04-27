@@ -1,10 +1,10 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { Panel as PanelElement } from "./Panel";
+import { Panel as PanelComponent } from "./Panel";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: "Components/Panel",
-  component: PanelElement,
+  component: PanelComponent,
   argTypes: {
     children: { control: false, table: false },
   },
@@ -13,11 +13,11 @@ export default {
     workspace: false,
     center: false,
   },
-} as ComponentMeta<typeof PanelElement>;
+} as ComponentMeta<typeof PanelComponent>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof PanelElement> = (args) => (
-  <PanelElement {...args} />
+const Template: ComponentStory<typeof PanelComponent> = (args) => (
+  <PanelComponent {...args} />
 );
 
 export const Panel = Template.bind({});

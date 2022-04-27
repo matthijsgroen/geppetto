@@ -1,0 +1,4 @@
+.controlPanel {
+  background-color: var(--colors-control-default);
+  border-radius: 10px;
+}

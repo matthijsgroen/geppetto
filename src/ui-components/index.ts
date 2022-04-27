@@ -1,4 +1,5 @@
 export { Label } from "./Label/Label";
+export { Title } from "./Title/Title";
 export { Icon } from "./Icon/Icon";
 
 export { ToolBar } from "./ToolBar/ToolBar";
@@ -16,3 +17,5 @@ export { Row } from "./Row/Row";
 export * from "./Menu/Menu";
 export * from "./Kbd/shortcut";
 export * from "./Kbd/Kbd";
+export { ControlPanel } from "./Controls/ControlPanel";
+export { Control } from "./Controls/Control";

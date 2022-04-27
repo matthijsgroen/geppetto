@@ -19,7 +19,7 @@ const ToolBarInner = styled.div<{ size: ToolBarSize }>`
 `;
 
 const ToolBarOuter = styled.div<{ size: ToolBarSize }>`
-  background-color: ${({ theme }) => theme.colors.controlDefault};
+  background-color: ${({ theme }) => theme.colors.backgroundPanel};
   height: ${(props) => (props.size === "default" ? 3 : 2.25)}rem;
 
   overflow-x: scroll;

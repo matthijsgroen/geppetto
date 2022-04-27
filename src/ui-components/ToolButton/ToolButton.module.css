@@ -4,7 +4,7 @@
   font-size: 1rem;
   height: 32px;
   min-width: 32px;
-  background-color: var(--colors-control-default);
+  background-color: var(--colors-background-panel);
   align-items: center;
   border: none;
   border-radius: 10px;

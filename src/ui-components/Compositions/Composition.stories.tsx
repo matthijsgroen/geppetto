@@ -1,25 +1,28 @@
 import { Story } from "@storybook/react";
 import {
-  ToolBar,
+  Column,
   Icon,
+  Kbd,
+  Menu,
+  MenuDivider,
+  MenuHeader,
+  MenuItem,
+  MenuRadioGroup,
+  Panel,
+  ResizeDirection,
+  ResizePanel,
+  Row,
+  SubMenu,
+  Title,
+  ToolBar,
   ToolButton,
   ToolSeparator,
   ToolTab,
-  ResizePanel,
-  ResizeDirection,
   Tree,
-  Panel,
-  Menu,
-  MenuItem,
-  SubMenu,
-  MenuHeader,
-  MenuDivider,
-  MenuRadioGroup,
   UncontrolledTreeEnvironment,
-  Kbd,
+  ControlPanel,
+  Control,
 } from "../";
-import { Column } from "../Column/Column";
-import { Row } from "../Row/Row";
 import { storyTreeDataProvider } from "../Tree/storybookTreeDataProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -110,7 +113,11 @@ const Template: Story = () => (
     </ToolBar>
 
     <Row>
-      <ResizePanel direction={ResizeDirection.East}>
+      <ResizePanel
+        direction={ResizeDirection.East}
+        minSize={100}
+        defaultSize={200}
+      >
         <Column>
           <ToolBar size="small">
             <ToolButton icon={<Icon>📄</Icon>} label="+" tooltip="Add layer" />
@@ -125,16 +132,6 @@ const Template: Story = () => (
               disabled={true}
               tooltip="Remove item"
             />
-            <ToolButton
-              icon={<Icon>⬆</Icon>}
-              disabled={true}
-              tooltip="Move item up"
-            />
-            <ToolButton
-              icon={<Icon>⬇</Icon>}
-              disabled={true}
-              tooltip="Move item down"
-            />
           </ToolBar>
           <Panel padding={5}>
             <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider()}>
@@ -143,15 +140,39 @@ const Template: Story = () => (
           </Panel>
           <ResizePanel
             direction={ResizeDirection.North}
-            minSize={100}
-            defaultSize={200}
+            minSize={200}
+            defaultSize={300}
           >
             <Panel padding={5}>
+              <Title>Controls</Title>
+              <ToolBar size="small">
+                <ToolButton
+                  icon={<Icon>⚙️</Icon>}
+                  label="+"
+                  tooltip="Add control"
+                />
+                <ToolButton
+                  icon={<Icon>🗑</Icon>}
+                  disabled={true}
+                  tooltip="Remove item"
+                />
+              </ToolBar>
               <UncontrolledTreeEnvironment
                 dataProvider={storyTreeDataProvider()}
               >
                 <Tree treeId="controls" />
               </UncontrolledTreeEnvironment>
+              <Title>Left Arm</Title>
+              <ControlPanel>
+                <Control label="Value">
+                  <input type="range" />
+                </Control>
+                <Control label="Steps">
+                  <ToolButton icon={"1"} size={"small"} />
+                  <ToolButton icon={"2"} size={"small"} />
+                  <ToolButton icon={"+"} size={"small"} />
+                </Control>
+              </ControlPanel>
             </Panel>
           </ResizePanel>
         </Column>
