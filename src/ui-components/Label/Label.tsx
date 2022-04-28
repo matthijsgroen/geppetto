@@ -7,6 +7,9 @@ type LabelProps = PropsWithChildren<{
   size?: "default" | "small";
 }>;
 
+/**
+ * Used for displaying labels on TabBars and Controls
+ */
 export const Label: React.FC<LabelProps> = ({
   children,
   active = false,

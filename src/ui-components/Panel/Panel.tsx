@@ -31,6 +31,10 @@ const StyledPanel = styled.div<{
       : ""}
 `;
 
+/**
+ * Basic component that applies the proper theme color as background,
+ * supports padding and supports centralizing elements.
+ */
 export const Panel: React.FC<PanelProps> = ({
   children,
   padding = 0,

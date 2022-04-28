@@ -7,5 +7,8 @@ const Separator = styled.span`
     font-size 0;
 `;
 
+/**
+ * Creates a small dividing line between toolbar elements
+ */
 export const ToolSeparator: React.FC = () => <Separator>|</Separator>;
 ToolSeparator.displayName = "ToolSeparator";
