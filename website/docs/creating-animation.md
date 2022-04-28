@@ -211,7 +211,7 @@ changed.
 
 You can add a control in the panel called "Controls".
 
-- `⚙️` +` Adds a new control
+- `⚙️ +` Adds a new control
 - `🗑` Removes selected control
 - `⬆` Moves control up in the list (has no functional effect
 - `⬇` Moves control down in the list (has no functional effect
