@@ -12,6 +12,7 @@ import {
   MenuHeader,
   MenuItem,
   MenuRadioGroup,
+  NumberInput,
   Panel,
   ResizeDirection,
   ResizePanel,
@@ -142,7 +143,8 @@ const Template: Story = () => (
             <Title>Opacity (4)</Title>
             <ControlPanel>
               <Control label="Value">
-                <input type="range" />
+                <NumberInput value={10} prefix="x:" />
+                <NumberInput value={20} prefix="y:" />
               </Control>
               <Control>
                 <ToolButton label={"Add mutation to control"} size={"small"} />

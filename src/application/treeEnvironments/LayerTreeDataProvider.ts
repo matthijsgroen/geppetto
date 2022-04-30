@@ -1,9 +1,6 @@
 import { findInHierarchy } from "../../animation/file2/hierarchy";
-import {
-  GeppettoImage,
-  MutationVector,
-  NodeType,
-} from "../../animation/file2/types";
+import { iconMapping } from "../../animation/file2/mutation";
+import { GeppettoImage, NodeType } from "../../animation/file2/types";
 import {
   TreeDataProvider,
   TreeItem,
@@ -12,17 +9,6 @@ import {
 } from "../../ui-components/Tree/Tree";
 
 const TREE_ROOT = "root";
-
-export const iconMapping: Record<MutationVector["type"], string> = {
-  deform: "🟠",
-  rotate: "🔴",
-  stretch: "🟣",
-  translate: "🟢",
-  opacity: "⚪️",
-  lightness: "⬜️",
-  colorize: "🟧",
-  saturation: "🟩",
-};
 
 export const treeDataProvider = (
   file: GeppettoImage,

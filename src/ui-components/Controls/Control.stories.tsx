@@ -36,7 +36,7 @@ NumberControl.args = {
 export const VectorControl = Template.bind({});
 VectorControl.args = {
   children: [
-    <NumberInput value={10} prefix="x:" />,
-    <NumberInput value={10} prefix="y:" />,
+    <NumberInput key={"x"} value={10} prefix="x:" />,
+    <NumberInput key={"y"} value={10} prefix="y:" />,
   ],
 };

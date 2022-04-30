@@ -21,6 +21,7 @@ const ToolBarInner = styled.div<{ size: ToolBarSize }>`
 const ToolBarOuter = styled.div<{ size: ToolBarSize }>`
   background-color: ${({ theme }) => theme.colors.backgroundPanel};
   height: ${(props) => (props.size === "default" ? 3 : 2.25)}rem;
+  flex-shrink: 0;
 
   overflow-x: scroll;
   overflow-y: visible;

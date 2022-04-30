@@ -16,6 +16,7 @@
 .controlInput {
   justify-items: end;
   padding: 0.5rem 0 0.5rem 0.5rem;
+  white-space: nowrap;
 }
 
 .controlShort {
@@ -33,10 +34,10 @@
   background-color: var(--colors-control-input);
   border: 0;
   color: var(--colors-text-dimmed);
-  width: 3ch;
+  width: 4ch;
 }
 .controlShort input[type="number"]:focus {
-  width: 5ch; /* extra width for spinner */
+  width: 6ch; /* extra width for spinner */
 }
 input[type="number"]:not(:focus)::-webkit-outer-spin-button,
 input[type="number"]:not(:focus)::-webkit-inner-spin-button {
