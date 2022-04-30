@@ -11,8 +11,63 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  align-self: center;
 }
 .controlInput {
   justify-items: end;
   padding: 0.5rem 0 0.5rem 0.5rem;
+}
+
+.controlShort {
+  display: inline-block;
+  border-top: 2px solid var(--colors-background-panel);
+  border-bottom: 2px solid var(--colors-background-panel);
+  padding: 2px;
+  background-color: var(--colors-background-panel);
+  color: var(--colors-text-dimmed);
+  box-shadow: 1px 1px 2px #0003;
+  cursor: text;
+}
+
+.controlShort input {
+  background-color: var(--colors-control-input);
+  border: 0;
+  color: var(--colors-text-dimmed);
+  width: 3ch;
+}
+.controlShort input[type="number"]:focus {
+  width: 5ch; /* extra width for spinner */
+}
+input[type="number"]:not(:focus)::-webkit-outer-spin-button,
+input[type="number"]:not(:focus)::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type="number"]:not(:focus) {
+  -moz-appearance: textfield;
+}
+
+.controlShort input:focus {
+  outline: none;
+  color: var(--colors-text-default);
+}
+.controlShort:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-left: 2px solid var(--colors-background-panel);
+}
+.controlShort:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-right: 2px solid var(--colors-background-panel);
+}
+
+.controlShort:focus-within {
+  border-color: var(--colors-control-focus);
+  background-color: var(--colors-control-edge);
+  color: var(--colors-text-default);
+}
+.controlShort:hover:not(:focus-within) {
+  border-color: var(--colors-control-highlight);
 }

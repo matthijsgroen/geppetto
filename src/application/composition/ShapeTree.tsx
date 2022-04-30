@@ -54,18 +54,27 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       selectedItemsState={selectedItemsState}
       showMutations
     >
-      <ToolBar size="small">
-        <ToolButton
-          icon={<Icon>📁</Icon>}
-          label="+"
-          tooltip="Add folder"
-          onClick={addFolderAction}
-          onKeyDown={addFolderAction}
-          disabled={selectedItems.length > 1}
-        />
-        <ToolSeparator />
-      </ToolBar>
-      <Panel padding={5}>{<Tree treeId="composition" />}</Panel>
+      <Panel padding={5}>
+        <ToolBar size="small">
+          <ToolButton
+            icon={<Icon>📁</Icon>}
+            label="+"
+            tooltip="Add folder"
+            onClick={addFolderAction}
+            onKeyDown={addFolderAction}
+            disabled={selectedItems.length > 1}
+          />
+          <ToolButton
+            icon={<Icon>⚪️</Icon>}
+            label="+"
+            tooltip="Add mutation"
+            disabled
+          />
+          <ToolSeparator />
+          <ToolButton icon={<Icon>🗑</Icon>} disabled tooltip="Remove item" />
+        </ToolBar>
+        <Tree treeId="composition" />
+      </Panel>
     </LayerTreeEnvironment>
   );
 };

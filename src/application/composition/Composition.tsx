@@ -8,7 +8,9 @@ import {
   ResizeDirection,
   ResizePanel,
   Row,
+  Title,
   ToolBar,
+  ToolButton,
   ToolSpacer,
   ToolTab,
 } from "../../ui-components";
@@ -19,6 +21,7 @@ import { MouseMode } from "../canvas/MouseControl";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
+import { ItemEdit } from "./ItemEdit";
 import { ShapeTree } from "./ShapeTree";
 
 type CompositionProps = {
@@ -41,7 +44,7 @@ export const Composition: React.FC<CompositionProps> = ({
   onSectionChange,
 }) => {
   const texture = textureState[0];
-  const [file] = fileState;
+  const [file, setFile] = fileState;
 
   const maxZoom = maxZoomFactor(texture);
 
@@ -68,10 +71,34 @@ export const Composition: React.FC<CompositionProps> = ({
       <Row>
         <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
           <Column>
-            <ShapeTree
-              fileState={fileState}
-              selectedItemsState={[selectedItems, setSelectedItems]}
-            />
+            <ResizePanel
+              direction={ResizeDirection.South}
+              minSize={200}
+              defaultSize={300}
+            >
+              <ShapeTree
+                fileState={fileState}
+                selectedItemsState={[selectedItems, setSelectedItems]}
+              />
+            </ResizePanel>
+            <Panel padding={5}>
+              <Column>
+                <Title>Controls</Title>
+                <ToolBar size="small">
+                  <ToolButton icon={<Icon>⚙️</Icon>} label={"+"} />
+                </ToolBar>
+                <Panel padding={5} center>
+                  <p>Controls here</p>
+                </Panel>
+
+                <ItemEdit
+                  selectedShapeIds={selectedItems}
+                  selectedControlIds={[]}
+                  file={file}
+                  setFile={setFile}
+                />
+              </Column>
+            </Panel>
           </Column>
         </ResizePanel>
         <Panel workspace center>

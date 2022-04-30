@@ -71,34 +71,36 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       fileState={fileState}
       selectedItemsState={selectedItemsState}
     >
-      <ToolBar size="small">
-        <ToolButton
-          icon={<Icon>📄</Icon>}
-          label="+"
-          tooltip="Add layer"
-          onClick={addShapeAction}
-          onKeyDown={addShapeAction}
-          disabled={selectedItems.length > 1}
-        />
-        <ToolButton
-          icon={<Icon>📁</Icon>}
-          label="+"
-          tooltip="Add folder"
-          onClick={addFolderAction}
-          onKeyDown={addFolderAction}
-          disabled={selectedItems.length > 1}
-        />
-        <ToolSeparator />
-        <ToolButton icon={<Icon>📑</Icon>} disabled tooltip="Copy layer" />
-        <ToolButton
-          icon={<Icon>🗑</Icon>}
-          disabled={selectedItems.length !== 1}
-          onClick={removeItemAction}
-          onKeyDown={removeItemAction}
-          tooltip="Remove item"
-        />
-      </ToolBar>
-      <Panel padding={5}>{<Tree treeId="layers" />}</Panel>
+      <Panel padding={5}>
+        <ToolBar size="small">
+          <ToolButton
+            icon={<Icon>📄</Icon>}
+            label="+"
+            tooltip="Add layer"
+            onClick={addShapeAction}
+            onKeyDown={addShapeAction}
+            disabled={selectedItems.length > 1}
+          />
+          <ToolButton
+            icon={<Icon>📁</Icon>}
+            label="+"
+            tooltip="Add folder"
+            onClick={addFolderAction}
+            onKeyDown={addFolderAction}
+            disabled={selectedItems.length > 1}
+          />
+          <ToolSeparator />
+          <ToolButton icon={<Icon>📑</Icon>} disabled tooltip="Copy layer" />
+          <ToolButton
+            icon={<Icon>🗑</Icon>}
+            disabled={selectedItems.length !== 1}
+            onClick={removeItemAction}
+            onKeyDown={removeItemAction}
+            tooltip="Remove item"
+          />
+        </ToolBar>
+        <Tree treeId="layers" />
+      </Panel>
     </LayerTreeEnvironment>
   );
 };
