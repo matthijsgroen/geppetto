@@ -12,6 +12,7 @@ import { useFile } from "../applicationMenu/FileContext";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
 import { UseState } from "../types";
+import { ItemEdit } from "./ItemEdit";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
@@ -66,6 +67,8 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
           <ToolButton icon={<Icon>🗑</Icon>} disabled tooltip="Remove item" />
         </ToolBar>
         <Tree treeId="composition" />
+
+        <ItemEdit selectedShapeIds={selectedItems} selectedControlIds={[]} />
       </Panel>
     </LayerTreeEnvironment>
   );

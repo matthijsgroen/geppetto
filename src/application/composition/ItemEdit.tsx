@@ -1,14 +1,13 @@
 import { iconMapping } from "../../animation/file2/mutation";
 import { GeppettoImage, NodeType, TreeNode } from "../../animation/file2/types";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
+import { useFile } from "../applicationMenu/FileContext";
 import { VectorControl } from "../controls/VectorControl";
 import { UpdateState } from "../types";
 
 type ItemEditProps = {
   selectedShapeIds: string[];
   selectedControlIds: string[];
-  file: GeppettoImage;
-  setFile: UpdateState<GeppettoImage>;
 };
 
 type EditProps<T extends NodeType> = {
@@ -52,9 +51,8 @@ const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId, file }) => {
 export const ItemEdit: React.FC<ItemEditProps> = ({
   selectedShapeIds,
   selectedControlIds,
-  file,
-  setFile,
 }) => {
+  const [file, setFile] = useFile();
   const activeShapeId =
     selectedShapeIds.length === 1 ? selectedShapeIds[0] : null;
   const hierarchyItem =

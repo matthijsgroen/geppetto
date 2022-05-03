@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { hasPoints } from "../../animation/file2/shapes";
+import { ControlDefinition, GeppettoImage } from "../../animation/file2/types";
+import { Vec2 } from "../../types";
 import {
   Column,
   Icon,
@@ -19,8 +21,8 @@ import { MouseMode } from "../canvas/MouseControl";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
+import { mixVec2 } from "../webgl/lib/vertices";
 import { ControlTree } from "./ControlTree";
-import { ItemEdit } from "./ItemEdit";
 import { ShapeTree } from "./ShapeTree";
 
 type CompositionProps = {
@@ -30,6 +32,31 @@ type CompositionProps = {
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
+};
+
+const calculateVectorValues = (
+  controlValues: Record<string, number>,
+  controls: Record<string, ControlDefinition>
+) => {
+  const result: Record<string, Vec2> = {};
+  for (const [controlId, controlValue] of Object.entries(controlValues)) {
+    const controlInfo = controls[controlId];
+    if (!controlInfo) continue;
+    const minStep = Math.floor(controlValue);
+    const maxStep = Math.ceil(controlValue);
+
+    const minValue = controlInfo.steps[minStep];
+    const maxValue = controlInfo.steps[maxStep];
+
+    const mixValue = controlValue - minStep;
+
+    for (const [mutationId, mutationValue] of Object.entries(minValue)) {
+      const value = mixVec2(mutationValue, maxValue[mutationId], mixValue);
+      result[mutationId] = value;
+    }
+  }
+
+  return result;
 };
 
 export const Composition: React.FC<CompositionProps> = ({
@@ -50,6 +77,17 @@ export const Composition: React.FC<CompositionProps> = ({
   const [panY] = panYState;
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [vectorValues, setVectorValues] = useState<
+    GeppettoImage["defaultFrame"]
+  >(file.defaultFrame);
+
+  useEffect(() => {
+    const controlVectors = calculateVectorValues(
+      file.controlValues,
+      file.controls
+    );
+    setVectorValues({ ...file.defaultFrame, ...controlVectors });
+  }, [file.defaultFrame, file.controlValues, file.controls]);
 
   return (
     <Column>
@@ -70,8 +108,8 @@ export const Composition: React.FC<CompositionProps> = ({
           <Column>
             <ResizePanel
               direction={ResizeDirection.South}
-              minSize={200}
-              defaultSize={300}
+              minSize={300}
+              defaultSize={400}
             >
               <ShapeTree
                 selectedItemsState={[selectedItems, setSelectedItems]}
@@ -80,13 +118,6 @@ export const Composition: React.FC<CompositionProps> = ({
             <Panel padding={5}>
               <Column>
                 <ControlTree file={file} setFile={setFile} />
-
-                <ItemEdit
-                  selectedShapeIds={selectedItems}
-                  selectedControlIds={[]}
-                  file={file}
-                  setFile={setFile}
-                />
               </Column>
             </Panel>
           </Column>
@@ -108,7 +139,7 @@ export const Composition: React.FC<CompositionProps> = ({
                 zoom={zoom}
                 panX={panX}
                 panY={panY}
-                vectorValues={file.defaultFrame}
+                vectorValues={vectorValues}
               />
             </LayerMouseControl>
           )}
