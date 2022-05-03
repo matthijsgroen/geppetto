@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { hasPoints } from "../../animation/file2/shapes";
-import { GeppettoImage } from "../../animation/file2/types";
 import {
   Column,
   Icon,
@@ -8,12 +7,11 @@ import {
   ResizeDirection,
   ResizePanel,
   Row,
-  Title,
   ToolBar,
-  ToolButton,
   ToolSpacer,
   ToolTab,
 } from "../../ui-components";
+import { useFile } from "../applicationMenu/FileContext";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl from "../canvas/LayerMouseControl";
@@ -21,6 +19,7 @@ import { MouseMode } from "../canvas/MouseControl";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
+import { ControlTree } from "./ControlTree";
 import { ItemEdit } from "./ItemEdit";
 import { ShapeTree } from "./ShapeTree";
 
@@ -28,7 +27,6 @@ type CompositionProps = {
   zoomState: UseState<number>;
   panXState: UseState<number>;
   panYState: UseState<number>;
-  fileState: UseState<GeppettoImage>;
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
@@ -37,14 +35,13 @@ type CompositionProps = {
 export const Composition: React.FC<CompositionProps> = ({
   menu,
   textureState,
-  fileState,
   zoomState,
   panXState,
   panYState,
   onSectionChange,
 }) => {
   const texture = textureState[0];
-  const [file, setFile] = fileState;
+  const [file, setFile] = useFile();
 
   const maxZoom = maxZoomFactor(texture);
 
@@ -77,19 +74,12 @@ export const Composition: React.FC<CompositionProps> = ({
               defaultSize={300}
             >
               <ShapeTree
-                fileState={fileState}
                 selectedItemsState={[selectedItems, setSelectedItems]}
               />
             </ResizePanel>
             <Panel padding={5}>
               <Column>
-                <Title>Controls</Title>
-                <ToolBar size="small">
-                  <ToolButton icon={<Icon>⚙️</Icon>} label={"+"} />
-                </ToolBar>
-                <Panel padding={5} center>
-                  <p>Controls here</p>
-                </Panel>
+                <ControlTree file={file} setFile={setFile} />
 
                 <ItemEdit
                   selectedShapeIds={selectedItems}

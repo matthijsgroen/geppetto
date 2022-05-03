@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { GeppettoImage } from "../animation/file2/types";
 import { ThemeProvider } from "styled-components";
 import { Layers } from "./layers/Layers";
 import { defaultTheme } from "./theme/default";
-import { newFile } from "../animation/file2/new";
 import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
 import { AppSection } from "./types";
 import { Composition } from "./composition/Composition";
 import { AppContext } from "./applicationMenu/ApplicationContext";
+import { FileContext } from "./applicationMenu/FileContext";
 
 const updateWindowTitle = (
   animFile: string | null,
@@ -21,7 +20,6 @@ const updateWindowTitle = (
 // const OUTPUT_VERSION_NUMBER = "2.0";
 
 const App: React.FC = () => {
-  const fileState = useState<GeppettoImage>(newFile());
   const textureFileState = useState<HTMLImageElement | null>(null);
   const [appSection, setAppSection] = useState<AppSection>("layers");
 
@@ -39,7 +37,6 @@ const App: React.FC = () => {
   const applicationMenu = (
     <ApplicationMenu
       fileNameState={[fileName, setFileName]}
-      fileState={fileState}
       textureFileNameState={[textureFileName, setTextureFileName]}
       textureFileState={textureFileState}
     />
@@ -47,30 +44,30 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <AppContext>
-        {appSection === "layers" && (
-          <Layers
-            menu={applicationMenu}
-            zoomState={zoomState}
-            panXState={panXState}
-            panYState={panYState}
-            fileState={fileState}
-            textureState={textureFileState}
-            onSectionChange={setAppSection}
-          />
-        )}
-        {appSection === "composition" && (
-          <Composition
-            menu={applicationMenu}
-            zoomState={zoomState}
-            panXState={panXState}
-            panYState={panYState}
-            fileState={fileState}
-            textureState={textureFileState}
-            onSectionChange={setAppSection}
-          />
-        )}
-      </AppContext>
+      <FileContext>
+        <AppContext>
+          {appSection === "layers" && (
+            <Layers
+              menu={applicationMenu}
+              zoomState={zoomState}
+              panXState={panXState}
+              panYState={panYState}
+              textureState={textureFileState}
+              onSectionChange={setAppSection}
+            />
+          )}
+          {appSection === "composition" && (
+            <Composition
+              menu={applicationMenu}
+              zoomState={zoomState}
+              panXState={panXState}
+              panYState={panYState}
+              textureState={textureFileState}
+              onSectionChange={setAppSection}
+            />
+          )}
+        </AppContext>
+      </FileContext>
     </ThemeProvider>
   );
 };

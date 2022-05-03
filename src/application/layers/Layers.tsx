@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from "react";
-import { GeppettoImage, Layer } from "../../animation/file2/types";
+import { Layer } from "../../animation/file2/types";
 import {
   Column,
   Icon,
@@ -35,12 +35,12 @@ import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionToolButton } from "../actions/ActionToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
+import { useFile } from "../applicationMenu/FileContext";
 
 type LayersProps = {
   zoomState: UseState<number>;
   panXState: UseState<number>;
   panYState: UseState<number>;
-  fileState: UseState<GeppettoImage>;
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
@@ -66,7 +66,6 @@ const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
 const DELETE_POINT: Shortcut = { key: "DelOrBackspace" };
 
 export const Layers: React.FC<LayersProps> = ({
-  fileState,
   textureState,
   onSectionChange,
   menu,
@@ -90,7 +89,7 @@ export const Layers: React.FC<LayersProps> = ({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
   const texture = textureState[0];
-  const [file, setFile] = fileState;
+  const [file, setFile] = useFile();
 
   const layers = file.layers;
   const maxZoom = maxZoomFactor(texture);
@@ -369,10 +368,7 @@ export const Layers: React.FC<LayersProps> = ({
       <Row>
         <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
           <Column>
-            <ShapeTree
-              fileState={fileState}
-              selectedItemsState={[selectedItems, setSelectedItems]}
-            />
+            <ShapeTree selectedItemsState={[selectedItems, setSelectedItems]} />
           </Column>
         </ResizePanel>
         <Panel workspace center>

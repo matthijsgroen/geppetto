@@ -18,11 +18,10 @@ import { ActionMenuItem } from "../actions/ActionMenuItem";
 import { useAppUpdate } from "../hooks/useAppUpdate";
 import { ApplicationContext } from "./ApplicationContext";
 import { useAppInstall } from "../hooks/useAppInstall";
+import { useFile } from "./FileContext";
 
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
-  fileState: UseState<GeppettoImage>;
-
   textureFileNameState: UseState<string | null>;
   textureFileState: UseState<HTMLImageElement | null>;
 };
@@ -70,7 +69,6 @@ const FILE_SAVE: Shortcut = { key: "KeyS", ctrlOrCmd: true };
 
 export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   fileNameState,
-  fileState,
   textureFileNameState,
   textureFileState,
 }) => {
@@ -78,6 +76,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   const textureFileRef = useRef<null | FileSystemFileHandle>(null);
   const [hasAppUpdate, updater] = useAppUpdate();
   const [canInstall, installer] = useAppInstall();
+  const [file, setFile] = useFile();
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -101,7 +100,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 fileRef.current = fileHandle;
                 const [filename, image] = await loadGeppettoImage(fileHandle);
                 fileNameState[1](filename);
-                fileState[1](image);
+                setFile(image);
               } catch (e) {
                 // user abort
               }
@@ -129,7 +128,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 fileRef.current = fileHandle;
                 fileNameState[1](fileHandle.name);
                 const writable = await fileHandle.createWritable();
-                await writable.write(JSON.stringify(fileState[0]));
+                await writable.write(JSON.stringify(file));
                 writable.close();
               } catch (e) {
                 // user abort
@@ -164,7 +163,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
             if (fileRef.current) {
               try {
                 const writable = await fileRef.current.createWritable();
-                await writable.write(JSON.stringify(fileState[0]));
+                await writable.write(JSON.stringify(file));
                 writable.close();
               } catch (e) {
                 // user abort
@@ -201,7 +200,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
           },
         },
       }),
-      [fileNameState, fileState, textureFileNameState, textureFileState]
+      [fileNameState, file, setFile, textureFileNameState, textureFileState]
     )
   );
 

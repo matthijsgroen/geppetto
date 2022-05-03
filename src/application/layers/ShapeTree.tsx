@@ -1,6 +1,5 @@
 import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
 import { addFolder, addShape, removeShape } from "../../animation/file2/shapes";
-import { GeppettoImage } from "../../animation/file2/types";
 import {
   Icon,
   Panel,
@@ -9,68 +8,62 @@ import {
   ToolSeparator,
   Tree,
 } from "../../ui-components";
+import { useFile } from "../applicationMenu/FileContext";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
 import { UseState } from "../types";
 
 type ShapeTreeProps = {
-  fileState: UseState<GeppettoImage>;
   selectedItemsState: UseState<string[]>;
 };
 
-export const ShapeTree: React.FC<ShapeTreeProps> = ({
-  fileState,
-  selectedItemsState,
-}) => {
-  const [fileData, setFileData] = fileState;
+export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
+  const [file, setFile] = useFile();
   const [selectedItems] = selectedItemsState;
 
   const addShapeAction = useToolAction(() => {
     let position: PlacementInfo | undefined = undefined;
     const targetId = selectedItems[0];
-    const folder = fileData.layerFolders[targetId];
-    const item = fileData.layers[targetId];
+    const folder = file.layerFolders[targetId];
+    const item = file.layers[targetId];
     if (selectedItems.length === 1 && folder) {
       position = { parent: targetId };
     }
     if (selectedItems.length === 1 && item) {
-      const parentId = findParentId(fileData.layerHierarchy, targetId);
+      const parentId = findParentId(file.layerHierarchy, targetId);
       if (parentId) {
         position = { after: targetId, parent: parentId };
       }
     }
-    const [updatedImage] = addShape(fileData, "New Shape", position);
-    setFileData(updatedImage);
-  }, [fileData, selectedItems]);
+    const [updatedImage] = addShape(file, "New Shape", position);
+    setFile(updatedImage);
+  }, [file, selectedItems]);
 
   const addFolderAction = useToolAction(() => {
     let position: PlacementInfo | undefined = undefined;
     const targetId = selectedItems[0];
-    const folder = fileData.layerFolders[targetId];
-    const item = fileData.layers[targetId];
+    const folder = file.layerFolders[targetId];
+    const item = file.layers[targetId];
     if (selectedItems.length === 1 && folder) {
       position = { parent: targetId };
     }
     if (selectedItems.length === 1 && item) {
-      const parentId = findParentId(fileData.layerHierarchy, targetId);
+      const parentId = findParentId(file.layerHierarchy, targetId);
       if (parentId) {
         position = { after: targetId, parent: parentId };
       }
     }
-    const [updatedImage] = addFolder(fileData, "New folder", position);
-    setFileData(updatedImage);
-  }, [fileData, selectedItems]);
+    const [updatedImage] = addFolder(file, "New folder", position);
+    setFile(updatedImage);
+  }, [file, selectedItems]);
 
   const removeItemAction = useToolAction(() => {
     const item = selectedItems[0];
-    setFileData((value) => removeShape(value, item));
-  }, [fileData, selectedItems]);
+    setFile((value) => removeShape(value, item));
+  }, [file, selectedItems]);
 
   return (
-    <LayerTreeEnvironment
-      fileState={fileState}
-      selectedItemsState={selectedItemsState}
-    >
+    <LayerTreeEnvironment selectedItemsState={selectedItemsState}>
       <Panel padding={5}>
         <ToolBar size="small">
           <ToolButton

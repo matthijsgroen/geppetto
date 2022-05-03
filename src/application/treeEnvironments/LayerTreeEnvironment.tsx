@@ -3,7 +3,6 @@ import { DraggingPosition } from "react-complex-tree";
 import { isRootNode, moveInHierarchy } from "../../animation/file2/hierarchy";
 import { newFile } from "../../animation/file2/new";
 import { rename } from "../../animation/file2/shapes";
-import { GeppettoImage } from "../../animation/file2/types";
 import {
   TreeData,
   TreeItem,
@@ -12,9 +11,9 @@ import {
 } from "../../ui-components";
 import { treeDataProvider } from "./LayerTreeDataProvider";
 import { UseState } from "../types";
+import { useFile } from "../applicationMenu/FileContext";
 
 type LayerTreeEnvironmentProps = {
-  fileState: UseState<GeppettoImage>;
   selectedItemsState: UseState<string[]>;
   showMutations?: boolean;
   children: React.ReactElement | React.ReactElement[] | null;
@@ -25,11 +24,10 @@ const yes = () => true;
 
 export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   children,
-  fileState,
   selectedItemsState,
   showMutations = false,
 }) => {
-  const [fileData, setFileData] = fileState;
+  const [file, setFile] = useFile();
   const [, setSelectedItems] = selectedItemsState;
 
   const treeData = useMemo(
@@ -37,19 +35,19 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     [showMutations]
   );
   useEffect(() => {
-    treeData.updateActiveTree && treeData.updateActiveTree(fileData);
-  }, [fileData, treeData]);
+    treeData.updateActiveTree && treeData.updateActiveTree(file);
+  }, [file, treeData]);
 
   const canDropAt = useCallback(
     (_items: LayerItem[], target: DraggingPosition) => {
       // target cannot be a layer (only for mutations)
       if (target.targetType === "item") {
-        const targetItem = fileData.layerHierarchy[target.targetItem];
+        const targetItem = file.layerHierarchy[target.targetItem];
         return targetItem.type === "layerFolder" || targetItem.type === "root";
       }
       return true;
     },
-    [fileData]
+    [file]
   );
 
   const onDrop = useCallback(
@@ -59,7 +57,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       if (target.targetType === "item") {
         const targetId = `${target.targetItem}`;
         updatedItems.push(targetId);
-        setFileData((fileData) => {
+        setFile((fileData) => {
           const result = { ...fileData };
           for (const item of items) {
             if (result.layerHierarchy[item.index].type === "mutation") continue;
@@ -77,7 +75,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
           return result;
         });
       } else {
-        setFileData((fileData) => {
+        setFile((fileData) => {
           const parent = fileData.layerHierarchy[`${target.parentItem}`];
           if (!parent.children) {
             return fileData;
@@ -115,7 +113,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       }
       treeData.addChangedId && treeData.addChangedId(...updatedItems);
     },
-    [treeData, setFileData]
+    [treeData, setFile]
   );
 
   return (
@@ -135,12 +133,12 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       canReorderItems={true}
       onRenameItem={useCallback(
         (item: LayerItem, newName: string) => {
-          setFileData((fileData) =>
+          setFile((fileData) =>
             rename(fileData, `${item.index}`, item.data.type, newName)
           );
           treeData.addChangedId && treeData.addChangedId(`${item.index}`);
         },
-        [setFileData, treeData]
+        [setFile, treeData]
       )}
       onDrop={onDrop}
       canDropOnItemWithChildren={true}
