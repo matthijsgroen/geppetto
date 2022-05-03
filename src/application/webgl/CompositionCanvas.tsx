@@ -46,8 +46,8 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
     composition.setShapes(file);
     layer.setShapes(file);
     layer.setLayerSelected(activeLayers);
-    vectorMap.setLayerSelected(activeLayers);
     vectorMap.setShapes(file);
+    vectorMap.setLayerSelected(activeLayers);
   }, [file, composition, layer, vectorMap, activeLayers]);
 
   useEffect(() => {

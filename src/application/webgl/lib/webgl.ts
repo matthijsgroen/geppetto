@@ -61,7 +61,7 @@ export const webGLScene = async (
   instId: string
 ): Promise<RenderAPI> => {
   const gl = element.getContext("webgl", {
-    premultipliedalpha: true,
+    premultipliedAlpha: true,
     depth: true,
     antialias: true,
     powerPreference: "low-power",
