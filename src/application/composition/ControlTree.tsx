@@ -8,25 +8,26 @@ import {
 } from "../../ui-components";
 import { ControlTreeEnvironment } from "../treeEnvironments/ControlTreeEnvironment";
 import { UseState } from "../types";
+import { ControlEdit } from "./ControlEdit";
 
 type ControlTreeProps = {
-  selectedItemsState: UseState<string[]>;
+  selectedControlsState: UseState<string[]>;
 };
 
 export const ControlTree: React.FC<ControlTreeProps> = ({
-  selectedItemsState,
+  selectedControlsState,
 }) => {
+  const [selectedControls] = selectedControlsState;
   return (
-    <ControlTreeEnvironment selectedItemsState={selectedItemsState}>
-      <>
+    <ControlTreeEnvironment selectedItemsState={selectedControlsState}>
+      <Panel padding={5}>
         <Title>Controls</Title>
         <ToolBar size="small">
           <ToolButton icon={<Icon>⚙️</Icon>} label={"+"} />
         </ToolBar>
-        <Panel padding={5}>
-          <Tree treeId="controls" />
-        </Panel>
-      </>
+        <Tree treeId="controls" />
+        <ControlEdit selectedControlIds={selectedControls} />
+      </Panel>
     </ControlTreeEnvironment>
   );
 };

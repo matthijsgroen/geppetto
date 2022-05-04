@@ -116,13 +116,9 @@ export const Composition: React.FC<CompositionProps> = ({
                 selectedItemsState={[selectedItems, setSelectedItems]}
               />
             </ResizePanel>
-            <Panel padding={5}>
-              <Column>
-                <ControlTree
-                  selectedItemsState={[selectedControls, setSelectedControls]}
-                />
-              </Column>
-            </Panel>
+            <ControlTree
+              selectedControlsState={[selectedControls, setSelectedControls]}
+            />
           </Column>
         </ResizePanel>
         <Panel workspace center>
