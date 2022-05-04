@@ -68,7 +68,7 @@ export const Composition: React.FC<CompositionProps> = ({
   onSectionChange,
 }) => {
   const texture = textureState[0];
-  const [file, setFile] = useFile();
+  const [file] = useFile();
 
   const maxZoom = maxZoomFactor(texture);
 
@@ -77,6 +77,7 @@ export const Composition: React.FC<CompositionProps> = ({
   const [panY] = panYState;
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedControls, setSelectedControls] = useState<string[]>([]);
   const [vectorValues, setVectorValues] = useState<
     GeppettoImage["defaultFrame"]
   >(file.defaultFrame);
@@ -117,7 +118,9 @@ export const Composition: React.FC<CompositionProps> = ({
             </ResizePanel>
             <Panel padding={5}>
               <Column>
-                <ControlTree file={file} setFile={setFile} />
+                <ControlTree
+                  selectedItemsState={[selectedControls, setSelectedControls]}
+                />
               </Column>
             </Panel>
           </Column>
