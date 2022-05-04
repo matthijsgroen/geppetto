@@ -4,7 +4,7 @@ import { Icon } from "../Icon/Icon";
 
 export const LogoIcon: React.FC = () => (
   <Icon>
-    <Image />
+    <Image width={20} />
   </Icon>
 );
 
