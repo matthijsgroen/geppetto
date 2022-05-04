@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import { Label } from "../Label/Label";
-import styles from "./Control.module.css";
+import styles from "./Control.module.scss";
 
 type ControlProps = PropsWithChildren<{
   label?: string;

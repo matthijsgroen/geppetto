@@ -31,7 +31,7 @@
 }
 
 .controlShort input {
-  background-color: var(--colors-control-input);
+  background-color: transparent;
   border: 0;
   color: var(--colors-text-dimmed);
   width: 4ch;
@@ -72,3 +72,53 @@ input[type="number"]:not(:focus) {
 .controlShort:hover:not(:focus-within) {
   border-color: var(--colors-control-highlight);
 }
+
+
+@mixin thumb {
+  height: 15px;
+  width: 15px;
+  background: var(--colors-background-panel);
+  border: 2px solid var(--thumb-border);
+  box-shadow: 1px 1px 2px #0006;
+  margin-top: -5px;
+  border-radius: 50%;
+}
+
+@mixin track {
+  background: var(--colors-background-workspace);
+  box-shadow: inset 1px 1px 2px #0003;
+  height: 5px;
+  border-radius: 3px;
+}
+
+.control input[type="range"] {
+  width: 100px;
+  background-color: transparent;
+  -webkit-appearance: none;
+
+  --thumb-border: var(--colors-background-panel);
+  &:hover {
+    --thumb-border: var(--colors-control-highlight);
+  }
+  &:focus {
+    --thumb-border: var(--colors-control-focus);
+  }
+
+  &::-webkit-slider-runnable-track {
+    @include track();
+  }
+  &::-moz-range-track {
+    @include track();
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    @include thumb()
+  }
+
+  &::-moz-range-thumb {
+    @include thumb()
+  }
+}
+
+

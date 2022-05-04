@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback } from "react";
-import styles from "./Control.module.css";
+import styles from "./Control.module.scss";
 
 type NumberInputProps = {
   prefix?: string;

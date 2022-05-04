@@ -40,3 +40,8 @@ VectorControl.args = {
     <NumberInput key={"y"} value={10} prefix="y:" />,
   ],
 };
+
+export const SliderControl = Template.bind({});
+SliderControl.args = {
+  children: <input type="range" value={10} />,
+};
