@@ -154,7 +154,6 @@ export const showCompositionMap = (): {
         layersSelected.push(layerId);
         layersSelected.push(...collectChildIds(shapes.layerHierarchy, layerId));
       }
-      console.log(layersSelected);
       onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
@@ -168,6 +167,7 @@ export const showCompositionMap = (): {
         compositionFragmentShader
       );
       program = shaderProgram;
+      populateShapes();
 
       return {
         onChange(listener) {

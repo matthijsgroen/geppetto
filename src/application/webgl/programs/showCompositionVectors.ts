@@ -253,6 +253,7 @@ export const showCompositionVectors = (): {
         shaderProgram,
         "basePosition"
       );
+      populateShapes();
 
       return {
         onChange(listener) {

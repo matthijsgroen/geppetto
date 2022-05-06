@@ -52,18 +52,12 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
 
   useEffect(() => {
     if (shapesChanged(file, fileRef.current)) {
-      console.log("updating shapes");
       composition.setShapes(file);
       layer.setShapes(file);
       vectorMap.setShapes(file);
     }
     fileRef.current = file;
   }, [file, composition, layer, vectorMap]);
-
-  useEffect(() => {
-    layer.setLayerSelected(activeLayers);
-    vectorMap.setLayerSelected(activeLayers);
-  }, [composition, layer, vectorMap, activeLayers]);
 
   useEffect(() => {
     composition.setVectorValues(vectorValues);
