@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
+import { newFile } from "../../animation/file2/new";
 import { GeppettoImage } from "../../animation/file2/types";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
@@ -15,6 +16,11 @@ export interface CompositionCanvasProps {
   panY: number;
   showFPS?: boolean;
 }
+
+const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
+  fileA.layerFolders !== fileB.layerFolders ||
+  fileA.layers !== fileB.layers ||
+  fileA.mutations !== fileB.mutations;
 
 const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
   image,
@@ -42,13 +48,22 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
     }
   }, [image, composition, layer, vectorMap]);
 
+  const fileRef = useRef(newFile());
+
   useEffect(() => {
-    composition.setShapes(file);
-    layer.setShapes(file);
+    if (shapesChanged(file, fileRef.current)) {
+      console.log("updating shapes");
+      composition.setShapes(file);
+      layer.setShapes(file);
+      vectorMap.setShapes(file);
+    }
+    fileRef.current = file;
+  }, [file, composition, layer, vectorMap]);
+
+  useEffect(() => {
     layer.setLayerSelected(activeLayers);
-    vectorMap.setShapes(file);
     vectorMap.setLayerSelected(activeLayers);
-  }, [file, composition, layer, vectorMap, activeLayers]);
+  }, [composition, layer, vectorMap, activeLayers]);
 
   useEffect(() => {
     composition.setVectorValues(vectorValues);

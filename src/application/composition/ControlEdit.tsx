@@ -1,5 +1,5 @@
 import produce from "immer";
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, useCallback, useTransition } from "react";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
 
@@ -15,16 +15,19 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
     selectedControlIds.length === 1 ? selectedControlIds[0] : null;
   const hierarchyItem =
     activeControlId !== null ? file.controlHierarchy[activeControlId] : null;
+  const [, startTransition] = useTransition();
 
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       if (activeControlId === null) return;
       const value = e.currentTarget.valueAsNumber;
-      setFile(
-        produce((draft) => {
-          draft.controlValues[activeControlId] = value;
-        })
-      );
+      startTransition(() => {
+        setFile(
+          produce((draft) => {
+            draft.controlValues[activeControlId] = value;
+          })
+        );
+      });
     },
     [setFile, activeControlId]
   );

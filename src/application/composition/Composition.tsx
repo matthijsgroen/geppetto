@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { hasPoints } from "../../animation/file2/shapes";
-import { ControlDefinition, GeppettoImage } from "../../animation/file2/types";
+import { ControlDefinition } from "../../animation/file2/types";
 import { Vec2 } from "../../types";
 import {
   Column,
@@ -78,17 +78,12 @@ export const Composition: React.FC<CompositionProps> = ({
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
-  const [vectorValues, setVectorValues] = useState<
-    GeppettoImage["defaultFrame"]
-  >(file.defaultFrame);
 
-  useEffect(() => {
-    const controlVectors = calculateVectorValues(
-      file.controlValues,
-      file.controls
-    );
-    setVectorValues({ ...file.defaultFrame, ...controlVectors });
-  }, [file.defaultFrame, file.controlValues, file.controls]);
+  const controlVectors = calculateVectorValues(
+    file.controlValues,
+    file.controls
+  );
+  const vectorValues = { ...file.defaultFrame, ...controlVectors };
 
   return (
     <Column>
