@@ -74,27 +74,34 @@ export const showLayerPoints = (): {
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
+  let onChange: () => void = () => {};
 
   return {
     setImage(image) {
       img = image;
+      onChange();
     },
     setLayers(s) {
       layers = s;
       populateShapes();
+      onChange();
     },
     setZoom(newZoom) {
       zoom = newZoom;
+      onChange();
     },
     setPan(x, y) {
       pan = [x, y];
+      onChange();
     },
     setLayerSelected(layer) {
       layerSelected = layer;
+      onChange();
     },
     setActiveCoord(coord) {
       coordSelected = coord;
       populateShapes();
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
@@ -109,6 +116,9 @@ export const showLayerPoints = (): {
       );
 
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!layers || !img || !vertexBuffer || !indexBuffer || !gl) {
             return;

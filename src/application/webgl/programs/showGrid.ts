@@ -30,18 +30,24 @@ export const showGrid = (): {
   let grid = 1.0;
   let pan = [0, 0];
 
+  let onChange: () => void = () => {};
+
   return {
     setImage(image: HTMLImageElement) {
       img = image;
+      onChange();
     },
     setZoom(newZoom) {
       zoom = newZoom;
+      onChange();
     },
     setGrid(newGrid) {
       grid = newGrid;
+      onChange();
     },
     setPan(x: number, y: number) {
       pan = [x, y];
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
@@ -102,6 +108,9 @@ export const showGrid = (): {
       setImageDimensions();
 
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!img || grid === 0 || !gl) {
             return;

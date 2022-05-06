@@ -184,13 +184,17 @@ export const showCompositionVectors = (): {
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
 
+  let onChange: () => void = () => {};
+
   return {
     setImage(image: HTMLImageElement) {
       img = image;
+      onChange();
     },
     setShapes(s: GeppettoImage) {
       shapes = s;
       populateShapes();
+      onChange();
     },
     setVectorValues(v) {
       vectorValues = v;
@@ -206,12 +210,15 @@ export const showCompositionVectors = (): {
         mutationValues[index * 2 + 1] = value[1];
       });
       gl.uniform2fv(uMutationValues, mutationValues);
+      onChange();
     },
     setZoom(newZoom) {
       zoom = newZoom;
+      onChange();
     },
     setPan(x: number, y: number) {
       pan = [x, y];
+      onChange();
     },
     setLayerSelected(layers) {
       if (layers === null || shapes === null) {
@@ -225,6 +232,7 @@ export const showCompositionVectors = (): {
           ...collectChildIds(shapes.layerHierarchy, layerId)
         );
       }
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
@@ -247,6 +255,9 @@ export const showCompositionVectors = (): {
       );
 
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!img || !shapes) {
             return;

@@ -41,16 +41,20 @@ export const showTexture = (): {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
   };
 
+  let onChange: () => void = () => {};
   return {
     setImage(image: HTMLImageElement) {
       img = image;
       setImageTexture();
+      onChange();
     },
     setZoom(newZoom) {
       zoom = newZoom;
+      onChange();
     },
     setPan(x: number, y: number) {
       pan = [x, y];
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getUnit, getSize }) {
       gl = initGl;
@@ -107,6 +111,9 @@ export const showTexture = (): {
       );
 
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!img || !gl) {
             return;

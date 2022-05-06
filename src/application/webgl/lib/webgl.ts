@@ -46,6 +46,7 @@ type Attribute = {
 export type AttributeTable = { [key: string]: Attribute };
 
 export type RenderAPI = {
+  onChange(listener: () => void): void;
   render(): void;
   cleanup(): void;
 };
@@ -57,8 +58,7 @@ export type WebGLRenderer = (
 
 export const webGLScene = async (
   element: HTMLCanvasElement,
-  programs: WebGLRenderer[],
-  instId: string
+  programs: WebGLRenderer[]
 ): Promise<RenderAPI> => {
   const gl = element.getContext("webgl", {
     premultipliedAlpha: true,
@@ -109,7 +109,18 @@ export const webGLScene = async (
   );
   let cleanedUp = false;
 
+  let onChange: () => void;
+
+  renders.forEach((r) => {
+    r.onChange(() => {
+      onChange && onChange();
+    });
+  });
+
   return {
+    onChange: (listener) => {
+      onChange = listener;
+    },
     render: () => {
       if (cleanedUp) {
         return;

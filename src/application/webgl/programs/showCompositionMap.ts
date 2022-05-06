@@ -108,13 +108,17 @@ export const showCompositionMap = (): {
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
 
+  let onChange: () => void = () => {};
+
   return {
     setImage(image) {
       img = image;
+      onChange();
     },
     setShapes(s) {
       shapes = s;
       populateShapes();
+      onChange();
     },
     setVectorValues(v) {
       vectorValues = v;
@@ -123,19 +127,22 @@ export const showCompositionMap = (): {
 
       const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
       const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
-      Object.entries(vectorValues).forEach(([key, value]) => {
+      for (const [key, value] of Object.entries(vectorValues)) {
         const index = mutMapping[key];
         if (index === -1) return;
         mutationValues[index * 2] = value[0];
         mutationValues[index * 2 + 1] = value[1];
-      });
+      }
       gl.uniform2fv(uMutationValues, mutationValues);
+      onChange();
     },
     setZoom(newZoom) {
       zoom = newZoom;
+      onChange();
     },
     setPan(x, y) {
       pan = [x, y];
+      onChange();
     },
     setLayerSelected(layers) {
       if (layers.length === 0 || shapes === null) {
@@ -147,6 +154,8 @@ export const showCompositionMap = (): {
         layersSelected.push(layerId);
         layersSelected.push(...collectChildIds(shapes.layerHierarchy, layerId));
       }
+      console.log(layersSelected);
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
@@ -161,6 +170,9 @@ export const showCompositionMap = (): {
       program = shaderProgram;
 
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!img || !shapes || !gl) {
             return;

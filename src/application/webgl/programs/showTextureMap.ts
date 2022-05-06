@@ -58,19 +58,25 @@ export const showTextureMap = (): {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
 
+  let onChange: () => void = () => {};
+
   return {
     setImage(image: HTMLImageElement) {
       img = image;
+      onChange();
     },
     setLayers(s: Layer[]) {
       shapes = s;
       populateShapes();
+      onChange();
     },
     setZoom(newZoom) {
       zoom = newZoom;
+      onChange();
     },
     setPan(x: number, y: number) {
       pan = [x, y];
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
@@ -85,6 +91,9 @@ export const showTextureMap = (): {
       );
 
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!shapes || !img || !vertexBuffer || !indexBuffer || !gl) {
             return;

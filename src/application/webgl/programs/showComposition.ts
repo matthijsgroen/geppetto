@@ -152,24 +152,31 @@ export const showComposition = (): {
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
 
+  let onChange: () => void = () => {};
+
   return {
     setImage(image: HTMLImageElement) {
       img = image;
       setImageTexture();
+      onChange();
     },
     setShapes(s: GeppettoImage) {
       shapes = s;
       populateShapes();
+      onChange();
     },
     setVectorValues(v) {
       vectorValues = v;
       populateVectorValues();
+      onChange();
     },
     setZoom(newZoom) {
       zoom = newZoom;
+      onChange();
     },
     setPan(x: number, y: number) {
       pan = [x, y];
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getUnit, getSize }) {
       gl = initGl;
@@ -212,6 +219,9 @@ export const showComposition = (): {
       );
 
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!img || !shapes || !gl) {
             return;
