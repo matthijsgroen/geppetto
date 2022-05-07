@@ -45,3 +45,8 @@ export const SliderControl = Template.bind({});
 SliderControl.args = {
   children: <input type="range" value={10} />,
 };
+
+export const CheckControl = Template.bind({});
+CheckControl.args = {
+  children: <input type="checkbox" checked />,
+};

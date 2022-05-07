@@ -79,7 +79,7 @@ input[type="number"]:not(:focus) {
   width: 15px;
   background: var(--colors-background-panel);
   border: 2px solid var(--thumb-border);
-  box-shadow: 1px 1px 2px #0006;
+  box-shadow: 2px 2px 3px #0006;
   margin-top: -5px;
   border-radius: 50%;
 }
@@ -122,3 +122,46 @@ input[type="number"]:not(:focus) {
 }
 
 
+.control input[type="checkbox"] {
+  -webkit-appearance: none;
+
+  width: 42px;
+  height: 25px;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  background-color: var(--colors-background-workspace);
+  position: relative;
+  border-radius: 15px;
+  box-shadow: inset 1px 1px 2px #0003;
+  transition: background-color 200ms;
+
+  &::after {
+    content: '.';
+    color: var(--colors-background-panel);
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    border: 2px solid var(--colors-background-panel);
+    background: var(--colors-background-panel);
+    border-radius: 50%;
+    box-shadow: 2px 2px 3px #0006;
+    margin: 2px;
+    transition: margin-left 200ms;
+  }
+
+  &:focus::after {
+    border-color: var(--colors-control-focus);
+  }
+  &:hover::after {
+    border-color: var(--colors-control-highlight);
+  }
+
+  &:checked {
+    background-color: var(--colors-control-active);
+  }
+
+  &:checked::after {
+    margin-left: 19px;
+  }
+}

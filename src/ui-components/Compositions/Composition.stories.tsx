@@ -142,6 +142,9 @@ const Template: Story = () => (
             </UncontrolledTreeEnvironment>
             <Title>Opacity (4)</Title>
             <ControlPanel>
+              <Control label="Visible">
+                <input type="checkbox" />
+              </Control>
               <Control label="Value">
                 <NumberInput value={10} prefix="x:" />
                 <NumberInput value={20} prefix="y:" />
