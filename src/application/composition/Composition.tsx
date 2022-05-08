@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { hasPoints } from "../../animation/file2/shapes";
-import { ControlDefinition } from "../../animation/file2/types";
+import { ControlDefinition, GeppettoImage } from "../../animation/file2/types";
 import { Vec2 } from "../../types";
 import {
   Column,
@@ -21,7 +21,7 @@ import { MouseMode } from "../canvas/MouseControl";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
-import { mixVec2 } from "../webgl/lib/vertices";
+import { mixHueVec2, mixVec2 } from "../webgl/lib/vertices";
 import { ControlTree } from "./ControlTree";
 import { ShapeTree } from "./ShapeTree";
 
@@ -36,7 +36,8 @@ type CompositionProps = {
 
 const calculateVectorValues = (
   controlValues: Record<string, number>,
-  controls: Record<string, ControlDefinition>
+  controls: Record<string, ControlDefinition>,
+  mutations: GeppettoImage["mutations"]
 ) => {
   const result: Record<string, Vec2> = {};
   for (const [controlId, controlValue] of Object.entries(controlValues)) {
@@ -51,7 +52,11 @@ const calculateVectorValues = (
     const mixValue = controlValue - minStep;
 
     for (const [mutationId, mutationValue] of Object.entries(minValue)) {
-      const value = mixVec2(mutationValue, maxValue[mutationId], mixValue);
+      const mutationInfo = mutations[mutationId];
+      const value =
+        mutationInfo.type === "colorize"
+          ? mixHueVec2(mutationValue, maxValue[mutationId], mixValue)
+          : mixVec2(mutationValue, maxValue[mutationId], mixValue);
       result[mutationId] = value;
     }
   }
@@ -81,7 +86,8 @@ export const Composition: React.FC<CompositionProps> = ({
 
   const controlVectors = calculateVectorValues(
     file.controlValues,
-    file.controls
+    file.controls,
+    file.mutations
   );
   const vectorValues = { ...file.defaultFrame, ...controlVectors };
 
