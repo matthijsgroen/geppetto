@@ -157,7 +157,11 @@ export const showCompositionMap = (): {
           continue;
         }
         layersSelected.push(layerId);
-        layersSelected.push(...collectChildIds(shapes.layerHierarchy, layerId));
+        if (treeNode.type === "layerFolder") {
+          layersSelected.push(
+            ...collectChildIds(shapes.layerHierarchy, layerId)
+          );
+        }
       }
       onChange();
     },

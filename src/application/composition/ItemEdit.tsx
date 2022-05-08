@@ -1,9 +1,11 @@
-import { iconMapping } from "../../animation/file2/mutation";
-import { GeppettoImage, NodeType, TreeNode } from "../../animation/file2/types";
+import produce from "immer";
+import { useCallback } from "react";
+import { hasRadius, iconMapping } from "../../animation/file2/mutation";
+import { NodeType, TreeNode } from "../../animation/file2/types";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
+import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
-import { UpdateState } from "../types";
 
 type ItemEditProps = {
   selectedShapeIds: string[];
@@ -13,11 +15,10 @@ type ItemEditProps = {
 type EditProps<T extends NodeType> = {
   item: TreeNode<T>;
   itemId: string;
-  file: GeppettoImage;
-  setFile: UpdateState<GeppettoImage>;
 };
 
-const LayerEdit: React.FC<EditProps<"layer">> = ({ itemId, file }) => {
+const LayerEdit: React.FC<EditProps<"layer">> = ({ itemId }) => {
+  const [file] = useFile();
   const layer = file.layers[itemId];
   return (
     <>
@@ -34,8 +35,24 @@ const LayerEdit: React.FC<EditProps<"layer">> = ({ itemId, file }) => {
   );
 };
 
-const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId, file }) => {
+const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId }) => {
+  const [file, setFile] = useFile();
   const mutation = file.mutations[itemId];
+
+  const radiusChange = useCallback(
+    (newRadius: number) => {
+      setFile(
+        produce((update) => {
+          const mutation = update.mutations[itemId];
+          if (hasRadius(mutation)) {
+            mutation.radius = newRadius;
+          }
+        })
+      );
+    },
+    [setFile, itemId]
+  );
+
   return (
     <>
       <Title>
@@ -43,6 +60,14 @@ const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId, file }) => {
       </Title>
       <ControlPanel>
         <VectorControl label="Origin" value={mutation.origin} />
+        {hasRadius(mutation) && (
+          <NumberControl
+            label="Radius"
+            value={mutation.radius}
+            onChange={radiusChange}
+          />
+        )}
+        {/* <VectorControl label="Value" value={mutation.} /> */}
       </ControlPanel>
     </>
   );
@@ -52,7 +77,7 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
   selectedShapeIds,
   selectedControlIds,
 }) => {
-  const [file, setFile] = useFile();
+  const [file] = useFile();
   const activeShapeId =
     selectedShapeIds.length === 1 ? selectedShapeIds[0] : null;
   const hierarchyItem =
@@ -65,8 +90,6 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
           <LayerEdit
             item={hierarchyItem as TreeNode<"layer">}
             itemId={activeShapeId}
-            file={file}
-            setFile={setFile}
           />
         )}
       {activeShapeId !== null &&
@@ -75,8 +98,6 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
           <MutationEdit
             item={hierarchyItem as TreeNode<"mutation">}
             itemId={activeShapeId}
-            file={file}
-            setFile={setFile}
           />
         )}
     </>

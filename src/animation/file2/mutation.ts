@@ -1,4 +1,4 @@
-import { MutationVector } from "./types";
+import { DeformationVector, MutationVector, TranslationVector } from "./types";
 
 export const iconMapping: Record<MutationVector["type"], string> = {
   deform: "🟠",
@@ -10,3 +10,7 @@ export const iconMapping: Record<MutationVector["type"], string> = {
   colorize: "🟧",
   saturation: "🟩",
 };
+
+export const hasRadius = (
+  mutation: MutationVector
+): mutation is TranslationVector | DeformationVector => "radius" in mutation;
