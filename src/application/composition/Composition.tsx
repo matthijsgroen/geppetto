@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { hasPoints } from "../../animation/file2/shapes";
-import { ControlDefinition, GeppettoImage } from "../../animation/file2/types";
+import { GeppettoImage } from "../../animation/file2/types";
 import { Vec2 } from "../../types";
 import {
   Column,
@@ -21,7 +21,7 @@ import { MouseMode } from "../canvas/MouseControl";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
-import { mixHueVec2, mixVec2 } from "../webgl/lib/vertices";
+import { mergeMutationValue, mixHueVec2, mixVec2 } from "../webgl/lib/vertices";
 import { ControlTree } from "./ControlTree";
 import { ShapeTree } from "./ShapeTree";
 
@@ -34,14 +34,10 @@ type CompositionProps = {
   menu?: React.ReactChild;
 };
 
-const calculateVectorValues = (
-  controlValues: Record<string, number>,
-  controls: Record<string, ControlDefinition>,
-  mutations: GeppettoImage["mutations"]
-) => {
-  const result: Record<string, Vec2> = {};
-  for (const [controlId, controlValue] of Object.entries(controlValues)) {
-    const controlInfo = controls[controlId];
+const calculateVectorValues = (file: GeppettoImage) => {
+  const result: Record<string, Vec2> = { ...file.defaultFrame };
+  for (const [controlId, controlValue] of Object.entries(file.controlValues)) {
+    const controlInfo = file.controls[controlId];
     if (!controlInfo) continue;
     const minStep = Math.floor(controlValue);
     const maxStep = Math.ceil(controlValue);
@@ -52,12 +48,21 @@ const calculateVectorValues = (
     const mixValue = controlValue - minStep;
 
     for (const [mutationId, mutationValue] of Object.entries(minValue)) {
-      const mutationInfo = mutations[mutationId];
+      const mutationInfo = file.mutations[mutationId];
       const value =
         mutationInfo.type === "colorize"
           ? mixHueVec2(mutationValue, maxValue[mutationId], mixValue)
           : mixVec2(mutationValue, maxValue[mutationId], mixValue);
-      result[mutationId] = value;
+
+      if (result[mutationId]) {
+        result[mutationId] = mergeMutationValue(
+          value,
+          result[mutationId],
+          mutationInfo.type
+        );
+      } else {
+        result[mutationId] = value;
+      }
     }
   }
 
@@ -84,12 +89,7 @@ export const Composition: React.FC<CompositionProps> = ({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
 
-  const controlVectors = calculateVectorValues(
-    file.controlValues,
-    file.controls,
-    file.mutations
-  );
-  const vectorValues = { ...file.defaultFrame, ...controlVectors };
+  const vectorValues = calculateVectorValues(file);
 
   return (
     <Column>
