@@ -5,13 +5,17 @@ type NumberInputProps = {
   prefix?: string;
   postfix?: string;
   value: number;
+  minValue?: number;
+  maxValue?: number;
   onChange?: (newValue: number) => void;
 };
 
 export const NumberInput: React.FC<NumberInputProps> = ({
   prefix,
-  value,
   postfix,
+  value,
+  minValue,
+  maxValue,
   onChange,
 }) => {
   const changeHandler = useCallback(
@@ -24,7 +28,13 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   return (
     <label className={styles.controlShort}>
       {prefix}
-      <input type="number" value={value} onChange={changeHandler} />
+      <input
+        type="number"
+        value={value}
+        onChange={changeHandler}
+        min={minValue}
+        max={maxValue}
+      />
       {postfix}
     </label>
   );
