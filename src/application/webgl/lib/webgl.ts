@@ -87,19 +87,6 @@ export const webGLScene = async (
     getSize: () => [element.width, element.height],
   };
 
-  const listener = ({ matches }: MediaQueryListEvent | MediaQueryList) => {
-    if (matches) {
-      gl.clearColor(0.1, 0.1, 0.1, 1.0);
-    } else {
-      gl.clearColor(0.67, 0.67, 0.67, 1.0);
-    }
-  };
-
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-  listener(mediaQuery);
-  mediaQuery.addEventListener("change", listener);
-
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -110,6 +97,22 @@ export const webGLScene = async (
   let cleanedUp = false;
 
   let onChange: () => void;
+
+  const colorSchemeListener = ({
+    matches,
+  }: MediaQueryListEvent | MediaQueryList) => {
+    if (matches) {
+      gl.clearColor(0.1, 0.1, 0.1, 1.0);
+    } else {
+      gl.clearColor(0.67, 0.67, 0.67, 1.0);
+    }
+    onChange && onChange();
+  };
+
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+  colorSchemeListener(mediaQuery);
+  mediaQuery.addEventListener("change", colorSchemeListener);
 
   renders.forEach((r) => {
     r.onChange(() => {
@@ -132,7 +135,7 @@ export const webGLScene = async (
     cleanup: () => {
       cleanedUp = true;
       renders.forEach((item) => item.cleanup());
-      mediaQuery.removeEventListener("change", listener);
+      mediaQuery.removeEventListener("change", colorSchemeListener);
     },
   };
 };
