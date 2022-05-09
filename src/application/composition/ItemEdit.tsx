@@ -4,6 +4,7 @@ import { hasRadius, iconMapping } from "../../animation/file2/mutation";
 import { NodeType, TreeNode } from "../../animation/file2/types";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
+import { BooleanControl } from "../controls/CheckControl";
 import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
 
@@ -39,13 +40,34 @@ const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const mutation = file.mutations[itemId];
 
+  const affectingControls = Object.entries(file.controls).filter(
+    ([, control]) =>
+      control.steps.some((frame) =>
+        Object.keys(frame).some((key) => key === itemId)
+      )
+  );
+
   const radiusChange = useCallback(
     (newRadius: number) => {
       setFile(
-        produce((update) => {
-          const mutation = update.mutations[itemId];
+        produce((draft) => {
+          const mutation = draft.mutations[itemId];
           if (hasRadius(mutation)) {
             mutation.radius = newRadius;
+          }
+        })
+      );
+    },
+    [setFile, itemId]
+  );
+
+  const toggleRadius = useCallback(
+    (value: boolean) => {
+      setFile(
+        produce((draft) => {
+          const mutation = draft.mutations[itemId];
+          if (hasRadius(mutation)) {
+            mutation.radius = value ? 10 : -1;
           }
         })
       );
@@ -61,13 +83,28 @@ const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId }) => {
       <ControlPanel>
         <VectorControl label="Origin" value={mutation.origin} />
         {hasRadius(mutation) && (
-          <NumberControl
-            label="Radius"
-            value={mutation.radius}
-            onChange={radiusChange}
-          />
+          <>
+            <BooleanControl
+              label="Use radius"
+              value={mutation.radius !== -1}
+              onChange={toggleRadius}
+            />
+            {mutation.radius !== -1 && (
+              <NumberControl
+                label="Radius"
+                value={mutation.radius}
+                minValue={0}
+                onChange={radiusChange}
+              />
+            )}
+          </>
         )}
-        {/* <VectorControl label="Value" value={mutation.} /> */}
+        {affectingControls.length > 0 && (
+          <Control label="Controlled by">
+            <p>{affectingControls.map(([, c]) => c.name).join(", ")}</p>
+          </Control>
+        )}
+        <VectorControl label="Value" value={file.defaultFrame[itemId]} />
       </ControlPanel>
     </>
   );
