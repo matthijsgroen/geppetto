@@ -2,6 +2,7 @@ import produce from "immer";
 import { useCallback } from "react";
 import { hasRadius, iconMapping } from "../../animation/file2/mutation";
 import { NodeType, TreeNode } from "../../animation/file2/types";
+import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
 import { BooleanControl } from "../controls/CheckControl";
@@ -19,15 +20,31 @@ type EditProps<T extends NodeType> = {
 };
 
 const LayerEdit: React.FC<EditProps<"layer">> = ({ itemId }) => {
-  const [file] = useFile();
+  const [file, setFile] = useFile();
   const layer = file.layers[itemId];
+
+  const offsetChangeHandler = useCallback(
+    (newValue: Vec2) => {
+      setFile(
+        produce((draft) => {
+          draft.layers[itemId].translate = newValue;
+        })
+      );
+    },
+    [setFile, itemId]
+  );
+
   return (
     <>
       <Title>
         <Icon>📄</Icon> {layer.name}
       </Title>
       <ControlPanel>
-        <VectorControl label="Offset" value={layer.translate} />
+        <VectorControl
+          label="Offset"
+          value={layer.translate}
+          onChange={offsetChangeHandler}
+        />
         <Control label="Visible">
           <input type="checkbox" />
         </Control>
@@ -62,13 +79,24 @@ const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId }) => {
   );
 
   const toggleRadius = useCallback(
-    (value: boolean) => {
+    (newValue: boolean) => {
       setFile(
         produce((draft) => {
           const mutation = draft.mutations[itemId];
           if (hasRadius(mutation)) {
-            mutation.radius = value ? 10 : -1;
+            mutation.radius = newValue ? 10 : -1;
           }
+        })
+      );
+    },
+    [setFile, itemId]
+  );
+
+  const valueChangeHandler = useCallback(
+    (newValue: Vec2) => {
+      setFile(
+        produce((draft) => {
+          draft.defaultFrame[itemId] = newValue;
         })
       );
     },
@@ -104,7 +132,11 @@ const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId }) => {
             <p>{affectingControls.map(([, c]) => c.name).join(", ")}</p>
           </Control>
         )}
-        <VectorControl label="Value" value={file.defaultFrame[itemId]} />
+        <VectorControl
+          label="Value"
+          value={file.defaultFrame[itemId]}
+          onChange={valueChangeHandler}
+        />
       </ControlPanel>
     </>
   );
