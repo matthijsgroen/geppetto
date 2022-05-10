@@ -1,29 +1,52 @@
 .inner {
   flex: 0;
   display: flex;
-  flex-direction: row;
   align-items: center;
+}
+.inner.inner.horizontal > * + * {
+  margin-left: 0.25rem;
+}
+.inner.horizontal {
+  flex-direction: row;
   min-width: fit-content;
   height: 3rem;
   padding: 0 0.2rem;
 }
-.inner > * + * {
-  margin-left: 0.25rem;
+
+.inner.vertical {
+  flex-direction: column;
+  min-height: fit-content;
+  width: 3rem;
+  padding: 0.2rem 0;
+}
+.inner.inner.vertical > * + * {
+  margin-top: 0.25rem;
 }
 
 .outer {
   background-color: var(--colors-background-panel);
-  height: 3rem;
   flex-shrink: 0;
-  overflow-x: scroll;
-  overflow-y: visible;
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+.outer.horizontal {
+  height: 3rem;
+  overflow-x: scroll;
+  overflow-y: visible;
+}
+.outer.vertical {
+  width: 3rem;
+  overflow-x: visible;
+  overflow-y: scroll;
+}
+
 .outer::-webkit-scrollbar {
   display: none;
 }
 
-.small {
+.horizontal.small {
   height: 2.25rem;
+}
+.vertical.small {
+  width: 2.25rem;
 }

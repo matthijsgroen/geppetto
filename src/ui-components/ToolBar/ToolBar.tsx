@@ -19,12 +19,16 @@ export const ToolBar: React.FC<ToolBarProps> = ({
     <div
       className={className({
         [styles.outer]: true,
+        [styles.horizontal]: !vertical,
+        [styles.vertical]: vertical,
         [styles.small]: size === "small",
       })}
     >
       <div
         className={className({
           [styles.inner]: true,
+          [styles.horizontal]: !vertical,
+          [styles.vertical]: vertical,
           [styles.small]: size === "small",
         })}
       >

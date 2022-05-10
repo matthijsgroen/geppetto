@@ -1,14 +1,23 @@
-import styled from "styled-components";
-
-const Separator = styled.span`
-    display: inline-block;
-    height: 1.8rem;
-    border-right: 1px solid ${(props) => props.theme.colors.controlEdge};
-    font-size 0;
-`;
+import { useContext } from "react";
+import { className } from "../className";
+import { ToolbarContext } from "../ToolBar/ToolBarContext";
+import styles from "./ToolSeparator.module.css";
 
 /**
  * Creates a small dividing line between toolbar elements
  */
-export const ToolSeparator: React.FC = () => <Separator>|</Separator>;
+export const ToolSeparator: React.FC = () => {
+  const toolbarProps = useContext(ToolbarContext);
+  return (
+    <span
+      className={className({
+        [styles.separator]: true,
+        [styles.horizontal]: !toolbarProps.vertical,
+        [styles.vertical]: toolbarProps.vertical,
+      })}
+    >
+      |
+    </span>
+  );
+};
 ToolSeparator.displayName = "ToolSeparator";
