@@ -213,4 +213,4 @@ const Template: Story = () => (
   </Column>
 );
 
-export const Layers = Template.bind({});
+export const Composition = Template.bind({});
