@@ -9,5 +9,6 @@
 }
 .separator.vertical {
   width: 1.8rem;
-  border-top: 1px solid var(--colors-control-edge);
+  padding-top: 0.1rem;
+  border-bottom: 1px solid var(--colors-control-edge);
 }

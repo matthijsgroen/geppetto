@@ -17,7 +17,7 @@
   flex-direction: column;
   min-height: fit-content;
   width: 3rem;
-  padding: 0.2rem 0;
+  padding: 0.35rem 0;
 }
 .inner.inner.vertical > * + * {
   margin-top: 0.25rem;
