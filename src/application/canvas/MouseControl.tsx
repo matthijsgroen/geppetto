@@ -31,7 +31,7 @@ const MouseControlContainer = styled.div<MouseControlProps>`
       [MouseMode.Aim]: "crosshair",
       [MouseMode.Target]: "pointer",
     }[props.mode])};
-  border: 1px solid transparent;
+  border: 1px solid ${(props) => props.theme.colors.controlEdge};
 
   &:focus {
     border-color: ${(props) => props.theme.colors.controlFocus};

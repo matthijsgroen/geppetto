@@ -17,6 +17,9 @@ const StyledPanel = styled.div<{
     props.workspace
       ? props.theme.colors.backgroundWorkspace
       : props.theme.colors.backgroundPanel};
+  border: 1px solid
+    ${(props) =>
+      props.workspace ? props.theme.colors.controlEdge : "transparent"};
   color: ${(props) => props.theme.colors.textDefault};
   flex: 1;
   flex-direction: column;
