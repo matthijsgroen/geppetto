@@ -13,6 +13,10 @@ export default {
   argTypes: {
     children: { control: false, table: false },
   },
+  args: {
+    size: "default",
+    vertical: false,
+  },
 } as ComponentMeta<typeof ToolBar>;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
@@ -30,7 +34,7 @@ const Template: ComponentStory<typeof ToolBar> = (args) => (
 );
 
 export const Default = Template.bind({});
-Default.args = {};
+Default.args = { size: "default" };
 
 export const Small = Template.bind({});
 Small.args = { size: "small" };

@@ -8,6 +8,7 @@ import { Label } from "../Label/Label";
 import { ToolbarContext } from "../ToolBar/ToolBarContext";
 import styles from "./ToolButton.module.css";
 import { className } from "../className";
+import { ToolBarSize } from "../ToolBar/ToolBar";
 
 type ToolButtonProps = {
   icon?: React.ReactChild;
@@ -17,7 +18,7 @@ type ToolButtonProps = {
   disabled?: boolean;
   tooltip?: string;
   notificationBadge?: boolean;
-  size?: "default" | "small";
+  size?: ToolBarSize;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
 };
@@ -38,8 +39,8 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
     },
     ref
   ) => {
-    const toolbarSize = useContext(ToolbarContext);
-    const useSize = size === undefined ? toolbarSize : size ?? "default";
+    const toolbarProps = useContext(ToolbarContext);
+    const useSize = size === undefined ? toolbarProps.size : size ?? "default";
     return (
       <button
         type={"button"}

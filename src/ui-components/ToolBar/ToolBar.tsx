@@ -7,13 +7,15 @@ export type ToolBarSize = "default" | "small";
 
 type ToolBarProps = PropsWithChildren<{
   size?: ToolBarSize;
+  vertical?: boolean;
 }>;
 
 export const ToolBar: React.FC<ToolBarProps> = ({
   children,
   size = "default",
+  vertical = false,
 }) => (
-  <ToolbarContext.Provider value={size}>
+  <ToolbarContext.Provider value={{ size, vertical }}>
     <div
       className={className({
         [styles.outer]: true,

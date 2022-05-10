@@ -1,10 +1,11 @@
 import { PropsWithChildren } from "react";
 import { className } from "../className";
+import { ToolBarSize } from "../ToolBar/ToolBar";
 import styles from "./Label.module.css";
 
 type LabelProps = PropsWithChildren<{
   active?: boolean;
-  size?: "default" | "small";
+  size?: ToolBarSize;
 }>;
 
 /**
