@@ -394,7 +394,6 @@ export const Layers: React.FC<LayersProps> = ({
                 grid={gridSettings}
                 activeLayer={activeLayer}
                 activeCoord={activeCoord}
-                showFPS={false}
               />
             </LayerMouseControl>
           )}

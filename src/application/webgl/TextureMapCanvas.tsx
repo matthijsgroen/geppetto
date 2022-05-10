@@ -22,7 +22,6 @@ export interface TextureMapCanvasProps {
   activeCoord?: Vec2 | null;
   activeLayer?: string;
   onMouseMove?(coordinates: [number, number] | null): void;
-  showFPS?: boolean;
 }
 
 const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
@@ -34,7 +33,6 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   grid,
   activeLayer,
   activeCoord = null,
-  showFPS,
 }) => {
   const textureProgram = useMemo(() => showTexture(), []);
   const textureMapProgram = useMemo(() => showTextureMap(), []);
@@ -81,7 +79,7 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   pointsProgram.setLayerSelected(activeLayer);
   pointsProgram.setActiveCoord(activeCoord);
 
-  return <WebGLCanvas renderers={renderers} showFPS={showFPS} />;
+  return <WebGLCanvas renderers={renderers} />;
 };
 
 export default TextureMapCanvas;

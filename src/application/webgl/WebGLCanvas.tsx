@@ -66,7 +66,6 @@ const startWebGL = async (
 
 export interface WebGLCanvasProps {
   renderers: WebGLRenderer[];
-  showFPS?: boolean;
 }
 
 const WebGLCanvas: React.FC<WebGLCanvasProps> = ({ renderers }) => {

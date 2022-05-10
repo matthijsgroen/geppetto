@@ -14,7 +14,6 @@ export interface CompositionCanvasProps {
   zoom: number;
   panX: number;
   panY: number;
-  showFPS?: boolean;
 }
 
 const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
@@ -30,7 +29,6 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
   zoom,
   panX,
   panY,
-  showFPS,
 }) => {
   const composition = useMemo(() => showComposition(), []);
   const layer = useMemo(() => showCompositionMap(), []);
@@ -79,7 +77,7 @@ const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
   vectorMap.setZoom(zoom);
   vectorMap.setPan(panX, panY);
 
-  return <WebGLCanvas renderers={renderers} showFPS={showFPS} />;
+  return <WebGLCanvas renderers={renderers} />;
 };
 
 export default CompositionCanvas;
