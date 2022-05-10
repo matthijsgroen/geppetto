@@ -25,7 +25,7 @@
   gap: 0.5rem;
   width: calc(3rem - 3px);
   height: fit-content;
-  margin-left: 2px;
+  margin-right: 2px;
 
   border-left: 3px solid transparent;
   padding: 1rem 0;
