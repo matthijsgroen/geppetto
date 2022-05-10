@@ -12,3 +12,6 @@
 .active {
   color: var(--colors-text-active);
 }
+.vertical {
+  writing-mode: vertical-lr;
+}

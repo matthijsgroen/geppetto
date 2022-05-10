@@ -11,6 +11,7 @@ type ToolTabProps = {
   active?: boolean;
   disabled?: boolean;
   size?: ToolBarSize;
+  vertical?: boolean;
   tooltip?: string;
   onClick?: () => void;
   onKeyDown?: () => void;
@@ -24,6 +25,7 @@ export const ToolTab = forwardRef<HTMLButtonElement, ToolTabProps>(
       disabled,
       active = false,
       size,
+      vertical,
       tooltip,
       onClick,
       onKeyDown: onKeydown,
@@ -32,6 +34,8 @@ export const ToolTab = forwardRef<HTMLButtonElement, ToolTabProps>(
   ) => {
     const toolbarProps = useContext(ToolbarContext);
     const useSize = size === undefined ? toolbarProps.size : size ?? "default";
+    const useVertical =
+      vertical === undefined ? toolbarProps.vertical : vertical ?? false;
     return (
       <button
         type="button"
@@ -39,6 +43,8 @@ export const ToolTab = forwardRef<HTMLButtonElement, ToolTabProps>(
           [styles.toolTab]: true,
           [styles.active]: active,
           [styles.small]: useSize === "small",
+          [styles.horizontal]: !useVertical,
+          [styles.vertical]: useVertical,
         })}
         onClick={onClick}
         onKeyDown={onKeydown}
@@ -48,7 +54,7 @@ export const ToolTab = forwardRef<HTMLButtonElement, ToolTabProps>(
       >
         {icon}{" "}
         {label && (
-          <Label active={active} size={useSize}>
+          <Label active={active} size={useSize} vertical={useVertical}>
             {label}
           </Label>
         )}

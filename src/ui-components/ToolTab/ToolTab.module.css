@@ -1,33 +1,57 @@
 .toolTab {
   font: caption;
-  display: inline-block;
+  display: inline-flex;
   background-color: var(--colors-background-panel);
   color: var(--colors-text-default);
+  background-repeat: no-repeat;
   font-size: 1rem;
-
-  height: calc(3rem - 3px);
-  margin-top: 2px;
 
   align-items: center;
   border: none;
-  border-bottom: 3px solid transparent;
 
   outline: 2px solid transparent;
-  padding: 0 1rem;
   white-space: nowrap;
 }
 
+.horizontal {
+  height: calc(3rem - 3px);
+  margin-top: 2px;
+
+  border-bottom: 3px solid transparent;
+  padding: 0 1rem;
+}
+.vertical {
+  flex-direction: column;
+  gap: 0.5rem;
+  width: calc(3rem - 3px);
+  height: fit-content;
+  margin-left: 2px;
+
+  border-left: 3px solid transparent;
+  padding: 1rem 0;
+}
+
 .active {
+  color: var(--colors-text-active);
+}
+
+.active.horizontal {
   background-image: radial-gradient(
     farthest-side,
     var(--colors-control-default),
     var(--colors-background-panel)
   );
-  background-repeat: no-repeat;
   background-position: 0em 1em;
-
-  color: var(--colors-text-active);
   border-bottom: 3px solid var(--colors-control-active);
+}
+.active.vertical {
+  background-image: radial-gradient(
+    closest-side,
+    var(--colors-control-default),
+    var(--colors-background-panel)
+  );
+  background-position: -1em 0em;
+  border-left: 3px solid var(--colors-control-active);
 }
 
 .toolTab:disabled {
@@ -40,6 +64,10 @@
   background: var(--colors-control-highlight);
 }
 
-.small {
+.horizontal.small {
   height: calc(2.25rem - 3px);
+}
+
+.vertical.small {
+  width: calc(2.25rem - 3px);
 }
