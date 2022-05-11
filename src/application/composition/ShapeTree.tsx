@@ -12,7 +12,6 @@ import { useFile } from "../applicationMenu/FileContext";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
 import { UseState } from "../types";
-import { ItemEdit } from "./ItemEdit";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
@@ -47,29 +46,25 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
 
   return (
     <LayerTreeEnvironment selectedItemsState={selectedItemsState} showMutations>
-      <Panel padding={5}>
-        <ToolBar size="small">
-          <ToolButton
-            icon={<Icon>📁</Icon>}
-            label="+"
-            tooltip="Add folder"
-            onClick={addFolderAction}
-            onKeyDown={addFolderAction}
-            disabled={selectedItems.length > 1}
-          />
-          <ToolButton
-            icon={<Icon>⚪️</Icon>}
-            label="+"
-            tooltip="Add mutation"
-            disabled
-          />
-          <ToolSeparator />
-          <ToolButton icon={<Icon>🗑</Icon>} disabled tooltip="Remove item" />
-        </ToolBar>
-        <Tree treeId="composition" />
-
-        <ItemEdit selectedShapeIds={selectedItems} selectedControlIds={[]} />
-      </Panel>
+      <ToolBar size="small">
+        <ToolButton
+          icon={<Icon>📁</Icon>}
+          label="+"
+          tooltip="Add folder"
+          onClick={addFolderAction}
+          onKeyDown={addFolderAction}
+          disabled={selectedItems.length > 1}
+        />
+        <ToolButton
+          icon={<Icon>⚪️</Icon>}
+          label="+"
+          tooltip="Add mutation"
+          disabled
+        />
+        <ToolSeparator />
+        <ToolButton icon={<Icon>🗑</Icon>} disabled tooltip="Remove item" />
+      </ToolBar>
+      <Tree treeId="composition" />
     </LayerTreeEnvironment>
   );
 };

@@ -270,6 +270,7 @@ export const Layers: React.FC<LayersProps> = ({
     <Column>
       <ToolBar>
         {menu}
+        <ToolSeparator />
         <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
         <ToolTab
           icon={<Icon>🤷🏼</Icon>}
@@ -366,7 +367,11 @@ export const Layers: React.FC<LayersProps> = ({
         <InstallToolButton />
       </ToolBar>
       <Row>
-        <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
+        <ResizePanel
+          direction={ResizeDirection.East}
+          defaultSize={250}
+          minSize={150}
+        >
           <Column>
             <ShapeTree selectedItemsState={[selectedItems, setSelectedItems]} />
           </Column>

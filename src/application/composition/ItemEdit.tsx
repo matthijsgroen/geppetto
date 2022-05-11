@@ -19,6 +19,24 @@ type EditProps<T extends NodeType> = {
   itemId: string;
 };
 
+const LayerFolderEdit: React.FC<EditProps<"layerFolder">> = ({ itemId }) => {
+  const [file] = useFile();
+  const layerFolder = file.layerFolders[itemId];
+
+  return (
+    <>
+      <Title>
+        <Icon>📁</Icon> {layerFolder.name}
+      </Title>
+      <ControlPanel>
+        <Control label="Visible">
+          <input type="checkbox" />
+        </Control>
+      </ControlPanel>
+    </>
+  );
+};
+
 const LayerEdit: React.FC<EditProps<"layer">> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const layer = file.layers[itemId];
@@ -151,24 +169,47 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
     selectedShapeIds.length === 1 ? selectedShapeIds[0] : null;
   const hierarchyItem =
     activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
+
+  if (
+    activeShapeId !== null &&
+    hierarchyItem &&
+    hierarchyItem.type === "layer"
+  ) {
+    return (
+      <LayerEdit
+        item={hierarchyItem as TreeNode<"layer">}
+        itemId={activeShapeId}
+      />
+    );
+  }
+  if (
+    activeShapeId !== null &&
+    hierarchyItem &&
+    hierarchyItem.type === "layerFolder"
+  ) {
+    return (
+      <LayerFolderEdit
+        item={hierarchyItem as TreeNode<"layerFolder">}
+        itemId={activeShapeId}
+      />
+    );
+  }
+
+  if (
+    activeShapeId !== null &&
+    hierarchyItem &&
+    hierarchyItem.type === "mutation"
+  ) {
+    return (
+      <MutationEdit
+        item={hierarchyItem as TreeNode<"mutation">}
+        itemId={activeShapeId}
+      />
+    );
+  }
   return (
     <>
-      {activeShapeId !== null &&
-        hierarchyItem &&
-        hierarchyItem.type === "layer" && (
-          <LayerEdit
-            item={hierarchyItem as TreeNode<"layer">}
-            itemId={activeShapeId}
-          />
-        )}
-      {activeShapeId !== null &&
-        hierarchyItem &&
-        hierarchyItem.type === "mutation" && (
-          <MutationEdit
-            item={hierarchyItem as TreeNode<"mutation">}
-            itemId={activeShapeId}
-          />
-        )}
+      <Title>No selection</Title>
     </>
   );
 };
