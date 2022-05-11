@@ -23,6 +23,7 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
 }) => {
   const [file] = useFile();
   const mutation = file.mutations[mutationId];
+
   if (mutation.type === "opacity") {
     return (
       <ValueSlider
@@ -111,4 +112,25 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
     );
   }
   return <VectorControl label="Value" value={value} onChange={onValueChange} />;
+};
+
+export const MutationControlled: React.FC<{ mutationId: string }> = ({
+  mutationId,
+}) => {
+  const [file] = useFile();
+
+  const affectingControls = Object.entries(file.controls).filter(
+    ([, control]) =>
+      control.steps.some((frame) =>
+        Object.keys(frame).some((key) => key === mutationId)
+      )
+  );
+  if (affectingControls.length > 0) {
+    return (
+      <Control label="Controlled by">
+        <p>{affectingControls.map(([, c]) => c.name).join(", ")}</p>
+      </Control>
+    );
+  }
+  return null;
 };

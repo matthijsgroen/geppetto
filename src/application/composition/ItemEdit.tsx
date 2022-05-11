@@ -7,7 +7,10 @@ import { useFile } from "../applicationMenu/FileContext";
 import { BooleanControl } from "../controls/CheckControl";
 import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
-import { MutationValueEdit } from "./editors/MutationValueEdit";
+import {
+  MutationControlled,
+  MutationValueEdit,
+} from "./editors/MutationValueEdit";
 
 type ItemEditProps = {
   selectedShapeIds: string[];
@@ -74,13 +77,6 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const mutation = file.mutations[itemId];
 
-  const affectingControls = Object.entries(file.controls).filter(
-    ([, control]) =>
-      control.steps.some((frame) =>
-        Object.keys(frame).some((key) => key === itemId)
-      )
-  );
-
   const radiusChange = useCallback(
     (newRadius: number) => {
       setFile(
@@ -144,11 +140,7 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
             )}
           </>
         )}
-        {affectingControls.length > 0 && (
-          <Control label="Controlled by">
-            <p>{affectingControls.map(([, c]) => c.name).join(", ")}</p>
-          </Control>
-        )}
+        <MutationControlled mutationId={itemId} />
         <MutationValueEdit
           mutationId={itemId}
           value={file.defaultFrame[itemId]}
@@ -196,4 +188,44 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
       <Title>No selection</Title>
     </>
   );
+};
+
+export const InlayControlPanel: React.FC<ItemEditProps> = ({
+  selectedShapeIds,
+}) => {
+  const [file, setFile] = useFile();
+  const activeShapeId =
+    selectedShapeIds.length === 1 ? selectedShapeIds[0] : null;
+  const hierarchyItem =
+    activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
+
+  const valueChangeHandler = useCallback(
+    (newValue: Vec2) => {
+      if (activeShapeId === null) return;
+      setFile(
+        produce((draft) => {
+          draft.defaultFrame[activeShapeId] = newValue;
+        })
+      );
+    },
+    [setFile, activeShapeId]
+  );
+
+  if (
+    activeShapeId !== null &&
+    hierarchyItem &&
+    hierarchyItem.type === "mutation"
+  ) {
+    return (
+      <ControlPanel shadow>
+        <MutationControlled mutationId={activeShapeId} />
+        <MutationValueEdit
+          mutationId={activeShapeId}
+          value={file.defaultFrame[activeShapeId]}
+          onValueChange={valueChangeHandler}
+        />
+      </ControlPanel>
+    );
+  }
+  return null;
 };

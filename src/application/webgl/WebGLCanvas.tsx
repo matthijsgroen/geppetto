@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import { WebGLRenderer, webGLScene } from "./lib/webgl";
 import styled from "styled-components";
 
@@ -74,7 +74,10 @@ export interface WebGLCanvasProps {
   renderers: WebGLRenderer[];
 }
 
-const WebGLCanvas: React.FC<WebGLCanvasProps> = ({ renderers }) => {
+const WebGLCanvas: React.FC<PropsWithChildren<WebGLCanvasProps>> = ({
+  renderers,
+  children,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -116,6 +119,7 @@ const WebGLCanvas: React.FC<WebGLCanvasProps> = ({ renderers }) => {
 
   return (
     <CanvasContainer ref={containerRef}>
+      {children}
       <canvas ref={canvasRef} />
     </CanvasContainer>
   );

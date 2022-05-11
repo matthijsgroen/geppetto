@@ -96,6 +96,7 @@ input[type="number"]:not(:focus) {
   background-color: transparent;
   -webkit-appearance: none;
   padding: 0.5rem 0;
+  outline: none;
 
   --thumb-border: var(--colors-background-panel);
   &:hover {

@@ -47,6 +47,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   const mouseMoveDeltaRef = useRef<[number, number]>([0, 0]);
 
   const mouseDown = useCallback((event: React.MouseEvent) => {
+    if ((event.target as HTMLElement).nodeName !== "CANVAS") return;
     const canvasPos = event.currentTarget.getBoundingClientRect();
     const elementX = event.pageX - canvasPos.left;
     const elementY = event.pageY - canvasPos.top;

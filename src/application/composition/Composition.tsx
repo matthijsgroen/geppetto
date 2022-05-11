@@ -27,7 +27,8 @@ import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
 import { mergeMutationValue, mixHueVec2, mixVec2 } from "../webgl/lib/vertices";
 import { ControlTree } from "./ControlTree";
-import { ItemEdit } from "./ItemEdit";
+import { Inlay } from "./Inlay";
+import { InlayControlPanel, ItemEdit } from "./ItemEdit";
 import { ShapeTree } from "./ShapeTree";
 
 type CompositionProps = {
@@ -191,7 +192,16 @@ export const Composition: React.FC<CompositionProps> = ({
                 panX={panX}
                 panY={panY}
                 vectorValues={vectorValues}
-              />
+              >
+                {!showItemDetails && (
+                  <Inlay>
+                    <InlayControlPanel
+                      selectedShapeIds={selectedItems}
+                      selectedControlIds={[]}
+                    />
+                  </Inlay>
+                )}
+              </CompositionCanvas>
             </LayerMouseControl>
           )}
         </Panel>
