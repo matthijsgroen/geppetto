@@ -2,7 +2,6 @@ import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
 import { addFolder } from "../../animation/file2/shapes";
 import {
   Icon,
-  Panel,
   ToolBar,
   ToolButton,
   ToolSeparator,

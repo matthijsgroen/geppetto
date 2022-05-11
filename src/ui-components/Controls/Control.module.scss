@@ -95,6 +95,7 @@ input[type="number"]:not(:focus) {
   width: 100px;
   background-color: transparent;
   -webkit-appearance: none;
+  padding: 0.5rem 0;
 
   --thumb-border: var(--colors-background-panel);
   &:hover {
@@ -169,4 +170,6 @@ input[type="number"]:not(:focus) {
 .control p {
   margin: 0;
   font-size: 0.8rem;
+  text-align: end;
+  white-space: normal;
 }

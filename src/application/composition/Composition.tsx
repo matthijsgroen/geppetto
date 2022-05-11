@@ -197,7 +197,7 @@ export const Composition: React.FC<CompositionProps> = ({
         </Panel>
         {showItemDetails && (
           <ResizePanel
-            direction={ResizeDirection.East}
+            direction={ResizeDirection.West}
             defaultSize={250}
             minSize={150}
           >

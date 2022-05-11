@@ -1,25 +1,24 @@
 import produce from "immer";
 import { useCallback } from "react";
 import { hasRadius, iconMapping } from "../../animation/file2/mutation";
-import { NodeType, TreeNode } from "../../animation/file2/types";
 import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
 import { BooleanControl } from "../controls/CheckControl";
 import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
+import { MutationValueEdit } from "./editors/MutationValueEdit";
 
 type ItemEditProps = {
   selectedShapeIds: string[];
   selectedControlIds: string[];
 };
 
-type EditProps<T extends NodeType> = {
-  item: TreeNode<T>;
+type EditProps = {
   itemId: string;
 };
 
-const LayerFolderEdit: React.FC<EditProps<"layerFolder">> = ({ itemId }) => {
+const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file] = useFile();
   const layerFolder = file.layerFolders[itemId];
 
@@ -37,7 +36,7 @@ const LayerFolderEdit: React.FC<EditProps<"layerFolder">> = ({ itemId }) => {
   );
 };
 
-const LayerEdit: React.FC<EditProps<"layer">> = ({ itemId }) => {
+const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const layer = file.layers[itemId];
 
@@ -71,7 +70,7 @@ const LayerEdit: React.FC<EditProps<"layer">> = ({ itemId }) => {
   );
 };
 
-const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId }) => {
+const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const mutation = file.mutations[itemId];
 
@@ -150,10 +149,10 @@ const MutationEdit: React.FC<EditProps<"mutation">> = ({ itemId }) => {
             <p>{affectingControls.map(([, c]) => c.name).join(", ")}</p>
           </Control>
         )}
-        <VectorControl
-          label="Value"
+        <MutationValueEdit
+          mutationId={itemId}
           value={file.defaultFrame[itemId]}
-          onChange={valueChangeHandler}
+          onValueChange={valueChangeHandler}
         />
       </ControlPanel>
     </>
@@ -175,24 +174,14 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
     hierarchyItem &&
     hierarchyItem.type === "layer"
   ) {
-    return (
-      <LayerEdit
-        item={hierarchyItem as TreeNode<"layer">}
-        itemId={activeShapeId}
-      />
-    );
+    return <LayerEdit itemId={activeShapeId} />;
   }
   if (
     activeShapeId !== null &&
     hierarchyItem &&
     hierarchyItem.type === "layerFolder"
   ) {
-    return (
-      <LayerFolderEdit
-        item={hierarchyItem as TreeNode<"layerFolder">}
-        itemId={activeShapeId}
-      />
-    );
+    return <LayerFolderEdit itemId={activeShapeId} />;
   }
 
   if (
@@ -200,12 +189,7 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
     hierarchyItem &&
     hierarchyItem.type === "mutation"
   ) {
-    return (
-      <MutationEdit
-        item={hierarchyItem as TreeNode<"mutation">}
-        itemId={activeShapeId}
-      />
-    );
+    return <MutationEdit itemId={activeShapeId} />;
   }
   return (
     <>
