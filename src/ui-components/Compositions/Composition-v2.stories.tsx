@@ -11,7 +11,6 @@ import {
   MenuDivider,
   MenuHeader,
   MenuItem,
-  MenuRadioGroup,
   NumberInput,
   Panel,
   ResizeDirection,
@@ -26,16 +25,31 @@ import {
   Tree,
   UncontrolledTreeEnvironment,
 } from "..";
-import { storyTreeDataProvider } from "../Tree/storybookTreeDataProvider";
+import {
+  storyTreeDataProvider,
+  ToolsProvider,
+} from "../Tree/storybookTreeDataProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const story = {
-  title: "Compositions/Layers",
+  title: "Compositions/Composition",
   argTypes: {
     children: { control: false, table: false },
   },
 };
 export default story;
+
+const toolsProvider: ToolsProvider = (data) => {
+  if (data.type === "layer" || data.type === "layerFolder") {
+    return (
+      <>
+        <ToolButton icon={<Icon>👁</Icon>} active />
+      </>
+    );
+  }
+};
+
+const noToolsProvider: ToolsProvider = () => null;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: Story = () => (
@@ -70,9 +84,10 @@ const Template: Story = () => (
         <MenuItem>Print...</MenuItem>
       </Menu>
 
-      <ToolTab icon={<Icon>🧬</Icon>} tooltip={"Layers"} />
-      <ToolTab icon={<Icon>🤷🏼</Icon>} tooltip={"Composition"} active />
-      <ToolTab icon={<Icon>🏃</Icon>} tooltip={"Animation"} />
+      <ToolSeparator />
+      <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} />
+      <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} active />
+      <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} />
     </ToolBar>
 
     <ResizePanel
@@ -97,7 +112,9 @@ const Template: Story = () => (
               tooltip="Remove item"
             />
           </ToolBar>
-          <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider()}>
+          <UncontrolledTreeEnvironment
+            dataProvider={storyTreeDataProvider(toolsProvider)}
+          >
             <Tree treeId="layers" />
           </UncontrolledTreeEnvironment>
           <Title>Opacity (4)</Title>
@@ -105,9 +122,19 @@ const Template: Story = () => (
             <Control label="Visible">
               <input type="checkbox" />
             </Control>
+            <Control label="Origin">
+              <NumberInput value={10} prefix="x:" />
+              <NumberInput value={20} prefix="y:" />
+            </Control>
             <Control label="Value">
               <NumberInput value={10} prefix="x:" />
               <NumberInput value={20} prefix="y:" />
+            </Control>
+            <Control label="Use Radius">
+              <input type="checkbox" checked />
+            </Control>
+            <Control label="Radius">
+              <NumberInput value={10} />
             </Control>
             <Control>
               <ToolButton label={"Add mutation to control"} size={"small"} />
@@ -133,7 +160,9 @@ const Template: Story = () => (
                 tooltip="Remove item"
               />
             </ToolBar>
-            <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider()}>
+            <UncontrolledTreeEnvironment
+              dataProvider={storyTreeDataProvider(noToolsProvider)}
+            >
               <Tree treeId="controls" />
             </UncontrolledTreeEnvironment>
             <Title>Left Arm</Title>
@@ -152,47 +181,6 @@ const Template: Story = () => (
       </Column>
     </ResizePanel>
     <Column>
-      <ToolBar>
-        <ToolButton active icon={<Icon>✋</Icon>} tooltip="Move mode" />
-        <ToolButton icon={<Icon>🔧</Icon>} tooltip="Adjust point mode" />
-        <ToolButton icon={<Icon>✏️</Icon>} tooltip="Add point mode" />
-        <ToolSeparator />
-        <ToolButton
-          icon={<Icon>🗑</Icon>}
-          disabled
-          tooltip="Remove selected point"
-        />
-        <ToolSeparator />
-        <ToolButton icon={<Icon>📏</Icon>} tooltip="Toggle grid visibility" />
-        <Menu
-          portal
-          menuButton={({ open }) => <ToolButton active={open} label="32" />}
-          direction="bottom"
-          align="center"
-          arrow
-          transition
-        >
-          <MenuRadioGroup value={32}>
-            <MenuItem type="radio" value={8}>
-              8
-            </MenuItem>
-            <MenuItem type="radio" value={16}>
-              16
-            </MenuItem>
-            <MenuItem type="radio" value={32}>
-              32
-            </MenuItem>
-            <MenuItem type="radio" value={64}>
-              64
-            </MenuItem>
-            <MenuItem type="radio" value={128}>
-              128
-            </MenuItem>
-          </MenuRadioGroup>
-        </Menu>
-        <ToolButton icon={<Icon>🧲</Icon>} tooltip="Toggle magnetic grid" />
-      </ToolBar>
-
       <Panel center workspace>
         <div>
           <Logo />
@@ -213,4 +201,4 @@ const Template: Story = () => (
   </Row>
 );
 
-export const CompositionAlt = Template.bind({});
+export const Version2 = Template.bind({});

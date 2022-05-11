@@ -1,8 +1,6 @@
 import { Story } from "@storybook/react";
 import {
   Column,
-  Control,
-  ControlPanel,
   Icon,
   Kbd,
   Logo,
@@ -12,21 +10,22 @@ import {
   MenuHeader,
   MenuItem,
   MenuRadioGroup,
-  NumberInput,
   Panel,
   ResizeDirection,
   ResizePanel,
   Row,
   SubMenu,
-  Title,
   ToolBar,
   ToolButton,
   ToolSeparator,
   ToolTab,
   Tree,
   UncontrolledTreeEnvironment,
-} from "../";
-import { storyTreeDataProvider } from "../Tree/storybookTreeDataProvider";
+} from "..";
+import {
+  storyTreeDataProvider,
+  ToolsProvider,
+} from "../Tree/storybookTreeDataProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const story = {
@@ -36,6 +35,8 @@ const story = {
   },
 };
 export default story;
+
+const noToolsProvider: ToolsProvider = () => null;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: Story = () => (
@@ -69,6 +70,7 @@ const Template: Story = () => (
         </SubMenu>
         <MenuItem>Print...</MenuItem>
       </Menu>
+      <ToolSeparator />
 
       <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
       <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} />
@@ -137,60 +139,12 @@ const Template: Story = () => (
             />
           </ToolBar>
           <Panel padding={5}>
-            <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider()}>
+            <UncontrolledTreeEnvironment
+              dataProvider={storyTreeDataProvider(noToolsProvider)}
+            >
               <Tree treeId="layers" />
             </UncontrolledTreeEnvironment>
-            <Title>Opacity (4)</Title>
-            <ControlPanel>
-              <Control label="Visible">
-                <input type="checkbox" />
-              </Control>
-              <Control label="Value">
-                <NumberInput value={10} prefix="x:" />
-                <NumberInput value={20} prefix="y:" />
-              </Control>
-              <Control>
-                <ToolButton label={"Add mutation to control"} size={"small"} />
-              </Control>
-            </ControlPanel>
           </Panel>
-          <ResizePanel
-            direction={ResizeDirection.North}
-            minSize={200}
-            defaultSize={300}
-          >
-            <Panel padding={5}>
-              <Title>Controls</Title>
-              <ToolBar size="small">
-                <ToolButton
-                  icon={<Icon>⚙️</Icon>}
-                  label="+"
-                  tooltip="Add control"
-                />
-                <ToolButton
-                  icon={<Icon>🗑</Icon>}
-                  disabled={true}
-                  tooltip="Remove item"
-                />
-              </ToolBar>
-              <UncontrolledTreeEnvironment
-                dataProvider={storyTreeDataProvider()}
-              >
-                <Tree treeId="controls" />
-              </UncontrolledTreeEnvironment>
-              <Title>Left Arm</Title>
-              <ControlPanel>
-                <Control label="Value">
-                  <input type="range" />
-                </Control>
-                <Control label="Steps">
-                  <ToolButton icon={"1"} size={"small"} />
-                  <ToolButton icon={"2"} size={"small"} />
-                  <ToolButton icon={"+"} size={"small"} />
-                </Control>
-              </ControlPanel>
-            </Panel>
-          </ResizePanel>
         </Column>
       </ResizePanel>
       <Panel center workspace>
@@ -213,4 +167,4 @@ const Template: Story = () => (
   </Column>
 );
 
-export const Composition = Template.bind({});
+export const Version1 = Template.bind({});

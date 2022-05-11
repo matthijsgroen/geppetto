@@ -13,7 +13,7 @@ export type TreeData<Type extends string> = {
   name: string;
   type: Type;
   icon: string;
-  itemTools?: React.ReactChild;
+  itemTools?: React.ReactNode;
 };
 
 export type TreeDataProvider<Type extends string> = ComplexTreeDataProvider<
