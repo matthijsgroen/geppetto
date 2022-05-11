@@ -33,34 +33,40 @@ const startWebGL = async (
   const api = await webGLScene(node, renderers);
   api.render();
   let debounce: ReturnType<typeof setTimeout>;
-  const onResize = () => {
-    clearTimeout(debounce);
-    debounce = setTimeout(() => {
-      const rect = container.getBoundingClientRect();
-      node.width = rect.width * window.devicePixelRatio;
-      node.height = (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
-      api.render();
-    }, 50);
-  };
 
-  // TODO change to ResizeObserver hook
-  window.addEventListener("resize", onResize);
   let dirty = false;
   const render = () => {
     api.render();
     dirty = false;
   };
 
-  api.onChange(() => {
+  const markChanged = () => {
     if (!dirty) {
       dirty = true;
       window.requestAnimationFrame(render);
     }
+  };
+
+  api.onChange(markChanged);
+
+  const onResize = () => {
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      const rect = container.getBoundingClientRect();
+      node.width = rect.width * window.devicePixelRatio;
+      node.height = (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
+      markChanged();
+    }, 5);
+  };
+  const resizeObserver = new ResizeObserver((entries) => {
+    onResize();
   });
+
+  resizeObserver.observe(container);
 
   return () => {
     api.cleanup();
-    window.removeEventListener("resize", onResize);
+    resizeObserver.disconnect();
   };
 };
 
