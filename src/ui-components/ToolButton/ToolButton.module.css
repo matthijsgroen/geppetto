@@ -33,8 +33,13 @@
   color: transparent;
   position: absolute;
   border-radius: 50%;
-  margin-left: 1.1rem;
-  margin-top: -0.7rem;
+  margin-left: 1.3rem;
+  margin-top: -0.6rem;
+}
+
+.small.notificationBadge::before {
+  margin-left: 0.7rem;
+  margin-top: -0.5rem;
 }
 
 .toolButton:disabled {
@@ -47,5 +52,5 @@
   background-color: var(--colors-control-highlight);
 }
 .shadow {
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
 }
