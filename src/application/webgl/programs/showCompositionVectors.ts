@@ -11,6 +11,7 @@ import {
 import { flatten } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import { createShapeMutationList, MAX_MUTATION_VECTORS } from "./utils";
+import { colorScheme } from "../../theme/darkMode";
 
 const compositionVertexShader = raw("./showCompositionVectors.vert");
 const compositionFragmentShader = raw("./showCompositionVectors.frag");
@@ -24,6 +25,7 @@ const green = [0, 180, 0].map((v) => v / 256.0) as Color;
 const white = [240, 240, 240].map((v) => v / 256.0) as Color;
 
 const EPSILON = 0.00001;
+const MUTATION_DOT_SIZE = 3;
 
 const colorMapping: Record<MutationVector["type"], Color> = {
   deform: orange,
@@ -109,10 +111,10 @@ export const showCompositionVectors = (): {
 
       const offset = vertices.length / stride;
       const color = colorMapping[vector.type];
-      vertices.push(0, -3, ...color, 1);
-      vertices.push(1, -3, ...color, 1);
-      vertices.push(2, -3, ...color, 1);
-      vertices.push(3, -3, ...color, 1);
+      vertices.push(0, -MUTATION_DOT_SIZE, ...color, 1);
+      vertices.push(1, -MUTATION_DOT_SIZE, ...color, 1);
+      vertices.push(2, -MUTATION_DOT_SIZE, ...color, 1);
+      vertices.push(3, -MUTATION_DOT_SIZE, ...color, 1);
 
       indices.push(
         offset,
@@ -247,12 +249,21 @@ export const showCompositionVectors = (): {
       );
       program = shaderProgram;
 
-      const translate = gl.getUniformLocation(shaderProgram, "translate");
-      const mutation = gl.getUniformLocation(shaderProgram, "mutation");
-      const uBasePosition = gl.getUniformLocation(
-        shaderProgram,
-        "basePosition"
-      );
+      const programInfo = {
+        uniforms: {
+          translate: gl.getUniformLocation(shaderProgram, "translate"),
+          mutation: gl.getUniformLocation(shaderProgram, "mutation"),
+          basePosition: gl.getUniformLocation(shaderProgram, "basePosition"),
+          viewport: gl.getUniformLocation(shaderProgram, "viewport"),
+          scale: gl.getUniformLocation(shaderProgram, "scale"),
+          active: gl.getUniformLocation(shaderProgram, "active"),
+        },
+        attributes: {
+          coordinates: gl.getAttribLocation(shaderProgram, "coordinates"),
+          colors: gl.getAttribLocation(shaderProgram, "color"),
+        },
+      };
+
       populateShapes();
 
       return {
@@ -268,27 +279,25 @@ export const showCompositionVectors = (): {
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-          const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
-            coord,
+            programInfo.attributes.coordinates,
             2,
             gl.FLOAT,
             false,
             stride * Float32Array.BYTES_PER_ELEMENT,
             /* offset */ 0
           );
-          gl.enableVertexAttribArray(coord);
+          gl.enableVertexAttribArray(programInfo.attributes.coordinates);
 
-          const colors = gl.getAttribLocation(shaderProgram, "color");
           gl.vertexAttribPointer(
-            colors,
+            programInfo.attributes.colors,
             4,
             gl.FLOAT,
             false,
             stride * Float32Array.BYTES_PER_ELEMENT,
             /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
           );
-          gl.enableVertexAttribArray(colors);
+          gl.enableVertexAttribArray(programInfo.attributes.colors);
 
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
@@ -300,7 +309,7 @@ export const showCompositionVectors = (): {
               : canvasHeight / img.height;
 
             gl.uniform2f(
-              gl.getUniformLocation(shaderProgram, "viewport"),
+              programInfo.uniforms.viewport,
               canvasWidth,
               canvasHeight
             );
@@ -315,25 +324,32 @@ export const showCompositionVectors = (): {
             cHeight = canvasHeight;
           }
 
-          gl.uniform4f(
-            gl.getUniformLocation(shaderProgram, "scale"),
-            scale,
-            zoom,
-            pan[0],
-            pan[1]
-          );
+          gl.uniform4f(programInfo.uniforms.scale, scale, zoom, pan[0], pan[1]);
 
           gl.uniform3f(
-            uBasePosition,
+            programInfo.uniforms.basePosition,
             basePosition[0],
             basePosition[1],
             basePosition[2]
           );
+          gl.uniform1f(
+            programInfo.uniforms.active,
+            vectorsSelected.length === 1
+              ? colorScheme.darkMode
+                ? 2.0
+                : 1.0
+              : 0.0
+          );
 
           vectors.forEach((vector) => {
             if (vectorsSelected.includes(vector.id)) {
-              gl.uniform3f(translate, vector.x, vector.y, vector.z);
-              gl.uniform1f(mutation, vector.mutator);
+              gl.uniform3f(
+                programInfo.uniforms.translate,
+                vector.x,
+                vector.y,
+                vector.z
+              );
+              gl.uniform1f(programInfo.uniforms.mutation, vector.mutator);
               gl.drawElements(
                 gl.TRIANGLES,
                 vector.amount,

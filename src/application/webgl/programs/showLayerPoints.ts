@@ -2,6 +2,7 @@ import { Vec2 } from "../../../types";
 import { Layer } from "../../../animation/file2/types";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import raw from "raw.macro";
+import { colorScheme } from "../../theme/darkMode";
 
 const layerPointsVertexShader = raw("./showLayerPoints.vert");
 const layerPointsFragmentShader = raw("./showLayerPoints.frag");
@@ -115,6 +116,17 @@ export const showLayerPoints = (): {
         layerPointsFragmentShader
       );
 
+      const programInfo = {
+        uniforms: {
+          viewport: gl.getUniformLocation(shaderProgram, "viewport"),
+          scale: gl.getUniformLocation(shaderProgram, "scale"),
+          darkMode: gl.getUniformLocation(shaderProgram, "darkMode"),
+        },
+        attributes: {
+          coordinates: gl.getAttribLocation(shaderProgram, "coordinates"),
+        },
+      };
+
       return {
         onChange(listener) {
           onChange = listener;
@@ -127,16 +139,15 @@ export const showLayerPoints = (): {
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-          const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
-            coord,
+            programInfo.attributes.coordinates,
             3,
             gl.FLOAT,
             false,
             Float32Array.BYTES_PER_ELEMENT * stride,
             /* offset */ 0
           );
-          gl.enableVertexAttribArray(coord);
+          gl.enableVertexAttribArray(programInfo.attributes.coordinates);
           const [canvasWidth, canvasHeight] = getSize();
           const landscape = img.width / canvasWidth > img.height / canvasHeight;
 
@@ -150,19 +161,17 @@ export const showLayerPoints = (): {
           ];
 
           gl.uniform4f(
-            gl.getUniformLocation(shaderProgram, "viewport"),
+            programInfo.uniforms.viewport,
             canvasWidth,
             canvasHeight,
             x,
             y
           );
 
-          gl.uniform4f(
-            gl.getUniformLocation(shaderProgram, "scale"),
-            scale,
-            zoom,
-            pan[0],
-            pan[1]
+          gl.uniform4f(programInfo.uniforms.scale, scale, zoom, pan[0], pan[1]);
+          gl.uniform1f(
+            programInfo.uniforms.darkMode,
+            colorScheme.darkMode ? 1.0 : 0.0
           );
 
           elements.forEach((element) => {

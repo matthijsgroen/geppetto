@@ -99,12 +99,12 @@ export const webGLScene = async (
   let onChange: () => void;
 
   const colorSchemeListener = ({
-    matches,
+    matches: darkMode,
   }: MediaQueryListEvent | MediaQueryList) => {
-    if (matches) {
-      gl.clearColor(0.1, 0.1, 0.1, 1.0);
+    if (darkMode) {
+      gl.clearColor(0.1875, 0.1875, 0.1875, 1.0);
     } else {
-      gl.clearColor(0.67, 0.67, 0.67, 1.0);
+      gl.clearColor(0.66, 0.66, 0.66, 1.0);
     }
     onChange && onChange();
   };

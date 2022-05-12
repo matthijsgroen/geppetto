@@ -6,7 +6,9 @@
 varying mediump vec4 vColor;
 varying mediump vec4 vCircle;
 varying mediump vec2 vViewport;
+varying mediump float vActive;
 uniform float mutation;
+uniform float active;
 
 uniform vec2 viewport;
 uniform vec3 translate;
@@ -108,6 +110,7 @@ mat3 mutatePoint(mat3 startValue, int mutationIndex) {
 }
 
 void main() {
+  vActive = active;
   mat3 start = mat3(
     translate.xy, 1.0,
     0, 0, 0,
@@ -140,6 +143,9 @@ void main() {
     size *= scale.y * scale.x;
   } else {
     size *= -coordinates.y;
+    if (active > 0.9) {
+      size *= 1.6;
+    }
   }
 
   vec2 center = (pos.xy + scale.ba) * scale.y;
