@@ -29,6 +29,10 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+.outer::-webkit-scrollbar {
+  display: none;
+}
+
 .outer.horizontal {
   height: 3rem;
   overflow-x: scroll;
@@ -38,10 +42,6 @@
   width: 3rem;
   overflow-x: visible;
   overflow-y: scroll;
-}
-
-.outer::-webkit-scrollbar {
-  display: none;
 }
 
 .horizontal.small {
