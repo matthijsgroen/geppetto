@@ -1,4 +1,5 @@
-import { ComponentMeta, ComponentStory, Story } from "@storybook/react";
+import { ComponentMeta, Story } from "@storybook/react";
+import { ComponentProps } from "react";
 import { Control } from "./Control";
 import { ControlPanel as ControlPanelComponent } from "./ControlPanel";
 
@@ -8,25 +9,39 @@ const story = {
   component: ControlPanelComponent,
   argTypes: {
     children: { control: false, table: false },
+    extraControlCount: { control: "number", table: false },
+  },
+  args: {
+    shadow: false,
+    extraControlCount: 2,
   },
 } as ComponentMeta<typeof ControlPanelComponent>;
 export default story;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ControlPanelComponent> = (args) => (
-  <ControlPanelComponent {...args} />
+const Template: Story<
+  ComponentProps<typeof ControlPanelComponent> & { extraControlCount: number }
+> = ({ extraControlCount, children, ...args }) => (
+  <div>
+    <ControlPanelComponent {...args}>
+      {children}
+      {Array.from({ length: extraControlCount ?? 0 }).map((_, index) => (
+        <Control label={`Extra Field ${index + 1}`} key={index}>
+          <input type="checkbox" />
+        </Control>
+      ))}
+    </ControlPanelComponent>
+  </div>
 );
 
 export const ControlPanel = Template.bind({});
 ControlPanel.args = {
-  children: (
-    <>
-      <Control label="Hello">
-        <input type="checkbox" />
-      </Control>
-      <Control label="Hello with a really long name">
-        <input type="checkbox" />
-      </Control>
-    </>
-  ),
+  children: [
+    <Control label="Hello" key="field1">
+      <input type="checkbox" />
+    </Control>,
+    <Control label="Hello with a really long name" key="field2">
+      <input type="checkbox" />
+    </Control>,
+  ],
 };

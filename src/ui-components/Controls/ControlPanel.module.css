@@ -1,8 +1,17 @@
 .controlPanel {
   background-color: var(--colors-control-default);
   border-radius: 10px;
+  overflow-y: hidden;
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  transition: height 0.3s ease-in-out, width 0.3s ease-in-out;
+  flex-shrink: 0;
+}
+.controlPanel::-webkit-scrollbar {
+  display: none;
 }
 
 .shadow {
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
 }
