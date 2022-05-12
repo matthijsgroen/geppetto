@@ -10,10 +10,6 @@ body,
   user-select: none;
 }
 
-.story-background {
-  background-color: var(--colors-background-workspace);
-}
-
 #root {
   display: flex;
 }
