@@ -15,7 +15,7 @@ import {
   ShapeMutationVector,
 } from "./types";
 
-const getUniqueName = (
+export const getUniqueName = (
   name: string,
   existingItems: Record<string, { name: string }>
 ) => {
@@ -49,14 +49,10 @@ export const addShape = (
   );
 
   return [
-    {
-      ...image,
-      layerHierarchy,
-      layers: {
-        ...image.layers,
-        [newId]: layer,
-      },
-    },
+    produce(image, (draft) => {
+      draft.layerHierarchy = layerHierarchy;
+      draft.layers[newId] = layer;
+    }),
     layer,
     newId,
   ];
@@ -80,14 +76,10 @@ export const addFolder = (
   );
 
   return [
-    {
-      ...image,
-      layerHierarchy,
-      layerFolders: {
-        ...image.layerFolders,
-        [newId]: folder,
-      },
-    },
+    produce(image, (draft) => {
+      draft.layerHierarchy = layerHierarchy;
+      draft.layerFolders[newId] = folder;
+    }),
     folder,
     newId,
   ];
@@ -114,13 +106,9 @@ export const rename = (
 ): GeppettoImage => {
   const groupKey = typeToGroupKey[itemType];
 
-  return {
-    ...image,
-    [groupKey]: {
-      ...image[groupKey],
-      [itemId]: { ...image[groupKey][itemId], name: newName },
-    },
-  };
+  return produce(image, (draft) => {
+    draft[groupKey][itemId].name = newName;
+  });
 };
 
 export const addPoint = (

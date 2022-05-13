@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { hasPoints } from "../../animation/file2/shapes";
-import { GeppettoImage } from "../../animation/file2/types";
-import { Vec2 } from "../../types";
 import {
   Column,
   Icon,
@@ -25,7 +23,7 @@ import { useActionMap } from "../hooks/useActionMap";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
-import { mergeMutationValue, mixHueVec2, mixVec2 } from "../webgl/lib/vertices";
+import { calculateVectorValues } from "../webgl/lib/vectorPositions";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
 import { InlayControlPanel, ItemEdit } from "./ItemEdit";
@@ -38,41 +36,6 @@ type CompositionProps = {
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
-};
-
-const calculateVectorValues = (file: GeppettoImage) => {
-  const result: Record<string, Vec2> = { ...file.defaultFrame };
-  for (const [controlId, controlValue] of Object.entries(file.controlValues)) {
-    const controlInfo = file.controls[controlId];
-    if (!controlInfo) continue;
-    const minStep = Math.floor(controlValue);
-    const maxStep = Math.ceil(controlValue);
-
-    const minValue = controlInfo.steps[minStep];
-    const maxValue = controlInfo.steps[maxStep];
-
-    const mixValue = controlValue - minStep;
-
-    for (const [mutationId, mutationValue] of Object.entries(minValue)) {
-      const mutationInfo = file.mutations[mutationId];
-      const value =
-        mutationInfo.type === "colorize"
-          ? mixHueVec2(mutationValue, maxValue[mutationId], mixValue)
-          : mixVec2(mutationValue, maxValue[mutationId], mixValue);
-
-      if (result[mutationId]) {
-        result[mutationId] = mergeMutationValue(
-          value,
-          result[mutationId],
-          mutationInfo.type
-        );
-      } else {
-        result[mutationId] = value;
-      }
-    }
-  }
-
-  return result;
 };
 
 const TOGGLE_INFO_SHORTCUT: Shortcut = {
