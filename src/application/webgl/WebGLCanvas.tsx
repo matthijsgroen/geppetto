@@ -1,6 +1,13 @@
-import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
+import React, {
+  forwardRef,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { WebGLRenderer, webGLScene } from "./lib/webgl";
 import styled from "styled-components";
+import { mergeRefs } from "../lib/mergeRefs";
 
 const HEIGHT_PIXEL_FIX = 4;
 
@@ -70,14 +77,14 @@ const startWebGL = async (
   };
 };
 
-export interface WebGLCanvasProps {
+type WebGLCanvasProps = {
   renderers: WebGLRenderer[];
-}
+};
 
-const WebGLCanvas: React.FC<PropsWithChildren<WebGLCanvasProps>> = ({
-  renderers,
-  children,
-}) => {
+const WebGLCanvas = forwardRef<
+  HTMLDivElement,
+  PropsWithChildren<WebGLCanvasProps>
+>(({ renderers, children }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -118,11 +125,11 @@ const WebGLCanvas: React.FC<PropsWithChildren<WebGLCanvasProps>> = ({
   }, [renderers, mounted]);
 
   return (
-    <CanvasContainer ref={containerRef}>
+    <CanvasContainer ref={mergeRefs([ref, containerRef])}>
       {children}
       <canvas ref={canvasRef} />
     </CanvasContainer>
   );
-};
+});
 
 export default WebGLCanvas;

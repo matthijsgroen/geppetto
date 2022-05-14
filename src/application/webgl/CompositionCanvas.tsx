@@ -1,4 +1,10 @@
-import React, { PropsWithChildren, useEffect, useMemo, useRef } from "react";
+import React, {
+  forwardRef,
+  PropsWithChildren,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { newFile } from "../../animation/file2/new";
 import { GeppettoImage } from "../../animation/file2/types";
 import { showComposition } from "./programs/showComposition";
@@ -21,8 +27,14 @@ const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
   fileA.layers !== fileB.layers ||
   fileA.mutations !== fileB.mutations;
 
-const CompositionCanvas: React.FC<PropsWithChildren<CompositionCanvasProps>> =
-  ({ image, file, vectorValues, activeLayers, zoom, panX, panY, children }) => {
+const CompositionCanvas = forwardRef<
+  HTMLDivElement,
+  PropsWithChildren<CompositionCanvasProps>
+>(
+  (
+    { image, file, vectorValues, activeLayers, zoom, panX, panY, children },
+    ref
+  ) => {
     const composition = useMemo(() => showComposition(), []);
     const layer = useMemo(() => showCompositionMap(), []);
     const vectorMap = useMemo(() => showCompositionVectors(), []);
@@ -70,7 +82,12 @@ const CompositionCanvas: React.FC<PropsWithChildren<CompositionCanvasProps>> =
     vectorMap.setZoom(zoom);
     vectorMap.setPan(panX, panY);
 
-    return <WebGLCanvas renderers={renderers}>{children}</WebGLCanvas>;
-  };
+    return (
+      <WebGLCanvas renderers={renderers} ref={ref}>
+        {children}
+      </WebGLCanvas>
+    );
+  }
+);
 
 export default CompositionCanvas;
