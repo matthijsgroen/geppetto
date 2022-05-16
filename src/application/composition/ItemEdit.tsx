@@ -105,6 +105,18 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
     [setFile, itemId]
   );
 
+  const originChangeHandler = useCallback(
+    (newValue: Vec2) => {
+      setFile(
+        produce((draft) => {
+          const mutation = draft.mutations[itemId];
+          mutation.origin = newValue;
+        })
+      );
+    },
+    [setFile, itemId]
+  );
+
   const valueChangeHandler = useCallback(
     (newValue: Vec2) => {
       setFile(
@@ -122,7 +134,11 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
         <Icon>{iconMapping[mutation.type]}</Icon> {mutation.name}
       </Title>
       <ControlPanel>
-        <VectorControl label="Origin" value={mutation.origin} />
+        <VectorControl
+          label="Origin"
+          value={mutation.origin}
+          onChange={originChangeHandler}
+        />
         {hasRadius(mutation) && (
           <>
             <BooleanControl

@@ -2,6 +2,7 @@ import { newFile } from "../../../animation/file2/new";
 import { addFolder, addShape } from "../../../animation/file2/shapes";
 import { addMutation } from "../../../animation/file2/mutation";
 import { GeppettoImage, MutationVector } from "../../../animation/file2/types";
+import { Vec2 } from "../../../types";
 
 export const fileBuilder = () => {
   let file = newFile();

@@ -1,5 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import {
+  RefObject,
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { hasPoints } from "../../animation/file2/shapes";
+import { GeppettoImage } from "../../animation/file2/types";
+import { Vec2 } from "../../types";
 import {
   Column,
   Icon,
@@ -23,7 +33,11 @@ import { useActionMap } from "../hooks/useActionMap";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
-import { calculateVectorValues } from "../webgl/lib/vectorPositions";
+import {
+  calculateVectorValues,
+  vectorPositions,
+} from "../webgl/lib/vectorPositions";
+import { vecAdd, vecScale } from "../webgl/lib/vertices";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
 import { InlayControlPanel, ItemEdit } from "./ItemEdit";
@@ -41,6 +55,82 @@ type CompositionProps = {
 const TOGGLE_INFO_SHORTCUT: Shortcut = {
   ctrlOrCmd: true,
   key: "KeyI",
+};
+
+interface Size {
+  width: number;
+  height: number;
+}
+
+const calculateScale = (element: Size, texture: Size) => {
+  const landscape =
+    texture.width / element.width > texture.height / element.height;
+  return landscape
+    ? element.width / texture.width
+    : element.height / texture.height;
+};
+
+const useMutatorMap = (
+  containerRef: RefObject<HTMLDivElement>,
+  texture: HTMLImageElement | null,
+  file: GeppettoImage,
+  vectorValues: Record<string, Vec2>,
+  zoom: number,
+  panX: number,
+  panY: number
+) => {
+  const deferredVectorValues = useDeferredValue(vectorValues);
+  const deferredMutations = useDeferredValue(file.mutations);
+  const [scale, setScale] = useState(1.0);
+  const [rect, setRect] = useState<Size>({ width: 1, height: 1 });
+  const textureRef = useRef(texture);
+  textureRef.current = texture;
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (containerRef.current && textureRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setScale(calculateScale(rect, textureRef.current));
+        setRect({ width: rect.width, height: rect.height });
+      }
+    };
+
+    const ref = containerRef.current;
+    if (ref === null) return;
+    ref.addEventListener("resize", handleResize);
+    return () => {
+      ref.removeEventListener("resize", handleResize);
+    };
+  }, [containerRef]);
+
+  const mutatorMap = useMemo(
+    () =>
+      vectorPositions(
+        deferredMutations,
+        file.layerHierarchy,
+        deferredVectorValues
+      ),
+    [deferredMutations, file.layerHierarchy, deferredVectorValues]
+  );
+
+  const scaledMutatorMap = useMemo(() => {
+    const result: Record<string, Vec2> = {};
+    const center: Vec2 = [rect.width / 2, rect.height / 2];
+    const panning: Vec2 = [rect.width * panX, -rect.height * panY];
+    const vecZoom = vecScale(panning, zoom / 2);
+
+    for (const mutator in mutatorMap) {
+      const value = mutatorMap[mutator];
+
+      result[mutator] = vecAdd(
+        vecAdd(vecScale(value, zoom * scale), center),
+        vecZoom
+      );
+    }
+
+    return result;
+  }, [scale, rect, mutatorMap, panX, panY, zoom]);
+  return scaledMutatorMap;
 };
 
 export const Composition: React.FC<CompositionProps> = ({
@@ -94,6 +184,27 @@ export const Composition: React.FC<CompositionProps> = ({
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [triggerKeyboardAction, actions]);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const mutatorMap = useMutatorMap(
+    containerRef,
+    texture,
+    file,
+    vectorValues,
+    zoom,
+    panX,
+    panY
+  );
+
+  let position: Vec2 = [10, 0];
+  if (selectedItems.length === 1) {
+    const itemId = selectedItems[0];
+    const item = file.layerHierarchy[itemId];
+    if (item.type === "mutation") {
+      position = mutatorMap[itemId];
+    }
+  }
 
   return (
     <Column>
@@ -155,6 +266,7 @@ export const Composition: React.FC<CompositionProps> = ({
                 panX={panX}
                 panY={panY}
                 vectorValues={vectorValues}
+                ref={containerRef}
               >
                 {!showItemDetails && (
                   <Inlay>
@@ -164,6 +276,23 @@ export const Composition: React.FC<CompositionProps> = ({
                     />
                   </Inlay>
                 )}
+                <div
+                  style={{
+                    width: 10,
+                    height: 10,
+                    left: position[0],
+                    top: position[1] - 4,
+                    position: "absolute",
+                    backgroundColor: "transparent",
+                    border: "2px solid pink",
+                    fontSize: "1px",
+                    cursor: "pointer",
+                    zIndex: 1,
+                    transform: "translate(-5px, -5px)",
+                  }}
+                >
+                  V
+                </div>
               </CompositionCanvas>
             </LayerMouseControl>
           )}

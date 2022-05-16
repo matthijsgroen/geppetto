@@ -62,6 +62,7 @@ const startWebGL = async (
       const rect = container.getBoundingClientRect();
       node.width = rect.width * window.devicePixelRatio;
       node.height = (rect.height - HEIGHT_PIXEL_FIX) * window.devicePixelRatio;
+      container.dispatchEvent(new Event("resize"));
       markChanged();
     }, 5);
   };

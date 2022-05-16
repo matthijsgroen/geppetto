@@ -22,7 +22,7 @@ describe("vectorPositions", () => {
     });
 
     expect(positions).toEqual({
-      [mutId]: [50, 30],
+      [mutId]: [90, 60],
     });
   });
 
@@ -47,7 +47,7 @@ describe("vectorPositions", () => {
       });
 
       expect(positions).toEqual({
-        [transMutId]: [50, 30],
+        [transMutId]: [90, 60],
         [rotateMutId]: [50, 70],
       });
     });
@@ -72,7 +72,7 @@ describe("vectorPositions", () => {
       });
 
       expect(positions).toEqual({
-        [transMutId]: [50, 30],
+        [transMutId]: [90, 60],
         [rotateMutId]: [50, 70],
       });
     });
@@ -105,8 +105,8 @@ describe("vectorPositions", () => {
       });
 
       expect(positions).toEqual({
-        [transMutId]: [50, 30],
-        [trans2MutId]: [60, 60],
+        [transMutId]: [90, 60],
+        [trans2MutId]: [70, 80],
         [rotateMutId]: [60, 90],
       });
     });
@@ -135,7 +135,7 @@ describe("vectorPositions", () => {
       });
 
       expect(positions).toEqual({
-        [transMutId]: [10, 30],
+        [transMutId]: [50, 60],
         [rotateMutId]: [10 + 40, 40 + 30], // translated
         [rotate2MutId]: [50, 50], // not affected
       });
@@ -163,7 +163,7 @@ describe("vectorPositions", () => {
       });
 
       expect(positions).toEqual({
-        [transMutId]: [40, 20],
+        [transMutId]: [10, 60],
         [rotateMutId]: [50, 20],
       });
     });
@@ -194,7 +194,7 @@ describe("vectorPositions", () => {
       });
 
       expect(positions).toEqual({
-        [deformMutId]: [10, 30],
+        [deformMutId]: [10 + 40 * 1, 30 + 30 * 1],
         [rotateMutId]: [10 + 40 * 0.5, 40 + 30 * 0.5], // translated
         [rotate2MutId]: [50, 50], // not affected
       });

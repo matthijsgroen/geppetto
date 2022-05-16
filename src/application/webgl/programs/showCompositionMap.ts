@@ -154,6 +154,14 @@ export const showCompositionMap = (): {
         const treeNode = shapes.layerHierarchy[layerId];
         if (treeNode.type === "mutation") {
           layersSelected.push(treeNode.parentId);
+
+          const parentNode = shapes.layerHierarchy[treeNode.parentId];
+          if (parentNode.type === "layerFolder") {
+            layersSelected.push(
+              ...collectChildIds(shapes.layerHierarchy, treeNode.parentId)
+            );
+          }
+
           continue;
         }
         layersSelected.push(layerId);

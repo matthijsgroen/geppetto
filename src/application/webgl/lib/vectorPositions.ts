@@ -1,14 +1,12 @@
 import { getPreviousOfType } from "../../../animation/file2/hierarchy";
 import { GeppettoImage } from "../../../animation/file2/types";
 import { Vec2 } from "../../../types";
-import { mutationIdByName } from "./testFileBuilder";
 import {
   distance,
   mergeMutationValue,
   mixHueVec2,
   mixVec2,
   vecAdd,
-  vecMul,
   vecSub,
 } from "./vertices";
 
@@ -59,35 +57,35 @@ export const vectorPositions = (
 ): Record<string, Vec2> => {
   const result: Record<string, Vec2> = {};
 
-  const applyMutation = (value: Vec2, currentId: string): Vec2 => {
-    const parentMutation = getPreviousOfType(
-      mutationHierarchy,
-      "mutation",
-      currentId
-    );
-
-    if (parentMutation === null) {
+  const applyMutation = (value: Vec2, mutationId: string | null): Vec2 => {
+    if (mutationId === null) {
       return value;
     }
-    const mutation = mutations[parentMutation];
+    const parentId = getPreviousOfType(
+      mutationHierarchy,
+      "mutation",
+      mutationId
+    );
+
+    const mutation = mutations[mutationId];
     let newValue = value;
     if (mutation.type === "translate") {
-      const mutatorOrigin = applyMutation(mutation.origin, parentMutation);
+      const mutatorOrigin = mutation.origin;
       if (
         mutation.radius === -1 ||
         inRadius(mutatorOrigin, newValue, mutation.radius)
       ) {
-        const translationValue = mutationValues[parentMutation];
+        const translationValue = mutationValues[mutationId];
         newValue = vecAdd(newValue, translationValue);
       }
     }
 
     if (mutation.type === "deform") {
-      const mutatorOrigin = applyMutation(mutation.origin, parentMutation);
+      const mutatorOrigin = mutation.origin;
 
-      const effect = distance(mutatorOrigin, newValue) / mutation.radius;
-      if (effect <= 1 && effect > 0) {
-        const translationValue = mutationValues[parentMutation];
+      const effect = 1 - distance(mutatorOrigin, newValue) / mutation.radius;
+      if (effect <= 1 && effect >= 0) {
+        const translationValue = mutationValues[mutationId];
         newValue = vecAdd(newValue, [
           translationValue[0] * effect,
           translationValue[1] * effect,
@@ -96,9 +94,9 @@ export const vectorPositions = (
     }
 
     if (mutation.type === "rotate") {
-      const mutatorOrigin = applyMutation(mutation.origin, parentMutation);
+      const mutatorOrigin = mutation.origin;
       const [x, y] = vecSub(newValue, mutatorOrigin);
-      const angle = mutationValues[parentMutation][0];
+      const angle = mutationValues[mutationId][0];
 
       const rad = (angle * Math.PI) / 180;
 
@@ -110,7 +108,7 @@ export const vectorPositions = (
       newValue = vecAdd(mutatorOrigin, rotated);
     }
 
-    return applyMutation(newValue, parentMutation);
+    return applyMutation(newValue, parentId);
   };
 
   for (const [mutationId, mutation] of Object.entries(mutations)) {
