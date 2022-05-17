@@ -25,8 +25,8 @@ const MouseControlContainer = styled.div<MouseControlProps>`
   box-sizing: border-box;
   cursor: ${(props) =>
     ({
-      [MouseMode.Grab]: "grab",
-      [MouseMode.Grabbing]: "grabbing",
+      [MouseMode.Grab]: "default",
+      [MouseMode.Grabbing]: "move",
       [MouseMode.Normal]: "default",
       [MouseMode.Aim]: "crosshair",
       [MouseMode.Target]: "pointer",

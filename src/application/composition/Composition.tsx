@@ -29,14 +29,16 @@ import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
+import {
+  ScreenTranslation,
+  useScreenTranslation,
+  useUpdateScreenTranslation,
+} from "../contexts/ScreenTranslationContext";
 import { useActionMap } from "../hooks/useActionMap";
 import { AppSection, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
-import {
-  calculateVectorValues,
-  vectorPositions,
-} from "../webgl/lib/vectorPositions";
+import { useVectorValues, vectorPositions } from "../webgl/lib/vectorPositions";
 import { vecAdd, vecScale } from "../webgl/lib/vertices";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
@@ -55,8 +57,8 @@ const TOGGLE_INFO_SHORTCUT: Shortcut = {
 };
 
 interface Size {
-  width: number;
-  height: number;
+  readonly width: number;
+  readonly height: number;
 }
 
 const calculateScale = (element: Size, texture: Size) => {
@@ -67,28 +69,42 @@ const calculateScale = (element: Size, texture: Size) => {
     : element.height / texture.height;
 };
 
-const useMutatorMap = (
+const imageToPercentage = (
+  coord: Vec2,
+  translation: ScreenTranslation,
+  rect: Size
+): Vec2 => {
+  const center: Vec2 = [0.5 * rect.width, 0.5 * rect.height];
+  const panning: Vec2 = [
+    translation.panX * rect.width,
+    -translation.panY * rect.height,
+  ];
+  const vecZoom = vecScale(panning, translation.zoom / 2);
+
+  return vecAdd(
+    vecAdd(vecScale(coord, translation.zoom * translation.scale), center),
+    vecZoom
+  );
+};
+
+const useScaleUpdater = (
   containerRef: RefObject<HTMLDivElement>,
-  texture: HTMLImageElement | null,
-  file: GeppettoImage,
-  vectorValues: Record<string, Vec2>,
-  zoom: number,
-  panX: number,
-  panY: number
+  texture: HTMLImageElement | null
 ) => {
-  const deferredVectorValues = useDeferredValue(vectorValues);
-  const deferredMutations = useDeferredValue(file.mutations);
-  const [scale, setScale] = useState(1.0);
-  const [rect, setRect] = useState<Size>({ width: 1, height: 1 });
+  const updater = useUpdateScreenTranslation();
   const textureRef = useRef(texture);
   textureRef.current = texture;
-
   useEffect(() => {
     const handleResize = () => {
       if (containerRef.current && textureRef.current) {
+        const img = textureRef.current;
         const rect = containerRef.current.getBoundingClientRect();
-        setScale(calculateScale(rect, textureRef.current));
-        setRect({ width: rect.width, height: rect.height });
+        updater((current) => {
+          return {
+            ...current,
+            scale: calculateScale(rect, img),
+          };
+        });
       }
     };
 
@@ -98,7 +114,15 @@ const useMutatorMap = (
     return () => {
       ref.removeEventListener("resize", handleResize);
     };
-  }, [containerRef]);
+  }, [containerRef, updater]);
+};
+
+const useMutatorMap = (
+  file: GeppettoImage,
+  vectorValues: Record<string, Vec2>
+) => {
+  const deferredVectorValues = useDeferredValue(vectorValues);
+  const deferredMutations = useDeferredValue(file.mutations);
 
   const mutatorMap = useMemo(
     () =>
@@ -110,24 +134,7 @@ const useMutatorMap = (
     [deferredMutations, file.layerHierarchy, deferredVectorValues]
   );
 
-  const scaledMutatorMap = useMemo(() => {
-    const result: Record<string, Vec2> = {};
-    const center: Vec2 = [rect.width / 2, rect.height / 2];
-    const panning: Vec2 = [rect.width * panX, -rect.height * panY];
-    const vecZoom = vecScale(panning, zoom / 2);
-
-    for (const mutator in mutatorMap) {
-      const value = mutatorMap[mutator];
-
-      result[mutator] = vecAdd(
-        vecAdd(vecScale(value, zoom * scale), center),
-        vecZoom
-      );
-    }
-
-    return result;
-  }, [scale, rect, mutatorMap, panX, panY, zoom]);
-  return scaledMutatorMap;
+  return mutatorMap;
 };
 
 export const Composition: React.FC<CompositionProps> = ({
@@ -144,7 +151,7 @@ export const Composition: React.FC<CompositionProps> = ({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
 
-  const vectorValues = calculateVectorValues(file);
+  const vectorValues = useVectorValues(file);
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -176,25 +183,20 @@ export const Composition: React.FC<CompositionProps> = ({
   }, [triggerKeyboardAction, actions]);
 
   const containerRef = useRef<HTMLDivElement>(null);
+  useScaleUpdater(containerRef, texture);
 
-  // const mutatorMap = useMutatorMap(
-  //   containerRef,
-  //   texture,
-  //   file,
-  //   vectorValues,
-  //   zoom,
-  //   panX,
-  //   panY
-  // );
+  const mutatorMap = useMutatorMap(file, vectorValues);
 
-  let position: Vec2 = [10, 0];
-  // if (selectedItems.length === 1) {
-  //   const itemId = selectedItems[0];
-  //   const item = file.layerHierarchy[itemId];
-  //   if (item.type === "mutation") {
-  //     position = mutatorMap[itemId];
-  //   }
-  // }
+  let position: Vec2 = [0, 0];
+  const translation = useScreenTranslation();
+  if (selectedItems.length === 1) {
+    const itemId = selectedItems[0];
+    const item = file.layerHierarchy[itemId];
+    if (item.type === "mutation" && containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      position = imageToPercentage(mutatorMap[itemId], translation, rect);
+    }
+  }
 
   return (
     <Column>
