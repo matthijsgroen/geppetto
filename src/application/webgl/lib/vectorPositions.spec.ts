@@ -169,6 +169,33 @@ describe("vectorPositions", () => {
     });
   });
 
+  describe("stretch", () => {
+    it("calculates the position with stretch parents", () => {
+      const file = fileWithFolderLayers()
+        .addMutation(
+          "translate",
+          "translate",
+          { origin: [50, 30], radius: -1 },
+          "shape"
+        )
+        .addMutation("stretch", "stretch", { origin: [70, 20] }, "shape")
+        .result();
+
+      const transMutId = mutationIdByName(file, "translate");
+      const stretchMutId = mutationIdByName(file, "stretch");
+
+      const positions = vectorPositions(file.mutations, file.layerHierarchy, {
+        [transMutId]: [40, 30],
+        [stretchMutId]: [0.5, 1.0],
+      });
+
+      expect(positions).toEqual({
+        [transMutId]: [80, 60],
+        [stretchMutId]: [70, 20],
+      });
+    });
+  });
+
   describe("deform", () => {
     it("calculates the position with deform parents", () => {
       const file = fileWithFolderLayers()

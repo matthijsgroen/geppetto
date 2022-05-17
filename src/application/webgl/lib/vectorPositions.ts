@@ -7,6 +7,7 @@ import {
   mixHueVec2,
   mixVec2,
   vecAdd,
+  vecMul,
   vecSub,
 } from "./vertices";
 
@@ -106,6 +107,16 @@ export const vectorPositions = (
       ];
 
       newValue = vecAdd(mutatorOrigin, rotated);
+    }
+
+    if (mutation.type === "stretch") {
+      const mutatorOrigin = mutation.origin;
+      const point = vecSub(newValue, mutatorOrigin);
+      const stretch = mutationValues[mutationId];
+
+      const stretched: Vec2 = vecMul(point, stretch);
+
+      newValue = vecAdd(mutatorOrigin, stretched);
     }
 
     return applyMutation(newValue, parentId);
