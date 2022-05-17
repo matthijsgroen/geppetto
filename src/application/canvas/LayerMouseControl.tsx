@@ -6,14 +6,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { UseState } from "../types";
+import { useUpdateScreenTranslation } from "../contexts/ScreenTranslationContext";
 
 export type LayerMouseControlProps = PropsWithChildren<{
   mode: MouseMode;
 
-  zoomState: UseState<number>;
-  panXState: UseState<number>;
-  panYState: UseState<number>;
   maxZoomFactor: number;
 
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
@@ -33,14 +30,8 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   onClick,
   onKeyDown,
   hoverCursor,
-  zoomState,
-  panXState,
-  panYState,
   maxZoomFactor,
 }) => {
-  const [zoom, setZoom] = zoomState;
-  const [panX, setPanX] = panXState;
-  const [panY, setPanY] = panYState;
   const [cursorMode, setCursorMode] = useState(mode);
 
   const mouseDownRef = useRef<false | [number, number]>(false);
@@ -56,9 +47,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
     mouseMoveDeltaRef.current = [0, 0];
   }, []);
 
-  const zoomRef = useRef(zoom);
-  const panXRef = useRef(panX);
-  const panYRef = useRef(panY);
+  const screenUpdater = useUpdateScreenTranslation();
 
   const mouseMove = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
@@ -83,34 +72,34 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
       const deltaY = elementY - y;
       const [prevDeltaX, prevDeltaY] = mouseMoveDeltaRef.current;
       mouseMoveDeltaRef.current = [deltaX, deltaY];
+      screenUpdater((trans) => {
+        const moveDeltaX = (deltaX - prevDeltaX) / trans.zoom;
+        const moveDeltaY = (deltaY - prevDeltaY) / trans.zoom;
+        if (handleDrag && handleDrag(event, moveDeltaX, moveDeltaY))
+          return trans;
 
-      const moveDeltaX = (deltaX - prevDeltaX) / zoomRef.current;
-      const moveDeltaY = (deltaY - prevDeltaY) / zoomRef.current;
-      if (handleDrag && handleDrag(event, moveDeltaX, moveDeltaY)) return;
+        const newPanX = Math.min(
+          1.0,
+          Math.max(
+            trans.panX +
+              (deltaX - prevDeltaX) / ((canvasPos.width * trans.zoom) / 2),
+            -1.0
+          )
+        );
 
-      const newPanX = Math.min(
-        1.0,
-        Math.max(
-          panXRef.current +
-            (deltaX - prevDeltaX) / ((canvasPos.width * zoomRef.current) / 2),
-          -1.0
-        )
-      );
-      panXRef.current = newPanX;
-      setPanX(newPanX);
+        const newPanY = Math.min(
+          1.0,
+          Math.max(
+            trans.panY -
+              (deltaY - prevDeltaY) / ((canvasPos.height * trans.zoom) / 2),
+            -1.0
+          )
+        );
 
-      const newPanY = Math.min(
-        1.0,
-        Math.max(
-          panYRef.current -
-            (deltaY - prevDeltaY) / ((canvasPos.height * zoomRef.current) / 2),
-          -1.0
-        )
-      );
-      panYRef.current = newPanY;
-      setPanY(newPanY);
+        return { ...trans, panX: newPanX, panY: newPanY };
+      });
     },
-    [handleDrag, setPanX, setPanY, hoverCursor]
+    [handleDrag, screenUpdater, hoverCursor]
   );
 
   const mouseUp = useCallback(
@@ -125,14 +114,15 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
 
   const mouseWheel = useCallback(
     (delta: number) => {
-      const z = Math.min(
-        maxZoomFactor,
-        Math.max(0.1, zoomRef.current - delta / 100)
-      );
-      zoomRef.current = z;
-      setZoom(z);
+      screenUpdater((trans) => {
+        const z = Math.min(
+          maxZoomFactor,
+          Math.max(0.1, trans.zoom - delta / 100)
+        );
+        return { ...trans, zoom: z };
+      });
     },
-    [setZoom, maxZoomFactor]
+    [screenUpdater, maxZoomFactor]
   );
 
   return (

@@ -1,5 +1,6 @@
 import raw from "raw.macro";
 import { Layer } from "../../../animation/file2/types";
+import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
 import { verticesFromPoints } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 
@@ -9,11 +10,11 @@ const textureMapFragmentShader = raw("./showTextureMap.frag");
 type Element = { start: number; amount: number };
 const STRIDE = 2;
 
-export const showTextureMap = (): {
+export const showTextureMap = (
+  trans: ScreenTranslation
+): {
   setImage(image: HTMLImageElement): void;
   setLayers(layers: Layer[]): void;
-  setZoom(zoom: number): void;
-  setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
   let shapes: Layer[] | null = null;
@@ -22,8 +23,7 @@ export const showTextureMap = (): {
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
   let gl: WebGLRenderingContext | null = null;
-  let zoom = 1.0;
-  let pan = [0, 0];
+  const screenTranslation = trans;
 
   let elements: Element[] = [];
 
@@ -68,14 +68,6 @@ export const showTextureMap = (): {
     setLayers(s: Layer[]) {
       shapes = s;
       populateShapes();
-      onChange();
-    },
-    setZoom(newZoom) {
-      zoom = newZoom;
-      onChange();
-    },
-    setPan(x: number, y: number) {
-      pan = [x, y];
       onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
@@ -135,9 +127,9 @@ export const showTextureMap = (): {
           gl.uniform4f(
             gl.getUniformLocation(shaderProgram, "scale"),
             scale,
-            zoom,
-            pan[0],
-            pan[1]
+            screenTranslation.zoom,
+            screenTranslation.panX,
+            screenTranslation.panY
           );
 
           elements.forEach((element) => {

@@ -1,6 +1,7 @@
 import raw from "raw.macro";
 import { visit } from "../../../animation/file2/hierarchy";
 import { GeppettoImage, Keyframe } from "../../../animation/file2/types";
+import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
 import { filteredTriangles, flatten } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import {
@@ -12,12 +13,12 @@ import {
 const compositionVertexShader = raw("./showComposition.vert");
 const compositionFragmentShader = raw("./showComposition.frag");
 
-export const showComposition = (): {
+export const showComposition = (
+  trans: ScreenTranslation
+): {
   setImage(image: HTMLImageElement): void;
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
-  setZoom(zoom: number): void;
-  setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 4;
@@ -42,9 +43,8 @@ export const showComposition = (): {
     z: number;
   }[] = [];
   let mutMapping: Record<string, number> = {};
-  let zoom = 1.0;
   let scale = 1.0;
-  let pan = [0, 0];
+  const screenTranslation = trans;
 
   const setImageTexture = (): void => {
     if (img === null || texture === null || gl === null || program === null) {
@@ -170,14 +170,6 @@ export const showComposition = (): {
       populateVectorValues();
       onChange();
     },
-    setZoom(newZoom) {
-      zoom = newZoom;
-      onChange();
-    },
-    setPan(x: number, y: number) {
-      pan = [x, y];
-      onChange();
-    },
     renderer(initGl: WebGLRenderingContext, { getUnit, getSize }) {
       gl = initGl;
 
@@ -283,9 +275,9 @@ export const showComposition = (): {
           gl.uniform4f(
             gl.getUniformLocation(shaderProgram, "scale"),
             scale,
-            zoom,
-            pan[0],
-            pan[1]
+            screenTranslation.zoom,
+            screenTranslation.panX,
+            screenTranslation.panY
           );
 
           gl.activeTexture(unit.unit);

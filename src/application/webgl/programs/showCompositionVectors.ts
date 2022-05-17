@@ -12,6 +12,7 @@ import { flatten } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import { createShapeMutationList, MAX_MUTATION_VECTORS } from "./utils";
 import { colorScheme } from "../../theme/darkMode";
+import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
 
 const compositionVertexShader = raw("./showCompositionVectors.vert");
 const compositionFragmentShader = raw("./showCompositionVectors.frag");
@@ -44,12 +45,12 @@ const hasRadius = (
   vector.type === "deform" ||
   (vector.type === "translate" && vector.radius !== -1);
 
-export const showCompositionVectors = (): {
+export const showCompositionVectors = (
+  trans: ScreenTranslation
+): {
   setImage(image: HTMLImageElement): void;
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
-  setZoom(zoom: number): void;
-  setPan(x: number, y: number): void;
   setLayerSelected(layers: string[]): void;
   renderer: WebGLRenderer;
 } => {
@@ -76,8 +77,7 @@ export const showCompositionVectors = (): {
     z: number;
   }[] = [];
   let mutators: string[] = [];
-  let zoom = 1.0;
-  let pan = [0, 0];
+  const screenTranslation = trans;
   let scale = 1.0;
 
   const populateShapes = () => {
@@ -214,14 +214,6 @@ export const showCompositionVectors = (): {
       gl.uniform2fv(uMutationValues, mutationValues);
       onChange();
     },
-    setZoom(newZoom) {
-      zoom = newZoom;
-      onChange();
-    },
-    setPan(x: number, y: number) {
-      pan = [x, y];
-      onChange();
-    },
     setLayerSelected(layers) {
       if (layers === null || shapes === null) {
         vectorsSelected = [];
@@ -324,7 +316,13 @@ export const showCompositionVectors = (): {
             cHeight = canvasHeight;
           }
 
-          gl.uniform4f(programInfo.uniforms.scale, scale, zoom, pan[0], pan[1]);
+          gl.uniform4f(
+            programInfo.uniforms.scale,
+            scale,
+            screenTranslation.zoom,
+            screenTranslation.panX,
+            screenTranslation.panY
+          );
 
           gl.uniform3f(
             programInfo.uniforms.basePosition,

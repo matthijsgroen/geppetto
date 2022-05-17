@@ -16,7 +16,7 @@ import { GeppettoImage } from "../../animation/file2/types";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionMenuItem } from "../actions/ActionMenuItem";
 import { useAppUpdate } from "../hooks/useAppUpdate";
-import { ApplicationContext } from "./ApplicationContext";
+import { ApplicationContext } from "../contexts/ApplicationContext";
 import { useAppInstall } from "../hooks/useAppInstall";
 import { useFile } from "./FileContext";
 

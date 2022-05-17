@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Layer } from "../../animation/file2/types";
 import {
   Column,
@@ -36,11 +36,9 @@ import { useActionMap } from "../hooks/useActionMap";
 import { ActionToolButton } from "../actions/ActionToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import { useFile } from "../applicationMenu/FileContext";
+import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
 
 type LayersProps = {
-  zoomState: UseState<number>;
-  panXState: UseState<number>;
-  panYState: UseState<number>;
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
@@ -70,14 +68,7 @@ export const Layers: React.FC<LayersProps> = ({
   onSectionChange,
   menu,
 }) => {
-  const zoomState = useState(1.0);
-  const panXState = useState(0.0);
-  const panYState = useState(0.0);
-  const [zoom] = zoomState;
-  const [panX] = panXState;
-  const [panY] = panYState;
-  const zoomPanRef = useRef({ zoom, panX, panY });
-  zoomPanRef.current = { zoom, panX, panY };
+  const translation = useScreenTranslation();
 
   const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
   const [gridSettings, setGridSettings] = useState<GridSettings>({
@@ -111,7 +102,7 @@ export const Layers: React.FC<LayersProps> = ({
         [canvasPos.width, canvasPos.height],
         [texture.width, texture.height]
       );
-      const factor = initialScale * zoom;
+      const factor = initialScale * translation.zoom;
       const closePoint = shape.points.find((p) => {
         const dx = p[0] - coord[0];
         const dy = p[1] - coord[1];
@@ -120,7 +111,7 @@ export const Layers: React.FC<LayersProps> = ({
       });
       return closePoint;
     },
-    [texture, zoom]
+    [texture, translation]
   );
 
   const mouseClick = useCallback(
@@ -130,7 +121,7 @@ export const Layers: React.FC<LayersProps> = ({
         texture &&
         activeLayer
       ) {
-        const { zoom, panX, panY } = zoomPanRef.current;
+        const { zoom, panX, panY } = translation;
         const coord = mouseToTextureCoordinate(
           texture,
           zoom,
@@ -155,7 +146,7 @@ export const Layers: React.FC<LayersProps> = ({
     [
       activeLayer,
       mouseMode,
-      zoomPanRef,
+      translation,
       setActiveCoord,
       texture,
       file.layers,
@@ -172,7 +163,7 @@ export const Layers: React.FC<LayersProps> = ({
         texture &&
         activeLayer
       ) {
-        const { zoom, panX, panY } = zoomPanRef.current;
+        const { zoom, panX, panY } = translation;
         const coord = mouseToTextureCoordinate(
           texture,
           zoom,
@@ -189,7 +180,7 @@ export const Layers: React.FC<LayersProps> = ({
       }
       return mouseMode;
     },
-    [mouseMode, activeLayer, file.layers, zoomPanRef, texture, getClosestPoint]
+    [mouseMode, activeLayer, file.layers, translation, texture, getClosestPoint]
   );
 
   const { actions, triggerKeyboardAction } = useActionMap(
@@ -383,9 +374,6 @@ export const Layers: React.FC<LayersProps> = ({
             <LayerMouseControl
               mode={mouseMode}
               maxZoomFactor={maxZoom}
-              panXState={panXState}
-              panYState={panYState}
-              zoomState={zoomState}
               onClick={mouseClick}
               onKeyDown={keyboardControl}
               hoverCursor={hoverCursor}
@@ -393,9 +381,6 @@ export const Layers: React.FC<LayersProps> = ({
               <TextureMapCanvas
                 image={texture}
                 layers={idLayers}
-                zoom={zoom}
-                panX={panX}
-                panY={panY}
                 grid={gridSettings}
                 activeLayer={activeLayer}
                 activeCoord={activeCoord}

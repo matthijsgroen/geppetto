@@ -3,17 +3,18 @@ import { Layer } from "../../../animation/file2/types";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import raw from "raw.macro";
 import { colorScheme } from "../../theme/darkMode";
+import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
 
 const layerPointsVertexShader = raw("./showLayerPoints.vert");
 const layerPointsFragmentShader = raw("./showLayerPoints.frag");
 
 export type IDLayer = Layer & { id: string };
 
-export const showLayerPoints = (): {
+export const showLayerPoints = (
+  trans: ScreenTranslation
+): {
   setImage(image: HTMLImageElement): void;
   setLayers(layers: IDLayer[]): void;
-  setZoom(zoom: number): void;
-  setPan(x: number, y: number): void;
   setLayerSelected(layer: undefined | string): void;
   setActiveCoord(coord: null | Vec2): void;
   renderer: WebGLRenderer;
@@ -25,8 +26,7 @@ export const showLayerPoints = (): {
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
   let gl: WebGLRenderingContext | null = null;
-  let zoom = 1.0;
-  let pan = [0, 0];
+  const screenTranslation = trans;
   let layerSelected: string | undefined = undefined;
   let coordSelected: Vec2 | null = null;
 
@@ -85,14 +85,6 @@ export const showLayerPoints = (): {
     setLayers(s) {
       layers = s;
       populateShapes();
-      onChange();
-    },
-    setZoom(newZoom) {
-      zoom = newZoom;
-      onChange();
-    },
-    setPan(x, y) {
-      pan = [x, y];
       onChange();
     },
     setLayerSelected(layer) {
@@ -168,7 +160,13 @@ export const showLayerPoints = (): {
             y
           );
 
-          gl.uniform4f(programInfo.uniforms.scale, scale, zoom, pan[0], pan[1]);
+          gl.uniform4f(
+            programInfo.uniforms.scale,
+            scale,
+            screenTranslation.zoom,
+            screenTranslation.panX,
+            screenTranslation.panY
+          );
           gl.uniform1f(
             programInfo.uniforms.darkMode,
             colorScheme.darkMode ? 1.0 : 0.0

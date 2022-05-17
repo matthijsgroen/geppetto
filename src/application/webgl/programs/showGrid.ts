@@ -1,13 +1,14 @@
 import raw from "raw.macro";
+import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 
 const textureVertexShader = raw("./showGrid.vert");
 const textureFragmentShader = raw("./showGrid.frag");
 
-export const showGrid = (): {
+export const showGrid = (
+  trans: ScreenTranslation
+): {
   setImage(image: HTMLImageElement): void;
-  setZoom(zoom: number): void;
-  setPan(x: number, y: number): void;
   setGrid(size: number): void;
   renderer: WebGLRenderer;
 } => {
@@ -26,9 +27,8 @@ export const showGrid = (): {
 
   let gl: WebGLRenderingContext | null = null;
   let img: HTMLImageElement | null = null;
-  let zoom = 1.0;
   let grid = 1.0;
-  let pan = [0, 0];
+  const screenTranslation = trans;
 
   let onChange: () => void = () => {};
 
@@ -37,16 +37,8 @@ export const showGrid = (): {
       img = image;
       onChange();
     },
-    setZoom(newZoom) {
-      zoom = newZoom;
-      onChange();
-    },
     setGrid(newGrid) {
       grid = newGrid;
-      onChange();
-    },
-    setPan(x: number, y: number) {
-      pan = [x, y];
       onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
@@ -96,11 +88,12 @@ export const showGrid = (): {
         updateVector(1, 0, [-x, -y]);
         updateVector(2, 0, [x, -y]);
         updateVector(3, 0, [x, y]);
+        const { panX, panY, zoom } = screenTranslation;
 
         gl.uniform3f(
           uViewPort,
-          ((-x + pan[0]) * zoom + 1) * (canvasWidth / 2),
-          ((y + pan[1]) * zoom + 1) * (canvasHeight / 2),
+          ((-x + panX) * zoom + 1) * (canvasWidth / 2),
+          ((y + panY) * zoom + 1) * (canvasHeight / 2),
           (zoom / pixDensity) * grid
         );
       };
@@ -145,12 +138,13 @@ export const showGrid = (): {
             0.1,
             0.1
           );
+          const { panX, panY, zoom } = screenTranslation;
           gl.uniform4f(
             gl.getUniformLocation(shaderProgram, "scale"),
             0,
             zoom,
-            pan[0],
-            pan[1]
+            panX,
+            panY
           );
 
           gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);

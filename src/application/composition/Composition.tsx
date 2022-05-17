@@ -44,9 +44,6 @@ import { InlayControlPanel, ItemEdit } from "./ItemEdit";
 import { ShapeTree } from "./ShapeTree";
 
 type CompositionProps = {
-  zoomState: UseState<number>;
-  panXState: UseState<number>;
-  panYState: UseState<number>;
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
@@ -136,9 +133,6 @@ const useMutatorMap = (
 export const Composition: React.FC<CompositionProps> = ({
   menu,
   textureState,
-  zoomState,
-  panXState,
-  panYState,
   onSectionChange,
 }) => {
   const texture = textureState[0];
@@ -146,10 +140,6 @@ export const Composition: React.FC<CompositionProps> = ({
   const [showItemDetails, setShowItemDetails] = useState(false);
 
   const maxZoom = maxZoomFactor(texture);
-
-  const [zoom] = zoomState;
-  const [panX] = panXState;
-  const [panY] = panYState;
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
@@ -187,24 +177,24 @@ export const Composition: React.FC<CompositionProps> = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const mutatorMap = useMutatorMap(
-    containerRef,
-    texture,
-    file,
-    vectorValues,
-    zoom,
-    panX,
-    panY
-  );
+  // const mutatorMap = useMutatorMap(
+  //   containerRef,
+  //   texture,
+  //   file,
+  //   vectorValues,
+  //   zoom,
+  //   panX,
+  //   panY
+  // );
 
   let position: Vec2 = [10, 0];
-  if (selectedItems.length === 1) {
-    const itemId = selectedItems[0];
-    const item = file.layerHierarchy[itemId];
-    if (item.type === "mutation") {
-      position = mutatorMap[itemId];
-    }
-  }
+  // if (selectedItems.length === 1) {
+  //   const itemId = selectedItems[0];
+  //   const item = file.layerHierarchy[itemId];
+  //   if (item.type === "mutation") {
+  //     position = mutatorMap[itemId];
+  //   }
+  // }
 
   return (
     <Column>
@@ -251,20 +241,11 @@ export const Composition: React.FC<CompositionProps> = ({
         <Panel workspace center>
           <StartupScreen file={file} texture={texture} screen={"composition"} />
           {texture && hasPoints(file) && (
-            <LayerMouseControl
-              mode={MouseMode.Grab}
-              maxZoomFactor={maxZoom}
-              panXState={panXState}
-              panYState={panYState}
-              zoomState={zoomState}
-            >
+            <LayerMouseControl mode={MouseMode.Grab} maxZoomFactor={maxZoom}>
               <CompositionCanvas
                 image={texture}
                 activeLayers={selectedItems}
                 file={file}
-                zoom={zoom}
-                panX={panX}
-                panY={panY}
                 vectorValues={vectorValues}
                 ref={containerRef}
               >

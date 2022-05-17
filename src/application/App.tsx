@@ -5,8 +5,9 @@ import { defaultTheme } from "./theme/default";
 import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
 import { AppSection } from "./types";
 import { Composition } from "./composition/Composition";
-import { AppContext } from "./applicationMenu/ApplicationContext";
+import { AppContext } from "./contexts/ApplicationContext";
 import { FileContext } from "./applicationMenu/FileContext";
+import { ScreenTranslationContext } from "./contexts/ScreenTranslationContext";
 
 const updateWindowTitle = (
   animFile: string | null,
@@ -26,10 +27,6 @@ const App: React.FC = () => {
   const [fileName, setFileName] = useState<string | null>(null);
   const [textureFileName, setTextureFileName] = useState<string | null>(null);
 
-  const zoomState = useState(1.0);
-  const panXState = useState(0.0);
-  const panYState = useState(0.0);
-
   useEffect(() => {
     updateWindowTitle(fileName, textureFileName);
   }, [fileName, textureFileName]);
@@ -46,26 +43,24 @@ const App: React.FC = () => {
     <ThemeProvider theme={defaultTheme}>
       <FileContext>
         <AppContext>
-          {appSection === "layers" && (
-            <Layers
-              menu={applicationMenu}
-              zoomState={zoomState}
-              panXState={panXState}
-              panYState={panYState}
-              textureState={textureFileState}
-              onSectionChange={setAppSection}
-            />
-          )}
-          {appSection === "composition" && (
-            <Composition
-              menu={applicationMenu}
-              zoomState={zoomState}
-              panXState={panXState}
-              panYState={panYState}
-              textureState={textureFileState}
-              onSectionChange={setAppSection}
-            />
-          )}
+          <ScreenTranslationContext>
+            {appSection === "layers" && (
+              <Layers
+                menu={applicationMenu}
+                textureState={textureFileState}
+                onSectionChange={setAppSection}
+              />
+            )}
+          </ScreenTranslationContext>
+          <ScreenTranslationContext>
+            {appSection === "composition" && (
+              <Composition
+                menu={applicationMenu}
+                textureState={textureFileState}
+                onSectionChange={setAppSection}
+              />
+            )}
+          </ScreenTranslationContext>
         </AppContext>
       </FileContext>
     </ThemeProvider>

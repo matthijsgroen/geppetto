@@ -4,7 +4,7 @@ import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import { Icon, Logo, ToolButton } from "../../ui-components";
 import { Kbd } from "../../ui-components/Kbd/Kbd";
-import { ApplicationContext } from "./ApplicationContext";
+import { ApplicationContext } from "../contexts/ApplicationContext";
 
 type StartupScreenProps = {
   texture: HTMLImageElement | null;

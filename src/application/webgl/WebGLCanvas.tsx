@@ -8,6 +8,10 @@ import React, {
 import { WebGLRenderer, webGLScene } from "./lib/webgl";
 import styled from "styled-components";
 import { mergeRefs } from "../lib/mergeRefs";
+import {
+  Subscription,
+  useScreenSubscription,
+} from "../contexts/ScreenTranslationContext";
 
 const HEIGHT_PIXEL_FIX = 4;
 
@@ -31,7 +35,8 @@ const CanvasContainer = styled.div`
 const startWebGL = async (
   node: HTMLCanvasElement,
   container: HTMLDivElement,
-  renderers: WebGLRenderer[]
+  renderers: WebGLRenderer[],
+  subscribe: Subscription
 ): Promise<() => void> => {
   const rect = container.getBoundingClientRect();
   node.width = rect.width * window.devicePixelRatio;
@@ -53,6 +58,9 @@ const startWebGL = async (
       window.requestAnimationFrame(render);
     }
   };
+  const unsubscribe = subscribe(() => {
+    markChanged();
+  });
 
   api.onChange(markChanged);
 
@@ -73,6 +81,7 @@ const startWebGL = async (
   resizeObserver.observe(container);
 
   return () => {
+    unsubscribe();
     api.cleanup();
     resizeObserver.disconnect();
   };
@@ -88,6 +97,7 @@ const WebGLCanvas = forwardRef<
 >(({ renderers, children }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const subscribe = useScreenSubscription();
 
   const [mounted, setMounted] = useState<boolean>(false);
   useEffect(() => {
@@ -111,19 +121,21 @@ const WebGLCanvas = forwardRef<
       let mounted = true;
       let cleanup: () => void;
 
-      startWebGL(node, containerRef.current, renderers).then((result) => {
-        cleanup = result;
-        if (!mounted) {
-          cleanup();
+      startWebGL(node, containerRef.current, renderers, subscribe).then(
+        (result) => {
+          cleanup = result;
+          if (!mounted) {
+            cleanup();
+          }
         }
-      });
+      );
       return () => {
         mounted = false;
         // unmount
         cleanup && cleanup();
       };
     }
-  }, [renderers, mounted]);
+  }, [renderers, mounted, subscribe]);
 
   return (
     <CanvasContainer ref={mergeRefs([ref, containerRef])}>

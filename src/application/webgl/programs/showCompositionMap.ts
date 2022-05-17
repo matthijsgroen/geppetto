@@ -1,6 +1,7 @@
 import raw from "raw.macro";
 import { collectChildIds, visit } from "../../../animation/file2/hierarchy";
 import { GeppettoImage, Keyframe } from "../../../animation/file2/types";
+import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
 import { flatten, verticesFromPoints } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import {
@@ -12,12 +13,12 @@ import {
 const compositionVertexShader = raw("./showCompositionMap.vert");
 const compositionFragmentShader = raw("./showCompositionMap.frag");
 
-export const showCompositionMap = (): {
+export const showCompositionMap = (
+  trans: ScreenTranslation
+): {
   setImage(image: HTMLImageElement): void;
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
-  setZoom(zoom: number): void;
-  setPan(x: number, y: number): void;
   setLayerSelected(layers: string[]): void;
   renderer: WebGLRenderer;
 } => {
@@ -42,9 +43,8 @@ export const showCompositionMap = (): {
     z: number;
   }[] = [];
   let mutMapping: Record<string, number> = {};
-  let zoom = 1.0;
-  let pan = [0, 0];
   let scale = 1.0;
+  const screenTranslation = trans;
 
   const populateShapes = () => {
     if (!shapes || !gl || !vertexBuffer || !program) return;
@@ -134,14 +134,6 @@ export const showCompositionMap = (): {
         mutationValues[index * 2 + 1] = value[1];
       }
       gl.uniform2fv(uMutationValues, mutationValues);
-      onChange();
-    },
-    setZoom(newZoom) {
-      zoom = newZoom;
-      onChange();
-    },
-    setPan(x, y) {
-      pan = [x, y];
       onChange();
     },
     setLayerSelected(layers) {
@@ -235,9 +227,9 @@ export const showCompositionMap = (): {
           gl.uniform4f(
             gl.getUniformLocation(shaderProgram, "scale"),
             scale,
-            zoom,
-            pan[0],
-            pan[1]
+            screenTranslation.zoom,
+            screenTranslation.panX,
+            screenTranslation.panY
           );
 
           const translate = gl.getUniformLocation(shaderProgram, "translate");
