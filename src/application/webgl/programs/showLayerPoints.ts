@@ -3,7 +3,7 @@ import { Layer } from "../../../animation/file2/types";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import raw from "raw.macro";
 import { colorScheme } from "../../theme/darkMode";
-import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
+import { ScreenTranslation } from "../../types";
 
 const layerPointsVertexShader = raw("./showLayerPoints.vert");
 const layerPointsFragmentShader = raw("./showLayerPoints.frag");

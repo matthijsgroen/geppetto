@@ -30,16 +30,15 @@ import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
 import {
-  ScreenTranslation,
   useScreenTranslation,
   useUpdateScreenTranslation,
 } from "../contexts/ScreenTranslationContext";
 import { useActionMap } from "../hooks/useActionMap";
-import { AppSection, UseState } from "../types";
+import { AppSection, Size, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
+import { imageToPixels } from "../webgl/lib/screenCoord";
 import { useVectorValues, vectorPositions } from "../webgl/lib/vectorPositions";
-import { vecAdd, vecScale } from "../webgl/lib/vertices";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
 import { InlayControlPanel, ItemEdit } from "./ItemEdit";
@@ -56,35 +55,12 @@ const TOGGLE_INFO_SHORTCUT: Shortcut = {
   key: "KeyI",
 };
 
-interface Size {
-  readonly width: number;
-  readonly height: number;
-}
-
 const calculateScale = (element: Size, texture: Size) => {
   const landscape =
     texture.width / element.width > texture.height / element.height;
   return landscape
     ? element.width / texture.width
     : element.height / texture.height;
-};
-
-const imageToPercentage = (
-  coord: Vec2,
-  translation: ScreenTranslation,
-  rect: Size
-): Vec2 => {
-  const center: Vec2 = [0.5 * rect.width, 0.5 * rect.height];
-  const panning: Vec2 = [
-    translation.panX * rect.width,
-    -translation.panY * rect.height,
-  ];
-  const vecZoom = vecScale(panning, translation.zoom / 2);
-
-  return vecAdd(
-    vecAdd(vecScale(coord, translation.zoom * translation.scale), center),
-    vecZoom
-  );
 };
 
 const useScaleUpdater = (
@@ -194,7 +170,7 @@ export const Composition: React.FC<CompositionProps> = ({
     const item = file.layerHierarchy[itemId];
     if (item.type === "mutation" && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
-      position = imageToPercentage(mutatorMap[itemId], translation, rect);
+      position = imageToPixels(mutatorMap[itemId], translation, rect);
     }
   }
 

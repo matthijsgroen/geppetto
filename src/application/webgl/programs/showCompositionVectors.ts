@@ -12,7 +12,7 @@ import { flatten } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import { createShapeMutationList, MAX_MUTATION_VECTORS } from "./utils";
 import { colorScheme } from "../../theme/darkMode";
-import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
+import { ScreenTranslation } from "../../types";
 
 const compositionVertexShader = raw("./showCompositionVectors.vert");
 const compositionFragmentShader = raw("./showCompositionVectors.frag");

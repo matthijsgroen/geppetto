@@ -1,5 +1,5 @@
 import raw from "raw.macro";
-import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
+import { ScreenTranslation } from "../../types";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 
 const textureVertexShader = raw("./showGrid.vert");

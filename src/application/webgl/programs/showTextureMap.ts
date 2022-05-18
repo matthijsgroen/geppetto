@@ -1,6 +1,6 @@
 import raw from "raw.macro";
 import { Layer } from "../../../animation/file2/types";
-import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
+import { ScreenTranslation } from "../../types";
 import { verticesFromPoints } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 

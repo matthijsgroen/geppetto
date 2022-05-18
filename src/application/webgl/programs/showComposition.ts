@@ -1,7 +1,7 @@
 import raw from "raw.macro";
 import { visit } from "../../../animation/file2/hierarchy";
 import { GeppettoImage, Keyframe } from "../../../animation/file2/types";
-import { ScreenTranslation } from "../../contexts/ScreenTranslationContext";
+import { ScreenTranslation } from "../../types";
 import { filteredTriangles, flatten } from "../lib/vertices";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import {

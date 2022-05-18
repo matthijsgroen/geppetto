@@ -6,13 +6,8 @@ import React, {
   useCallback,
   useContext,
 } from "react";
+import { ScreenTranslation } from "../types";
 
-export type ScreenTranslation = {
-  readonly zoom: number;
-  readonly scale: number;
-  readonly panX: number;
-  readonly panY: number;
-};
 type MutableScreenTranslation = {
   zoom: number;
   scale: number;
