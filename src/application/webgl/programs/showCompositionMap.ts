@@ -57,10 +57,20 @@ export const showCompositionMap = (
     const image = shapes;
     let index = 0;
     visit(image.layerHierarchy, (node, nodeId) => {
+      if (node.type === "layerFolder") {
+        const folder = image.layerFolders[nodeId];
+        if (!folder.visible) {
+          return "SKIP";
+        }
+      }
       if (node.type !== "layer") {
         return;
       }
       const shape = image.layers[nodeId];
+      if (!shape.visible) return "SKIP";
+      if (node.type !== "layer") {
+        return;
+      }
       const anchor = getAnchor(shape);
       const itemOffset = [...shape.translate, index * 0.1];
       index++;

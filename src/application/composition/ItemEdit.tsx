@@ -7,6 +7,7 @@ import { useFile } from "../applicationMenu/FileContext";
 import { BooleanControl } from "../controls/CheckControl";
 import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
+import useEvent from "../hooks/useEvent";
 import {
   MutationControlled,
   MutationValueEdit,
@@ -22,8 +23,17 @@ type EditProps = {
 };
 
 const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
-  const [file] = useFile();
+  const [file, setFile] = useFile();
   const layerFolder = file.layerFolders[itemId];
+
+  const handleClick = useEvent(() => {
+    setFile(
+      produce((draft) => {
+        draft.layerFolders[itemId].visible =
+          !draft.layerFolders[itemId].visible;
+      })
+    );
+  });
 
   return (
     <>
@@ -32,7 +42,11 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
       </Title>
       <ControlPanel>
         <Control label="Visible">
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            checked={layerFolder.visible}
+            onChange={handleClick}
+          />
         </Control>
       </ControlPanel>
     </>
@@ -42,6 +56,14 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
 const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const layer = file.layers[itemId];
+
+  const handleClick = useEvent(() => {
+    setFile(
+      produce((draft) => {
+        draft.layers[itemId].visible = !draft.layers[itemId].visible;
+      })
+    );
+  });
 
   const offsetChangeHandler = useCallback(
     (newValue: Vec2) => {
@@ -66,7 +88,11 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
           onChange={offsetChangeHandler}
         />
         <Control label="Visible">
-          <input type="checkbox" />
+          <input
+            type="checkbox"
+            checked={layer.visible}
+            onChange={handleClick}
+          />
         </Control>
       </ControlPanel>
     </>

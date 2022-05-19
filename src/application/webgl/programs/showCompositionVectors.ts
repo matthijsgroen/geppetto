@@ -90,6 +90,16 @@ export const showCompositionVectors = (
     const file = shapes;
     let index = 0;
     visit(file.layerHierarchy, (node, nodeId) => {
+      if (node.type === "layerFolder") {
+        const folder = file.layerFolders[nodeId];
+        if (!folder.visible) {
+          return "SKIP";
+        }
+      }
+      if (node.type === "layer") {
+        const shape = file.layers[nodeId];
+        if (!shape.visible) return "SKIP";
+      }
       if (node.type !== "mutation") return;
 
       const vector = file.mutations[nodeId];

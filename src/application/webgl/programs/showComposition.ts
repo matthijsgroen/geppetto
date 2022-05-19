@@ -73,10 +73,17 @@ export const showComposition = (
     let index = 0;
 
     visit(image.layerHierarchy, (node, nodeId) => {
+      if (node.type === "layerFolder") {
+        const folder = image.layerFolders[nodeId];
+        if (!folder.visible) {
+          return "SKIP";
+        }
+      }
       if (node.type !== "layer") {
         return;
       }
       const shape = image.layers[nodeId];
+      if (!shape.visible) return "SKIP";
       const anchor = getAnchor(shape);
       const shapeIndices = filteredTriangles(shape.points);
       const start = indices.length;
