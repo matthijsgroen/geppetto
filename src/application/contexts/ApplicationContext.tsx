@@ -1,6 +1,6 @@
 import { createContext, PropsWithChildren, useCallback, useRef } from "react";
 
-type SystemMessage = "fileOpen" | "textureOpen";
+type SystemMessage = "fileOpen" | "textureOpen" | "demoOpenScenery";
 
 type Unsubscribe = () => void;
 

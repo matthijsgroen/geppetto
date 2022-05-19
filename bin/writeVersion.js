@@ -3,9 +3,10 @@
 const { version } = require("../package.json");
 const { writeFile } = require("fs/promises");
 const util = require("util");
+const prettier = require("prettier");
 const exec = util.promisify(require("child_process").exec);
 
-const INFO_PATH = "./src/versionInfo.json";
+const INFO_PATH = "./src/versionInfo.ts";
 
 const currentCommit = async () => {
   const status = await exec("git rev-parse HEAD");
@@ -20,8 +21,13 @@ const run = async () => {
     timestamp: new Date().getTime(),
     commit,
   };
+  const contents = `export const versionInfo = ${JSON.stringify(
+    versionInfo
+  )} as const;`;
 
-  await writeFile(INFO_PATH, JSON.stringify(versionInfo), "utf-8");
+  const formattedContents = prettier.format(contents, { parser: "typescript" });
+
+  await writeFile(INFO_PATH, formattedContents, "utf-8");
 
   await exec(`git update-index --assume-unchanged ${INFO_PATH}`);
 };

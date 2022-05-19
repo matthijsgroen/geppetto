@@ -20,6 +20,9 @@ import { ApplicationContext } from "../contexts/ApplicationContext";
 import { useAppInstall } from "../hooks/useAppInstall";
 import { useFile } from "./FileContext";
 
+import sceneryDemo from "../../demos/scenery.json";
+import sceneryDemoImage from "../../demos/scenery.png";
+
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
   textureFileNameState: UseState<string | null>;
@@ -77,6 +80,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   const [hasAppUpdate, updater] = useAppUpdate();
   const [canInstall, installer] = useAppInstall();
   const [file, setFile] = useFile();
+  const [, setTextureFile] = textureFileState;
+  const [, setTextureFileName] = textureFileNameState;
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -189,8 +194,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 });
                 textureFileRef.current = file;
                 const [filename, image] = await loadTextureImage(file);
-                textureFileNameState[1](filename);
-                textureFileState[1](image);
+                setTextureFileName(filename);
+                setTextureFile(image);
               } catch (e) {
                 // user abort
               }
@@ -200,7 +205,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
           },
         },
       }),
-      [fileNameState, file, setFile, textureFileNameState, textureFileState]
+      [fileNameState, file, setFile, setTextureFile, setTextureFileName]
     )
   );
 
@@ -221,12 +226,33 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       if (message === "fileOpen") {
         actions.openImageFile.handler();
       }
+      if (message === "demoOpenScenery") {
+        if (verifyVersion1(sceneryDemo)) {
+          setFile(convertFromV1(sceneryDemo));
+        } else if (verifyVersion2(sceneryDemo)) {
+          setFile(sceneryDemo);
+        }
+        const image = new Image();
+        image.addEventListener("load", () => {
+          setTextureFile(image);
+          setTextureFileName("scenery.png");
+        });
+        image.crossOrigin = "anonymous";
+        image.src = sceneryDemoImage;
+      }
     });
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       unsubscribe();
     };
-  }, [triggerKeyboardAction, actions, onMessage]);
+  }, [
+    triggerKeyboardAction,
+    actions,
+    onMessage,
+    setFile,
+    setTextureFile,
+    setTextureFileName,
+  ]);
 
   return (
     <Menu

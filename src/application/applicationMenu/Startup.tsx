@@ -2,9 +2,11 @@ import { useContext } from "react";
 import { isNew } from "../../animation/file2/new";
 import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
-import { Icon, Logo, ToolButton } from "../../ui-components";
+import { Icon, Label, Logo, ToolButton } from "../../ui-components";
 import { Kbd } from "../../ui-components/Kbd/Kbd";
+import { versionInfo } from "../../versionInfo";
 import { ApplicationContext } from "../contexts/ApplicationContext";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 type StartupScreenProps = {
   texture: HTMLImageElement | null;
@@ -24,7 +26,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
       <div>
         <Logo />
         <h1>Welcome to Geppetto</h1>
-        <p>In this studio app you can build webGl animations</p>
+        <p>In this studio app you can build webGL animations</p>
         {isNew(file) && (
           <p>
             <ToolButton
@@ -47,6 +49,21 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
           />
           <Kbd shortcut={{ key: "KeyO", ctrlOrCmd: true, shift: true }} />
         </p>
+        <p>&mdash; Or &mdash;</p>
+        <p>
+          <ToolButton
+            icon={<Icon>🏡</Icon>}
+            label={"Load demo file"}
+            onClick={() => sendMessage("demoOpenScenery")}
+            size="small"
+            shadow
+          />
+        </p>
+        <Label size="small">
+          Version: {versionInfo.version} - {versionInfo.commit.slice(0, 6)},
+          released{" "}
+          {formatDistanceToNow(versionInfo.timestamp, { addSuffix: true })}
+        </Label>
       </div>
     );
   }
