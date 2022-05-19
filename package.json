@@ -1,7 +1,7 @@
 {
   "name": "geppetto",
   "productName": "Geppetto",
-  "version": "1.3.1",
+  "version": "2.0.0-alpha.0",
   "description": "Geppetto is a free and open animation tool to embed webGL animations in a web site.",
   "author": "Matthijs Groen <matthijs.groen@gmail.com> (https://github.com/matthijsgroen)",
   "contributors": [
@@ -38,6 +38,7 @@
   },
   "scripts": {
     "start": "craco start",
+    "prebuild": "bin/writeVersion.js",
     "build": "craco build",
     "deploy": "bin/deploy.sh",
     "lint": "eslint src/**/*.ts{,x}",
