@@ -26,7 +26,10 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
       <div>
         <Logo />
         <h1>Welcome to Geppetto</h1>
-        <p>In this studio app you can build webGL animations</p>
+        <p>
+          Geppetto is a free and open animation tool
+          <br /> to create and embed WebGL animations
+        </p>
         {isNew(file) && (
           <p>
             <ToolButton
