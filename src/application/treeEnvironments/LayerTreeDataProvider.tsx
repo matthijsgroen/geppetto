@@ -1,6 +1,7 @@
 import { findInHierarchy } from "../../animation/file2/hierarchy";
 import { iconMapping } from "../../animation/file2/mutation";
 import { GeppettoImage, NodeType } from "../../animation/file2/types";
+import { Icon, ToolButton } from "../../ui-components";
 import {
   TreeDataProvider,
   TreeItem,
@@ -10,9 +11,12 @@ import {
 
 const TREE_ROOT = "root";
 
+export type ActionButton = "visibility";
+
 export const treeDataProvider = (
   file: GeppettoImage,
-  { showMutations = true } = {}
+  { showMutations = true, toggleVisibility = false } = {},
+  actionButtonPress: (itemId: string, buttonId: ActionButton) => void = () => {}
 ): TreeDataProvider<NodeType> => {
   let activeTree = file;
   const getItem = (itemId: string | number): TreeItem<TreeData<NodeType>> => {
@@ -45,23 +49,57 @@ export const treeDataProvider = (
 
     if (item.type === "layer") {
       const layerData = activeTree.layers[itemId];
+      const data: TreeData<NodeType> = {
+        name: layerData.name,
+        icon: "📄",
+        type: item.type,
+      };
+      if (toggleVisibility) {
+        data.itemTools = (
+          <ToolButton
+            size="small"
+            icon={<Icon>👁</Icon>}
+            active={layerData.visible}
+            onClick={() => {
+              actionButtonPress(`${itemId}`, "visibility");
+            }}
+          />
+        );
+      }
       return {
         index: itemId,
         canMove: true,
         hasChildren: childIds.length > 0,
         children: childIds,
-        data: { name: layerData.name, icon: "📄", type: item.type },
+        data,
         canRename: true,
       };
     }
     if (item.type === "layerFolder") {
       const layerFolderData = activeTree.layerFolders[itemId];
+      const data: TreeData<NodeType> = {
+        name: layerFolderData.name,
+        icon: "📁",
+        type: item.type,
+      };
+      if (toggleVisibility) {
+        data.itemTools = (
+          <ToolButton
+            size="small"
+            icon={<Icon>👁</Icon>}
+            active={layerFolderData.visible}
+            onClick={() => {
+              actionButtonPress(`${itemId}`, "visibility");
+            }}
+          />
+        );
+      }
       return {
         index: itemId,
         canMove: true,
         hasChildren: childIds.length > 0,
         children: childIds,
-        data: { name: layerFolderData.name, icon: "📁", type: item.type },
+        data,
         canRename: true,
       };
     }

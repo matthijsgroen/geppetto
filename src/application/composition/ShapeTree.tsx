@@ -44,7 +44,11 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
   // }, [fileData, selectedItems]);
 
   return (
-    <LayerTreeEnvironment selectedItemsState={selectedItemsState} showMutations>
+    <LayerTreeEnvironment
+      selectedItemsState={selectedItemsState}
+      showMutations
+      toggleVisibility
+    >
       <ToolBar size="small">
         <ToolButton
           icon={<Icon>📁</Icon>}

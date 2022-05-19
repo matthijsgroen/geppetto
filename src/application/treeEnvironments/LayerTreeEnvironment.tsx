@@ -9,13 +9,16 @@ import {
   TreeItemIndex,
   UncontrolledTreeEnvironment,
 } from "../../ui-components";
-import { treeDataProvider } from "./LayerTreeDataProvider";
+import { ActionButton, treeDataProvider } from "./LayerTreeDataProvider";
 import { UseState } from "../types";
 import { useFile } from "../applicationMenu/FileContext";
+import useEvent from "../hooks/useEvent";
+import produce from "immer";
 
 type LayerTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
   showMutations?: boolean;
+  toggleVisibility?: boolean;
   children: React.ReactElement | React.ReactElement[] | null;
 };
 
@@ -26,13 +29,38 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   children,
   selectedItemsState,
   showMutations = false,
+  toggleVisibility = false,
 }) => {
   const [file, setFile] = useFile();
   const [, setSelectedItems] = selectedItemsState;
 
+  const actionButtonPress = useEvent(
+    (itemId: string, buttonId: ActionButton) => {
+      if (buttonId === "visibility") {
+        setFile(
+          produce((draft) => {
+            const item = draft.layerHierarchy[itemId];
+            if (item.type === "layer") {
+              draft.layers[itemId].visible = !draft.layers[itemId].visible;
+            }
+            if (item.type === "layerFolder") {
+              draft.layerFolders[itemId].visible =
+                !draft.layerFolders[itemId].visible;
+            }
+          })
+        );
+      }
+    }
+  );
+
   const treeData = useMemo(
-    () => treeDataProvider(newFile(), { showMutations }),
-    [showMutations]
+    () =>
+      treeDataProvider(
+        newFile(),
+        { showMutations, toggleVisibility },
+        actionButtonPress
+      ),
+    [showMutations, toggleVisibility, actionButtonPress]
   );
   useEffect(() => {
     treeData.updateActiveTree && treeData.updateActiveTree(file);

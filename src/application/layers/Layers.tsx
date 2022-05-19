@@ -37,6 +37,7 @@ import { ActionToolButton } from "../actions/ActionToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import { useFile } from "../applicationMenu/FileContext";
 import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
+import { useEvent } from "../hooks/useEvent";
 
 type LayersProps = {
   onSectionChange?: (newSection: AppSection) => void;
@@ -94,7 +95,7 @@ export const Layers: React.FC<LayersProps> = ({
     setActiveCoord(null);
   }
 
-  const getClosestPoint = useCallback(
+  const getClosestPoint = useEvent(
     (element: HTMLElement, coord: Vec2, shape: Layer): Vec2 | undefined => {
       if (!texture) return undefined;
       const canvasPos = element.getBoundingClientRect();
@@ -110,53 +111,39 @@ export const Layers: React.FC<LayersProps> = ({
         return dx > -factor && dx < factor && dy > -factor && dy < factor;
       });
       return closePoint;
-    },
-    [texture, translation]
+    }
   );
 
-  const mouseClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (
-        (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
-        texture &&
-        activeLayer
-      ) {
-        const { zoom, panX, panY } = translation;
-        const coord = mouseToTextureCoordinate(
-          texture,
-          zoom,
-          [panX, panY],
-          event
-        );
+  const mouseClick = useEvent((event: React.MouseEvent<HTMLElement>) => {
+    if (
+      (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
+      texture &&
+      activeLayer
+    ) {
+      const { zoom, panX, panY } = translation;
+      const coord = mouseToTextureCoordinate(
+        texture,
+        zoom,
+        [panX, panY],
+        event
+      );
 
-        const shape = file.layers[activeLayer];
-        if (shape) {
-          const closePoint = getClosestPoint(event.currentTarget, coord, shape);
+      const shape = file.layers[activeLayer];
+      if (shape) {
+        const closePoint = getClosestPoint(event.currentTarget, coord, shape);
 
-          if (!closePoint && mouseMode === MouseMode.Aim) {
-            const gridCoord = alignOnGrid(gridSettings, coord);
-            setFile((image) => addPoint(image, activeLayer, gridCoord));
-            setActiveCoord(gridCoord);
-          } else {
-            closePoint && setActiveCoord(closePoint);
-          }
+        if (!closePoint && mouseMode === MouseMode.Aim) {
+          const gridCoord = alignOnGrid(gridSettings, coord);
+          setFile((image) => addPoint(image, activeLayer, gridCoord));
+          setActiveCoord(gridCoord);
+        } else {
+          closePoint && setActiveCoord(closePoint);
         }
       }
-    },
-    [
-      activeLayer,
-      mouseMode,
-      translation,
-      setActiveCoord,
-      texture,
-      file.layers,
-      setFile,
-      gridSettings,
-      getClosestPoint,
-    ]
-  );
+    }
+  });
 
-  const hoverCursor = useCallback(
+  const hoverCursor = useEvent(
     (event: React.MouseEvent<HTMLElement>): MouseMode => {
       if (
         (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
@@ -179,8 +166,7 @@ export const Layers: React.FC<LayersProps> = ({
         }
       }
       return mouseMode;
-    },
-    [mouseMode, activeLayer, file.layers, translation, texture, getClosestPoint]
+    }
   );
 
   const { actions, triggerKeyboardAction } = useActionMap(
@@ -201,61 +187,49 @@ export const Layers: React.FC<LayersProps> = ({
     )
   );
 
-  const keyboardControl = useCallback(
-    (e: React.KeyboardEvent<HTMLElement>) => {
-      if (triggerKeyboardAction(e)) {
-        e.preventDefault();
-      }
-      if (activeLayer && activeCoord) {
-        const newValue: Vec2 = [activeCoord[0], activeCoord[1]];
-        if (e.shiftKey) {
-          if (e.code === "ArrowLeft" || e.code === "ArrowUp") {
-            const index = e.code === "ArrowLeft" ? 0 : 1;
-            newValue[index] = snapToGridDown(
-              gridSettings.size,
-              newValue[index]
-            );
-            if (newValue[index] === activeCoord[index]) {
-              newValue[index] -= gridSettings.size;
-            }
-          }
-          if (e.code === "ArrowRight" || e.code === "ArrowDown") {
-            const index = e.code === "ArrowRight" ? 0 : 1;
-            newValue[index] = snapToGridUp(gridSettings.size, newValue[index]);
-            if (newValue[index] === activeCoord[index]) {
-              newValue[index] += gridSettings.size;
-            }
-          }
-        } else {
-          if (e.code === "ArrowLeft") {
-            newValue[0] -= 1;
-          }
-          if (e.code === "ArrowRight") {
-            newValue[0] += 1;
-          }
-          if (e.code === "ArrowDown") {
-            newValue[1] += 1;
-          }
-          if (e.code === "ArrowUp") {
-            newValue[1] -= 1;
+  const keyboardControl = useEvent((e: React.KeyboardEvent<HTMLElement>) => {
+    if (triggerKeyboardAction(e)) {
+      e.preventDefault();
+    }
+    if (activeLayer && activeCoord) {
+      const newValue: Vec2 = [activeCoord[0], activeCoord[1]];
+      if (e.shiftKey) {
+        if (e.code === "ArrowLeft" || e.code === "ArrowUp") {
+          const index = e.code === "ArrowLeft" ? 0 : 1;
+          newValue[index] = snapToGridDown(gridSettings.size, newValue[index]);
+          if (newValue[index] === activeCoord[index]) {
+            newValue[index] -= gridSettings.size;
           }
         }
-        if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
-          setFile((image) =>
-            movePoint(image, activeLayer, activeCoord, newValue)
-          );
-          setActiveCoord(newValue);
+        if (e.code === "ArrowRight" || e.code === "ArrowDown") {
+          const index = e.code === "ArrowRight" ? 0 : 1;
+          newValue[index] = snapToGridUp(gridSettings.size, newValue[index]);
+          if (newValue[index] === activeCoord[index]) {
+            newValue[index] += gridSettings.size;
+          }
+        }
+      } else {
+        if (e.code === "ArrowLeft") {
+          newValue[0] -= 1;
+        }
+        if (e.code === "ArrowRight") {
+          newValue[0] += 1;
+        }
+        if (e.code === "ArrowDown") {
+          newValue[1] += 1;
+        }
+        if (e.code === "ArrowUp") {
+          newValue[1] -= 1;
         }
       }
-    },
-    [
-      triggerKeyboardAction,
-      activeCoord,
-      activeLayer,
-      setFile,
-      gridSettings.size,
-    ]
-  );
+      if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
+        setFile((image) =>
+          movePoint(image, activeLayer, activeCoord, newValue)
+        );
+        setActiveCoord(newValue);
+      }
+    }
+  });
 
   return (
     <Column>
