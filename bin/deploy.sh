@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 if [[ "$(git status --porcelain)" != "" ]]; then
     echo "There are unstaged changes. Please make sure the tree is clean before making a release. e.g. 'git stash -u'"
