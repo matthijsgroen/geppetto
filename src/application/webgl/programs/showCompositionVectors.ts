@@ -1,7 +1,7 @@
 import { TranslationVector } from "geppetto-player";
 import raw from "raw.macro";
 import { collectChildIds, visit } from "../../../animation/file2/hierarchy";
-import { isShapeMutationVector } from "../../../animation/file2/shapes";
+import { isShapeMutationVector } from "../../../animation/file2/mutation";
 import {
   GeppettoImage,
   MutationVector,

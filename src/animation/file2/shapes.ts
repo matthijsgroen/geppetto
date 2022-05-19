@@ -6,14 +6,7 @@ import {
   collectChildIds,
   isRootNode,
 } from "./hierarchy";
-import {
-  GeppettoImage,
-  Layer,
-  LayerFolder,
-  MutationVector,
-  NodeType,
-  ShapeMutationVector,
-} from "./types";
+import { GeppettoImage, Layer, LayerFolder, NodeType } from "./types";
 
 export const getUniqueName = (
   name: string,
@@ -183,12 +176,3 @@ export const removeShape = (
 
 export const hasPoints = (file: GeppettoImage) =>
   Object.values(file.layers).some((l) => l.points.length > 2);
-
-export const isShapeMutationVector = (
-  vector: MutationVector
-): vector is ShapeMutationVector =>
-  vector.type === "deform" ||
-  vector.type === "opacity" ||
-  vector.type === "rotate" ||
-  vector.type === "stretch" ||
-  vector.type === "translate";

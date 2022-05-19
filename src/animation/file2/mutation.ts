@@ -6,6 +6,7 @@ import {
   DeformationVector,
   GeppettoImage,
   MutationVector,
+  ShapeMutationVector,
   TranslationVector,
 } from "./types";
 
@@ -25,6 +26,15 @@ export const hasRadius = (
 ): mutation is TranslationVector | DeformationVector => "radius" in mutation;
 
 type Mutation<T> = Extract<MutationVector, { type: T }>;
+
+export const isShapeMutationVector = (
+  vector: MutationVector
+): vector is ShapeMutationVector =>
+  vector.type === "deform" ||
+  vector.type === "opacity" ||
+  vector.type === "rotate" ||
+  vector.type === "stretch" ||
+  vector.type === "translate";
 
 export const addMutation = <MutationType extends MutationVector["type"]>(
   file: GeppettoImage,

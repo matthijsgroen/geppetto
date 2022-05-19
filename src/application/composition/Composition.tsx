@@ -7,6 +7,8 @@ import {
   useRef,
   useState,
 } from "react";
+import { visit } from "../../animation/file2/hierarchy";
+import { isShapeMutationVector } from "../../animation/file2/mutation";
 import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import { Vec2 } from "../../types";
@@ -34,6 +36,7 @@ import {
   useUpdateScreenTranslation,
 } from "../contexts/ScreenTranslationContext";
 import { useActionMap } from "../hooks/useActionMap";
+import useEvent from "../hooks/useEvent";
 import { AppSection, Size, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
@@ -141,7 +144,7 @@ export const Composition: React.FC<CompositionProps> = ({
           },
         },
       }),
-      [setShowItemDetails]
+      []
     )
   );
 
@@ -162,17 +165,91 @@ export const Composition: React.FC<CompositionProps> = ({
   useScaleUpdater(containerRef, texture);
 
   const mutatorMap = useMutatorMap(file, vectorValues);
-
-  let position: Vec2 = [0, 0];
   const translation = useScreenTranslation();
-  if (selectedItems.length === 1) {
-    const itemId = selectedItems[0];
-    const item = file.layerHierarchy[itemId];
-    if (item.type === "mutation" && containerRef.current) {
+  const visibleMutators = useMemo(() => {
+    const result: string[] = [];
+    if (selectedItems[0] === undefined) return result;
+
+    visit(
+      file.layerHierarchy,
+      (node, nodeId) => {
+        if (node.type === "layerFolder") {
+          const folder = file.layerFolders[nodeId];
+          if (!folder.visible) {
+            return "SKIP";
+          }
+          return;
+        }
+        if (node.type === "layer") {
+          const layer = file.layers[nodeId];
+          if (!layer.visible) {
+            return "SKIP";
+          }
+          return;
+        }
+        if (node.type === "mutation") {
+          const mutation = file.mutations[nodeId];
+          if (isShapeMutationVector(mutation)) {
+            result.push(nodeId);
+          }
+        }
+      },
+      selectedItems[0]
+    );
+    return result;
+  }, [
+    selectedItems,
+    file.layerHierarchy,
+    file.layers,
+    file.mutations,
+    file.layerFolders,
+  ]);
+
+  const handleClick = useEvent((event: React.MouseEvent<HTMLElement>) => {
+    if (selectedItems.length === 1 && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
-      position = imageToPixels(mutatorMap[itemId], translation, rect);
+      const imageConvert = imageToPixels(translation, rect);
+      for (const mutatorId of visibleMutators) {
+        const position = imageConvert(mutatorMap[mutatorId]);
+
+        const elementX = event.pageX - rect.left;
+        const elementY = event.pageY - rect.top - 2;
+        if (
+          elementX > position[0] - 6 &&
+          elementX < position[0] + 6 &&
+          elementY > position[1] - 6 &&
+          elementY < position[1] + 6
+        ) {
+          setSelectedItems([mutatorId]);
+        }
+      }
     }
-  }
+  });
+
+  const hoverCursor = useEvent(
+    (event: React.MouseEvent<HTMLElement>): MouseMode => {
+      if (selectedItems.length === 1 && containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const imageConvert = imageToPixels(translation, rect);
+        for (const mutatorId of visibleMutators) {
+          const position = imageConvert(mutatorMap[mutatorId]);
+
+          const elementX = event.pageX - rect.left;
+          const elementY = event.pageY - rect.top - 2;
+          if (
+            elementX > position[0] - 6 &&
+            elementX < position[0] + 6 &&
+            elementY > position[1] - 6 &&
+            elementY < position[1] + 6
+          ) {
+            return MouseMode.Target;
+          }
+        }
+      }
+
+      return MouseMode.Normal;
+    }
+  );
 
   return (
     <Column>
@@ -219,7 +296,12 @@ export const Composition: React.FC<CompositionProps> = ({
         <Panel workspace center>
           <StartupScreen file={file} texture={texture} screen={"composition"} />
           {texture && hasPoints(file) && (
-            <LayerMouseControl mode={MouseMode.Grab} maxZoomFactor={maxZoom}>
+            <LayerMouseControl
+              mode={MouseMode.Grab}
+              maxZoomFactor={maxZoom}
+              hoverCursor={hoverCursor}
+              onClick={handleClick}
+            >
               <CompositionCanvas
                 image={texture}
                 activeLayers={selectedItems}
@@ -235,23 +317,6 @@ export const Composition: React.FC<CompositionProps> = ({
                     />
                   </Inlay>
                 )}
-                <div
-                  style={{
-                    width: 10,
-                    height: 10,
-                    left: position[0],
-                    top: position[1] - 4,
-                    position: "absolute",
-                    backgroundColor: "transparent",
-                    border: "2px solid pink",
-                    fontSize: "1px",
-                    cursor: "pointer",
-                    zIndex: 1,
-                    transform: "translate(-5px, -5px)",
-                  }}
-                >
-                  V
-                </div>
               </CompositionCanvas>
             </LayerMouseControl>
           )}

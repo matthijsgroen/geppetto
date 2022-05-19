@@ -1,5 +1,4 @@
 import produce from "immer";
-import { useCallback } from "react";
 import { hasRadius, iconMapping } from "../../animation/file2/mutation";
 import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
@@ -65,16 +64,13 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
     );
   });
 
-  const offsetChangeHandler = useCallback(
-    (newValue: Vec2) => {
-      setFile(
-        produce((draft) => {
-          draft.layers[itemId].translate = newValue;
-        })
-      );
-    },
-    [setFile, itemId]
-  );
+  const offsetChangeHandler = useEvent((newValue: Vec2) => {
+    setFile(
+      produce((draft) => {
+        draft.layers[itemId].translate = newValue;
+      })
+    );
+  });
 
   return (
     <>
@@ -103,56 +99,44 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const mutation = file.mutations[itemId];
 
-  const radiusChange = useCallback(
-    (newRadius: number) => {
-      setFile(
-        produce((draft) => {
-          const mutation = draft.mutations[itemId];
-          if (hasRadius(mutation)) {
-            mutation.radius = newRadius;
-          }
-        })
-      );
-    },
-    [setFile, itemId]
-  );
+  const radiusChange = useEvent((newRadius: number) => {
+    setFile(
+      produce((draft) => {
+        const mutation = draft.mutations[itemId];
+        if (hasRadius(mutation)) {
+          mutation.radius = newRadius;
+        }
+      })
+    );
+  });
 
-  const toggleRadius = useCallback(
-    (newValue: boolean) => {
-      setFile(
-        produce((draft) => {
-          const mutation = draft.mutations[itemId];
-          if (hasRadius(mutation)) {
-            mutation.radius = newValue ? 10 : -1;
-          }
-        })
-      );
-    },
-    [setFile, itemId]
-  );
+  const toggleRadius = useEvent((newValue: boolean) => {
+    setFile(
+      produce((draft) => {
+        const mutation = draft.mutations[itemId];
+        if (hasRadius(mutation)) {
+          mutation.radius = newValue ? 10 : -1;
+        }
+      })
+    );
+  });
 
-  const originChangeHandler = useCallback(
-    (newValue: Vec2) => {
-      setFile(
-        produce((draft) => {
-          const mutation = draft.mutations[itemId];
-          mutation.origin = newValue;
-        })
-      );
-    },
-    [setFile, itemId]
-  );
+  const originChangeHandler = useEvent((newValue: Vec2) => {
+    setFile(
+      produce((draft) => {
+        const mutation = draft.mutations[itemId];
+        mutation.origin = newValue;
+      })
+    );
+  });
 
-  const valueChangeHandler = useCallback(
-    (newValue: Vec2) => {
-      setFile(
-        produce((draft) => {
-          draft.defaultFrame[itemId] = newValue;
-        })
-      );
-    },
-    [setFile, itemId]
-  );
+  const valueChangeHandler = useEvent((newValue: Vec2) => {
+    setFile(
+      produce((draft) => {
+        draft.defaultFrame[itemId] = newValue;
+      })
+    );
+  });
 
   return (
     <>
@@ -241,17 +225,14 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
   const hierarchyItem =
     activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
 
-  const valueChangeHandler = useCallback(
-    (newValue: Vec2) => {
-      if (activeShapeId === null) return;
-      setFile(
-        produce((draft) => {
-          draft.defaultFrame[activeShapeId] = newValue;
-        })
-      );
-    },
-    [setFile, activeShapeId]
-  );
+  const valueChangeHandler = useEvent((newValue: Vec2) => {
+    if (activeShapeId === null) return;
+    setFile(
+      produce((draft) => {
+        draft.defaultFrame[activeShapeId] = newValue;
+      })
+    );
+  });
 
   if (
     activeShapeId !== null &&

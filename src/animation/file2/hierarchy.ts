@@ -235,14 +235,16 @@ export const moveInHierarchy = <T extends string>(
   return result;
 };
 
+export const SKIP_CHILDREN = "SKIP";
+
 const visitNode = <T extends string>(
   hierarchy: Hierarchy<T>,
   node: TreeNode<T>,
   nodeId: string,
-  visitor: (node: TreeNode<T>, nodeId: string) => void
+  visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP"
 ): void => {
-  visitor(node, nodeId);
-  if (node.children) {
+  const result = visitor(node, nodeId);
+  if (node.children && result !== "SKIP") {
     for (const childId of node.children) {
       const childNode = hierarchy[childId] as TreeNode<T>;
       visitNode(hierarchy, childNode, childId, visitor);
@@ -252,8 +254,15 @@ const visitNode = <T extends string>(
 
 export const visit = <T extends string>(
   hierarchy: Hierarchy<T>,
-  visitor: (node: TreeNode<T>, nodeId: string) => void
+  visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP",
+  startId?: string
 ): void => {
+  if (startId) {
+    const node = hierarchy[startId] as TreeNode<T>;
+    visitNode(hierarchy, node, startId, visitor);
+    return;
+  }
+
   const root = Object.values(hierarchy).find((n) => n.type === "root");
   for (const nodeId of root?.children || []) {
     const node = hierarchy[nodeId] as TreeNode<T>;
