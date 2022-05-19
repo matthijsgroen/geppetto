@@ -8,7 +8,7 @@ fi
 echo "Preparing site for deploy"
 rm -rf build/
 yarn build
-git checkout -- src/versionInfo.json
+git reset --hard
 git switch gh-pages
 mkdir -p docs/app
 cp -rf build/* docs/app
