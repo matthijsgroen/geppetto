@@ -22,6 +22,8 @@ const run = async () => {
   };
 
   await writeFile(INFO_PATH, JSON.stringify(versionInfo), "utf-8");
+
+  await exec(`git update-index --assume-unchanged ${INFO_PATH}`);
 };
 
 run();
