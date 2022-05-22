@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { DraggingPosition } from "react-complex-tree";
-import { isRootNode, moveInHierarchy } from "../../animation/file2/hierarchy";
+import {
+  isRootNode,
+  moveInHierarchy,
+  visit,
+} from "../../animation/file2/hierarchy";
 import { newFile } from "../../animation/file2/new";
 import { rename } from "../../animation/file2/shapes";
 import {
@@ -14,11 +18,13 @@ import { UseState } from "../types";
 import { useFile } from "../applicationMenu/FileContext";
 import useEvent from "../hooks/useEvent";
 import produce from "immer";
+import { NodeType } from "../../animation/file2/types";
 
 type LayerTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
   showMutations?: boolean;
   toggleVisibility?: boolean;
+  treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
 };
 
@@ -28,6 +34,7 @@ const yes = () => true;
 export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   children,
   selectedItemsState,
+  treeId,
   showMutations = false,
   toggleVisibility = false,
 }) => {
@@ -144,6 +151,20 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     [treeData, setFile]
   );
 
+  const expandedItems = useMemo(() => {
+    const expanded: string[] = [];
+    visit(file.layerHierarchy, (node, nodeId) => {
+      if (node.type === "layerFolder") {
+        const folderInfo = file.layerFolders[nodeId];
+        if (!folderInfo.collapsed) {
+          expanded.push(nodeId);
+        }
+      }
+    });
+
+    return expanded;
+  }, [file.layerFolders, file.layerHierarchy]);
+
   return (
     <UncontrolledTreeEnvironment
       dataProvider={treeData}
@@ -159,18 +180,40 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       canDropAt={canDropAt}
       canDragAndDrop={true}
       canReorderItems={true}
-      onRenameItem={useCallback(
-        (item: LayerItem, newName: string) => {
-          setFile((fileData) =>
-            rename(fileData, `${item.index}`, item.data.type, newName)
-          );
-          treeData.addChangedId && treeData.addChangedId(`${item.index}`);
-        },
-        [setFile, treeData]
-      )}
+      onRenameItem={useEvent((item: LayerItem, newName: string) => {
+        setFile((fileData) =>
+          rename(fileData, `${item.index}`, item.data.type, newName)
+        );
+        treeData.addChangedId && treeData.addChangedId(`${item.index}`);
+      })}
       onDrop={onDrop}
+      onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+        setFile(
+          produce((draft) => {
+            const folder = draft.layerHierarchy[item.index];
+            if (folder.type === "layerFolder") {
+              draft.layerFolders[item.index].collapsed = false;
+            }
+          })
+        );
+      })}
+      onCollapseItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+        setFile(
+          produce((draft) => {
+            const folder = draft.layerHierarchy[item.index];
+            if (folder.type === "layerFolder") {
+              draft.layerFolders[item.index].collapsed = true;
+            }
+          })
+        );
+      })}
       canDropOnItemWithChildren={true}
       canDropOnItemWithoutChildren={true}
+      viewState={{
+        [treeId]: {
+          expandedItems,
+        },
+      }}
     >
       {children}
     </UncontrolledTreeEnvironment>

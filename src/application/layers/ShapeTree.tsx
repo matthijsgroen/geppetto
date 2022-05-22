@@ -63,7 +63,10 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
   }, [file, selectedItems]);
 
   return (
-    <LayerTreeEnvironment selectedItemsState={selectedItemsState}>
+    <LayerTreeEnvironment
+      selectedItemsState={selectedItemsState}
+      treeId={"layers"}
+    >
       <Panel padding={5}>
         <ToolBar size="small">
           <ToolButton

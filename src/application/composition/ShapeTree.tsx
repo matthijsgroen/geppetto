@@ -48,6 +48,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
       selectedItemsState={selectedItemsState}
       showMutations
       toggleVisibility
+      treeId="composition"
     >
       <ToolBar size="small">
         <ToolButton
