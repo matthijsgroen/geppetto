@@ -7,12 +7,14 @@ type NumberInputProps = {
   value: number;
   minValue?: number;
   maxValue?: number;
+  htmlId?: string;
   onChange?: (newValue: number) => void;
 };
 
 export const NumberInput: React.FC<NumberInputProps> = ({
   prefix,
   postfix,
+  htmlId,
   value,
   minValue,
   maxValue,
@@ -30,6 +32,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
       {prefix}
       <input
         type="number"
+        id={htmlId}
         value={value}
         onChange={changeHandler}
         min={minValue}

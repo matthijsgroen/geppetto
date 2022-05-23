@@ -52,7 +52,7 @@ export const ToolTab = forwardRef<HTMLButtonElement, ToolTabProps>(
         title={tooltip}
         ref={ref}
       >
-        {icon}{" "}
+        {icon}
         {label && (
           <Label active={active} size={useSize} vertical={useVertical}>
             {label}

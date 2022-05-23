@@ -19,34 +19,36 @@ export default story;
 const Template: ComponentStory<typeof ControlComponent> = (args) => (
   <Panel padding={5}>
     <ControlPanel>
-      <ControlComponent label={args.label}>{args.children}</ControlComponent>
+      <ControlComponent label={args.label} htmlFor={"InputField"}>
+        {args.children}
+      </ControlComponent>
     </ControlPanel>
   </Panel>
 );
 
 export const Control = Template.bind({});
 Control.args = {
-  children: <input type="checkbox" />,
+  children: <input type="checkbox" id="InputField" />,
 };
 
 export const NumberControl = Template.bind({});
 NumberControl.args = {
-  children: <NumberInput value={10} prefix="x:" />,
+  children: <NumberInput value={10} prefix="x:" htmlId="InputField" />,
 };
 export const VectorControl = Template.bind({});
 VectorControl.args = {
   children: [
-    <NumberInput key={"x"} value={10} prefix="x:" />,
+    <NumberInput key={"x"} value={10} prefix="x:" htmlId="InputField" />,
     <NumberInput key={"y"} value={10} prefix="y:" />,
   ],
 };
 
 export const SliderControl = Template.bind({});
 SliderControl.args = {
-  children: <input type="range" value={10} />,
+  children: <input type="range" value={10} id="InputField" />,
 };
 
 export const CheckControl = Template.bind({});
 CheckControl.args = {
-  children: <input type="checkbox" checked />,
+  children: <input type="checkbox" checked id="InputField" />,
 };

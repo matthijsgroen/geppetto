@@ -7,6 +7,7 @@ type LabelProps = PropsWithChildren<{
   active?: boolean;
   size?: ToolBarSize;
   vertical?: boolean;
+  htmlFor?: string;
 }>;
 
 /**
@@ -14,18 +15,20 @@ type LabelProps = PropsWithChildren<{
  */
 export const Label: React.FC<LabelProps> = ({
   children,
+  htmlFor,
   active = false,
   size = "default",
   vertical = false,
 }) => (
-  <span
+  <label
     className={className({
       [styles.label]: true,
       [styles.active]: active,
       [styles.small]: size === "small",
       [styles.vertical]: vertical,
     })}
+    htmlFor={htmlFor}
   >
     {children}
-  </span>
+  </label>
 );

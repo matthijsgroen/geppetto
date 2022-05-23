@@ -152,11 +152,11 @@ input[type="number"]:not(:focus) {
     transition: margin-left 200ms;
   }
 
-  &:focus::after {
-    border-color: var(--colors-control-focus);
-  }
   &:hover::after {
     border-color: var(--colors-control-highlight);
+  }
+  &:focus::after {
+    border-color: var(--colors-control-focus);
   }
 
   &:checked {
