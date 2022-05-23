@@ -114,6 +114,21 @@ export const showCompositionMap = (
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
   };
 
+  const populateVectorValues = () => {
+    if (Object.keys(mutMapping).length === 0 || !program || !gl) return;
+    gl.useProgram(program);
+
+    const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
+    const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
+    for (const [key, value] of Object.entries(vectorValues)) {
+      const index = mutMapping[key];
+      if (index === -1) continue;
+      mutationValues[index * 2] = value[0];
+      mutationValues[index * 2 + 1] = value[1];
+    }
+    gl.uniform2fv(uMutationValues, mutationValues);
+  };
+
   let cWidth = 0;
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
@@ -132,23 +147,13 @@ export const showCompositionMap = (
     },
     setVectorValues(v) {
       vectorValues = v;
-      if (Object.keys(mutMapping).length === 0 || !program || !gl) return;
-      gl.useProgram(program);
-
-      const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
-      const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
-      for (const [key, value] of Object.entries(vectorValues)) {
-        const index = mutMapping[key];
-        if (index === -1) return;
-        mutationValues[index * 2] = value[0];
-        mutationValues[index * 2 + 1] = value[1];
-      }
-      gl.uniform2fv(uMutationValues, mutationValues);
+      populateVectorValues();
       onChange();
     },
     setLayerSelected(layers) {
       if (layers.length === 0 || shapes === null) {
         layersSelected = [];
+        onChange();
         return;
       }
       layersSelected = [];
@@ -187,6 +192,7 @@ export const showCompositionMap = (
       );
       program = shaderProgram;
       populateShapes();
+      populateVectorValues();
 
       return {
         onChange(listener) {
@@ -257,7 +263,6 @@ export const showCompositionMap = (
 
           for (const element of elements) {
             if (layersSelected.includes(element.id) && element.amount > 0) {
-              // if (element.amount > 0) {
               gl.uniform3f(translate, element.x, element.y, element.z);
               gl.uniform1f(mutation, element.mutator);
 

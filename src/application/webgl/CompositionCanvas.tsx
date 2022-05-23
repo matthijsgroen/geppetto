@@ -16,6 +16,7 @@ import WebGLCanvas from "./WebGLCanvas";
 export interface CompositionCanvasProps {
   image: HTMLImageElement | null;
   file: GeppettoImage;
+  showWireFrames: boolean;
   vectorValues: GeppettoImage["defaultFrame"];
   activeLayers: string[];
 }
@@ -28,57 +29,65 @@ const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
 const CompositionCanvas = forwardRef<
   HTMLDivElement,
   PropsWithChildren<CompositionCanvasProps>
->(({ image, file, vectorValues, activeLayers, children }, ref) => {
-  const translation = useScreenTranslation();
-  const composition = useMemo(
-    () => showComposition(translation),
-    [translation]
-  );
-  const layer = useMemo(() => showCompositionMap(translation), [translation]);
-  const vectorMap = useMemo(
-    () => showCompositionVectors(translation),
-    [translation]
-  );
-  const renderers = useMemo(
-    () => [composition.renderer, layer.renderer, vectorMap.renderer],
-    [composition.renderer, layer.renderer, vectorMap.renderer]
-  );
+>(
+  (
+    { image, file, vectorValues, activeLayers, showWireFrames, children },
+    ref
+  ) => {
+    const translation = useScreenTranslation();
+    const composition = useMemo(
+      () => showComposition(translation),
+      [translation]
+    );
+    const compositionMap = useMemo(
+      () => showCompositionMap(translation),
+      [translation]
+    );
+    const vectorMap = useMemo(
+      () => showCompositionVectors(translation),
+      [translation]
+    );
+    const renderers = useMemo(
+      () => [composition.renderer, compositionMap.renderer, vectorMap.renderer],
+      [composition.renderer, compositionMap.renderer, vectorMap.renderer]
+    );
 
-  useEffect(() => {
-    if (image) {
-      composition.setImage(image);
-      layer.setImage(image);
-      vectorMap.setImage(image);
-    }
-  }, [image, composition, layer, vectorMap]);
+    useEffect(() => {
+      if (image) {
+        composition.setImage(image);
+        compositionMap.setImage(image);
+        vectorMap.setImage(image);
+      }
+    }, [image, composition, compositionMap, vectorMap]);
 
-  const fileRef = useRef(newFile());
+    const fileRef = useRef(newFile());
 
-  useEffect(() => {
-    if (shapesChanged(file, fileRef.current)) {
-      composition.setShapes(file);
-      layer.setShapes(file);
-      vectorMap.setShapes(file);
-    }
-    fileRef.current = file;
-  }, [file, composition, layer, vectorMap]);
+    useEffect(() => {
+      if (shapesChanged(file, fileRef.current)) {
+        composition.setShapes(file);
+        compositionMap.setShapes(file);
+        vectorMap.setShapes(file);
+      }
+      fileRef.current = file;
+    }, [file, composition, compositionMap, vectorMap]);
 
-  useEffect(() => {
-    composition.setVectorValues(vectorValues);
-    layer.setVectorValues(vectorValues);
-    vectorMap.setVectorValues(vectorValues);
-  }, [vectorValues, composition, layer, vectorMap]);
+    useEffect(() => {
+      composition.setVectorValues(vectorValues);
+      compositionMap.setVectorValues(vectorValues);
+      vectorMap.setVectorValues(vectorValues);
+    }, [vectorValues, composition, compositionMap, vectorMap]);
 
-  useEffect(() => {
-    layer.setLayerSelected(activeLayers);
-    vectorMap.setLayerSelected(activeLayers);
-  }, [activeLayers, layer, vectorMap]);
+    useEffect(() => {
+      compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);
+      vectorMap.setLayerSelected(activeLayers);
+    }, [activeLayers, compositionMap, vectorMap, showWireFrames]);
 
-  return (
-    <WebGLCanvas renderers={renderers} ref={ref}>
-      {children}
-    </WebGLCanvas>
-  );
-});
+    return (
+      <WebGLCanvas renderers={renderers} ref={ref}>
+        {children}
+      </WebGLCanvas>
+    );
+  }
+);
 
 export default CompositionCanvas;

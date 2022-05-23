@@ -192,6 +192,21 @@ export const showCompositionVectors = (
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
 
+  const populateVectorValues = () => {
+    if (mutators.length === 0 || !program || !gl) return;
+    gl.useProgram(program);
+
+    const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
+    const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
+    Object.entries(vectorValues).forEach(([key, value]) => {
+      const index = mutators.indexOf(key);
+      if (index === -1) return;
+      mutationValues[index * 2] = value[0];
+      mutationValues[index * 2 + 1] = value[1];
+    });
+    gl.uniform2fv(uMutationValues, mutationValues);
+  };
+
   let cWidth = 0;
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
@@ -210,18 +225,7 @@ export const showCompositionVectors = (
     },
     setVectorValues(v) {
       vectorValues = v;
-      if (mutators.length === 0 || !program || !gl) return;
-      gl.useProgram(program);
-
-      const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
-      const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
-      Object.entries(vectorValues).forEach(([key, value]) => {
-        const index = mutators.indexOf(key);
-        if (index === -1) return;
-        mutationValues[index * 2] = value[0];
-        mutationValues[index * 2 + 1] = value[1];
-      });
-      gl.uniform2fv(uMutationValues, mutationValues);
+      populateVectorValues();
       onChange();
     },
     setLayerSelected(layers) {
@@ -267,6 +271,7 @@ export const showCompositionVectors = (
       };
 
       populateShapes();
+      populateVectorValues();
 
       return {
         onChange(listener) {
