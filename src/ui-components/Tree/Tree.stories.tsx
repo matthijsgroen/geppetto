@@ -5,7 +5,7 @@ import {
   ToolsProvider,
 } from "./storybookTreeDataProvider";
 import { Tree } from "./Tree";
-import { UncontrolledTreeEnvironment } from "./UncontrolledTreeEnvironment";
+import { TreeEnvironment } from "./TreeEnvironment";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -27,11 +27,9 @@ const toolsProvider: ToolsProvider = (data) => {
 };
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof Tree> = (args) => (
-  <UncontrolledTreeEnvironment
-    dataProvider={storyTreeDataProvider(toolsProvider)}
-  >
+  <TreeEnvironment dataProvider={storyTreeDataProvider(toolsProvider)}>
     <Tree {...args} />
-  </UncontrolledTreeEnvironment>
+  </TreeEnvironment>
 );
 
 export const Default = Template.bind({});

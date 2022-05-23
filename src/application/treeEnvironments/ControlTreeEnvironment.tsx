@@ -6,7 +6,7 @@ import {
   TreeData,
   TreeItem,
   TreeItemIndex,
-  UncontrolledTreeEnvironment,
+  TreeEnvironment,
 } from "../../ui-components";
 import { treeDataProvider } from "./ControlTreeDataProvider";
 import { UseState } from "../types";
@@ -108,7 +108,7 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
   );
 
   return (
-    <UncontrolledTreeEnvironment
+    <TreeEnvironment
       dataProvider={treeData}
       onSelectItems={useCallback(
         (items: TreeItemIndex[]) => {
@@ -136,6 +136,6 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
       canDropOnItemWithoutChildren={true}
     >
       {children}
-    </UncontrolledTreeEnvironment>
+    </TreeEnvironment>
   );
 };

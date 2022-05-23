@@ -11,7 +11,7 @@ import {
   TreeData,
   TreeItem,
   TreeItemIndex,
-  UncontrolledTreeEnvironment,
+  TreeEnvironment,
 } from "../../ui-components";
 import { ActionButton, treeDataProvider } from "./LayerTreeDataProvider";
 import { UseState } from "../types";
@@ -166,7 +166,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   }, [file.layerFolders, file.layerHierarchy]);
 
   return (
-    <UncontrolledTreeEnvironment
+    <TreeEnvironment
       dataProvider={treeData}
       onSelectItems={useCallback(
         (items: TreeItemIndex[]) => {
@@ -217,6 +217,6 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       }}
     >
       {children}
-    </UncontrolledTreeEnvironment>
+    </TreeEnvironment>
   );
 };

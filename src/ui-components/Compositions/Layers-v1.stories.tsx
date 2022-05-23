@@ -20,7 +20,7 @@ import {
   ToolSeparator,
   ToolTab,
   Tree,
-  UncontrolledTreeEnvironment,
+  TreeEnvironment,
 } from "..";
 import {
   storyTreeDataProvider,
@@ -139,11 +139,11 @@ const Template: Story = () => (
             />
           </ToolBar>
           <Panel padding={5}>
-            <UncontrolledTreeEnvironment
+            <TreeEnvironment
               dataProvider={storyTreeDataProvider(noToolsProvider)}
             >
               <Tree treeId="layers" />
-            </UncontrolledTreeEnvironment>
+            </TreeEnvironment>
           </Panel>
         </Column>
       </ResizePanel>

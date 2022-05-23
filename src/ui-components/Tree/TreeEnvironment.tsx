@@ -65,7 +65,7 @@ const interactionManager: InteractionManager = {
   }),
 };
 
-export const UncontrolledTreeEnvironment = <T extends string>({
+export const TreeEnvironment = <T extends string>({
   children,
   viewState = {},
   ...props

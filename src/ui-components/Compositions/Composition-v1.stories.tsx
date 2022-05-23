@@ -23,7 +23,7 @@ import {
   ToolSeparator,
   ToolTab,
   Tree,
-  UncontrolledTreeEnvironment,
+  TreeEnvironment,
 } from "..";
 import {
   storyTreeDataProvider,
@@ -112,11 +112,11 @@ const Template: Story = () => (
             />
           </ToolBar>
           <Panel padding={5}>
-            <UncontrolledTreeEnvironment
+            <TreeEnvironment
               dataProvider={storyTreeDataProvider(toolsProvider)}
             >
               <Tree treeId="layers" />
-            </UncontrolledTreeEnvironment>
+            </TreeEnvironment>
             <Title>Opacity (4)</Title>
             <ControlPanel>
               <Control label="Visible">
@@ -160,11 +160,11 @@ const Template: Story = () => (
                   tooltip="Remove item"
                 />
               </ToolBar>
-              <UncontrolledTreeEnvironment
+              <TreeEnvironment
                 dataProvider={storyTreeDataProvider(noToolsProvider)}
               >
                 <Tree treeId="controls" />
-              </UncontrolledTreeEnvironment>
+              </TreeEnvironment>
               <Title>Left Arm</Title>
               <ControlPanel>
                 <Control label="Value">

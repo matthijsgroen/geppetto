@@ -10,7 +10,7 @@ export { ToolTab } from "./ToolTab/ToolTab";
 export { ResizePanel, ResizeDirection } from "./ResizePanel/ResizePanel";
 export { Tree } from "./Tree/Tree";
 export type { TreeItem, TreeData, TreeItemIndex } from "./Tree/Tree";
-export { UncontrolledTreeEnvironment } from "./Tree/UncontrolledTreeEnvironment";
+export { TreeEnvironment } from "./Tree/TreeEnvironment";
 export { Panel } from "./Panel/Panel";
 export { Column } from "./Column/Column";
 export { Row } from "./Row/Row";
