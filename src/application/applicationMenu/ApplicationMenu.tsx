@@ -1,12 +1,12 @@
 import React, { useCallback, useRef, useEffect, useContext } from "react";
 import {
-  Icon,
   Menu,
   ToolButton,
   SubMenu,
   Shortcut,
   MenuDivider,
   MenuItem,
+  LogoIcon,
 } from "../../ui-components";
 import { UseState } from "../types";
 import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
@@ -16,12 +16,15 @@ import { GeppettoImage } from "../../animation/file2/types";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionMenuItem } from "../actions/ActionMenuItem";
 import { useAppUpdate } from "../hooks/useAppUpdate";
-import { ApplicationContext } from "./ApplicationContext";
+import { ApplicationContext } from "../contexts/ApplicationContext";
+import { useAppInstall } from "../hooks/useAppInstall";
+import { useFile } from "./FileContext";
+
+import sceneryDemo from "../../demos/scenery.json";
+import sceneryDemoImage from "../../demos/scenery.png";
 
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
-  fileState: UseState<GeppettoImage>;
-
   textureFileNameState: UseState<string | null>;
   textureFileState: UseState<HTMLImageElement | null>;
 };
@@ -69,13 +72,16 @@ const FILE_SAVE: Shortcut = { key: "KeyS", ctrlOrCmd: true };
 
 export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   fileNameState,
-  fileState,
   textureFileNameState,
   textureFileState,
 }) => {
   const fileRef = useRef<null | FileSystemFileHandle>(null);
   const textureFileRef = useRef<null | FileSystemFileHandle>(null);
   const [hasAppUpdate, updater] = useAppUpdate();
+  const [canInstall, installer] = useAppInstall();
+  const [file, setFile] = useFile();
+  const [, setTextureFile] = textureFileState;
+  const [, setTextureFileName] = textureFileNameState;
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -99,7 +105,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 fileRef.current = fileHandle;
                 const [filename, image] = await loadGeppettoImage(fileHandle);
                 fileNameState[1](filename);
-                fileState[1](image);
+                setFile(image);
               } catch (e) {
                 // user abort
               }
@@ -127,7 +133,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 fileRef.current = fileHandle;
                 fileNameState[1](fileHandle.name);
                 const writable = await fileHandle.createWritable();
-                await writable.write(JSON.stringify(fileState[0]));
+                await writable.write(JSON.stringify(file));
                 writable.close();
               } catch (e) {
                 // user abort
@@ -162,7 +168,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
             if (fileRef.current) {
               try {
                 const writable = await fileRef.current.createWritable();
-                await writable.write(JSON.stringify(fileState[0]));
+                await writable.write(JSON.stringify(file));
                 writable.close();
               } catch (e) {
                 // user abort
@@ -188,8 +194,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 });
                 textureFileRef.current = file;
                 const [filename, image] = await loadTextureImage(file);
-                textureFileNameState[1](filename);
-                textureFileState[1](image);
+                setTextureFileName(filename);
+                setTextureFile(image);
               } catch (e) {
                 // user abort
               }
@@ -199,7 +205,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
           },
         },
       }),
-      [fileNameState, fileState, textureFileNameState, textureFileState]
+      [fileNameState, file, setFile, setTextureFile, setTextureFileName]
     )
   );
 
@@ -217,12 +223,36 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       if (message === "textureOpen") {
         actions.openTextureFile.handler();
       }
+      if (message === "fileOpen") {
+        actions.openImageFile.handler();
+      }
+      if (message === "demoOpenScenery") {
+        if (verifyVersion1(sceneryDemo)) {
+          setFile(convertFromV1(sceneryDemo));
+        } else if (verifyVersion2(sceneryDemo)) {
+          setFile(sceneryDemo);
+        }
+        const image = new Image();
+        image.addEventListener("load", () => {
+          setTextureFile(image);
+          setTextureFileName("scenery.png");
+        });
+        image.crossOrigin = "anonymous";
+        image.src = sceneryDemoImage;
+      }
     });
     return () => {
       window.removeEventListener("keydown", onKeyDown);
       unsubscribe();
     };
-  }, [triggerKeyboardAction, actions, onMessage]);
+  }, [
+    triggerKeyboardAction,
+    actions,
+    onMessage,
+    setFile,
+    setTextureFile,
+    setTextureFileName,
+  ]);
 
   return (
     <Menu
@@ -230,14 +260,17 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       transition
       menuButton={({ open }) => (
         <ToolButton
-          icon={<Icon>🍔</Icon>}
+          icon={<LogoIcon />}
           active={open}
           notificationBadge={hasAppUpdate}
         />
       )}
     >
       {hasAppUpdate && (
-        <MenuItem onClick={updater}>Restart for app update...</MenuItem>
+        <MenuItem onClick={updater}>↻ Restart for app update...</MenuItem>
+      )}
+      {canInstall && (
+        <MenuItem onClick={installer}>⇣ Install application locally</MenuItem>
       )}
       <SubMenu label="File">
         {/* <MenuItem>New</MenuItem> */}

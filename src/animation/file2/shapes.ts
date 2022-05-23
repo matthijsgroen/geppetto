@@ -1,9 +1,14 @@
 import produce from "immer";
 import { Vec2 } from "../../types";
-import { addInHierarchy, PlacementInfo, collectChildIds } from "./hierarchy";
+import {
+  addInHierarchy,
+  PlacementInfo,
+  collectChildIds,
+  isRootNode,
+} from "./hierarchy";
 import { GeppettoImage, Layer, LayerFolder, NodeType } from "./types";
 
-const getUniqueName = (
+export const getUniqueName = (
   name: string,
   existingItems: Record<string, { name: string }>
 ) => {
@@ -37,14 +42,10 @@ export const addShape = (
   );
 
   return [
-    {
-      ...image,
-      layerHierarchy,
-      layers: {
-        ...image.layers,
-        [newId]: layer,
-      },
-    },
+    produce(image, (draft) => {
+      draft.layerHierarchy = layerHierarchy;
+      draft.layers[newId] = layer;
+    }),
     layer,
     newId,
   ];
@@ -68,14 +69,10 @@ export const addFolder = (
   );
 
   return [
-    {
-      ...image,
-      layerHierarchy,
-      layerFolders: {
-        ...image.layerFolders,
-        [newId]: folder,
-      },
-    },
+    produce(image, (draft) => {
+      draft.layerHierarchy = layerHierarchy;
+      draft.layerFolders[newId] = folder;
+    }),
     folder,
     newId,
   ];
@@ -102,13 +99,9 @@ export const rename = (
 ): GeppettoImage => {
   const groupKey = typeToGroupKey[itemType];
 
-  return {
-    ...image,
-    [groupKey]: {
-      ...image[groupKey],
-      [itemId]: { ...image[groupKey][itemId], name: newName },
-    },
-  };
+  return produce(image, (draft) => {
+    draft[groupKey][itemId].name = newName;
+  });
 };
 
 export const addPoint = (
@@ -168,6 +161,18 @@ export const removeShape = (
       if (item.type === "layerFolder") {
         delete draft.layerFolders[itemId];
       }
+      if (!isRootNode(item)) {
+        const parent = draft.layerHierarchy[item.parentId];
+        if (parent && parent.children) {
+          const selfIndex = parent.children.indexOf(shapeId);
+          if (selfIndex > -1) {
+            parent.children.splice(selfIndex, 1);
+          }
+        }
+      }
       delete draft.layerHierarchy[itemId];
     }
   });
+
+export const hasPoints = (file: GeppettoImage) =>
+  Object.values(file.layers).some((l) => l.points.length > 2);

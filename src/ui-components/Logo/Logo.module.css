@@ -1,0 +1,8 @@
+.logo {
+  background: var(--colors-control-default);
+  border-radius: 15%;
+  box-shadow: 5px 5px 5px #0003;
+  aspect-ratio: 1;
+  height: min(20vh, 200px);
+  margin: 0 auto;
+}

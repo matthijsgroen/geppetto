@@ -1,4 +1,5 @@
 export { Label } from "./Label/Label";
+export { Title } from "./Title/Title";
 export { Icon } from "./Icon/Icon";
 
 export { ToolBar } from "./ToolBar/ToolBar";
@@ -9,9 +10,14 @@ export { ToolTab } from "./ToolTab/ToolTab";
 export { ResizePanel, ResizeDirection } from "./ResizePanel/ResizePanel";
 export { Tree } from "./Tree/Tree";
 export type { TreeItem, TreeData, TreeItemIndex } from "./Tree/Tree";
-export { UncontrolledTreeEnvironment } from "./Tree/UncontrolledTreeEnvironment";
+export { TreeEnvironment } from "./Tree/TreeEnvironment";
 export { Panel } from "./Panel/Panel";
 export { Column } from "./Column/Column";
 export { Row } from "./Row/Row";
 export * from "./Menu/Menu";
-export * from "./Menu/shortcut";
+export * from "./Kbd/shortcut";
+export * from "./Kbd/Kbd";
+export { ControlPanel } from "./Controls/ControlPanel";
+export { Control } from "./Controls/Control";
+export { NumberInput } from "./Controls/NumberInput";
+export { Logo, LogoIcon } from "./Logo/Logo";

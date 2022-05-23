@@ -1,75 +1,106 @@
-import React, { useEffect, useMemo } from "react";
+import React, {
+  forwardRef,
+  PropsWithChildren,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import { newFile } from "../../animation/file2/new";
 import { GeppettoImage } from "../../animation/file2/types";
+import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
 import { showComposition } from "./programs/showComposition";
-// import { showCompositionMap } from "./programs/showCompositionMap";
-// import { showCompositionVectors } from "./programs/showCompositionVectors";
+import { showCompositionMap } from "./programs/showCompositionMap";
+import { showCompositionVectors } from "./programs/showCompositionVectors";
 import WebGLCanvas from "./WebGLCanvas";
 
 export interface CompositionCanvasProps {
   image: HTMLImageElement | null;
   file: GeppettoImage;
-  vectorValues: GeppettoImage["controlValues"];
-  zoom: number;
-  panX: number;
-  panY: number;
-  showFPS?: boolean;
+  showWireFrames: boolean;
+  vectorValues: GeppettoImage["defaultFrame"];
+  activeLayers: string[];
+  activeMutation: string | null;
 }
 
-const CompositionCanvas: React.FC<CompositionCanvasProps> = ({
-  image,
-  file,
-  vectorValues,
-  zoom,
-  panX,
-  panY,
-  showFPS,
-}) => {
-  const composition = useMemo(() => showComposition(), []);
-  // const layer = useMemo(() => showCompositionMap(), []);
-  // const vectorMap = useMemo(() => showCompositionVectors(), []);
-  // const renderers = [composition.renderer, layer.renderer, vectorMap.renderer];
-  const renderers = useMemo(
-    () => [composition.renderer],
-    [composition.renderer]
-  );
+const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
+  fileA.layerFolders !== fileB.layerFolders ||
+  fileA.layers !== fileB.layers ||
+  fileA.mutations !== fileB.mutations;
 
-  useEffect(() => {
-    if (image) {
-      composition.setImage(image);
-      // layer.setImage(image);
-      // vectorMap.setImage(image);
-    }
-  }, [image, composition]);
+const CompositionCanvas = forwardRef<
+  HTMLDivElement,
+  PropsWithChildren<CompositionCanvasProps>
+>(
+  (
+    {
+      image,
+      file,
+      vectorValues,
+      activeLayers,
+      showWireFrames,
+      activeMutation,
+      children,
+    },
+    ref
+  ) => {
+    const translation = useScreenTranslation();
+    const composition = useMemo(
+      () => showComposition(translation),
+      [translation]
+    );
+    const compositionMap = useMemo(
+      () => showCompositionMap(translation),
+      [translation]
+    );
+    const vectorMap = useMemo(
+      () => showCompositionVectors(translation),
+      [translation]
+    );
+    const renderers = useMemo(
+      () => [composition.renderer, compositionMap.renderer, vectorMap.renderer],
+      [composition.renderer, compositionMap.renderer, vectorMap.renderer]
+    );
 
-  useEffect(() => {
-    composition.setShapes(file);
-    // layer.setShapes(shapes);
-    // layer.setLayerSelected(activeLayer);
-    // vectorMap.setLayerSelected(activeLayer);
-    // vectorMap.setShapes(shapes);
-  }, [file, composition]);
+    useEffect(() => {
+      if (image) {
+        composition.setImage(image);
+        compositionMap.setImage(image);
+        vectorMap.setImage(image);
+      }
+    }, [image, composition, compositionMap, vectorMap]);
 
-  // useEffect(() => {
-  //   composition.setVectorValues(vectorValues);
-  //   layer.setVectorValues(vectorValues);
-  //   vectorMap.setVectorValues(vectorValues);
-  // }, [vectorValues]);
+    const fileRef = useRef(newFile());
 
-  // useEffect(() => {
-  //   layer.setLayerSelected(activeLayer);
-  //   vectorMap.setLayerSelected(activeLayer);
-  // }, [activeLayer]);
+    useEffect(() => {
+      if (shapesChanged(file, fileRef.current)) {
+        composition.setShapes(file);
+        compositionMap.setShapes(file);
+        vectorMap.setShapes(file);
+      }
+      fileRef.current = file;
+    }, [file, composition, compositionMap, vectorMap]);
 
-  composition.setZoom(zoom);
-  composition.setPan(panX, panY);
+    useEffect(() => {
+      composition.setVectorValues(vectorValues);
+      compositionMap.setVectorValues(vectorValues);
+      vectorMap.setVectorValues(vectorValues);
+    }, [vectorValues, composition, compositionMap, vectorMap]);
 
-  // layer.setZoom(zoom);
-  // layer.setPan(panX, panY);
+    useEffect(() => {
+      compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);
+      vectorMap.setLayerSelected(activeLayers);
+    }, [activeLayers, compositionMap, vectorMap, showWireFrames]);
 
-  // vectorMap.setZoom(zoom);
-  // vectorMap.setPan(panX, panY);
+    useEffect(() => {
+      vectorMap.setActiveMutation(activeMutation);
+    }, [activeMutation, vectorMap]);
 
-  return <WebGLCanvas renderers={renderers} showFPS={showFPS} />;
-};
+    return (
+      <WebGLCanvas renderers={renderers} ref={ref}>
+        {children}
+      </WebGLCanvas>
+    );
+  }
+);
 
 export default CompositionCanvas;

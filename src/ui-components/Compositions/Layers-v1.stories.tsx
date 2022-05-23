@@ -1,50 +1,67 @@
 import { Story } from "@storybook/react";
 import {
-  ToolBar,
+  Column,
   Icon,
+  Kbd,
+  Logo,
+  LogoIcon,
+  Menu,
+  MenuDivider,
+  MenuHeader,
+  MenuItem,
+  MenuRadioGroup,
+  Panel,
+  ResizeDirection,
+  ResizePanel,
+  Row,
+  SubMenu,
+  ToolBar,
   ToolButton,
   ToolSeparator,
   ToolTab,
-  ResizePanel,
-  ResizeDirection,
   Tree,
-  Panel,
-  Menu,
-  MenuItem,
-  SubMenu,
-  MenuHeader,
-  MenuDivider,
-  MenuRadioGroup,
-  UncontrolledTreeEnvironment,
-} from "../";
-import { storyTreeDataProvider } from "../Tree/storybookTreeDataProvider";
+  TreeEnvironment,
+} from "..";
+import {
+  storyTreeDataProvider,
+  ToolsProvider,
+} from "../Tree/storybookTreeDataProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const story = {
   title: "Compositions/Layers",
   argTypes: {
     children: { control: false, table: false },
   },
 };
+export default story;
+
+const noToolsProvider: ToolsProvider = () => null;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: Story = () => (
-  <div>
+  <Column>
     <ToolBar>
       <Menu
         portal={true}
         transition
         menuButton={({ open }) => (
-          <ToolButton icon={<Icon>🍔</Icon>} active={open} />
+          <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
         )}
       >
-        <MenuItem>New</MenuItem>
-        <MenuItem>Open</MenuItem>
-        <MenuItem>Load texture</MenuItem>
-        <MenuItem>Reload texture</MenuItem>
-        <MenuItem disabled>Save</MenuItem>
-        <MenuItem>Save as...</MenuItem>
-        <MenuDivider />
+        <MenuItem>↻ Restart for app update...</MenuItem>
+        <MenuItem>⇣ Install application locally</MenuItem>
+        <SubMenu label="File">
+          <MenuItem>New</MenuItem>
+          <MenuDivider />
+          <MenuItem>Open</MenuItem>
+          <MenuItem>Load texture</MenuItem>
+          <MenuDivider />
+          <MenuItem>Reload texture</MenuItem>
+          <MenuDivider />
+          <MenuItem disabled>Save</MenuItem>
+          <MenuItem>Save as...</MenuItem>
+        </SubMenu>
         <MenuHeader>Edit</MenuHeader>
         <SubMenu label="Edit">
           <MenuItem>Cut</MenuItem>
@@ -53,6 +70,7 @@ const Template: Story = () => (
         </SubMenu>
         <MenuItem>Print...</MenuItem>
       </Menu>
+      <ToolSeparator />
 
       <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
       <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} />
@@ -96,30 +114,16 @@ const Template: Story = () => (
           </MenuItem>
         </MenuRadioGroup>
       </Menu>
-      {/* <ToolTab
-        icon={<Icon>📏</Icon>}
-        label={"32"}
-        tooltip="Toggle grid visibility"
-      />
-      <ToolButton icon={"+"} tooltip="Increase grid size" /> */}
       <ToolButton icon={<Icon>🧲</Icon>} tooltip="Toggle magnetic grid" />
     </ToolBar>
 
-    <div
-      style={{
-        height: "30em",
-        display: "flex",
-        flexFlow: "row nowrap",
-      }}
-    >
-      <ResizePanel direction={ResizeDirection.East}>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-          }}
-        >
+    <Row>
+      <ResizePanel
+        direction={ResizeDirection.East}
+        minSize={100}
+        defaultSize={250}
+      >
+        <Column>
           <ToolBar size="small">
             <ToolButton icon={<Icon>📄</Icon>} label="+" tooltip="Add layer" />
             <ToolButton icon={<Icon>📁</Icon>} label="+" tooltip="Add folder" />
@@ -133,37 +137,34 @@ const Template: Story = () => (
               disabled={true}
               tooltip="Remove item"
             />
-            <ToolButton
-              icon={<Icon>⬆</Icon>}
-              disabled={true}
-              tooltip="Move item up"
-            />
-            <ToolButton
-              icon={<Icon>⬇</Icon>}
-              disabled={true}
-              tooltip="Move item down"
-            />
           </ToolBar>
           <Panel padding={5}>
-            <UncontrolledTreeEnvironment dataProvider={storyTreeDataProvider}>
-              <Tree />
-            </UncontrolledTreeEnvironment>
+            <TreeEnvironment
+              dataProvider={storyTreeDataProvider(noToolsProvider)}
+            >
+              <Tree treeId="layers" />
+            </TreeEnvironment>
           </Panel>
-        </div>
+        </Column>
       </ResizePanel>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexGrow: 2,
-          background: "gray",
-        }}
-      >
-        <p>Other content</p>
-      </div>
-    </div>
-  </div>
+      <Panel center workspace>
+        <div>
+          <Logo />
+          <h1>Welcome to Geppetto</h1>
+          <p>Some introduction text here...</p>
+          <p>
+            <ToolButton
+              icon={<Icon>📄</Icon>}
+              label="Load file..."
+              size={"small"}
+              shadow
+            />{" "}
+            <Kbd shortcut={{ key: "KeyO", ctrlOrCmd: true }} />
+          </p>
+        </div>
+      </Panel>
+    </Row>
+  </Column>
 );
 
-export const Layers = Template.bind({});
+export const Version1 = Template.bind({});

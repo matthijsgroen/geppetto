@@ -134,10 +134,11 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
       {React.Children.only(children)}
     </div>,
   ];
+  const handleRef = useRef<HTMLDivElement>(null);
 
   const handle = (
-    <Draggable key="handle" onDrag={onDrag}>
-      <div className={resizeBarClasses}></div>
+    <Draggable key="handle" onDrag={onDrag} nodeRef={handleRef}>
+      <div ref={handleRef} className={resizeBarClasses}></div>
     </Draggable>
   );
 

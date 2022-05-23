@@ -58,10 +58,21 @@ export const vecAdd = (a: Vec2 = [0, 0], b: Vec2 = [0, 0]): Vec2 => [
   a[1] + b[1],
 ];
 
+export const vecSub = (a: Vec2 = [0, 0], b: Vec2 = [0, 0]): Vec2 => [
+  a[0] - b[0],
+  a[1] - b[1],
+];
+
 export const vecMul = (a: Vec2 = [1, 1], b: Vec2 = [1, 1]): Vec2 => [
   a[0] * b[0],
   a[1] * b[1],
 ];
+
+export const vecScale = (a: Vec2 = [1, 1], b: number): Vec2 =>
+  vecMul(a, [b, b]);
+
+export const distance = (a: Vec2, b: Vec2): number =>
+  Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
 
 export const mergeMutationValue = (
   a: Vec2 | undefined,

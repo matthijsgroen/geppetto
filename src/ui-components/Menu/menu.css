@@ -13,3 +13,7 @@
 .szh-menu__item--hover {
   background-color: var(--colors-control-highlight);
 }
+
+.szh-menu__header {
+  color: var(--colors-text-dimmed);
+}

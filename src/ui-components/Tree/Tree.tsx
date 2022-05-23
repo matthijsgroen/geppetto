@@ -13,7 +13,7 @@ export type TreeData<Type extends string> = {
   name: string;
   type: Type;
   icon: string;
-  itemTools?: React.ReactChild;
+  itemTools?: React.ReactNode;
 };
 
 export type TreeDataProvider<Type extends string> = ComplexTreeDataProvider<
@@ -91,9 +91,13 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
   );
 };
 
-export const Tree: React.VFC = () => (
+type TreeProps = {
+  treeId: string;
+};
+
+export const Tree: React.FC<TreeProps> = ({ treeId }) => (
   <ComplexTree
-    treeId="tree-1"
+    treeId={treeId}
     rootItem="root"
     treeLabel="Tree Example"
     renderItem={renderItem}

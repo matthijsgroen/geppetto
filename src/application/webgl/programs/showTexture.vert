@@ -1,3 +1,5 @@
+// vim: ts=2:sw=2
+
 attribute vec2 coordinates;
 attribute vec2 aTextureCoord;
 varying lowp vec2 vTextureCoord;

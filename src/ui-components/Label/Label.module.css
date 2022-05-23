@@ -2,6 +2,7 @@
   font: caption;
   padding: 0 0.25em;
   color: var(--colors-text-default);
+  font-size: 1rem;
 }
 
 .small {
@@ -10,4 +11,7 @@
 
 .active {
   color: var(--colors-text-active);
+}
+.vertical {
+  writing-mode: vertical-lr;
 }

@@ -1,0 +1,14 @@
+.separator {
+  display: inline-block;
+  font-size: 0;
+}
+
+.separator.horizontal {
+  height: 1.8rem;
+  border-right: 1px solid var(--colors-control-edge);
+}
+.separator.vertical {
+  width: 1.8rem;
+  padding-top: 0.1rem;
+  border-bottom: 1px solid var(--colors-control-edge);
+}

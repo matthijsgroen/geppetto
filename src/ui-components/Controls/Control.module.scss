@@ -1,0 +1,176 @@
+.control {
+  display: flex;
+  margin: 0 0.5rem;
+  justify-content: space-between;
+}
+.control + .control {
+  border-top: 1px solid var(--colors-control-edge);
+}
+.labelElement {
+  padding: 0.5rem 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  align-self: center;
+}
+.controlInput {
+  justify-items: end;
+  padding: 0.5rem 0 0.5rem 0.5rem;
+  white-space: nowrap;
+}
+
+.controlShort {
+  display: inline-block;
+  border-top: 2px solid var(--colors-background-panel);
+  border-bottom: 2px solid var(--colors-background-panel);
+  padding: 2px;
+  background-color: var(--colors-background-panel);
+  color: var(--colors-text-dimmed);
+  box-shadow: 1px 1px 2px #0003;
+  cursor: text;
+}
+
+.controlShort input {
+  background-color: transparent;
+  border: 0;
+  color: var(--colors-text-dimmed);
+  width: 4ch;
+}
+.controlShort input[type="number"]:focus {
+  width: 6ch; /* extra width for spinner */
+}
+input[type="number"]:not(:focus)::-webkit-outer-spin-button,
+input[type="number"]:not(:focus)::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+input[type="number"]:not(:focus) {
+  -moz-appearance: textfield;
+}
+
+.controlShort input:focus {
+  outline: none;
+  color: var(--colors-text-default);
+}
+.controlShort:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-left: 2px solid var(--colors-background-panel);
+}
+.controlShort:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-right: 2px solid var(--colors-background-panel);
+}
+
+.controlShort:focus-within {
+  border-color: var(--colors-control-focus);
+  background-color: var(--colors-control-edge);
+  color: var(--colors-text-default);
+}
+.controlShort:hover:not(:focus-within) {
+  border-color: var(--colors-control-highlight);
+}
+
+
+@mixin thumb {
+  height: 15px;
+  width: 15px;
+  background: var(--colors-background-panel);
+  border: 2px solid var(--thumb-border);
+  box-shadow: 2px 2px 3px #0006;
+  margin-top: -5px;
+  border-radius: 50%;
+}
+
+@mixin track {
+  background: var(--colors-background-workspace);
+  box-shadow: inset 1px 1px 2px #0003;
+  height: 5px;
+  border-radius: 3px;
+}
+
+.control input[type="range"] {
+  width: 100px;
+  background-color: transparent;
+  -webkit-appearance: none;
+  padding: 0.5rem 0;
+  outline: none;
+
+  --thumb-border: var(--colors-background-panel);
+  &:hover {
+    --thumb-border: var(--colors-control-highlight);
+  }
+  &:focus {
+    --thumb-border: var(--colors-control-focus);
+  }
+
+  &::-webkit-slider-runnable-track {
+    @include track();
+  }
+  &::-moz-range-track {
+    @include track();
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    @include thumb()
+  }
+
+  &::-moz-range-thumb {
+    @include thumb()
+  }
+}
+
+
+.control input[type="checkbox"] {
+  -webkit-appearance: none;
+
+  width: 42px;
+  height: 25px;
+  padding: 0;
+  margin: 0;
+  display: inline-block;
+  background-color: var(--colors-background-workspace);
+  position: relative;
+  border-radius: 15px;
+  box-shadow: inset 1px 1px 2px #0003;
+  transition: background-color 200ms;
+
+  &::after {
+    content: '.';
+    color: var(--colors-background-panel);
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    border: 2px solid var(--colors-background-panel);
+    background: var(--colors-background-panel);
+    border-radius: 50%;
+    box-shadow: 2px 2px 3px #0006;
+    margin: 2px;
+    transition: margin-left 200ms;
+  }
+
+  &:hover::after {
+    border-color: var(--colors-control-highlight);
+  }
+  &:focus::after {
+    border-color: var(--colors-control-focus);
+  }
+
+  &:checked {
+    background-color: var(--colors-control-active);
+  }
+
+  &:checked::after {
+    margin-left: 19px;
+  }
+}
+
+.control p {
+  margin: 0;
+  font-size: 0.8rem;
+  text-align: end;
+  white-space: normal;
+}

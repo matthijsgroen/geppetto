@@ -1,3 +1,5 @@
+// vim: ts=2:sw=2
+
 #define MAX_MUT 60
 #define PI_FRAC 0.017453292519943295
 

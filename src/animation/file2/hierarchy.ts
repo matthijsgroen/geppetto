@@ -235,31 +235,67 @@ export const moveInHierarchy = <T extends string>(
   return result;
 };
 
+export const SKIP_CHILDREN = "SKIP";
+
 const visitNode = <T extends string>(
   hierarchy: Hierarchy<T>,
   node: TreeNode<T>,
   nodeId: string,
-  parents: string[],
-  visitor: (node: TreeNode<T>, nodeId: string, parents: string[]) => void
+  visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP"
 ): void => {
-  visitor(node, nodeId, parents);
-  if (node.children) {
+  const result = visitor(node, nodeId);
+  if (node.children && result !== "SKIP") {
     for (const childId of node.children) {
       const childNode = hierarchy[childId] as TreeNode<T>;
-      visitNode(hierarchy, childNode, childId, parents.concat(nodeId), visitor);
+      visitNode(hierarchy, childNode, childId, visitor);
     }
   }
 };
 
 export const visit = <T extends string>(
   hierarchy: Hierarchy<T>,
-  visitor: (node: TreeNode<T>, nodeId: string, parents: string[]) => void
+  visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP",
+  startId?: string
 ): void => {
+  if (startId) {
+    const node = hierarchy[startId] as TreeNode<T>;
+    visitNode(hierarchy, node, startId, visitor);
+    return;
+  }
+
   const root = Object.values(hierarchy).find((n) => n.type === "root");
   for (const nodeId of root?.children || []) {
     const node = hierarchy[nodeId] as TreeNode<T>;
-    visitNode(hierarchy, node, nodeId, [], visitor);
+    visitNode(hierarchy, node, nodeId, visitor);
   }
+};
+
+export const getPreviousOfType = <T extends string>(
+  hierarchy: Hierarchy<T>,
+  type: T,
+  startId: keyof Hierarchy<T>
+): keyof Hierarchy<T> | null => {
+  let nodeId = startId;
+  let activeParent = hierarchy[nodeId];
+  while (activeParent && !isRootNode(activeParent)) {
+    activeParent = hierarchy[activeParent.parentId];
+    if (!activeParent.children) {
+      return null;
+    }
+    let lastOfType: string | null = null;
+
+    for (const childId of activeParent.children) {
+      if (childId === nodeId) break;
+      if (hierarchy[childId].type === type) {
+        lastOfType = childId;
+      }
+    }
+    if (lastOfType) {
+      return lastOfType;
+    }
+  }
+
+  return null;
 };
 
 export const visualizeTree = <T extends string>(

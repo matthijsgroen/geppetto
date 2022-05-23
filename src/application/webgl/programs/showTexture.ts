@@ -1,12 +1,13 @@
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import raw from "raw.macro";
+import { ScreenTranslation } from "../../types";
 const textureVertexShader = raw("./showTexture.vert");
 const textureFragmentShader = raw("./showTexture.frag");
 
-export const showTexture = (): {
+export const showTexture = (
+  trans: ScreenTranslation
+): {
   setImage(image: HTMLImageElement): void;
-  setZoom(zoom: number): void;
-  setPan(x: number, y: number): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 4;
@@ -25,8 +26,8 @@ export const showTexture = (): {
   let gl: WebGLRenderingContext | null = null;
   let img: HTMLImageElement | null = null;
   let texture: WebGLTexture | null = null;
-  let zoom = 1.0;
-  let pan = [0, 0];
+
+  const screenTranslation = trans;
 
   const setImageTexture = (): void => {
     if (img === null || texture === null || gl === null) {
@@ -41,16 +42,13 @@ export const showTexture = (): {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
   };
 
+  let onChange: () => void = () => {};
+
   return {
     setImage(image: HTMLImageElement) {
       img = image;
       setImageTexture();
-    },
-    setZoom(newZoom) {
-      zoom = newZoom;
-    },
-    setPan(x: number, y: number) {
-      pan = [x, y];
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getUnit, getSize }) {
       gl = initGl;
@@ -107,6 +105,9 @@ export const showTexture = (): {
       );
 
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!img || !gl) {
             return;
@@ -168,9 +169,9 @@ export const showTexture = (): {
           gl.uniform4f(
             gl.getUniformLocation(shaderProgram, "scale"),
             0,
-            zoom,
-            pan[0],
-            pan[1]
+            screenTranslation.zoom,
+            screenTranslation.panX,
+            screenTranslation.panY
           );
 
           gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);

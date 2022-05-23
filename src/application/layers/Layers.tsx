@@ -1,11 +1,5 @@
-import React, {
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { GeppettoImage, Layer } from "../../animation/file2/types";
+import React, { useCallback, useMemo, useState } from "react";
+import { Layer } from "../../animation/file2/types";
 import {
   Column,
   Icon,
@@ -22,6 +16,7 @@ import {
   ToolSeparator,
   ToolSpacer,
   ToolTab,
+  Shortcut,
 } from "../../ui-components";
 import { AppSection, UseState } from "../types";
 import LayerMouseControl from "../canvas/LayerMouseControl";
@@ -37,16 +32,14 @@ import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { IDLayer } from "../webgl/programs/showLayerPoints";
 import { Vec2 } from "../../types";
 import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
-import { Shortcut } from "../../ui-components/Menu/shortcut";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionToolButton } from "../actions/ActionToolButton";
-import { ApplicationContext } from "../applicationMenu/ApplicationContext";
+import { StartupScreen } from "../applicationMenu/Startup";
+import { useFile } from "../applicationMenu/FileContext";
+import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
+import { useEvent } from "../hooks/useEvent";
 
 type LayersProps = {
-  zoomState: UseState<number>;
-  panXState: UseState<number>;
-  panYState: UseState<number>;
-  fileState: UseState<GeppettoImage>;
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
   menu?: React.ReactChild;
@@ -72,19 +65,11 @@ const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
 const DELETE_POINT: Shortcut = { key: "DelOrBackspace" };
 
 export const Layers: React.FC<LayersProps> = ({
-  fileState,
   textureState,
   onSectionChange,
   menu,
 }) => {
-  const zoomState = useState(1.0);
-  const panXState = useState(0.0);
-  const panYState = useState(0.0);
-  const [zoom] = zoomState;
-  const [panX] = panXState;
-  const [panY] = panYState;
-  const zoomPanRef = useRef({ zoom, panX, panY });
-  zoomPanRef.current = { zoom, panX, panY };
+  const translation = useScreenTranslation();
 
   const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
   const [gridSettings, setGridSettings] = useState<GridSettings>({
@@ -96,7 +81,7 @@ export const Layers: React.FC<LayersProps> = ({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
   const texture = textureState[0];
-  const [file, setFile] = fileState;
+  const [file, setFile] = useFile();
 
   const layers = file.layers;
   const maxZoom = maxZoomFactor(texture);
@@ -110,7 +95,7 @@ export const Layers: React.FC<LayersProps> = ({
     setActiveCoord(null);
   }
 
-  const getClosestPoint = useCallback(
+  const getClosestPoint = useEvent(
     (element: HTMLElement, coord: Vec2, shape: Layer): Vec2 | undefined => {
       if (!texture) return undefined;
       const canvasPos = element.getBoundingClientRect();
@@ -118,7 +103,7 @@ export const Layers: React.FC<LayersProps> = ({
         [canvasPos.width, canvasPos.height],
         [texture.width, texture.height]
       );
-      const factor = initialScale * zoom;
+      const factor = initialScale * translation.zoom;
       const closePoint = shape.points.find((p) => {
         const dx = p[0] - coord[0];
         const dy = p[1] - coord[1];
@@ -126,60 +111,46 @@ export const Layers: React.FC<LayersProps> = ({
         return dx > -factor && dx < factor && dy > -factor && dy < factor;
       });
       return closePoint;
-    },
-    [texture, zoom]
+    }
   );
 
-  const mouseClick = useCallback(
-    (event: React.MouseEvent<HTMLElement>) => {
-      if (
-        (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
-        texture &&
-        activeLayer
-      ) {
-        const { zoom, panX, panY } = zoomPanRef.current;
-        const coord = mouseToTextureCoordinate(
-          texture,
-          zoom,
-          [panX, panY],
-          event
-        );
+  const mouseClick = useEvent((event: React.MouseEvent<HTMLElement>) => {
+    if (
+      (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
+      texture &&
+      activeLayer
+    ) {
+      const { zoom, panX, panY } = translation;
+      const coord = mouseToTextureCoordinate(
+        texture,
+        zoom,
+        [panX, panY],
+        event
+      );
 
-        const shape = file.layers[activeLayer];
-        if (shape) {
-          const closePoint = getClosestPoint(event.currentTarget, coord, shape);
+      const shape = file.layers[activeLayer];
+      if (shape) {
+        const closePoint = getClosestPoint(event.currentTarget, coord, shape);
 
-          if (!closePoint && mouseMode === MouseMode.Aim) {
-            const gridCoord = alignOnGrid(gridSettings, coord);
-            setFile((image) => addPoint(image, activeLayer, gridCoord));
-            setActiveCoord(gridCoord);
-          } else {
-            closePoint && setActiveCoord(closePoint);
-          }
+        if (!closePoint && mouseMode === MouseMode.Aim) {
+          const gridCoord = alignOnGrid(gridSettings, coord);
+          setFile((image) => addPoint(image, activeLayer, gridCoord));
+          setActiveCoord(gridCoord);
+        } else {
+          closePoint && setActiveCoord(closePoint);
         }
       }
-    },
-    [
-      activeLayer,
-      mouseMode,
-      zoomPanRef,
-      setActiveCoord,
-      texture,
-      file.layers,
-      setFile,
-      gridSettings,
-      getClosestPoint,
-    ]
-  );
+    }
+  });
 
-  const hoverCursor = useCallback(
+  const hoverCursor = useEvent(
     (event: React.MouseEvent<HTMLElement>): MouseMode => {
       if (
         (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
         texture &&
         activeLayer
       ) {
-        const { zoom, panX, panY } = zoomPanRef.current;
+        const { zoom, panX, panY } = translation;
         const coord = mouseToTextureCoordinate(
           texture,
           zoom,
@@ -195,8 +166,7 @@ export const Layers: React.FC<LayersProps> = ({
         }
       }
       return mouseMode;
-    },
-    [mouseMode, activeLayer, file.layers, zoomPanRef, texture, getClosestPoint]
+    }
   );
 
   const { actions, triggerKeyboardAction } = useActionMap(
@@ -217,67 +187,55 @@ export const Layers: React.FC<LayersProps> = ({
     )
   );
 
-  const keyboardControl = useCallback(
-    (e: React.KeyboardEvent<HTMLElement>) => {
-      if (triggerKeyboardAction(e)) {
-        e.preventDefault();
-      }
-      if (activeLayer && activeCoord) {
-        const newValue: Vec2 = [activeCoord[0], activeCoord[1]];
-        if (e.shiftKey) {
-          if (e.code === "ArrowLeft" || e.code === "ArrowUp") {
-            const index = e.code === "ArrowLeft" ? 0 : 1;
-            newValue[index] = snapToGridDown(
-              gridSettings.size,
-              newValue[index]
-            );
-            if (newValue[index] === activeCoord[index]) {
-              newValue[index] -= gridSettings.size;
-            }
-          }
-          if (e.code === "ArrowRight" || e.code === "ArrowDown") {
-            const index = e.code === "ArrowRight" ? 0 : 1;
-            newValue[index] = snapToGridUp(gridSettings.size, newValue[index]);
-            if (newValue[index] === activeCoord[index]) {
-              newValue[index] += gridSettings.size;
-            }
-          }
-        } else {
-          if (e.code === "ArrowLeft") {
-            newValue[0] -= 1;
-          }
-          if (e.code === "ArrowRight") {
-            newValue[0] += 1;
-          }
-          if (e.code === "ArrowDown") {
-            newValue[1] += 1;
-          }
-          if (e.code === "ArrowUp") {
-            newValue[1] -= 1;
+  const keyboardControl = useEvent((e: React.KeyboardEvent<HTMLElement>) => {
+    if (triggerKeyboardAction(e)) {
+      e.preventDefault();
+    }
+    if (activeLayer && activeCoord) {
+      const newValue: Vec2 = [activeCoord[0], activeCoord[1]];
+      if (e.shiftKey) {
+        if (e.code === "ArrowLeft" || e.code === "ArrowUp") {
+          const index = e.code === "ArrowLeft" ? 0 : 1;
+          newValue[index] = snapToGridDown(gridSettings.size, newValue[index]);
+          if (newValue[index] === activeCoord[index]) {
+            newValue[index] -= gridSettings.size;
           }
         }
-        if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
-          setFile((image) =>
-            movePoint(image, activeLayer, activeCoord, newValue)
-          );
-          setActiveCoord(newValue);
+        if (e.code === "ArrowRight" || e.code === "ArrowDown") {
+          const index = e.code === "ArrowRight" ? 0 : 1;
+          newValue[index] = snapToGridUp(gridSettings.size, newValue[index]);
+          if (newValue[index] === activeCoord[index]) {
+            newValue[index] += gridSettings.size;
+          }
+        }
+      } else {
+        if (e.code === "ArrowLeft") {
+          newValue[0] -= 1;
+        }
+        if (e.code === "ArrowRight") {
+          newValue[0] += 1;
+        }
+        if (e.code === "ArrowDown") {
+          newValue[1] += 1;
+        }
+        if (e.code === "ArrowUp") {
+          newValue[1] -= 1;
         }
       }
-    },
-    [
-      triggerKeyboardAction,
-      activeCoord,
-      activeLayer,
-      setFile,
-      gridSettings.size,
-    ]
-  );
-  const { sendMessage } = useContext(ApplicationContext);
+      if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
+        setFile((image) =>
+          movePoint(image, activeLayer, activeCoord, newValue)
+        );
+        setActiveCoord(newValue);
+      }
+    }
+  });
 
   return (
     <Column>
       <ToolBar>
         {menu}
+        <ToolSeparator />
         <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
         <ToolTab
           icon={<Icon>🤷🏼</Icon>}
@@ -374,30 +332,22 @@ export const Layers: React.FC<LayersProps> = ({
         <InstallToolButton />
       </ToolBar>
       <Row>
-        <ResizePanel direction={ResizeDirection.East} defaultSize={250}>
+        <ResizePanel
+          direction={ResizeDirection.East}
+          defaultSize={250}
+          minSize={150}
+        >
           <Column>
-            <ShapeTree
-              fileState={fileState}
-              selectedItemsState={[selectedItems, setSelectedItems]}
-            />
+            <ShapeTree selectedItemsState={[selectedItems, setSelectedItems]} />
           </Column>
         </ResizePanel>
         <Panel workspace center>
           {texture === null ? (
-            <p>
-              No texture loaded{" "}
-              <ToolButton
-                icon={<Icon>🌅</Icon>}
-                onClick={() => sendMessage("textureOpen")}
-              />
-            </p>
+            <StartupScreen file={file} texture={texture} screen={"layers"} />
           ) : (
             <LayerMouseControl
               mode={mouseMode}
               maxZoomFactor={maxZoom}
-              panXState={panXState}
-              panYState={panYState}
-              zoomState={zoomState}
               onClick={mouseClick}
               onKeyDown={keyboardControl}
               hoverCursor={hoverCursor}
@@ -405,13 +355,9 @@ export const Layers: React.FC<LayersProps> = ({
               <TextureMapCanvas
                 image={texture}
                 layers={idLayers}
-                zoom={zoom}
-                panX={panX}
-                panY={panY}
                 grid={gridSettings}
                 activeLayer={activeLayer}
                 activeCoord={activeCoord}
-                showFPS={false}
               />
             </LayerMouseControl>
           )}

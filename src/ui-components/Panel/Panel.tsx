@@ -16,7 +16,10 @@ const StyledPanel = styled.div<{
   background-color: ${(props) =>
     props.workspace
       ? props.theme.colors.backgroundWorkspace
-      : props.theme.colors.controlDefault};
+      : props.theme.colors.backgroundPanel};
+  border: 1px solid
+    ${(props) =>
+      props.workspace ? props.theme.colors.controlEdge : "transparent"};
   color: ${(props) => props.theme.colors.textDefault};
   flex: 1;
   flex-direction: column;
@@ -31,6 +34,10 @@ const StyledPanel = styled.div<{
       : ""}
 `;
 
+/**
+ * Basic component that applies the proper theme color as background,
+ * supports padding and supports centralizing elements.
+ */
 export const Panel: React.FC<PanelProps> = ({
   children,
   padding = 0,

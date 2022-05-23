@@ -1,6 +1,7 @@
 import {
   addInHierarchy,
   findInHierarchy,
+  getPreviousOfType,
   moveInHierarchy,
   removeFromHierarchy,
 } from "./hierarchy";
@@ -136,7 +137,7 @@ describe("moveInHierarchy", () => {
     });
   });
 
-  it("can move item in list of children", () => {
+  it("can move item in list of children (multiple steps)", () => {
     const placeTogether = moveInHierarchy(hierarchy, "3", { after: "1" });
     const result = moveInHierarchy(placeTogether, "3", { before: "1" });
     expect(result).toEqual({
@@ -161,5 +162,35 @@ describe("moveInHierarchy", () => {
   it("prevents moving item to its own", () => {
     const moveToOwn = moveInHierarchy(hierarchy, "2", { parent: "2" });
     expect(moveToOwn).toBe(hierarchy);
+  });
+});
+
+describe("getPreviousOfType", () => {
+  const hierarchy: Hierarchy<"item" | "search"> = {
+    root: { type: "root", children: ["0", "2"] },
+    "0": { type: "item", parentId: "root" },
+    "2": { type: "item", parentId: "root", children: ["3", "4", "5", "6"] },
+    "3": { type: "search", parentId: "2" },
+    "4": { type: "search", parentId: "2" },
+    "5": { type: "item", parentId: "2", children: ["7", "8"] },
+    "6": { type: "item", parentId: "2", children: ["9"] },
+    "7": { type: "search", parentId: "5" },
+    "8": { type: "item", parentId: "5" },
+    "9": { type: "item", parentId: "6" },
+  };
+
+  it("looks in list of siblings", () => {
+    const result = getPreviousOfType(hierarchy, "search", "5");
+    expect(result).toEqual("4");
+  });
+
+  it("looks upwards in hierarchy", () => {
+    const result = getPreviousOfType(hierarchy, "search", "7");
+    expect(result).toEqual("4");
+  });
+
+  it("looks upwards in hierarchy (multiple times)", () => {
+    const result = getPreviousOfType(hierarchy, "search", "9");
+    expect(result).toEqual("4");
   });
 });

@@ -1,3 +1,5 @@
+// vim: ts=2:sw=2
+
 precision mediump float;
 
 varying mediump vec2 vTextureCoord;

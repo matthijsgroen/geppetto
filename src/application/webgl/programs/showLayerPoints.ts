@@ -2,17 +2,19 @@ import { Vec2 } from "../../../types";
 import { Layer } from "../../../animation/file2/types";
 import { createProgram, WebGLRenderer } from "../lib/webgl";
 import raw from "raw.macro";
+import { colorScheme } from "../../theme/darkMode";
+import { ScreenTranslation } from "../../types";
 
 const layerPointsVertexShader = raw("./showLayerPoints.vert");
 const layerPointsFragmentShader = raw("./showLayerPoints.frag");
 
 export type IDLayer = Layer & { id: string };
 
-export const showLayerPoints = (): {
+export const showLayerPoints = (
+  trans: ScreenTranslation
+): {
   setImage(image: HTMLImageElement): void;
   setLayers(layers: IDLayer[]): void;
-  setZoom(zoom: number): void;
-  setPan(x: number, y: number): void;
   setLayerSelected(layer: undefined | string): void;
   setActiveCoord(coord: null | Vec2): void;
   renderer: WebGLRenderer;
@@ -24,8 +26,7 @@ export const showLayerPoints = (): {
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
   let gl: WebGLRenderingContext | null = null;
-  let zoom = 1.0;
-  let pan = [0, 0];
+  const screenTranslation = trans;
   let layerSelected: string | undefined = undefined;
   let coordSelected: Vec2 | null = null;
 
@@ -74,27 +75,26 @@ export const showLayerPoints = (): {
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
+  let onChange: () => void = () => {};
 
   return {
     setImage(image) {
       img = image;
+      onChange();
     },
     setLayers(s) {
       layers = s;
       populateShapes();
-    },
-    setZoom(newZoom) {
-      zoom = newZoom;
-    },
-    setPan(x, y) {
-      pan = [x, y];
+      onChange();
     },
     setLayerSelected(layer) {
       layerSelected = layer;
+      onChange();
     },
     setActiveCoord(coord) {
       coordSelected = coord;
       populateShapes();
+      onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
@@ -108,7 +108,21 @@ export const showLayerPoints = (): {
         layerPointsFragmentShader
       );
 
+      const programInfo = {
+        uniforms: {
+          viewport: gl.getUniformLocation(shaderProgram, "viewport"),
+          scale: gl.getUniformLocation(shaderProgram, "scale"),
+          darkMode: gl.getUniformLocation(shaderProgram, "darkMode"),
+        },
+        attributes: {
+          coordinates: gl.getAttribLocation(shaderProgram, "coordinates"),
+        },
+      };
+
       return {
+        onChange(listener) {
+          onChange = listener;
+        },
         render() {
           if (!layers || !img || !vertexBuffer || !indexBuffer || !gl) {
             return;
@@ -117,16 +131,15 @@ export const showLayerPoints = (): {
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
-          const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
-            coord,
+            programInfo.attributes.coordinates,
             3,
             gl.FLOAT,
             false,
             Float32Array.BYTES_PER_ELEMENT * stride,
             /* offset */ 0
           );
-          gl.enableVertexAttribArray(coord);
+          gl.enableVertexAttribArray(programInfo.attributes.coordinates);
           const [canvasWidth, canvasHeight] = getSize();
           const landscape = img.width / canvasWidth > img.height / canvasHeight;
 
@@ -140,7 +153,7 @@ export const showLayerPoints = (): {
           ];
 
           gl.uniform4f(
-            gl.getUniformLocation(shaderProgram, "viewport"),
+            programInfo.uniforms.viewport,
             canvasWidth,
             canvasHeight,
             x,
@@ -148,11 +161,15 @@ export const showLayerPoints = (): {
           );
 
           gl.uniform4f(
-            gl.getUniformLocation(shaderProgram, "scale"),
+            programInfo.uniforms.scale,
             scale,
-            zoom,
-            pan[0],
-            pan[1]
+            screenTranslation.zoom,
+            screenTranslation.panX,
+            screenTranslation.panY
+          );
+          gl.uniform1f(
+            programInfo.uniforms.darkMode,
+            colorScheme.darkMode ? 1.0 : 0.0
           );
 
           elements.forEach((element) => {

@@ -21,9 +21,11 @@ export const compileShader = (
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    source.split("\n").forEach((line, index) => {
-      console.log(index + 1, line);
-    });
+    if (process.env.NODE_ENV === "development") {
+      source.split("\n").forEach((line, index) => {
+        console.log(index + 1, line);
+      });
+    }
     throw new Error(gl.getShaderInfoLog(shader) as string);
   }
   return shader;
@@ -46,6 +48,7 @@ type Attribute = {
 export type AttributeTable = { [key: string]: Attribute };
 
 export type RenderAPI = {
+  onChange(listener: () => void): void;
   render(): void;
   cleanup(): void;
 };
@@ -57,11 +60,10 @@ export type WebGLRenderer = (
 
 export const webGLScene = async (
   element: HTMLCanvasElement,
-  programs: WebGLRenderer[],
-  instId: string
+  programs: WebGLRenderer[]
 ): Promise<RenderAPI> => {
   const gl = element.getContext("webgl", {
-    premultipliedalpha: true,
+    premultipliedAlpha: true,
     depth: true,
     antialias: true,
     powerPreference: "low-power",
@@ -87,11 +89,6 @@ export const webGLScene = async (
     getSize: () => [element.width, element.height],
   };
 
-  if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  } else {
-    gl.clearColor(0.67, 0.67, 0.67, 1.0);
-  }
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
@@ -101,7 +98,34 @@ export const webGLScene = async (
   );
   let cleanedUp = false;
 
+  let onChange: () => void;
+
+  const colorSchemeListener = ({
+    matches: darkMode,
+  }: MediaQueryListEvent | MediaQueryList) => {
+    if (darkMode) {
+      gl.clearColor(0.1875, 0.1875, 0.1875, 1.0);
+    } else {
+      gl.clearColor(0.66, 0.66, 0.66, 1.0);
+    }
+    onChange && onChange();
+  };
+
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+  colorSchemeListener(mediaQuery);
+  mediaQuery.addEventListener("change", colorSchemeListener);
+
+  renders.forEach((r) => {
+    r.onChange(() => {
+      onChange && onChange();
+    });
+  });
+
   return {
+    onChange: (listener) => {
+      onChange = listener;
+    },
     render: () => {
       if (cleanedUp) {
         return;
@@ -113,6 +137,7 @@ export const webGLScene = async (
     cleanup: () => {
       cleanedUp = true;
       renders.forEach((item) => item.cleanup());
+      mediaQuery.removeEventListener("change", colorSchemeListener);
     },
   };
 };

@@ -1,9 +1,7 @@
 import { findInHierarchy } from "../../animation/file2/hierarchy";
-import {
-  GeppettoImage,
-  MutationVector,
-  NodeType,
-} from "../../animation/file2/types";
+import { iconMapping } from "../../animation/file2/mutation";
+import { GeppettoImage, NodeType } from "../../animation/file2/types";
+import { Icon, ToolButton } from "../../ui-components";
 import {
   TreeDataProvider,
   TreeItem,
@@ -13,20 +11,12 @@ import {
 
 const TREE_ROOT = "root";
 
-export const iconMapping: Record<MutationVector["type"], string> = {
-  deform: "🟠",
-  rotate: "🔴",
-  stretch: "🟣",
-  translate: "🟢",
-  opacity: "⚪️",
-  lightness: "⬜️",
-  colorize: "🟧",
-  saturation: "🟩",
-};
+export type ActionButton = "visibility";
 
 export const treeDataProvider = (
   file: GeppettoImage,
-  { showMutations = true } = {}
+  { showMutations = true, toggleVisibility = false } = {},
+  actionButtonPress: (itemId: string, buttonId: ActionButton) => void = () => {}
 ): TreeDataProvider<NodeType> => {
   let activeTree = file;
   const getItem = (itemId: string | number): TreeItem<TreeData<NodeType>> => {
@@ -53,28 +43,63 @@ export const treeDataProvider = (
     }
 
     const childIds = (item.children || []).filter(
-      (e) => showMutations || activeTree.layerHierarchy[e].type !== "mutation"
+      (childId) =>
+        showMutations || activeTree.layerHierarchy[childId].type !== "mutation"
     );
 
     if (item.type === "layer") {
       const layerData = activeTree.layers[itemId];
+      const data: TreeData<NodeType> = {
+        name: layerData.name,
+        icon: "📄",
+        type: item.type,
+      };
+      if (toggleVisibility) {
+        data.itemTools = (
+          <ToolButton
+            size="small"
+            icon={<Icon>👁</Icon>}
+            active={layerData.visible}
+            onClick={() => {
+              actionButtonPress(`${itemId}`, "visibility");
+            }}
+          />
+        );
+      }
       return {
         index: itemId,
         canMove: true,
         hasChildren: childIds.length > 0,
         children: childIds,
-        data: { name: layerData.name, icon: "📄", type: item.type },
+        data,
         canRename: true,
       };
     }
     if (item.type === "layerFolder") {
       const layerFolderData = activeTree.layerFolders[itemId];
+      const data: TreeData<NodeType> = {
+        name: layerFolderData.name,
+        icon: "📁",
+        type: item.type,
+      };
+      if (toggleVisibility) {
+        data.itemTools = (
+          <ToolButton
+            size="small"
+            icon={<Icon>👁</Icon>}
+            active={layerFolderData.visible}
+            onClick={() => {
+              actionButtonPress(`${itemId}`, "visibility");
+            }}
+          />
+        );
+      }
       return {
         index: itemId,
         canMove: true,
         hasChildren: childIds.length > 0,
         children: childIds,
-        data: { name: layerFolderData.name, icon: "📁", type: item.type },
+        data,
         canRename: true,
       };
     }
@@ -101,10 +126,17 @@ export const treeDataProvider = (
     addChangedId: (...ids: string[]) => bufferedChanges.push(...ids),
     updateActiveTree: (tree: GeppettoImage) => {
       const updatedItems: TreeItemIndex[] = ["root", ...bufferedChanges];
+      const pools = [
+        "layers",
+        "layerFolders",
+        "mutations",
+        "layerHierarchy",
+      ] as const;
 
-      for (const pool of [tree.layers, tree.layerFolders, tree.mutations]) {
-        for (const [key, value] of Object.entries(pool)) {
-          if (pool[key] !== value) {
+      for (const pool of pools) {
+        for (const [key, value] of Object.entries(activeTree[pool])) {
+          const newNode = tree[pool][key];
+          if (newNode !== value && newNode) {
             updatedItems.push(key);
           }
         }
