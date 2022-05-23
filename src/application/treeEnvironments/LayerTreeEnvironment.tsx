@@ -167,7 +167,8 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
 
   return (
     <TreeEnvironment
-      dataProvider={treeData}
+      // dataProvider={treeData}
+      items={{}}
       onSelectItems={useCallback(
         (items: TreeItemIndex[]) => {
           const ids = items.map((e) => `${e}`);

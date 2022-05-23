@@ -27,7 +27,7 @@ import {
   TreeEnvironment,
 } from "..";
 import {
-  storyTreeDataProvider,
+  storyTreeItems,
   ToolsProvider,
 } from "../Tree/storybookTreeDataProvider";
 
@@ -133,7 +133,8 @@ const Template: Story = () => (
               />
             </ToolBar>
             <TreeEnvironment
-              dataProvider={storyTreeDataProvider(toolsProvider)}
+              items={storyTreeItems(toolsProvider)}
+              viewState={{}}
             >
               <Tree treeId="layers" />
             </TreeEnvironment>
@@ -158,7 +159,8 @@ const Template: Story = () => (
                 />
               </ToolBar>
               <TreeEnvironment
-                dataProvider={storyTreeDataProvider(noToolsProvider)}
+                items={storyTreeItems(noToolsProvider)}
+                viewState={{}}
               >
                 <Tree treeId="controls" />
               </TreeEnvironment>

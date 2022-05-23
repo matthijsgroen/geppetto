@@ -109,7 +109,8 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
 
   return (
     <TreeEnvironment
-      dataProvider={treeData}
+      items={{}}
+      viewState={{}}
       onSelectItems={useCallback(
         (items: TreeItemIndex[]) => {
           const ids = items.map((e) => `${e}`);

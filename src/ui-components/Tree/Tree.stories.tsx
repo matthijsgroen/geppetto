@@ -1,9 +1,6 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { Icon, ToolButton } from "..";
-import {
-  storyTreeDataProvider,
-  ToolsProvider,
-} from "./storybookTreeDataProvider";
+import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
 import { Tree } from "./Tree";
 import { TreeEnvironment } from "./TreeEnvironment";
 
@@ -27,7 +24,7 @@ const toolsProvider: ToolsProvider = (data) => {
 };
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof Tree> = (args) => (
-  <TreeEnvironment dataProvider={storyTreeDataProvider(toolsProvider)}>
+  <TreeEnvironment items={storyTreeItems(toolsProvider)} viewState={{}}>
     <Tree {...args} />
   </TreeEnvironment>
 );

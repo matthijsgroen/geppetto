@@ -1,10 +1,6 @@
-import {
-  StaticTreeDataProvider,
-  TreeItem,
-  TreeItemIndex,
-} from "react-complex-tree";
+import { TreeItem, TreeItemIndex } from "react-complex-tree";
 import { NodeType } from "../../animation/file2/types";
-import { TreeData, TreeDataProvider } from "./Tree";
+import { TreeData } from "./Tree";
 import React from "react";
 
 export type ToolsProvider = (data: TreeData<NodeType>) => React.ReactNode;
@@ -17,9 +13,9 @@ const createTreeNodeData = (
   itemTools: tools(data),
 });
 
-const treeItems: (
-  tools: ToolsProvider
-) => Record<TreeItemIndex, TreeItem<TreeData<NodeType>>> = (tools) => ({
+type TreeItems = Record<TreeItemIndex, TreeItem<TreeData<NodeType>>>;
+
+export const storyTreeItems: (tools: ToolsProvider) => TreeItems = (tools) => ({
   root: {
     index: "root",
     canMove: true,
@@ -82,11 +78,3 @@ const treeItems: (
     canRename: true,
   },
 });
-
-export const storyTreeDataProvider: (
-  tools: ToolsProvider
-) => TreeDataProvider<NodeType> = (tools) =>
-  new StaticTreeDataProvider(treeItems(tools), (item, newName) => ({
-    ...item,
-    data: { ...item.data, name: newName },
-  }));
