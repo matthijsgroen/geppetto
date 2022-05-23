@@ -51,6 +51,7 @@ export const showCompositionVectors = (
   setImage(image: HTMLImageElement): void;
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
+  setActiveMutation(mutation: string | null): void;
   setLayerSelected(layers: string[]): void;
   renderer: WebGLRenderer;
 } => {
@@ -210,6 +211,7 @@ export const showCompositionVectors = (
   let cWidth = 0;
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
+  let activeMutation: string | null = null;
 
   let onChange: () => void = () => {};
 
@@ -226,6 +228,10 @@ export const showCompositionVectors = (
     setVectorValues(v) {
       vectorValues = v;
       populateVectorValues();
+      onChange();
+    },
+    setActiveMutation(mutation) {
+      activeMutation = mutation;
       onChange();
     },
     setLayerSelected(layers) {
@@ -345,17 +351,17 @@ export const showCompositionVectors = (
             basePosition[1],
             basePosition[2]
           );
-          gl.uniform1f(
-            programInfo.uniforms.active,
-            vectorsSelected.length === 1
-              ? colorScheme.darkMode
-                ? 2.0
-                : 1.0
-              : 0.0
-          );
 
           vectors.forEach((vector) => {
             if (vectorsSelected.includes(vector.id)) {
+              gl.uniform1f(
+                programInfo.uniforms.active,
+                vectorsSelected.length === 1 || vector.id === activeMutation
+                  ? colorScheme.darkMode
+                    ? 2.0
+                    : 1.0
+                  : 0.0
+              );
               gl.uniform3f(
                 programInfo.uniforms.translate,
                 vector.x,

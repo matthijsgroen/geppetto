@@ -19,6 +19,7 @@ export interface CompositionCanvasProps {
   showWireFrames: boolean;
   vectorValues: GeppettoImage["defaultFrame"];
   activeLayers: string[];
+  activeMutation: string | null;
 }
 
 const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
@@ -31,7 +32,15 @@ const CompositionCanvas = forwardRef<
   PropsWithChildren<CompositionCanvasProps>
 >(
   (
-    { image, file, vectorValues, activeLayers, showWireFrames, children },
+    {
+      image,
+      file,
+      vectorValues,
+      activeLayers,
+      showWireFrames,
+      activeMutation,
+      children,
+    },
     ref
   ) => {
     const translation = useScreenTranslation();
@@ -81,6 +90,10 @@ const CompositionCanvas = forwardRef<
       compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);
       vectorMap.setLayerSelected(activeLayers);
     }, [activeLayers, compositionMap, vectorMap, showWireFrames]);
+
+    useEffect(() => {
+      vectorMap.setActiveMutation(activeMutation);
+    }, [activeMutation, vectorMap]);
 
     return (
       <WebGLCanvas renderers={renderers} ref={ref}>

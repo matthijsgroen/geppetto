@@ -1,5 +1,6 @@
 import {
   RefObject,
+  SetStateAction,
   useCallback,
   useDeferredValue,
   useEffect,
@@ -124,13 +125,22 @@ export const Composition: React.FC<CompositionProps> = ({
   const texture = textureState[0];
   const [file] = useFile();
   const [showItemDetails, setShowItemDetails] = useState(false);
+  const [showWireFrames, setShowWireFrames] = useState(true);
 
   const maxZoom = maxZoomFactor(texture);
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [activeMutator, setActiveMutator] = useState<string | null>(null);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
 
   const vectorValues = useVectorValues(file);
+
+  const updateSelectedItems = useEvent(
+    (selectedItems: SetStateAction<string[]>) => {
+      setActiveMutator(null);
+      setSelectedItems(selectedItems);
+    }
+  );
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -141,6 +151,14 @@ export const Composition: React.FC<CompositionProps> = ({
           shortcut: TOGGLE_INFO_SHORTCUT,
           handler: () => {
             setShowItemDetails((prev) => !prev);
+          },
+        },
+        toggleWireFrames: {
+          icon: "🩻",
+          tooltip: "toggle wireframes",
+          shortcut: { alt: true, key: "KeyW" } as Shortcut,
+          handler: () => {
+            setShowWireFrames((prev) => !prev);
           },
         },
       }),
@@ -220,7 +238,7 @@ export const Composition: React.FC<CompositionProps> = ({
           elementY > position[1] - 6 &&
           elementY < position[1] + 6
         ) {
-          setSelectedItems([mutatorId]);
+          setActiveMutator(mutatorId);
         }
       }
     }
@@ -247,7 +265,7 @@ export const Composition: React.FC<CompositionProps> = ({
         }
       }
 
-      return MouseMode.Normal;
+      return MouseMode.Grab;
     }
   );
 
@@ -263,6 +281,11 @@ export const Composition: React.FC<CompositionProps> = ({
         />
         <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} active />
         <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
+        <ToolSeparator />
+        <ActionToolButton
+          action={actions.toggleWireFrames}
+          active={showWireFrames}
+        />
         <ToolSpacer />
         <ActionToolButton
           action={actions.toggleInfo}
@@ -284,7 +307,7 @@ export const Composition: React.FC<CompositionProps> = ({
             >
               <Panel padding={5}>
                 <ShapeTree
-                  selectedItemsState={[selectedItems, setSelectedItems]}
+                  selectedItemsState={[selectedItems, updateSelectedItems]}
                 />
               </Panel>
             </ResizePanel>
@@ -305,6 +328,8 @@ export const Composition: React.FC<CompositionProps> = ({
               <CompositionCanvas
                 image={texture}
                 activeLayers={selectedItems}
+                activeMutation={activeMutator}
+                showWireFrames={showWireFrames}
                 file={file}
                 vectorValues={vectorValues}
                 ref={containerRef}
@@ -312,6 +337,7 @@ export const Composition: React.FC<CompositionProps> = ({
                 {!showItemDetails && (
                   <Inlay>
                     <InlayControlPanel
+                      activeMutator={activeMutator}
                       selectedShapeIds={selectedItems}
                       selectedControlIds={[]}
                     />
@@ -330,6 +356,7 @@ export const Composition: React.FC<CompositionProps> = ({
             <Column>
               <Panel padding={5}>
                 <ItemEdit
+                  activeMutator={activeMutator}
                   selectedShapeIds={selectedItems}
                   selectedControlIds={[]}
                 />

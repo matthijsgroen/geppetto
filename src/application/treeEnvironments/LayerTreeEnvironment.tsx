@@ -39,7 +39,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   toggleVisibility = false,
 }) => {
   const [file, setFile] = useFile();
-  const [, setSelectedItems] = selectedItemsState;
+  const [selectedItems, setSelectedItems] = selectedItemsState;
 
   const actionButtonPress = useEvent(
     (itemId: string, buttonId: ActionButton) => {
@@ -212,6 +212,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       viewState={{
         [treeId]: {
           expandedItems,
+          selectedItems,
         },
       }}
     >

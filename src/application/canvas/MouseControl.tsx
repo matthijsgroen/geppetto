@@ -1,11 +1,6 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  PropsWithChildren,
-} from "react";
+import { useEffect, useRef, useState, PropsWithChildren } from "react";
 import styled from "styled-components";
+import useEvent from "../hooks/useEvent";
 
 export enum MouseMode {
   Normal,
@@ -78,22 +73,16 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
       ref={ref}
       mode={isGrabbing ? MouseMode.Grabbing : mode}
       tabIndex={0}
-      onMouseDown={useCallback(
-        (e: React.MouseEvent<HTMLDivElement>) => {
-          if (mode === MouseMode.Grab) {
-            setIsGrabbing(true);
-          }
-          onMouseDown && onMouseDown(e);
-        },
-        [onMouseDown, mode]
-      )}
-      onMouseUp={useCallback(
-        (e: React.MouseEvent<HTMLDivElement>) => {
-          setIsGrabbing(false);
-          onMouseUp && onMouseUp(e);
-        },
-        [onMouseUp]
-      )}
+      onMouseDown={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
+        if (mode === MouseMode.Grab) {
+          setIsGrabbing(true);
+        }
+        onMouseDown && onMouseDown(e);
+      })}
+      onMouseUp={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
+        setIsGrabbing(false);
+        onMouseUp && onMouseUp(e);
+      })}
       onMouseMove={onMouseMove}
       onKeyDown={onKeyDown}
     >

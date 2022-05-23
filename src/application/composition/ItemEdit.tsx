@@ -13,6 +13,7 @@ import {
 } from "./editors/MutationValueEdit";
 
 type ItemEditProps = {
+  activeMutator: string | null;
   selectedShapeIds: string[];
   selectedControlIds: string[];
 };
@@ -179,11 +180,13 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
 
 export const ItemEdit: React.FC<ItemEditProps> = ({
   selectedShapeIds,
+  activeMutator,
   selectedControlIds,
 }) => {
   const [file] = useFile();
   const activeShapeId =
-    selectedShapeIds.length === 1 ? selectedShapeIds[0] : null;
+    activeMutator ||
+    (selectedShapeIds.length === 1 ? selectedShapeIds[0] : null);
   const hierarchyItem =
     activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
 
@@ -217,11 +220,13 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
 };
 
 export const InlayControlPanel: React.FC<ItemEditProps> = ({
+  activeMutator,
   selectedShapeIds,
 }) => {
   const [file, setFile] = useFile();
   const activeShapeId =
-    selectedShapeIds.length === 1 ? selectedShapeIds[0] : null;
+    activeMutator ||
+    (selectedShapeIds.length === 1 ? selectedShapeIds[0] : null);
   const hierarchyItem =
     activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
 
