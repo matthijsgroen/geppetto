@@ -7,9 +7,8 @@ import {
   TreeItem,
   TreeData,
   TreeItemIndex,
+  TREE_ROOT,
 } from "../../ui-components/Tree/Tree";
-
-const TREE_ROOT = "root";
 
 export type ActionButton = "visibility";
 

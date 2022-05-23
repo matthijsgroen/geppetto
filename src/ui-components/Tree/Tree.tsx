@@ -95,10 +95,11 @@ type TreeProps = {
   treeId: string;
 };
 
+export const TREE_ROOT = "root";
 export const Tree: React.FC<TreeProps> = ({ treeId }) => (
   <ComplexTree
     treeId={treeId}
-    rootItem="root"
+    rootItem={TREE_ROOT}
     treeLabel="Tree Example"
     renderItem={renderItem}
   />
