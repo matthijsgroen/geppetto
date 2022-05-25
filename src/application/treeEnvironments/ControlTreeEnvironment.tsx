@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { DraggingPosition } from "react-complex-tree";
 import { isRootNode, moveInHierarchy } from "../../animation/file2/hierarchy";
-import { newFile } from "../../animation/file2/new";
 import {
   TreeData,
   TreeItem,
   TreeItemIndex,
   TreeEnvironment,
 } from "../../ui-components";
-import { treeDataProvider } from "./ControlTreeDataProvider";
 import { UseState } from "../types";
 import { useFile } from "../applicationMenu/FileContext";
 import { useControlTreeItems } from "./useControlTreeItems";
@@ -31,11 +29,6 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
   const [focusedItem, setFocusedItem] = useState<string | undefined>(undefined);
-
-  const treeData = useMemo(() => treeDataProvider(newFile()), []);
-  useEffect(() => {
-    treeData.updateActiveTree && treeData.updateActiveTree(file);
-  }, [file, treeData]);
 
   const canDropAt = useCallback(
     (_items: ControlItem[], target: DraggingPosition) => {
@@ -107,9 +100,8 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
           return result;
         });
       }
-      treeData.addChangedId && treeData.addChangedId(...updatedItems);
     },
-    [treeData, setFile]
+    [setFile]
   );
 
   const items = useControlTreeItems(file);
