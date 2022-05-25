@@ -79,11 +79,6 @@ const populateTree = (
         },
         canRename: false,
       };
-
-      for (const childId of item.children) {
-        populateNode(childId);
-      }
-      return;
     }
     if (item.type === "layer") {
       const layerData = newFile.layers[nodeId];

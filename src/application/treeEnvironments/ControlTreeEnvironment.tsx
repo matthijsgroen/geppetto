@@ -11,9 +11,11 @@ import {
 import { treeDataProvider } from "./ControlTreeDataProvider";
 import { UseState } from "../types";
 import { useFile } from "../applicationMenu/FileContext";
+import { useControlTreeItems } from "./useControlTreeItems";
 
 type ControlTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
+  treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
 };
 
@@ -21,11 +23,12 @@ type ControlItem = TreeItem<TreeData<"control" | "controlFolder">>;
 const yes = () => true;
 
 export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
-  children,
   selectedItemsState,
+  treeId,
+  children,
 }) => {
   const [file, setFile] = useFile();
-  const [, setSelectedItems] = selectedItemsState;
+  const [selectedItems, setSelectedItems] = selectedItemsState;
 
   const treeData = useMemo(() => treeDataProvider(newFile()), []);
   useEffect(() => {
@@ -107,10 +110,10 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
     [treeData, setFile]
   );
 
+  const items = useControlTreeItems(file);
   return (
     <TreeEnvironment
-      items={{}}
-      viewState={{}}
+      items={items}
       onSelectItems={useCallback(
         (items: TreeItemIndex[]) => {
           const ids = items.map((e) => `${e}`);
@@ -135,6 +138,12 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
       onDrop={onDrop}
       canDropOnItemWithChildren={true}
       canDropOnItemWithoutChildren={true}
+      viewState={{
+        [treeId]: {
+          expandedItems: [], // TODO: expand when folders get supported
+          selectedItems,
+        },
+      }}
     >
       {children}
     </TreeEnvironment>
