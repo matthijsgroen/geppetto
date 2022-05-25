@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { DraggingPosition } from "react-complex-tree";
 import { isRootNode, moveInHierarchy } from "../../animation/file2/hierarchy";
 import { newFile } from "../../animation/file2/new";
@@ -12,6 +12,7 @@ import { treeDataProvider } from "./ControlTreeDataProvider";
 import { UseState } from "../types";
 import { useFile } from "../applicationMenu/FileContext";
 import { useControlTreeItems } from "./useControlTreeItems";
+import useEvent from "../hooks/useEvent";
 
 type ControlTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
@@ -29,6 +30,7 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
+  const [focusedItem, setFocusedItem] = useState<string | undefined>(undefined);
 
   const treeData = useMemo(() => treeDataProvider(newFile()), []);
   useEffect(() => {
@@ -136,12 +138,16 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
       // [setFile, treeData]
       //   )}
       onDrop={onDrop}
+      onFocusItem={useEvent((item: ControlItem) => {
+        setFocusedItem(`${item.index}`);
+      })}
       canDropOnItemWithChildren={true}
       canDropOnItemWithoutChildren={true}
       viewState={{
         [treeId]: {
           expandedItems: [], // TODO: expand when folders get supported
           selectedItems,
+          focusedItem,
         },
       }}
     >

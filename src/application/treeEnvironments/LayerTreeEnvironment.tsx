@@ -39,6 +39,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
+  const [focusedItem, setFocusedItem] = useState<string | undefined>(undefined);
 
   const actionButtonPress = useEvent(
     (itemId: string, buttonId: ActionButton) => {
@@ -200,12 +201,16 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
           );
         }
       })}
+      onFocusItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+        setFocusedItem(`${item.index}`);
+      })}
       canDropOnItemWithChildren={true}
       canDropOnItemWithoutChildren={true}
       viewState={{
         [treeId]: {
           expandedItems: expandedFolders.concat(expandedLayers),
           selectedItems,
+          focusedItem,
         },
       }}
     >
