@@ -186,6 +186,7 @@ export const useLayerTreeItems = (
     fileRef.current = file;
   }, [file, toggleVisibility, showMutations, actionHandler]);
   if (expandRef.current !== expandedItems) {
+    // This is a workaround for issue: https://github.com/lukasbach/react-complex-tree/issues/76
     treeItemsRef.current = { ...treeItemsRef.current };
     expandRef.current = expandedItems;
   }
