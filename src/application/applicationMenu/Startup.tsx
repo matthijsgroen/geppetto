@@ -30,6 +30,11 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
           Geppetto is a free and open animation tool
           <br /> to create and embed WebGL animations
         </p>
+        <p>
+          Note: This is an early ALPHA build of Geppetto 2.0
+          <br /> and is not yet ready for production use. (It's not feature
+          complete yet!)
+        </p>
         {isNew(file) && (
           <p>
             <ToolButton
