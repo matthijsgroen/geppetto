@@ -1,19 +1,20 @@
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useState } from "react";
 import { DraggingPosition } from "react-complex-tree";
 import { isRootNode, moveInHierarchy } from "../../animation/file2/hierarchy";
-import { newFile } from "../../animation/file2/new";
 import {
   TreeData,
   TreeItem,
   TreeItemIndex,
   TreeEnvironment,
 } from "../../ui-components";
-import { treeDataProvider } from "./ControlTreeDataProvider";
 import { UseState } from "../types";
 import { useFile } from "../applicationMenu/FileContext";
+import { useControlTreeItems } from "./useControlTreeItems";
+import useEvent from "../hooks/useEvent";
 
 type ControlTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
+  treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
 };
 
@@ -21,16 +22,13 @@ type ControlItem = TreeItem<TreeData<"control" | "controlFolder">>;
 const yes = () => true;
 
 export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
-  children,
   selectedItemsState,
+  treeId,
+  children,
 }) => {
   const [file, setFile] = useFile();
-  const [, setSelectedItems] = selectedItemsState;
-
-  const treeData = useMemo(() => treeDataProvider(newFile()), []);
-  useEffect(() => {
-    treeData.updateActiveTree && treeData.updateActiveTree(file);
-  }, [file, treeData]);
+  const [selectedItems, setSelectedItems] = selectedItemsState;
+  const [focusedItem, setFocusedItem] = useState<string | undefined>(undefined);
 
   const canDropAt = useCallback(
     (_items: ControlItem[], target: DraggingPosition) => {
@@ -102,14 +100,14 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
           return result;
         });
       }
-      treeData.addChangedId && treeData.addChangedId(...updatedItems);
     },
-    [treeData, setFile]
+    [setFile]
   );
 
+  const items = useControlTreeItems(file);
   return (
     <TreeEnvironment
-      dataProvider={treeData}
+      items={items}
       onSelectItems={useCallback(
         (items: TreeItemIndex[]) => {
           const ids = items.map((e) => `${e}`);
@@ -132,8 +130,18 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
       // [setFile, treeData]
       //   )}
       onDrop={onDrop}
+      onFocusItem={useEvent((item: ControlItem) => {
+        setFocusedItem(`${item.index}`);
+      })}
       canDropOnItemWithChildren={true}
       canDropOnItemWithoutChildren={true}
+      viewState={{
+        [treeId]: {
+          expandedItems: [], // TODO: expand when folders get supported
+          selectedItems,
+          focusedItem,
+        },
+      }}
     >
       {children}
     </TreeEnvironment>

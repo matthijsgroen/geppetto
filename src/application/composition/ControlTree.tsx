@@ -18,8 +18,12 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
   selectedControlsState,
 }) => {
   const [selectedControls] = selectedControlsState;
+
   return (
-    <ControlTreeEnvironment selectedItemsState={selectedControlsState}>
+    <ControlTreeEnvironment
+      selectedItemsState={selectedControlsState}
+      treeId="controls"
+    >
       <Panel padding={5}>
         <Title>Controls</Title>
         <ToolBar size="small">

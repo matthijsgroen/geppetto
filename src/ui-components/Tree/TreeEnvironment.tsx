@@ -1,10 +1,8 @@
-import React from "react";
 import {
-  UncontrolledTreeEnvironment as ComplexUncontrolledTreeEnvironment,
-  UncontrolledTreeEnvironmentProps,
+  ControlledTreeEnvironment as ComplexControlledTreeEnvironment,
+  ControlledTreeEnvironmentProps,
   TreeItem,
   InteractionManager,
-  TreeViewState,
 } from "react-complex-tree";
 import { TreeData } from "./Tree";
 
@@ -12,13 +10,9 @@ const getItemTitle = <T extends string>(item: TreeItem<TreeData<T>>): string =>
   item.data.name;
 
 type Props<T extends string> = Omit<
-  UncontrolledTreeEnvironmentProps<TreeData<T>>,
-  | "getItemTitle"
-  | "treeId"
-  | "defaultInteractionMode"
-  | "viewState"
-  | "keyboardBindings"
-> & { viewState?: TreeViewState };
+  ControlledTreeEnvironmentProps<TreeData<T>>,
+  "getItemTitle" | "treeId" | "defaultInteractionMode" | "keyboardBindings"
+>;
 
 const interactionManager: InteractionManager = {
   mode: "custom",
@@ -67,12 +61,10 @@ const interactionManager: InteractionManager = {
 
 export const TreeEnvironment = <T extends string>({
   children,
-  viewState = {},
   ...props
 }: Props<T>): ReturnType<React.FC<Props<T>>> => (
-  <ComplexUncontrolledTreeEnvironment
+  <ComplexControlledTreeEnvironment
     {...props}
-    viewState={viewState}
     getItemTitle={getItemTitle}
     defaultInteractionMode={interactionManager}
     keyboardBindings={{
@@ -81,5 +73,5 @@ export const TreeEnvironment = <T extends string>({
     }}
   >
     {children}
-  </ComplexUncontrolledTreeEnvironment>
+  </ComplexControlledTreeEnvironment>
 );

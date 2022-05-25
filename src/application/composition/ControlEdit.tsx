@@ -55,6 +55,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
             value={file.controlValues[activeControlId]}
             onChange={onChange}
           />
+          <p>{file.controlValues[activeControlId]}</p>
         </Control>
       </ControlPanel>
     </>

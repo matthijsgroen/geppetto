@@ -130,6 +130,7 @@ export const Composition: React.FC<CompositionProps> = ({
   const maxZoom = maxZoomFactor(texture);
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [focusedLayer, setFocusedLayer] = useState<string | undefined>();
   const [activeMutator, setActiveMutator] = useState<string | null>(null);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
 
@@ -239,6 +240,8 @@ export const Composition: React.FC<CompositionProps> = ({
           elementY < position[1] + 6
         ) {
           setActiveMutator(mutatorId);
+          setFocusedLayer(mutatorId);
+          setSelectedItems([mutatorId]);
         }
       }
     }
@@ -308,6 +311,7 @@ export const Composition: React.FC<CompositionProps> = ({
               <Panel padding={5}>
                 <ShapeTree
                   selectedItemsState={[selectedItems, updateSelectedItems]}
+                  focusedItemState={[focusedLayer, setFocusedLayer]}
                 />
               </Panel>
             </ResizePanel>
