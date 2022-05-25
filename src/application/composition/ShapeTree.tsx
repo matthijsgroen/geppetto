@@ -14,9 +14,13 @@ import { UseState } from "../types";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
+  focusedItemState: UseState<string | undefined>;
 };
 
-export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
+export const ShapeTree: React.FC<ShapeTreeProps> = ({
+  selectedItemsState,
+  focusedItemState,
+}) => {
   const [file, setFile] = useFile();
   const [selectedItems] = selectedItemsState;
 
@@ -46,6 +50,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
   return (
     <LayerTreeEnvironment
       selectedItemsState={selectedItemsState}
+      focusedItemState={focusedItemState}
       showMutations
       toggleVisibility
       treeId="composition"

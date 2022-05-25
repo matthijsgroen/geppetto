@@ -16,11 +16,12 @@ import { UseState } from "../types";
 import { useFile } from "../applicationMenu/FileContext";
 import useEvent from "../hooks/useEvent";
 import produce from "immer";
-import { NodeType } from "../../animation/file2/types";
+import { GeppettoImage, NodeType } from "../../animation/file2/types";
 import { ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
 
 type LayerTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
+  focusedItemState: UseState<string | undefined>;
   showMutations?: boolean;
   toggleVisibility?: boolean;
   treeId: string;
@@ -30,16 +31,26 @@ type LayerTreeEnvironmentProps = {
 type LayerItem = TreeItem<TreeData<"layer" | "layerFolder" | "mutation">>;
 const yes = () => true;
 
+const openThroughFocusItem = (
+  file: GeppettoImage,
+  focusItem: string | undefined
+): string[] => {
+  if (!focusItem) return [];
+
+  return [];
+};
+
 export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   children,
   selectedItemsState,
+  focusedItemState,
   treeId,
   showMutations = false,
   toggleVisibility = false,
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
-  const [focusedItem, setFocusedItem] = useState<string | undefined>(undefined);
+  const [focusedItem, setFocusedItem] = focusedItemState;
 
   const actionButtonPress = useEvent(
     (itemId: string, buttonId: ActionButton) => {
@@ -60,11 +71,34 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     }
   );
 
+  const expandedFolders = useMemo(() => {
+    const expanded: string[] = [];
+    visit(file.layerHierarchy, (node, nodeId) => {
+      if (node.type === "layerFolder") {
+        const folderInfo = file.layerFolders[nodeId];
+        if (!folderInfo.collapsed) {
+          expanded.push(nodeId);
+        }
+      }
+    });
+
+    return expanded;
+  }, [file.layerFolders, file.layerHierarchy]);
+  const [expandedLayers, setExpandedLayers] = useState<string[]>([]);
+  const focusedExpansions = openThroughFocusItem(file, focusedItem);
+
+  const expandedItems = useMemo(
+    () => expandedFolders.concat(expandedLayers).concat(focusedExpansions),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [expandedFolders.join(), expandedLayers.join(), focusedExpansions.join()]
+  );
+
   const items = useLayerTreeItems(
     file,
     actionButtonPress,
     showMutations,
-    toggleVisibility
+    toggleVisibility,
+    expandedItems
   );
 
   const canDropAt = useEvent(
@@ -140,21 +174,6 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     }
   });
 
-  const expandedFolders = useMemo(() => {
-    const expanded: string[] = [];
-    visit(file.layerHierarchy, (node, nodeId) => {
-      if (node.type === "layerFolder") {
-        const folderInfo = file.layerFolders[nodeId];
-        if (!folderInfo.collapsed) {
-          expanded.push(nodeId);
-        }
-      }
-    });
-
-    return expanded;
-  }, [file.layerFolders, file.layerHierarchy]);
-  const [expandedLayers, setExpandedLayers] = useState<string[]>([]);
-
   return (
     <TreeEnvironment
       items={items}
@@ -208,7 +227,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       canDropOnItemWithoutChildren={true}
       viewState={{
         [treeId]: {
-          expandedItems: expandedFolders.concat(expandedLayers),
+          expandedItems,
           selectedItems,
           focusedItem,
         },

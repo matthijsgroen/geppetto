@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { MutableRefObject, useMemo, useRef } from "react";
 import { newFile } from "../../animation/file2/new";
 import { GeppettoImage } from "../../animation/file2/types";
 import { TreeData, TreeItem, TreeItemIndex } from "../../ui-components";
@@ -10,7 +10,7 @@ export type ControlItem = TreeItem<TreeData<ControlType>>;
 const populateTree = (
   newFile: GeppettoImage,
   previousFile: GeppettoImage,
-  result: Record<TreeItemIndex, ControlItem>
+  result: MutableRefObject<Record<TreeItemIndex, ControlItem>>
 ) => {
   const hierarchy = newFile.controlHierarchy;
 
@@ -40,6 +40,10 @@ const populateTree = (
 
     return false;
   });
+  if (changedNodes.length === 0) {
+    return;
+  }
+  result.current = { ...result.current };
 
   const populateNode = (nodeId: string) => {
     const item = hierarchy[nodeId];
@@ -52,7 +56,7 @@ const populateTree = (
     }
 
     if (item.type === "root") {
-      result[nodeId] = {
+      result.current[nodeId] = {
         index: nodeId,
         canMove: false,
         hasChildren: true,
@@ -77,7 +81,7 @@ const populateTree = (
         icon: "⚙️",
         type: item.type,
       };
-      result[nodeId] = {
+      result.current[nodeId] = {
         index: nodeId,
         canMove: true,
         hasChildren: false,
@@ -93,7 +97,7 @@ const populateTree = (
         icon: "📁",
         type: item.type,
       };
-      result[nodeId] = {
+      result.current[nodeId] = {
         index: nodeId,
         canMove: true,
         hasChildren: childIds.length > 0,
@@ -115,7 +119,7 @@ export const useControlTreeItems = (file: GeppettoImage) => {
   const fileRef = useRef<GeppettoImage>(newFile());
 
   useMemo(() => {
-    populateTree(file, fileRef.current, treeItemsRef.current);
+    populateTree(file, fileRef.current, treeItemsRef);
     fileRef.current = file;
   }, [file]);
   return treeItemsRef.current;

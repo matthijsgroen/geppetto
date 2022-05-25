@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { MutableRefObject, useMemo, useRef } from "react";
 import { iconMapping } from "../../animation/file2/mutation";
 import { newFile } from "../../animation/file2/new";
 import { GeppettoImage, NodeType } from "../../animation/file2/types";
@@ -20,7 +20,7 @@ export type ActionButton = "visibility";
 const populateTree = (
   newFile: GeppettoImage,
   previousFile: GeppettoImage,
-  result: Record<TreeItemIndex, LayerItem>,
+  result: MutableRefObject<Record<TreeItemIndex, LayerItem>>,
   actionHandler: (nodeId: string, button: ActionButton) => void,
   showMutations: boolean,
   toggleVisibility: boolean
@@ -53,6 +53,10 @@ const populateTree = (
 
     return false;
   });
+  if (changedNodes.length === 0) {
+    return;
+  }
+  result.current = { ...result.current };
 
   const populateNode = (nodeId: string) => {
     const item = hierarchy[nodeId];
@@ -67,7 +71,7 @@ const populateTree = (
     }
 
     if (item.type === "root") {
-      result[nodeId] = {
+      result.current[nodeId] = {
         index: nodeId,
         canMove: false,
         hasChildren: true,
@@ -99,7 +103,7 @@ const populateTree = (
           />
         );
       }
-      result[nodeId] = {
+      result.current[nodeId] = {
         index: nodeId,
         canMove: true,
         hasChildren: childIds.length > 0,
@@ -127,7 +131,7 @@ const populateTree = (
           />
         );
       }
-      result[nodeId] = {
+      result.current[nodeId] = {
         index: nodeId,
         canMove: true,
         hasChildren: childIds.length > 0,
@@ -138,7 +142,7 @@ const populateTree = (
     }
     if (item.type === "mutation") {
       const mutationData = newFile.mutations[nodeId];
-      result[nodeId] = {
+      result.current[nodeId] = {
         index: nodeId,
         canMove: true,
         hasChildren: childIds.length > 0,
@@ -163,21 +167,27 @@ export const useLayerTreeItems = (
   file: GeppettoImage,
   actionHandler: (nodeId: string, button: ActionButton) => void,
   showMutations: boolean,
-  toggleVisibility: boolean
+  toggleVisibility: boolean,
+  expandedItems: string[]
 ) => {
   const treeItemsRef = useRef<Record<TreeItemIndex, LayerItem>>({});
   const fileRef = useRef<GeppettoImage>(newFile());
+  const expandRef = useRef<string[]>(expandedItems);
 
   useMemo(() => {
     populateTree(
       file,
       fileRef.current,
-      treeItemsRef.current,
+      treeItemsRef,
       actionHandler,
       showMutations,
       toggleVisibility
     );
     fileRef.current = file;
   }, [file, toggleVisibility, showMutations, actionHandler]);
+  if (expandRef.current !== expandedItems) {
+    treeItemsRef.current = { ...treeItemsRef.current };
+    expandRef.current = expandedItems;
+  }
   return treeItemsRef.current;
 };
