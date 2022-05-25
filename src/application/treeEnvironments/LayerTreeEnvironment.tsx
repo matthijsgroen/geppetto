@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DraggingPosition } from "react-complex-tree";
 import {
   isRootNode,
@@ -65,19 +65,6 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     showMutations,
     toggleVisibility
   );
-
-  // const treeData = useMemo(
-  //   () =>
-  //     treeDataProvider(
-  //       newFile(),
-  //       { showMutations, toggleVisibility },
-  //       actionButtonPress
-  //     ),
-  //   [showMutations, toggleVisibility, actionButtonPress]
-  // );
-  // useEffect(() => {
-  //   treeData.updateActiveTree && treeData.updateActiveTree(file);
-  // }, [file, treeData]);
 
   const canDropAt = useEvent(
     (_items: LayerItem[], target: DraggingPosition) => {
@@ -150,10 +137,9 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         return result;
       });
     }
-    // treeData.addChangedId && treeData.addChangedId(...updatedItems);
   });
 
-  const expandedItems = useMemo(() => {
+  const expandedFolders = useMemo(() => {
     const expanded: string[] = [];
     visit(file.layerHierarchy, (node, nodeId) => {
       if (node.type === "layerFolder") {
@@ -166,6 +152,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
 
     return expanded;
   }, [file.layerFolders, file.layerHierarchy]);
+  const [expandedLayers, setExpandedLayers] = useState<string[]>([]);
 
   return (
     <TreeEnvironment
@@ -186,30 +173,38 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       })}
       onDrop={onDrop}
       onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
-        setFile(
-          produce((draft) => {
-            const folder = draft.layerHierarchy[item.index];
-            if (folder.type === "layerFolder") {
+        const treeNode = file.layerHierarchy[item.index];
+        if (treeNode.type === "layerFolder") {
+          setFile(
+            produce((draft) => {
               draft.layerFolders[item.index].collapsed = false;
-            }
-          })
-        );
+            })
+          );
+        }
+        if (treeNode.type === "layer") {
+          setExpandedLayers((layers) => layers.concat(`${item.index}`));
+        }
       })}
       onCollapseItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
-        setFile(
-          produce((draft) => {
-            const folder = draft.layerHierarchy[item.index];
-            if (folder.type === "layerFolder") {
+        const treeNode = file.layerHierarchy[item.index];
+        if (treeNode.type === "layerFolder") {
+          setFile(
+            produce((draft) => {
               draft.layerFolders[item.index].collapsed = true;
-            }
-          })
-        );
+            })
+          );
+        }
+        if (treeNode.type === "layer") {
+          setExpandedLayers((layers) =>
+            layers.filter((layer) => layer !== item.index)
+          );
+        }
       })}
       canDropOnItemWithChildren={true}
       canDropOnItemWithoutChildren={true}
       viewState={{
         [treeId]: {
-          expandedItems,
+          expandedItems: expandedFolders.concat(expandedLayers),
           selectedItems,
         },
       }}
