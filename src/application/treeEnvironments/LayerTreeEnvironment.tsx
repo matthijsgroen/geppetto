@@ -36,8 +36,15 @@ const openThroughFocusItem = (
   focusItem: string | undefined
 ): string[] => {
   if (!focusItem) return [];
+  const result: string[] = [];
 
-  return [];
+  let currentItem = file.layerHierarchy[focusItem];
+  while (!isRootNode(currentItem)) {
+    result.push(currentItem.parentId);
+    currentItem = file.layerHierarchy[currentItem.parentId];
+  }
+
+  return result;
 };
 
 export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
