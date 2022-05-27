@@ -104,8 +104,8 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     file,
     actionButtonPress,
     showMutations,
-    toggleVisibility,
-    expandedItems
+    toggleVisibility
+    // expandedItems
   );
 
   const canDropAt = useEvent(

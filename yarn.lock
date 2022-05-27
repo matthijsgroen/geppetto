@@ -12186,10 +12186,10 @@ react-colorful@^5.1.2:
   resolved "https://registry.yarnpkg.com/react-colorful/-/react-colorful-5.5.1.tgz#29d9c4e496f2ca784dd2bb5053a3a4340cfaf784"
   integrity sha512-M1TJH2X3RXEt12sWkpa6hLc/bbYS0H6F4rIqjQZ+RxNBstpY67d9TrFXtqdZwhpmBXcCwEi7stKqFue3ZRkiOg==
 
-react-complex-tree@^1.1.6:
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/react-complex-tree/-/react-complex-tree-1.1.6.tgz#c2cb68f90e70aee7e815d69328b7bf47f84248c7"
-  integrity sha512-0HwBtv3iLg/3+Wg4g25FA+1g3Ivzm4WCt4+9C91AyUIXeSNsp7Ll/0qh8hSBCYvyu+zdWqUOcE9Gi0HAI2TN0g==
+react-complex-tree@1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/react-complex-tree/-/react-complex-tree-1.1.7.tgz#431fb805d30ce17e3adcfb4eb97bf5c66668ec28"
+  integrity sha512-DdLqKfI8XBllygEwj1vRlpiE4XEjEFYPsayrd8VfFVEbeNZZQE0TbnJbwUko4jTblV88AtBc3plKm1p9sDkgRA==
 
 react-dev-utils@^12.0.1:
   version "12.0.1"
