@@ -121,10 +121,8 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
 
   const onDrop = useEvent((items: LayerItem[], target: DraggingPosition) => {
     items.reverse();
-    const updatedItems: string[] = [];
     if (target.targetType === "item") {
       const targetId = `${target.targetItem}`;
-      updatedItems.push(targetId);
       setFile((fileData) => {
         const result = { ...fileData };
         for (const item of items) {
@@ -135,30 +133,34 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
             `${item.index}`,
             { parent: targetId }
           );
-          const node = fileData.layerHierarchy[`${item.index}`];
-          if (!isRootNode(node)) {
-            updatedItems.push(node.parentId);
-          }
         }
         return result;
       });
     } else {
-      setFile((fileData) => {
-        const parent = fileData.layerHierarchy[`${target.parentItem}`];
-        if (!parent.children) {
-          return fileData;
-        }
-        const childIds = parent.children.filter(
-          (id) => fileData.layerHierarchy[id].type !== "mutation"
-        );
-        const targetId =
-          target.linePosition === "bottom"
-            ? childIds[target.childIndex - 1]
-            : childIds[target.childIndex];
+      // Between items
+      const parent = file.layerHierarchy[`${target.parentItem}`];
+      if (!parent.children) {
+        return;
+      }
+      const childIds = showMutations
+        ? parent.children
+        : parent.children.filter(
+            (id) => file.layerHierarchy[id].type !== "mutation"
+          );
+      const targetId =
+        target.linePosition === "bottom"
+          ? childIds[target.childIndex - 1]
+          : childIds[target.childIndex];
 
+      if (targetId === undefined) return;
+
+      setFile((fileData) => {
+        let hasChanges = false;
         const result = { ...fileData };
         for (const item of items) {
           if (result.layerHierarchy[item.index].type === "mutation") continue;
+          if (item.index === targetId) continue;
+          hasChanges = true;
           result.layerHierarchy = moveInHierarchy(
             result.layerHierarchy,
             `${item.index}`,
@@ -166,17 +168,9 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
               ? { after: targetId }
               : { before: targetId }
           );
-          const dest = result.layerHierarchy[`${item.index}`];
-          if (!isRootNode(dest)) {
-            updatedItems.push(dest.parentId);
-          }
-          const source = fileData.layerHierarchy[`${item.index}`];
-          if (!isRootNode(source)) {
-            updatedItems.push(source.parentId);
-          }
         }
 
-        return result;
+        return hasChanges ? result : fileData;
       });
     }
   });

@@ -23,6 +23,7 @@ export interface CompositionCanvasProps {
 }
 
 const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
+  fileA.layerHierarchy !== fileB.layerHierarchy ||
   fileA.layerFolders !== fileB.layerFolders ||
   fileA.layers !== fileB.layers ||
   fileA.mutations !== fileB.mutations;
