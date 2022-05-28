@@ -33,7 +33,7 @@
   --rct-color-renaming-input-submitbutton-text-hover: #ffffff;
   --rct-color-renaming-input-submitbutton-text-active: #ffffff;
 
-  border-radius: 10px;
+  border-radius: var(--control-border-radius);
 
   flex-grow: 1;
   overflow: scroll;

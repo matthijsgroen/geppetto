@@ -7,7 +7,7 @@
   background-color: var(--colors-background-panel);
   align-items: center;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--control-border-radius);
   white-space: nowrap;
   outline: 2px solid transparent;
 }

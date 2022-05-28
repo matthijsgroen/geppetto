@@ -1,19 +1,11 @@
-.label {
+.paragraph {
   font: caption;
   padding: 0 0.25em;
   color: var(--colors-text-default);
   font-size: 1rem;
 }
-
 .small {
   font-size: 0.75rem;
-}
-
-.active {
-  color: var(--colors-text-active);
-}
-.vertical {
-  writing-mode: vertical-lr;
 }
 .selectable {
   user-select: text;

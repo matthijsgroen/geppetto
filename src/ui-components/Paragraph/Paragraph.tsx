@@ -1,37 +1,28 @@
 import { PropsWithChildren } from "react";
 import { className } from "../className";
 import { ToolBarSize } from "../ToolBar/ToolBar";
-import styles from "./Label.module.css";
+import styles from "./Paragraph.module.css";
 
 type LabelProps = PropsWithChildren<{
-  active?: boolean;
   size?: ToolBarSize;
-  vertical?: boolean;
   selectable?: boolean;
-  htmlFor?: string;
 }>;
 
 /**
  * Used for displaying labels on TabBars and Controls
  */
-export const Label: React.FC<LabelProps> = ({
+export const Paragraph: React.FC<LabelProps> = ({
   children,
-  htmlFor,
-  active = false,
   size = "default",
-  selectable = false,
-  vertical = false,
+  selectable = true,
 }) => (
-  <label
+  <p
     className={className({
-      [styles.label]: true,
-      [styles.active]: active,
+      [styles.paragraph]: true,
       [styles.small]: size === "small",
-      [styles.vertical]: vertical,
       [styles.selectable]: selectable,
     })}
-    htmlFor={htmlFor}
   >
     {children}
-  </label>
+  </p>
 );

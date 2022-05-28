@@ -1,4 +1,5 @@
 export { Label } from "./Label/Label";
+export { Paragraph } from "./Paragraph/Paragraph";
 export { Title } from "./Title/Title";
 export { Icon } from "./Icon/Icon";
 
