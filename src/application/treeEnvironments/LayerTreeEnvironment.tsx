@@ -29,7 +29,7 @@ type LayerTreeEnvironmentProps = {
 };
 
 type LayerItem = TreeItem<TreeData<"layer" | "layerFolder" | "mutation">>;
-const yes = () => true;
+const onlyOne = (items: unknown[]) => items.length === 1;
 
 const openThroughFocusItem = (
   file: GeppettoImage,
@@ -39,6 +39,7 @@ const openThroughFocusItem = (
   const result: string[] = [];
 
   let currentItem = file.layerHierarchy[focusItem];
+  if (!currentItem) return [];
   while (!isRootNode(currentItem)) {
     result.push(currentItem.parentId);
     currentItem = file.layerHierarchy[currentItem.parentId];
@@ -108,16 +109,53 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     // expandedItems
   );
 
-  const canDropAt = useEvent(
-    (_items: LayerItem[], target: DraggingPosition) => {
-      // target cannot be a layer (only for mutations)
-      if (target.targetType === "item") {
-        const targetItem = file.layerHierarchy[target.targetItem];
-        return targetItem.type === "layerFolder" || targetItem.type === "root";
-      }
-      return true;
+  const canDropAt = useEvent((items: LayerItem[], target: DraggingPosition) => {
+    // target cannot be a layer (only for mutations)
+    if (target.targetType === "item") {
+      const targetItem = file.layerHierarchy[target.targetItem];
+      return targetItem.type === "layerFolder" || targetItem.type === "root";
     }
-  );
+    if (target.targetType === "between-items") {
+      const parent = file.layerHierarchy[`${target.parentItem}`];
+      if (!parent.children) {
+        return false;
+      }
+      const childIds = showMutations
+        ? parent.children
+        : parent.children.filter(
+            (id) => file.layerHierarchy[id].type !== "mutation"
+          );
+      const mutationCount = showMutations
+        ? parent.children.filter(
+            (id) => file.layerHierarchy[id].type === "mutation"
+          ).length
+        : 0;
+
+      const targetId =
+        target.linePosition === "bottom"
+          ? childIds[target.childIndex - 1]
+          : childIds[target.childIndex];
+      const aligned = childIds[target.childIndex];
+
+      if (
+        items.every((item) => item.index === targetId || item.index === aligned)
+      ) {
+        return false;
+      }
+
+      if (
+        items.every(
+          (item) =>
+            !file.mutations[item.index] && target.childIndex < mutationCount
+        )
+      ) {
+        return false;
+      }
+
+      console.log(mutationCount);
+    }
+    return true;
+  });
 
   const onDrop = useEvent((items: LayerItem[], target: DraggingPosition) => {
     items.reverse();
@@ -183,7 +221,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         setSelectedItems(ids);
       })}
       canRename={true}
-      canDrag={yes}
+      canDrag={onlyOne}
       canDropAt={canDropAt}
       canDragAndDrop={true}
       canReorderItems={true}
