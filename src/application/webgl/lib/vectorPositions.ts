@@ -73,6 +73,10 @@ export const vectorPositions = (
     );
 
     const mutation = mutations[mutationId];
+    if (mutation === undefined) {
+      // values or info could be lagging behind
+      return value;
+    }
     let newValue = value;
     if (mutation.type === "translate") {
       const mutatorOrigin = mutation.origin;
