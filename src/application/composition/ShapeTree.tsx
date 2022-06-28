@@ -58,7 +58,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
         position = { after: targetId, parent: parentId };
       }
     }
-    const [updatedImage] = addFolder(file, "New folder", position);
+    const updatedImage = addFolder(file, "New folder", position);
     setFile(updatedImage);
   });
 

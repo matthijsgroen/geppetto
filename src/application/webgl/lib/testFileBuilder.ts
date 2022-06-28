@@ -14,14 +14,12 @@ export const fileBuilder = () => {
           ([, f]) => f.name === parentName
         );
         if (parentId) {
-          const [updated] = addFolder(file, name, { parent: parentId[0] });
-          file = updated;
+          file = addFolder(file, name, { parent: parentId[0] });
 
           return builder;
         }
       }
-      const [updated] = addFolder(file, name);
-      file = updated;
+      file = addFolder(file, name);
 
       return builder;
     },
