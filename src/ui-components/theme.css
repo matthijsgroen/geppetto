@@ -61,29 +61,30 @@
 }
 
 .light-theme {
-  --colors-background: #eee;
-  /* --colors-background-destructive: #911;
-  --colors-background-secondary: #ddd;
-  --colors-background-selected: #bbe;
-  --colors-background: #eee;
-  --colors-item-container-background: #ccc;
-  --colors-item-selected: #bbe;
-  --colors-item-special: #366;
-  --colors-text-selected: black;
+  --colors-background-destructive: #911;
   --colors-text-destructive: #eee;
-  */
+  --colors-background: #fff;
+
+  /* --colors-background-selected: #bbe; */
+  /* --colors-background: #eee;
+    --colors-item-container-background: #ccc;
+    --colors-item-selected: #bbe;
+    --colors-item-special: #366;
+    --colors-text-selected: black;
+    --colors-text: #333; */
+
   --colors-background-workspace: #a9a9a9;
-  --colors-background-panel: #d5d5d5;
+  --colors-background-panel: #e7eaed;
   --colors-background-notification: red;
 
-  --colors-control-default: #eee;
+  --colors-control-default: #fff;
   --colors-control-edge: #33333334;
   --colors-control-highlight: #cce;
-  --colors-control-active: #bbe;
   --colors-control-active-dimmed: #bbec;
+  --colors-control-active: #bbe;
   --colors-control-focus: #66e;
 
   --colors-text-default: #333;
-  --colors-text-dimmed: #888;
+  --colors-text-dimmed: #3338;
   --colors-text-active: #669;
 }
