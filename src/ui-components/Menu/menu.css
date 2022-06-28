@@ -1,6 +1,6 @@
 .szh-menu {
   border-color: var(--colors-control-edge);
-  background-color: var(--colors-control-default);
+  background-color: var(--colors-background-panel);
   color: var(--colors-text-default);
 }
 
