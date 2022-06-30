@@ -1,4 +1,7 @@
-import { fileBuilder, mutationIdByName } from "./testFileBuilder";
+import {
+  fileBuilder,
+  mutationIdByName,
+} from "../../../animation/file2/testFileBuilder";
 import { vectorPositions } from "./vectorPositions";
 
 const fileWithFolderLayers = () =>
@@ -13,7 +16,7 @@ describe("vectorPositions", () => {
         { radius: -1, origin: [50, 30] },
         "folder"
       )
-      .result();
+      .build();
 
     const mutId = mutationIdByName(file, "mutation");
 
@@ -36,7 +39,7 @@ describe("vectorPositions", () => {
           { origin: [50, 30], radius: -1 },
           "shape"
         )
-        .result();
+        .build();
 
       const transMutId = mutationIdByName(file, "translate");
       const rotateMutId = mutationIdByName(file, "rotate");
@@ -61,7 +64,7 @@ describe("vectorPositions", () => {
           { origin: [50, 30], radius: -1 },
           "folder"
         )
-        .result();
+        .build();
 
       const transMutId = mutationIdByName(file, "translate");
       const rotateMutId = mutationIdByName(file, "rotate");
@@ -92,7 +95,7 @@ describe("vectorPositions", () => {
           { origin: [50, 30], radius: -1 },
           "folder"
         )
-        .result();
+        .build();
 
       const transMutId = mutationIdByName(file, "translate");
       const trans2MutId = mutationIdByName(file, "translate2");
@@ -122,7 +125,7 @@ describe("vectorPositions", () => {
           { origin: [10, 30], radius: 20 },
           "folder"
         )
-        .result();
+        .build();
 
       const transMutId = mutationIdByName(file, "translate");
       const rotateMutId = mutationIdByName(file, "rotate");
@@ -152,7 +155,7 @@ describe("vectorPositions", () => {
           "shape"
         )
         .addMutation("rotate", "rotate", { origin: [50, 20] }, "shape")
-        .result();
+        .build();
 
       const transMutId = mutationIdByName(file, "translate");
       const rotateMutId = mutationIdByName(file, "rotate");
@@ -179,7 +182,7 @@ describe("vectorPositions", () => {
           "shape"
         )
         .addMutation("stretch", "stretch", { origin: [70, 20] }, "shape")
-        .result();
+        .build();
 
       const transMutId = mutationIdByName(file, "translate");
       const stretchMutId = mutationIdByName(file, "stretch");
@@ -208,7 +211,7 @@ describe("vectorPositions", () => {
           { origin: [10, 30], radius: 20 },
           "folder"
         )
-        .result();
+        .build();
 
       const deformMutId = mutationIdByName(file, "deform");
       const rotateMutId = mutationIdByName(file, "rotate");

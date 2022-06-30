@@ -1,8 +1,8 @@
-import { newFile } from "../../../animation/file2/new";
-import { addFolder, addShape } from "../../../animation/file2/shapes";
-import { addMutation } from "../../../animation/file2/mutation";
-import { GeppettoImage, MutationVector } from "../../../animation/file2/types";
-import { Vec2 } from "../../../types";
+import { newFile } from "./new";
+import { addFolder, addShape } from "./shapes";
+import { addMutation } from "./mutation";
+import { GeppettoImage, MutationVector } from "./types";
+import { Vec2 } from "../../types";
 
 export const fileBuilder = () => {
   let file = newFile();
@@ -54,7 +54,7 @@ export const fileBuilder = () => {
           ([, f]) => f.name === parentName
         );
         if (folderParentId) {
-          const [updated] = addMutation(file, name, type, props, {
+          const updated = addMutation(file, name, type, props, {
             parent: folderParentId[0],
           });
           file = updated;
@@ -64,17 +64,16 @@ export const fileBuilder = () => {
           ([, f]) => f.name === parentName
         );
         if (layerParentId) {
-          const [updated] = addMutation(file, name, type, props, {
+          file = addMutation(file, name, type, props, {
             parent: layerParentId[0],
           });
-          file = updated;
           return builder;
         }
       }
 
       return builder;
     },
-    result: () => file,
+    build: () => file,
   };
 
   return builder;
@@ -84,6 +83,27 @@ export const mutationIdByName = (file: GeppettoImage, name: string): string => {
   const mut = Object.entries(file.mutations).find(([, m]) => m.name === name);
   if (mut) {
     return mut[0];
+  }
+  return "NOT_FOUND";
+};
+
+export const shapeIdByName = (file: GeppettoImage, name: string): string => {
+  const layer = Object.entries(file.layers).find(([, m]) => m.name === name);
+  if (layer) {
+    return layer[0];
+  }
+  return "NOT_FOUND";
+};
+
+export const shapeFolderIdByName = (
+  file: GeppettoImage,
+  name: string
+): string => {
+  const layer = Object.entries(file.layerFolders).find(
+    ([, m]) => m.name === name
+  );
+  if (layer) {
+    return layer[0];
   }
   return "NOT_FOUND";
 };

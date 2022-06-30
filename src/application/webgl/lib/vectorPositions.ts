@@ -105,7 +105,7 @@ export const vectorPositions = (
     if (mutation.type === "rotate") {
       const mutatorOrigin = mutation.origin;
       const [x, y] = vecSub(newValue, mutatorOrigin);
-      const angle = mutationValues[mutationId][0];
+      const angle = mutationValues[mutationId][0] * -1;
 
       const rad = (angle * Math.PI) / 180;
 
