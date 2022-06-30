@@ -137,9 +137,23 @@ export const Composition: React.FC<CompositionProps> = ({
   const vectorValues = useVectorValues(file);
 
   const updateSelectedItems = useEvent(
-    (selectedItems: SetStateAction<string[]>) => {
-      setActiveMutator(null);
-      setSelectedItems(selectedItems);
+    (selectedItemsUpdate: SetStateAction<string[]>) => {
+      const newValue =
+        typeof selectedItemsUpdate === "function"
+          ? selectedItemsUpdate(selectedItems)
+          : selectedItemsUpdate;
+
+      if (newValue.length === 1) {
+        const selectedId = `${newValue[0]}`;
+        if (file.mutations[selectedId]) {
+          setActiveMutator(selectedId);
+        } else {
+          setActiveMutator(null);
+        }
+      } else {
+        setActiveMutator(null);
+      }
+      setSelectedItems(selectedItemsUpdate);
     }
   );
 
