@@ -41,6 +41,8 @@ export const isShapeMutationVector = (
   vector.type === "stretch" ||
   vector.type === "translate";
 
+export type AddMutationDetails<T> = { mutation: Mutation<T>; id: string };
+
 export const addMutation = <MutationType extends MutationVector["type"]>(
   file: GeppettoImage,
   name: string,
@@ -49,8 +51,9 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
     Extract<MutationVector, { type: MutationType }>,
     "name" | "type" | "origin"
   > & { origin?: Vec2 },
-  placement: PlacementInfo
-): [GeppettoImage, Mutation<MutationType>, string] => {
+  placement: PlacementInfo,
+  dataResult?: AddMutationDetails<MutationType> | {}
+): GeppettoImage => {
   const newName = getUniqueName(name, file.mutations);
 
   const mutation = {
@@ -65,15 +68,17 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
     placement
   );
 
-  return [
-    produce(file, (draft) => {
-      draft.layerHierarchy = layerHierarchy;
-      draft.mutations[mutationId] = mutation as unknown as MutationVector;
-      draft.defaultFrame[mutationId] = defaultValueForVector(mutationType);
-    }),
-    mutation as Mutation<typeof mutationType>,
-    mutationId,
-  ];
+  if (dataResult) {
+    Object.assign(dataResult, {
+      mutation,
+      id: mutationId,
+    });
+  }
+  return produce(file, (draft) => {
+    draft.layerHierarchy = layerHierarchy;
+    draft.mutations[mutationId] = mutation as unknown as MutationVector;
+    draft.defaultFrame[mutationId] = defaultValueForVector(mutationType);
+  });
 };
 
 export const removeMutation = (

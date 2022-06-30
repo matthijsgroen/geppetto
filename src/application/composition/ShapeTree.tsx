@@ -95,13 +95,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       }
       if (!position) return;
       const name = mutationLabels[mutationType];
-      const [updatedImage] = addMutation(
-        file,
-        name,
-        mutationType,
-        {},
-        position
-      );
+      const updatedImage = addMutation(file, name, mutationType, {}, position);
       setFile(updatedImage);
     }
   );
