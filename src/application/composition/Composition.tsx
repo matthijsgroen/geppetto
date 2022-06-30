@@ -352,6 +352,14 @@ export const Composition: React.FC<CompositionProps> = ({
                 vectorValues={vectorValues}
                 ref={containerRef}
               >
+                {/*activeMutator && containerRef.current && (
+                  <DebugMutatorPoint
+                    point={imageToPixels(
+                      translation,
+                      containerRef.current.getBoundingClientRect()
+                    )(mutatorMap[activeMutator])}
+                  />
+                    )*/}
                 {!showItemDetails && (
                   <Inlay>
                     <InlayControlPanel
