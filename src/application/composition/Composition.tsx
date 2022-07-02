@@ -8,23 +8,38 @@ import {
   useRef,
   useState,
 } from "react";
-import { visit } from "../../animation/file2/hierarchy";
-import { isShapeMutationVector } from "../../animation/file2/mutation";
+import {
+  findParentId,
+  PlacementInfo,
+  visit,
+} from "../../animation/file2/hierarchy";
+import {
+  addMutation,
+  hasRadius,
+  iconMapping,
+  isShapeMutationVector,
+  mutationLabels,
+  MutationSettings,
+} from "../../animation/file2/mutation";
 import { hasPoints } from "../../animation/file2/shapes";
-import { GeppettoImage } from "../../animation/file2/types";
+import { GeppettoImage, MutationVector } from "../../animation/file2/types";
 import { Vec2 } from "../../types";
 import {
   Column,
+  ControlledMenu,
   Icon,
+  MenuItem,
   Panel,
   ResizeDirection,
   ResizePanel,
   Row,
   Shortcut,
+  SubMenu,
   ToolBar,
   ToolSeparator,
   ToolSpacer,
   ToolTab,
+  useMenuState,
 } from "../../ui-components";
 import { ActionToolButton } from "../actions/ActionToolButton";
 import { useFile } from "../applicationMenu/FileContext";
@@ -41,7 +56,7 @@ import useEvent from "../hooks/useEvent";
 import { AppSection, Size, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
-import { imageToPixels } from "../webgl/lib/screenCoord";
+import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
 import { useVectorValues, vectorPositions } from "../webgl/lib/vectorPositions";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
@@ -123,7 +138,7 @@ export const Composition: React.FC<CompositionProps> = ({
   onSectionChange,
 }) => {
   const texture = textureState[0];
-  const [file] = useFile();
+  const [file, setFile] = useFile();
   const [showItemDetails, setShowItemDetails] = useState(false);
   const [showWireFrames, setShowWireFrames] = useState(true);
 
@@ -285,6 +300,74 @@ export const Composition: React.FC<CompositionProps> = ({
       return MouseMode.Grab;
     }
   );
+  const [menuProps, toggleMenu] = useMenuState();
+  const [anchorPoint, setAnchorPoint] = useState({
+    x: 0,
+    y: 0,
+  });
+
+  const [contextOffset, setContextOffset] = useState({
+    x: 0,
+    y: 0,
+  });
+
+  const handleContextMenu = useEvent(
+    (event: React.MouseEvent<HTMLElement>): void => {
+      event.preventDefault();
+      setAnchorPoint({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      setContextOffset({
+        x: event.nativeEvent.offsetX,
+        y: event.nativeEvent.offsetY,
+      });
+      toggleMenu(true);
+    }
+  );
+
+  const addMutationHandler = useEvent(
+    (e: { value?: MutationVector["type"] }) => {
+      if (!e.value || !containerRef.current) return;
+      const targetId = selectedItems[0];
+
+      const mutationType: MutationVector["type"] = e.value;
+      let position: PlacementInfo | undefined = undefined;
+      const folder = file.layerFolders[targetId];
+      const layer = file.layers[targetId];
+      const mutation = file.mutations[targetId];
+      if (selectedItems.length === 1 && (folder || layer)) {
+        position = { parent: targetId };
+      }
+      if (selectedItems.length === 1 && mutation) {
+        const parentId = findParentId(file.layerHierarchy, targetId);
+        if (parentId) {
+          position = { after: targetId, parent: parentId };
+        }
+      }
+      if (!position) return;
+      const name = mutationLabels[mutationType];
+      const origin = pixelsToImage(
+        translation,
+        containerRef.current.getBoundingClientRect()
+      )([contextOffset.x, contextOffset.y]);
+      const settings: MutationSettings<typeof mutationType> = {
+        origin,
+      };
+      if (mutationType === "deform" || mutationType === "translate") {
+        (settings as MutationSettings<"deform">).radius = -1;
+      }
+
+      const updatedImage = addMutation(
+        file,
+        name,
+        mutationType,
+        settings,
+        position
+      );
+      setFile(updatedImage);
+    }
+  );
 
   return (
     <Column>
@@ -342,6 +425,7 @@ export const Composition: React.FC<CompositionProps> = ({
               maxZoomFactor={maxZoom}
               hoverCursor={hoverCursor}
               onClick={handleClick}
+              onContextMenu={handleContextMenu}
             >
               <CompositionCanvas
                 image={texture}
@@ -360,6 +444,28 @@ export const Composition: React.FC<CompositionProps> = ({
                     )(mutatorMap[activeMutator])}
                   />
                     )*/}
+                <ControlledMenu
+                  {...menuProps}
+                  anchorPoint={anchorPoint}
+                  onClose={() => toggleMenu(false)}
+                >
+                  <SubMenu
+                    label="Add mutation"
+                    disabled={selectedItems.length !== 1}
+                  >
+                    {Object.keys(mutationLabels).map((key) => (
+                      <MenuItem
+                        key={key}
+                        value={key}
+                        onClick={addMutationHandler}
+                      >
+                        {iconMapping[key as MutationVector["type"]]}{" "}
+                        {mutationLabels[key as MutationVector["type"]]}
+                      </MenuItem>
+                    ))}
+                  </SubMenu>
+                  <MenuItem disabled>Zoom to selected item</MenuItem>
+                </ControlledMenu>
                 {!showItemDetails && (
                   <Inlay>
                     <InlayControlPanel

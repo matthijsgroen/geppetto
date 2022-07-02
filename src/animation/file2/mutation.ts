@@ -26,6 +26,17 @@ export const iconMapping: Record<MutationVector["type"], string> = {
   saturation: "🟩",
 };
 
+export const mutationLabels: Record<MutationVector["type"], string> = {
+  translate: "Translate",
+  deform: "Deform",
+  rotate: "Rotate",
+  stretch: "Stretch",
+  opacity: "Opacity",
+  colorize: "Colorize",
+  lightness: "Lightness",
+  saturation: "Saturation",
+};
+
 export const hasRadius = (
   mutation: MutationVector
 ): mutation is TranslationVector | DeformationVector => "radius" in mutation;
@@ -42,15 +53,16 @@ export const isShapeMutationVector = (
   vector.type === "translate";
 
 export type AddMutationDetails<T> = { mutation: Mutation<T>; id: string };
+export type MutationSettings<MutationType> = Omit<
+  Extract<MutationVector, { type: MutationType }>,
+  "name" | "type" | "origin"
+> & { origin?: Vec2 };
 
 export const addMutation = <MutationType extends MutationVector["type"]>(
   file: GeppettoImage,
   name: string,
   mutationType: MutationType,
-  setupProperties: Omit<
-    Extract<MutationVector, { type: MutationType }>,
-    "name" | "type" | "origin"
-  > & { origin?: Vec2 },
+  setupProperties: MutationSettings<MutationType>,
   placement: PlacementInfo,
   dataResult?: AddMutationDetails<MutationType> | {}
 ): GeppettoImage => {

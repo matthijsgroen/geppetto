@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, PropsWithChildren } from "react";
 import styled from "styled-components";
+import { Vec2 } from "../../types";
 import useEvent from "../hooks/useEvent";
 
 export enum MouseMode {
@@ -37,8 +38,9 @@ interface MouseEventsProps {
   onMouseMove?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseDown?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseUp?: (event: React.MouseEvent<HTMLElement>) => void;
+  onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
-  onWheel?: (delta: number) => void;
+  onWheel?: (delta: number, position: Vec2, rect: DOMRect) => void;
 }
 
 const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
@@ -47,6 +49,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
   onMouseDown,
   onMouseMove,
   onMouseUp,
+  onContextMenu,
   onWheel,
   onKeyDown,
 }) => {
@@ -55,11 +58,11 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
 
   useEffect(() => {
     if (ref.current && onWheel) {
+      const elem = ref.current;
       const handler = (e: WheelEvent) => {
         e.preventDefault();
-        onWheel(e.deltaY);
+        onWheel(e.deltaY, [e.offsetX, e.offsetY], elem.getBoundingClientRect());
       };
-      const elem = ref.current;
       elem.addEventListener("wheel", handler, { passive: false });
 
       return () => {
@@ -85,6 +88,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
       })}
       onMouseMove={onMouseMove}
       onKeyDown={onKeyDown}
+      onContextMenu={onContextMenu}
     >
       {children}
     </MouseControlContainer>

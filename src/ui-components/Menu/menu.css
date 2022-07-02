@@ -7,7 +7,7 @@
 .szh-menu__arrow {
   border-left-color: var(--colors-control-edge);
   border-top-color: var(--colors-control-edge);
-  background-color: var(--colors-control-default);
+  background-color: var(--colors-background-panel);
 }
 
 .szh-menu__item--hover {

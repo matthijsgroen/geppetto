@@ -2,6 +2,7 @@ import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
 import {
   addMutation,
   iconMapping,
+  mutationLabels,
   removeMutation,
 } from "../../animation/file2/mutation";
 import { addFolder } from "../../animation/file2/shapes";
@@ -24,17 +25,6 @@ import { UseState } from "../types";
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
   focusedItemState: UseState<string | undefined>;
-};
-
-const mutationLabels: Record<MutationVector["type"], string> = {
-  translate: "Translate",
-  deform: "Deform",
-  rotate: "Rotate",
-  stretch: "Stretch",
-  opacity: "Opacity",
-  colorize: "Colorize",
-  lightness: "Lightness",
-  saturation: "Saturation",
 };
 
 export const ShapeTree: React.FC<ShapeTreeProps> = ({

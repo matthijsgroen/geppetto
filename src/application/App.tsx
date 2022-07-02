@@ -18,6 +18,13 @@ const updateWindowTitle = (
   }`;
 };
 
+if (process.env.NODE_ENV !== "development") {
+  const bodyElement = document.querySelector("body");
+  bodyElement?.addEventListener("contextmenu", (event) =>
+    event.preventDefault()
+  );
+}
+
 // const OUTPUT_VERSION_NUMBER = "2.0";
 
 const App: React.FC = () => {
