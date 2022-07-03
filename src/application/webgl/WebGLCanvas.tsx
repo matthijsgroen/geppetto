@@ -53,7 +53,6 @@ const startWebGL = async (
   };
 
   const markChanged = () => {
-    console.log("mark changed!");
     if (!dirty) {
       dirty = true;
       window.requestAnimationFrame(render);

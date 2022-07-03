@@ -15,7 +15,7 @@ import {
 } from "../../animation/file2/hierarchy";
 import {
   addMutation,
-  hasRadius,
+  AddMutationDetails,
   iconMapping,
   isShapeMutationVector,
   mutationLabels,
@@ -358,14 +358,19 @@ export const Composition: React.FC<CompositionProps> = ({
         (settings as MutationSettings<"deform">).radius = -1;
       }
 
+      const addDetails = {} as AddMutationDetails<typeof mutationType>;
       const updatedImage = addMutation(
         file,
         name,
         mutationType,
         settings,
-        position
+        position,
+        addDetails
       );
       setFile(updatedImage);
+      setActiveMutator(addDetails.id);
+      setFocusedLayer(addDetails.id);
+      setSelectedItems([addDetails.id]);
     }
   );
 

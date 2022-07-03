@@ -56,7 +56,6 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
     const item = selectedItems[0];
     const treeItem = file.layerHierarchy[item];
     if (treeItem.type === "mutation") {
-      console.log("mutation", item);
       setSelectedItems([]);
       setFile((value) => removeMutation(value, item));
     }

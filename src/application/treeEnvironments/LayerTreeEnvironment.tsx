@@ -151,8 +151,6 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       ) {
         return false;
       }
-
-      console.log(mutationCount);
     }
     return true;
   });
