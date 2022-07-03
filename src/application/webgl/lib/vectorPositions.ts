@@ -89,17 +89,14 @@ export const vectorPositions = (
       }
     }
 
-    if (mutation.type === "deform") {
+    if (mutation.type === "stretch") {
       const mutatorOrigin = mutation.origin;
+      const point = vecSub(newValue, mutatorOrigin);
+      const stretch = mutationValues[mutationId];
 
-      const effect = 1 - distance(mutatorOrigin, newValue) / mutation.radius;
-      if (effect <= 1 && effect >= 0) {
-        const translationValue = mutationValues[mutationId];
-        newValue = vecAdd(newValue, [
-          translationValue[0] * effect,
-          translationValue[1] * effect,
-        ]);
-      }
+      const stretched: Vec2 = vecMul(point, stretch);
+
+      newValue = vecAdd(mutatorOrigin, stretched);
     }
 
     if (mutation.type === "rotate") {
@@ -117,16 +114,18 @@ export const vectorPositions = (
       newValue = vecAdd(mutatorOrigin, rotated);
     }
 
-    if (mutation.type === "stretch") {
+    if (mutation.type === "deform") {
       const mutatorOrigin = mutation.origin;
-      const point = vecSub(newValue, mutatorOrigin);
-      const stretch = mutationValues[mutationId];
 
-      const stretched: Vec2 = vecMul(point, stretch);
-
-      newValue = vecAdd(mutatorOrigin, stretched);
+      const effect = 1 - distance(mutatorOrigin, newValue) / mutation.radius;
+      if (effect <= 1 && effect >= 0) {
+        const translationValue = mutationValues[mutationId];
+        newValue = vecAdd(newValue, [
+          translationValue[0] * effect,
+          translationValue[1] * effect,
+        ]);
+      }
     }
-
     return applyMutation(newValue, parentId);
   };
 
