@@ -77,7 +77,7 @@ export const showCompositionVectors = (
     y: number;
     z: number;
   }[] = [];
-  let mutators: string[] = [];
+  let mutMapping: Record<string, number> = {};
   const screenTranslation = trans;
   let scale = 1.0;
 
@@ -87,6 +87,7 @@ export const showCompositionVectors = (
     const indices: number[] = [];
     gl.useProgram(program);
 
+    mutMapping = {};
     vectors = [];
     const file = shapes;
     let index = 0;
@@ -172,7 +173,7 @@ export const showCompositionVectors = (
       vector.mutator = mutatorMapping[vector.id];
     });
 
-    mutators = Object.keys(mutatorMapping);
+    mutMapping = mutatorMapping;
 
     const uMutationVectors = gl.getUniformLocation(program, "uMutationVectors");
     gl.uniform4fv(uMutationVectors, flatten(vectorSettings));
@@ -194,17 +195,17 @@ export const showCompositionVectors = (
   };
 
   const populateVectorValues = () => {
-    if (mutators.length === 0 || !program || !gl) return;
+    if (Object.keys(mutMapping).length === 0 || !program || !gl) return;
     gl.useProgram(program);
 
     const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
     const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
-    Object.entries(vectorValues).forEach(([key, value]) => {
-      const index = mutators.indexOf(key);
-      if (index === -1) return;
+    for (const [key, value] of Object.entries(vectorValues)) {
+      const index = mutMapping[key];
+      if (index === -1) continue;
       mutationValues[index * 2] = value[0];
       mutationValues[index * 2 + 1] = value[1];
-    });
+    }
     gl.uniform2fv(uMutationValues, mutationValues);
   };
 
