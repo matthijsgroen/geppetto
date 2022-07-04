@@ -8,6 +8,7 @@ import { Composition } from "./composition/Composition";
 import { AppContext } from "./contexts/ApplicationContext";
 import { FileContext } from "./applicationMenu/FileContext";
 import { ScreenTranslationContext } from "./contexts/ScreenTranslationContext";
+import { ImageControlContext } from "./contexts/ImageControlContext";
 
 const updateWindowTitle = (
   animFile: string | null,
@@ -49,26 +50,28 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
       <FileContext>
-        <AppContext>
-          <ScreenTranslationContext>
-            {appSection === "layers" && (
-              <Layers
-                menu={applicationMenu}
-                textureState={textureFileState}
-                onSectionChange={setAppSection}
-              />
-            )}
-          </ScreenTranslationContext>
-          <ScreenTranslationContext>
-            {appSection === "composition" && (
-              <Composition
-                menu={applicationMenu}
-                textureState={textureFileState}
-                onSectionChange={setAppSection}
-              />
-            )}
-          </ScreenTranslationContext>
-        </AppContext>
+        <ImageControlContext>
+          <AppContext>
+            <ScreenTranslationContext>
+              {appSection === "layers" && (
+                <Layers
+                  menu={applicationMenu}
+                  textureState={textureFileState}
+                  onSectionChange={setAppSection}
+                />
+              )}
+            </ScreenTranslationContext>
+            <ScreenTranslationContext>
+              {appSection === "composition" && (
+                <Composition
+                  menu={applicationMenu}
+                  textureState={textureFileState}
+                  onSectionChange={setAppSection}
+                />
+              )}
+            </ScreenTranslationContext>
+          </AppContext>
+        </ImageControlContext>
       </FileContext>
     </ThemeProvider>
   );

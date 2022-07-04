@@ -7,7 +7,12 @@ import React, {
 } from "react";
 import { newFile } from "../../animation/file2/new";
 import { GeppettoImage } from "../../animation/file2/types";
+import {
+  useControlValues,
+  useControlValueSubscription,
+} from "../contexts/ImageControlContext";
 import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
+import { calculateVectorValues } from "./lib/vectorPositions";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
 import { showCompositionVectors } from "./programs/showCompositionVectors";
@@ -17,7 +22,6 @@ export interface CompositionCanvasProps {
   image: HTMLImageElement | null;
   file: GeppettoImage;
   showWireFrames: boolean;
-  vectorValues: GeppettoImage["defaultFrame"];
   activeLayers: string[];
   activeMutation: string | null;
 }
@@ -33,15 +37,7 @@ const CompositionCanvas = forwardRef<
   PropsWithChildren<CompositionCanvasProps>
 >(
   (
-    {
-      image,
-      file,
-      vectorValues,
-      activeLayers,
-      showWireFrames,
-      activeMutation,
-      children,
-    },
+    { image, file, activeLayers, showWireFrames, activeMutation, children },
     ref
   ) => {
     const translation = useScreenTranslation();
@@ -81,11 +77,32 @@ const CompositionCanvas = forwardRef<
       fileRef.current = file;
     }, [file, composition, compositionMap, vectorMap]);
 
+    const controlValues = useControlValues();
+    const subscribe = useControlValueSubscription();
+
     useEffect(() => {
-      composition.setVectorValues(vectorValues);
-      compositionMap.setVectorValues(vectorValues);
-      vectorMap.setVectorValues(vectorValues);
-    }, [vectorValues, composition, compositionMap, vectorMap]);
+      const updateControlValues = (
+        controlValues: GeppettoImage["controlValues"]
+      ) => {
+        const vectorValues = calculateVectorValues(
+          fileRef.current,
+          controlValues
+        );
+        composition.setVectorValues(vectorValues);
+        compositionMap.setVectorValues(vectorValues);
+        vectorMap.setVectorValues(vectorValues);
+      };
+      const unsubscribe = subscribe(updateControlValues);
+      updateControlValues(controlValues);
+      return unsubscribe;
+    }, [
+      composition,
+      compositionMap,
+      controlValues,
+      fileRef,
+      subscribe,
+      vectorMap,
+    ]);
 
     useEffect(() => {
       compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);

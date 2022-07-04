@@ -14,43 +14,43 @@ import {
 
 type VectorValues = GeppettoImage["defaultFrame"];
 
-export const useVectorValues = (file: GeppettoImage): VectorValues =>
-  useMemo(() => {
-    const result: VectorValues = { ...file.defaultFrame };
-    for (const [controlId, controlValue] of Object.entries(
-      file.controlValues
-    )) {
-      const controlInfo = file.controls[controlId];
-      if (!controlInfo) continue;
-      const minStep = Math.floor(controlValue);
-      const maxStep = Math.ceil(controlValue);
+export const calculateVectorValues = (
+  file: GeppettoImage,
+  controlValues: GeppettoImage["controlValues"]
+): VectorValues => {
+  const result: VectorValues = { ...file.defaultFrame };
+  for (const [controlId, controlValue] of Object.entries(controlValues)) {
+    const controlInfo = file.controls[controlId];
+    if (!controlInfo) continue;
+    const minStep = Math.floor(controlValue);
+    const maxStep = Math.ceil(controlValue);
 
-      const minValue = controlInfo.steps[minStep];
-      const maxValue = controlInfo.steps[maxStep];
+    const minValue = controlInfo.steps[minStep];
+    const maxValue = controlInfo.steps[maxStep];
 
-      const mixValue = controlValue - minStep;
+    const mixValue = controlValue - minStep;
 
-      for (const [mutationId, mutationValue] of Object.entries(minValue)) {
-        const mutationInfo = file.mutations[mutationId];
-        const value =
-          mutationInfo.type === "colorize"
-            ? mixHueVec2(mutationValue, maxValue[mutationId], mixValue)
-            : mixVec2(mutationValue, maxValue[mutationId], mixValue);
+    for (const [mutationId, mutationValue] of Object.entries(minValue)) {
+      const mutationInfo = file.mutations[mutationId];
+      const value =
+        mutationInfo.type === "colorize"
+          ? mixHueVec2(mutationValue, maxValue[mutationId], mixValue)
+          : mixVec2(mutationValue, maxValue[mutationId], mixValue);
 
-        if (result[mutationId]) {
-          result[mutationId] = mergeMutationValue(
-            value,
-            result[mutationId],
-            mutationInfo.type
-          );
-        } else {
-          result[mutationId] = value;
-        }
+      if (result[mutationId]) {
+        result[mutationId] = mergeMutationValue(
+          value,
+          result[mutationId],
+          mutationInfo.type
+        );
+      } else {
+        result[mutationId] = value;
       }
     }
+  }
 
-    return result;
-  }, [file.controlValues, file.defaultFrame, file.controls, file.mutations]);
+  return result;
+};
 
 const inRadius = (start: Vec2, affected: Vec2, radius: number): boolean =>
   distance(affected, start) < radius;

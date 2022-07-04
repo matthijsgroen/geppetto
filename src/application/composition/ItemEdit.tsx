@@ -3,6 +3,7 @@ import { hasRadius, iconMapping } from "../../animation/file2/mutation";
 import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
+import { useUpdateControlValues } from "../contexts/ImageControlContext";
 import { BooleanControl } from "../controls/CheckControl";
 import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
@@ -99,6 +100,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
 const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const mutation = file.mutations[itemId];
+  const update = useUpdateControlValues();
 
   const radiusChange = useEvent((newRadius: number) => {
     setFile(
@@ -137,6 +139,7 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
         draft.defaultFrame[itemId] = newValue;
       })
     );
+    update((controls) => ({ ...controls }));
   });
 
   return (
@@ -230,6 +233,8 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
   const hierarchyItem =
     activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
 
+  const update = useUpdateControlValues();
+
   const valueChangeHandler = useEvent((newValue: Vec2) => {
     if (activeShapeId === null) return;
     setFile(
@@ -237,6 +242,7 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
         draft.defaultFrame[activeShapeId] = newValue;
       })
     );
+    update((controls) => ({ ...controls }));
   });
 
   if (

@@ -19,11 +19,10 @@ export type Subscription = (
   listener: (trans: ScreenTranslation) => void
 ) => Unsubscribe;
 
-export const ScreenTransContext = createContext<{
+const ScreenTransContext = createContext<{
   translation: ScreenTranslation;
   update: (updater: (current: ScreenTranslation) => ScreenTranslation) => void;
   onUpdate: Subscription;
-  // listeners: MutableRefObject<(() => void)[]>;
 }>({
   translation: { zoom: 1.0, scale: 1.0, panX: 0, panY: 0 },
   update: () => {},

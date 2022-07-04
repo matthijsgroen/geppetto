@@ -2,6 +2,10 @@ import produce from "immer";
 import { ChangeEvent, useEffect, useState, useTransition } from "react";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
+import {
+  useControlValues,
+  useUpdateControlValues,
+} from "../contexts/ImageControlContext";
 import useEvent from "../hooks/useEvent";
 
 type ControlEditProps = {
@@ -22,8 +26,10 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
     activeControlId === null ||
     !hierarchyItem ||
     hierarchyItem.type !== "control";
+  const controlValues = useControlValues();
+  const updateControlValues = useUpdateControlValues();
 
-  const controlValue = isNoControl ? 0 : file.controlValues[activeControlId];
+  const controlValue = isNoControl ? 0 : controlValues[activeControlId];
   const [slideValue, setSlideValue] = useState(controlValue);
   useEffect(() => {
     if (activeControlId) {
@@ -33,7 +39,12 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     if (activeControlId === null) return;
     const value = e.currentTarget.valueAsNumber;
+
     setSlideValue(value);
+    updateControlValues((current) => ({
+      ...current,
+      [activeControlId]: value,
+    }));
     startTransition(() => {
       setFile(
         produce((draft) => {

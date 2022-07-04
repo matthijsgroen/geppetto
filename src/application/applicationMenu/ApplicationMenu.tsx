@@ -22,6 +22,7 @@ import { useFile } from "./FileContext";
 
 import sceneryDemo from "../../demos/scenery.json";
 import sceneryDemoImage from "../../demos/scenery.png";
+import { useUpdateControlValues } from "../contexts/ImageControlContext";
 
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
@@ -82,6 +83,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   const [file, setFile] = useFile();
   const [, setTextureFile] = textureFileState;
   const [, setTextureFileName] = textureFileNameState;
+  const controlUpdate = useUpdateControlValues();
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -106,6 +108,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 const [filename, image] = await loadGeppettoImage(fileHandle);
                 fileNameState[1](filename);
                 setFile(image);
+                controlUpdate(() => image.controlValues);
               } catch (e) {
                 // user abort
               }
@@ -205,7 +208,14 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
           },
         },
       }),
-      [fileNameState, file, setFile, setTextureFile, setTextureFileName]
+      [
+        fileNameState,
+        file,
+        setFile,
+        setTextureFile,
+        setTextureFileName,
+        controlUpdate,
+      ]
     )
   );
 
@@ -232,6 +242,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         } else if (verifyVersion2(sceneryDemo)) {
           setFile(sceneryDemo);
         }
+
+        controlUpdate(() => sceneryDemo.controlValues);
         const image = new Image();
         image.addEventListener("load", () => {
           setTextureFile(image);
@@ -252,6 +264,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
     setFile,
     setTextureFile,
     setTextureFileName,
+    controlUpdate,
   ]);
 
   return (

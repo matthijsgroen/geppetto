@@ -57,7 +57,10 @@ import { AppSection, Size, UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
 import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
-import { useVectorValues, vectorPositions } from "../webgl/lib/vectorPositions";
+import {
+  calculateVectorValues,
+  vectorPositions,
+} from "../webgl/lib/vectorPositions";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
 import { InlayControlPanel, ItemEdit } from "./ItemEdit";
@@ -149,7 +152,7 @@ export const Composition: React.FC<CompositionProps> = ({
   const [activeMutator, setActiveMutator] = useState<string | null>(null);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
 
-  const vectorValues = useVectorValues(file);
+  const vectorValues = calculateVectorValues(file, file.controlValues);
 
   const updateSelectedItems = useEvent(
     (selectedItemsUpdate: SetStateAction<string[]>) => {
@@ -438,7 +441,6 @@ export const Composition: React.FC<CompositionProps> = ({
                 activeMutation={activeMutator}
                 showWireFrames={showWireFrames}
                 file={file}
-                vectorValues={vectorValues}
                 ref={containerRef}
               >
                 {/*activeMutator && containerRef.current && (
