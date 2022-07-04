@@ -194,7 +194,6 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         let hasChanges = false;
         const result = { ...fileData };
         for (const item of items) {
-          if (result.layerHierarchy[item.index].type === "mutation") continue;
           if (item.index === targetId) continue;
           hasChanges = true;
           result.layerHierarchy = moveInHierarchy(
