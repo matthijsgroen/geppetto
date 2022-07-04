@@ -12,11 +12,13 @@ export default {
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof ToolSpacerComponent> = () => (
-  <ToolBar>
-    <ToolButton icon={<Icon>💡</Icon>} />
-    <ToolSpacerComponent />
-    <ToolButton icon={<Icon>🚨</Icon>} />
-  </ToolBar>
+  <div style={{ width: "100%" }}>
+    <ToolBar>
+      <ToolButton icon={<Icon>💡</Icon>} />
+      <ToolSpacerComponent />
+      <ToolButton icon={<Icon>🚨</Icon>} />
+    </ToolBar>
+  </div>
 );
 
 export const ToolSpacer = Template.bind({});
