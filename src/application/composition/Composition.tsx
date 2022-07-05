@@ -294,9 +294,17 @@ export const Composition: React.FC<CompositionProps> = ({
         }
       }
 
-      return MouseMode.Grab;
+      return event.shiftKey ? MouseMode.Grab : MouseMode.Normal;
     }
   );
+  // const handleDrag = useEvent(
+  //   (event: React.MouseEvent<HTMLElement>): boolean => {
+  //     if (!event.shiftKey) {
+  //       return false;
+  //     }
+  //     return true;
+  //   }
+  // );
   const [menuProps, toggleMenu] = useMenuState();
   const [anchorPoint, setAnchorPoint] = useState({
     x: 0,
@@ -427,9 +435,10 @@ export const Composition: React.FC<CompositionProps> = ({
           <StartupScreen file={file} texture={texture} screen={"composition"} />
           {texture && hasPoints(file) && (
             <LayerMouseControl
-              mode={MouseMode.Grab}
+              mode={MouseMode.Normal}
               maxZoomFactor={maxZoom}
               hoverCursor={hoverCursor}
+              // handleDrag={handleDrag}
               onClick={handleClick}
               onContextMenu={handleContextMenu}
             >

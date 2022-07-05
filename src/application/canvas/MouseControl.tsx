@@ -7,6 +7,7 @@ export enum MouseMode {
   Normal,
   Grab,
   Grabbing,
+  Panning,
   Aim,
   Target,
 }
@@ -21,8 +22,9 @@ const MouseControlContainer = styled.div<{ $mode: MouseMode }>`
   box-sizing: border-box;
   cursor: ${(props) =>
     ({
-      [MouseMode.Grab]: "default",
-      [MouseMode.Grabbing]: "move",
+      [MouseMode.Grab]: "grab",
+      [MouseMode.Grabbing]: "grabbing",
+      [MouseMode.Panning]: "move",
       [MouseMode.Normal]: "default",
       [MouseMode.Aim]: "crosshair",
       [MouseMode.Target]: "pointer",
@@ -40,6 +42,7 @@ interface MouseEventsProps {
   onMouseUp?: (event: React.MouseEvent<HTMLElement>) => void;
   onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
+  onKeyUp?: (event: React.KeyboardEvent<HTMLElement>) => void;
   onWheel?: (delta: number, position: Vec2, rect: DOMRect) => void;
 }
 
@@ -52,6 +55,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
   onContextMenu,
   onWheel,
   onKeyDown,
+  onKeyUp,
 }) => {
   const [isGrabbing, setIsGrabbing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -71,15 +75,20 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
     }
   }, [ref, onWheel]);
 
+  const $mode =
+    isGrabbing && mode === MouseMode.Normal
+      ? MouseMode.Panning
+      : isGrabbing && mode === MouseMode.Grab
+      ? MouseMode.Grabbing
+      : mode;
+
   return (
     <MouseControlContainer
       ref={ref}
-      $mode={isGrabbing ? MouseMode.Grabbing : mode}
+      $mode={$mode}
       tabIndex={0}
       onMouseDown={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
-        if (mode === MouseMode.Grab) {
-          setIsGrabbing(true);
-        }
+        setIsGrabbing(true);
         onMouseDown && onMouseDown(e);
       })}
       onMouseUp={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
@@ -88,6 +97,7 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
       })}
       onMouseMove={onMouseMove}
       onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
       onContextMenu={onContextMenu}
     >
       {children}

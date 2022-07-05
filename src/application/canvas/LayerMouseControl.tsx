@@ -1,5 +1,11 @@
 import MouseControl, { MouseMode } from "./MouseControl";
-import React, { FC, PropsWithChildren, useRef, useState } from "react";
+import React, {
+  FC,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useUpdateScreenTranslation } from "../contexts/ScreenTranslationContext";
 import { Vec2 } from "geppetto-player";
 import useEvent from "../hooks/useEvent";
@@ -15,7 +21,7 @@ export type LayerMouseControlProps = PropsWithChildren<{
   onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
   handleDrag?: (
-    event: React.MouseEvent,
+    event: React.MouseEvent<HTMLElement>,
     deltaX: number,
     deltaY: number
   ) => boolean;
@@ -37,7 +43,39 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   const mouseDownRef = useRef<false | [number, number]>(false);
   const mouseMoveDeltaRef = useRef<[number, number]>([0, 0]);
 
-  const mouseDown = useEvent((event: React.MouseEvent) => {
+  // const handleKeyDown = useEvent((event: React.KeyboardEvent<HTMLElement>) => {
+  //   if (onKeyDown) onKeyDown(event);
+  //   console.log("keydown!");
+  //   if (event.shiftKey && handleDrag) {
+  //     setCursorMode(MouseMode.Grab);
+  //   }
+  // });
+
+  const resetCursor = useEvent(() => {
+    setCursorMode(mode);
+  });
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.shiftKey && handleDrag) {
+        setCursorMode(MouseMode.Grab);
+      }
+    };
+
+    const onKeyUp = (event: KeyboardEvent) => {
+      resetCursor();
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+    };
+  }, [handleDrag, resetCursor]);
+
+  const handleMouseDown = useEvent((event: React.MouseEvent) => {
     if ((event.target as HTMLElement).nodeName !== "CANVAS") return;
     const canvasPos = event.currentTarget.getBoundingClientRect();
     const elementX = event.pageX - canvasPos.left;
@@ -49,7 +87,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
 
   const screenUpdater = useUpdateScreenTranslation();
 
-  const mouseMove = useEvent((event: React.MouseEvent<HTMLElement>) => {
+  const handleMouseMove = useEvent((event: React.MouseEvent<HTMLElement>) => {
     if (mouseDownRef.current && event.buttons === 0) {
       mouseDownRef.current = false;
     }
@@ -74,7 +112,14 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
     screenUpdater((trans) => {
       const moveDeltaX = (deltaX - prevDeltaX) / trans.zoom;
       const moveDeltaY = (deltaY - prevDeltaY) / trans.zoom;
-      if (handleDrag && handleDrag(event, moveDeltaX, moveDeltaY)) return trans;
+      if (handleDrag) {
+        if (handleDrag(event, moveDeltaX, moveDeltaY)) {
+          setCursorMode(MouseMode.Grab);
+          return trans;
+        } else {
+          setCursorMode(mode);
+        }
+      }
 
       const newPanX = Math.min(
         1.0,
@@ -98,47 +143,49 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
     });
   });
 
-  const mouseUp = useEvent((event: React.MouseEvent<HTMLElement>) => {
+  const handleMouseUp = useEvent((event: React.MouseEvent<HTMLElement>) => {
     if (onClick) {
       onClick(event);
     }
     mouseDownRef.current = false;
   });
 
-  const mouseWheel = useEvent((delta: number, pos: Vec2, rect: DOMRect) => {
-    screenUpdater((trans) => {
-      const imageCoord = pixelsToImage(trans, rect)(pos);
+  const handleMouseWheel = useEvent(
+    (delta: number, pos: Vec2, rect: DOMRect) => {
+      screenUpdater((trans) => {
+        const imageCoord = pixelsToImage(trans, rect)(pos);
 
-      const z = Math.min(
-        maxZoomFactor,
-        Math.max(0.1, trans.zoom - delta / 100)
-      );
+        const z = Math.min(
+          maxZoomFactor,
+          Math.max(0.1, trans.zoom - delta / 100)
+        );
 
-      const updatedPixelCoord = imageToPixels(
-        { ...trans, zoom: z },
-        rect
-      )(imageCoord);
-      const panDelta = vecSub(pos, updatedPixelCoord);
-      const panX = panDelta[0] / rect.width / (z / 2);
-      const panY = panDelta[1] / rect.height / (z / 2);
+        const updatedPixelCoord = imageToPixels(
+          { ...trans, zoom: z },
+          rect
+        )(imageCoord);
+        const panDelta = vecSub(pos, updatedPixelCoord);
+        const panX = panDelta[0] / rect.width / (z / 2);
+        const panY = panDelta[1] / rect.height / (z / 2);
 
-      return {
-        ...trans,
-        zoom: z,
-        panX: trans.panX + panX,
-        panY: trans.panY - panY,
-      };
-    });
-  });
+        return {
+          ...trans,
+          zoom: z,
+          panX: trans.panX + panX,
+          panY: trans.panY - panY,
+        };
+      });
+    }
+  );
 
   return (
     <MouseControl
       mode={cursorMode}
-      onMouseDown={mouseDown}
-      onMouseMove={mouseMove}
-      onMouseUp={mouseUp}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
       onContextMenu={onContextMenu}
-      onWheel={mouseWheel}
+      onWheel={handleMouseWheel}
       onKeyDown={onKeyDown}
     >
       {children}
