@@ -2,7 +2,6 @@ import {
   RefObject,
   SetStateAction,
   useCallback,
-  useDeferredValue,
   useEffect,
   useMemo,
   useRef,
@@ -119,22 +118,11 @@ const useScaleUpdater = (
 const useMutatorMap = (
   file: GeppettoImage,
   vectorValues: Record<string, Vec2>
-) => {
-  const deferredVectorValues = useDeferredValue(vectorValues);
-  const deferredMutations = useDeferredValue(file.mutations);
-
-  const mutatorMap = useMemo(
-    () =>
-      vectorPositions(
-        deferredMutations,
-        file.layerHierarchy,
-        deferredVectorValues
-      ),
-    [deferredMutations, file.layerHierarchy, deferredVectorValues]
+) =>
+  useMemo(
+    () => vectorPositions(file.mutations, file.layerHierarchy, vectorValues),
+    [file.mutations, file.layerHierarchy, vectorValues]
   );
-
-  return mutatorMap;
-};
 
 export const Composition: React.FC<CompositionProps> = ({
   menu,
@@ -154,7 +142,6 @@ export const Composition: React.FC<CompositionProps> = ({
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
   const updateMutationValues = useUpdateMutationValues();
 
-  const vectorValues = calculateVectorValues(file, file.controlValues);
   const vectorValues = calculateVectorValues(
     file,
     file.defaultFrame,
