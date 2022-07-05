@@ -98,6 +98,9 @@
   "jest": {
     "transformIgnorePatterns": [
       "/node_modules/(?!delaunator|robust-predicates)"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/.*.stories.tsx$"
     ]
   }
 }
