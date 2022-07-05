@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { getPreviousOfType } from "../../../animation/file2/hierarchy";
 import { GeppettoImage } from "../../../animation/file2/types";
 import { Vec2 } from "../../../types";
@@ -14,43 +13,44 @@ import {
 
 type VectorValues = GeppettoImage["defaultFrame"];
 
-export const useVectorValues = (file: GeppettoImage): VectorValues =>
-  useMemo(() => {
-    const result: VectorValues = { ...file.defaultFrame };
-    for (const [controlId, controlValue] of Object.entries(
-      file.controlValues
-    )) {
-      const controlInfo = file.controls[controlId];
-      if (!controlInfo) continue;
-      const minStep = Math.floor(controlValue);
-      const maxStep = Math.ceil(controlValue);
+export const calculateVectorValues = (
+  file: GeppettoImage,
+  mutationValues: GeppettoImage["defaultFrame"],
+  controlValues: GeppettoImage["controlValues"]
+): VectorValues => {
+  const result: VectorValues = { ...mutationValues };
+  for (const [controlId, controlValue] of Object.entries(controlValues)) {
+    const controlInfo = file.controls[controlId];
+    if (!controlInfo) continue;
+    const minStep = Math.floor(controlValue);
+    const maxStep = Math.ceil(controlValue);
 
-      const minValue = controlInfo.steps[minStep];
-      const maxValue = controlInfo.steps[maxStep];
+    const minValue = controlInfo.steps[minStep];
+    const maxValue = controlInfo.steps[maxStep];
 
-      const mixValue = controlValue - minStep;
+    const mixValue = controlValue - minStep;
 
-      for (const [mutationId, mutationValue] of Object.entries(minValue)) {
-        const mutationInfo = file.mutations[mutationId];
-        const value =
-          mutationInfo.type === "colorize"
-            ? mixHueVec2(mutationValue, maxValue[mutationId], mixValue)
-            : mixVec2(mutationValue, maxValue[mutationId], mixValue);
+    for (const [mutationId, mutationValue] of Object.entries(minValue)) {
+      const mutationInfo = file.mutations[mutationId];
+      const value =
+        mutationInfo.type === "colorize"
+          ? mixHueVec2(mutationValue, maxValue[mutationId], mixValue)
+          : mixVec2(mutationValue, maxValue[mutationId], mixValue);
 
-        if (result[mutationId]) {
-          result[mutationId] = mergeMutationValue(
-            value,
-            result[mutationId],
-            mutationInfo.type
-          );
-        } else {
-          result[mutationId] = value;
-        }
+      if (result[mutationId]) {
+        result[mutationId] = mergeMutationValue(
+          value,
+          result[mutationId],
+          mutationInfo.type
+        );
+      } else {
+        result[mutationId] = value;
       }
     }
+  }
 
-    return result;
-  }, [file.controlValues, file.defaultFrame, file.controls, file.mutations]);
+  return result;
+};
 
 const inRadius = (start: Vec2, affected: Vec2, radius: number): boolean =>
   distance(affected, start) < radius;
@@ -73,6 +73,10 @@ export const vectorPositions = (
     );
 
     const mutation = mutations[mutationId];
+    if (mutation === undefined) {
+      // values or info could be lagging behind
+      return value;
+    }
     let newValue = value;
     if (mutation.type === "translate") {
       const mutatorOrigin = mutation.origin;
@@ -83,6 +87,31 @@ export const vectorPositions = (
         const translationValue = mutationValues[mutationId];
         newValue = vecAdd(newValue, translationValue);
       }
+    }
+
+    if (mutation.type === "stretch") {
+      const mutatorOrigin = mutation.origin;
+      const point = vecSub(newValue, mutatorOrigin);
+      const stretch = mutationValues[mutationId];
+
+      const stretched: Vec2 = vecMul(point, stretch);
+
+      newValue = vecAdd(mutatorOrigin, stretched);
+    }
+
+    if (mutation.type === "rotate") {
+      const mutatorOrigin = mutation.origin;
+      const [x, y] = vecSub(newValue, mutatorOrigin);
+      const angle = mutationValues[mutationId][0] * -1;
+
+      const rad = (angle * Math.PI) / 180;
+
+      const rotated: Vec2 = [
+        x * Math.cos(rad) - y * Math.sin(rad),
+        y * Math.cos(rad) + x * Math.sin(rad),
+      ];
+
+      newValue = vecAdd(mutatorOrigin, rotated);
     }
 
     if (mutation.type === "deform") {
@@ -97,32 +126,6 @@ export const vectorPositions = (
         ]);
       }
     }
-
-    if (mutation.type === "rotate") {
-      const mutatorOrigin = mutation.origin;
-      const [x, y] = vecSub(newValue, mutatorOrigin);
-      const angle = mutationValues[mutationId][0];
-
-      const rad = (angle * Math.PI) / 180;
-
-      const rotated: Vec2 = [
-        x * Math.cos(rad) - y * Math.sin(rad),
-        y * Math.cos(rad) + x * Math.sin(rad),
-      ];
-
-      newValue = vecAdd(mutatorOrigin, rotated);
-    }
-
-    if (mutation.type === "stretch") {
-      const mutatorOrigin = mutation.origin;
-      const point = vecSub(newValue, mutatorOrigin);
-      const stretch = mutationValues[mutationId];
-
-      const stretched: Vec2 = vecMul(point, stretch);
-
-      newValue = vecAdd(mutatorOrigin, stretched);
-    }
-
     return applyMutation(newValue, parentId);
   };
 

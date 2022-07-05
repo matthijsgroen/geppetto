@@ -51,11 +51,14 @@ export const addShape = (
   ];
 };
 
+export type AddFolderDetails = { folder: LayerFolder; id: string };
+
 export const addFolder = (
   image: GeppettoImage,
   folderName: string,
-  position?: PlacementInfo
-): [GeppettoImage, LayerFolder, string] => {
+  position?: PlacementInfo,
+  dataResult?: AddFolderDetails | {}
+): GeppettoImage => {
   const newName = getUniqueName(folderName, image.layerFolders);
   const folder: LayerFolder = {
     name: newName,
@@ -68,14 +71,17 @@ export const addFolder = (
     position
   );
 
-  return [
-    produce(image, (draft) => {
-      draft.layerHierarchy = layerHierarchy;
-      draft.layerFolders[newId] = folder;
-    }),
-    folder,
-    newId,
-  ];
+  if (dataResult) {
+    Object.assign(dataResult, {
+      folder,
+      id: newId,
+    });
+  }
+
+  return produce(image, (draft) => {
+    draft.layerHierarchy = layerHierarchy;
+    draft.layerFolders[newId] = folder;
+  });
 };
 
 type RenameableItems<O> = Pick<

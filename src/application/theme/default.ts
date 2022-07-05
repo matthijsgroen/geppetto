@@ -1,5 +1,5 @@
 import { DefaultTheme } from "styled-components";
-import "./theme.css";
+import "../../ui-components/theme.css";
 
 export const defaultTheme: DefaultTheme = {
   colors: {

@@ -7,7 +7,14 @@ import React, {
 } from "react";
 import { newFile } from "../../animation/file2/new";
 import { GeppettoImage } from "../../animation/file2/types";
+import {
+  useControlValues,
+  useControlValueSubscription,
+  useMutationValues,
+} from "../contexts/ImageControlContext";
 import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
+import useEvent from "../hooks/useEvent";
+import { calculateVectorValues } from "./lib/vectorPositions";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
 import { showCompositionVectors } from "./programs/showCompositionVectors";
@@ -17,30 +24,25 @@ export interface CompositionCanvasProps {
   image: HTMLImageElement | null;
   file: GeppettoImage;
   showWireFrames: boolean;
-  vectorValues: GeppettoImage["defaultFrame"];
   activeLayers: string[];
   activeMutation: string | null;
 }
 
 const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
+  fileA.layerHierarchy !== fileB.layerHierarchy ||
   fileA.layerFolders !== fileB.layerFolders ||
   fileA.layers !== fileB.layers ||
   fileA.mutations !== fileB.mutations;
+
+const mutationsControlsChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
+  fileA.controls !== fileB.controls || fileA.mutations !== fileB.mutations;
 
 const CompositionCanvas = forwardRef<
   HTMLDivElement,
   PropsWithChildren<CompositionCanvasProps>
 >(
   (
-    {
-      image,
-      file,
-      vectorValues,
-      activeLayers,
-      showWireFrames,
-      activeMutation,
-      children,
-    },
+    { image, file, activeLayers, showWireFrames, activeMutation, children },
     ref
   ) => {
     const translation = useScreenTranslation();
@@ -71,20 +73,53 @@ const CompositionCanvas = forwardRef<
 
     const fileRef = useRef(newFile());
 
+    const updateControlValues = useEvent(
+      (
+        controlValues: GeppettoImage["controlValues"],
+        mutationValues: GeppettoImage["defaultFrame"]
+      ) => {
+        const vectorValues = calculateVectorValues(
+          fileRef.current,
+          mutationValues,
+          controlValues
+        );
+        composition.setVectorValues(vectorValues);
+        compositionMap.setVectorValues(vectorValues);
+        vectorMap.setVectorValues(vectorValues);
+      }
+    );
+
+    const controlValues = useControlValues();
+    const mutationValues = useMutationValues();
+    const subscribe = useControlValueSubscription();
+
     useEffect(() => {
       if (shapesChanged(file, fileRef.current)) {
         composition.setShapes(file);
         compositionMap.setShapes(file);
         vectorMap.setShapes(file);
       }
+      if (mutationsControlsChanged(file, fileRef.current)) {
+        updateControlValues(file.controlValues, file.defaultFrame);
+        mutationValues.current = file.defaultFrame;
+        controlValues.current = file.controlValues;
+      }
       fileRef.current = file;
-    }, [file, composition, compositionMap, vectorMap]);
+    }, [
+      file,
+      composition,
+      compositionMap,
+      vectorMap,
+      updateControlValues,
+      mutationValues,
+      controlValues,
+    ]);
 
     useEffect(() => {
-      composition.setVectorValues(vectorValues);
-      compositionMap.setVectorValues(vectorValues);
-      vectorMap.setVectorValues(vectorValues);
-    }, [vectorValues, composition, compositionMap, vectorMap]);
+      const unsubscribe = subscribe(updateControlValues);
+      updateControlValues(controlValues.current, mutationValues.current);
+      return unsubscribe;
+    }, [controlValues, mutationValues, subscribe, updateControlValues]);
 
     useEffect(() => {
       compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);

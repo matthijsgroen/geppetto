@@ -1,6 +1,6 @@
 .controlPanel {
   background-color: var(--colors-control-default);
-  border-radius: 10px;
+  border-radius: var(--control-border-radius);
   overflow-y: hidden;
 
   -ms-overflow-style: none; /* IE and Edge */

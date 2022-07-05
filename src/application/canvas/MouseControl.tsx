@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState, PropsWithChildren } from "react";
 import styled from "styled-components";
+import { Vec2 } from "../../types";
 import useEvent from "../hooks/useEvent";
 
 export enum MouseMode {
   Normal,
   Grab,
   Grabbing,
+  Panning,
   Aim,
   Target,
 }
@@ -14,18 +16,19 @@ type MouseControlProps = PropsWithChildren<{
   mode: MouseMode;
 }>;
 
-const MouseControlContainer = styled.div<MouseControlProps>`
+const MouseControlContainer = styled.div<{ $mode: MouseMode }>`
   width: 100%;
   height: 100%;
   box-sizing: border-box;
   cursor: ${(props) =>
     ({
-      [MouseMode.Grab]: "default",
-      [MouseMode.Grabbing]: "move",
+      [MouseMode.Grab]: "grab",
+      [MouseMode.Grabbing]: "grabbing",
+      [MouseMode.Panning]: "move",
       [MouseMode.Normal]: "default",
       [MouseMode.Aim]: "crosshair",
       [MouseMode.Target]: "pointer",
-    }[props.mode])};
+    }[props.$mode])};
   border: 1px solid ${(props) => props.theme.colors.controlEdge};
 
   &:focus {
@@ -37,8 +40,10 @@ interface MouseEventsProps {
   onMouseMove?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseDown?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseUp?: (event: React.MouseEvent<HTMLElement>) => void;
+  onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
-  onWheel?: (delta: number) => void;
+  onKeyUp?: (event: React.KeyboardEvent<HTMLElement>) => void;
+  onWheel?: (delta: number, position: Vec2, rect: DOMRect) => void;
 }
 
 const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
@@ -47,19 +52,21 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
   onMouseDown,
   onMouseMove,
   onMouseUp,
+  onContextMenu,
   onWheel,
   onKeyDown,
+  onKeyUp,
 }) => {
   const [isGrabbing, setIsGrabbing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (ref.current && onWheel) {
+      const elem = ref.current;
       const handler = (e: WheelEvent) => {
         e.preventDefault();
-        onWheel(e.deltaY);
+        onWheel(e.deltaY, [e.offsetX, e.offsetY], elem.getBoundingClientRect());
       };
-      const elem = ref.current;
       elem.addEventListener("wheel", handler, { passive: false });
 
       return () => {
@@ -68,15 +75,20 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
     }
   }, [ref, onWheel]);
 
+  const $mode =
+    isGrabbing && mode === MouseMode.Normal
+      ? MouseMode.Panning
+      : isGrabbing && mode === MouseMode.Grab
+      ? MouseMode.Grabbing
+      : mode;
+
   return (
     <MouseControlContainer
       ref={ref}
-      mode={isGrabbing ? MouseMode.Grabbing : mode}
+      $mode={$mode}
       tabIndex={0}
       onMouseDown={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
-        if (mode === MouseMode.Grab) {
-          setIsGrabbing(true);
-        }
+        setIsGrabbing(true);
         onMouseDown && onMouseDown(e);
       })}
       onMouseUp={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
@@ -85,6 +97,8 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
       })}
       onMouseMove={onMouseMove}
       onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
+      onContextMenu={onContextMenu}
     >
       {children}
     </MouseControlContainer>

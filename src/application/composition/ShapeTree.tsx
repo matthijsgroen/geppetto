@@ -1,13 +1,25 @@
 import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
+import {
+  addMutation,
+  AddMutationDetails,
+  iconMapping,
+  mutationLabels,
+  removeMutation,
+} from "../../animation/file2/mutation";
 import { addFolder } from "../../animation/file2/shapes";
+import { MutationVector } from "../../animation/file2/types";
 import {
   Icon,
+  Menu,
+  MenuItem,
   ToolBar,
   ToolButton,
   ToolSeparator,
   Tree,
 } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
+import { useUpdateMutationValues } from "../contexts/ImageControlContext";
+import useEvent from "../hooks/useEvent";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
 import { UseState } from "../types";
@@ -22,7 +34,10 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
   focusedItemState,
 }) => {
   const [file, setFile] = useFile();
-  const [selectedItems] = selectedItemsState;
+  const [selectedItems, setSelectedItems] = selectedItemsState;
+  const activeMutation =
+    (selectedItems.length === 1 && file.mutations[selectedItems[0]]) || null;
+  const updateMutationValues = useUpdateMutationValues();
 
   const addFolderAction = useToolAction(() => {
     let position: PlacementInfo | undefined = undefined;
@@ -38,14 +53,56 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
         position = { after: targetId, parent: parentId };
       }
     }
-    const [updatedImage] = addFolder(file, "New folder", position);
+    const updatedImage = addFolder(file, "New folder", position);
     setFile(updatedImage);
-  }, [file, selectedItems]);
+  });
 
-  // const removeItemAction = useToolAction(() => {
-  //   const item = selectedItems[0];
-  //   setFileData((value) => removeShape(value, item));
-  // }, [fileData, selectedItems]);
+  const removeItemAction = useToolAction(() => {
+    const item = selectedItems[0];
+    const treeItem = file.layerHierarchy[item];
+    if (treeItem.type === "mutation") {
+      setSelectedItems([]);
+      setFile((value) => removeMutation(value, item));
+    }
+  });
+
+  const addMutationHandler = useEvent(
+    (e: { value?: MutationVector["type"] }) => {
+      if (!e.value) return;
+      const targetId = selectedItems[0];
+
+      const mutationType: MutationVector["type"] = e.value;
+      let position: PlacementInfo | undefined = undefined;
+      const folder = file.layerFolders[targetId];
+      const layer = file.layers[targetId];
+      const mutation = file.mutations[targetId];
+      if (selectedItems.length === 1 && (folder || layer)) {
+        position = { parent: targetId };
+      }
+      if (selectedItems.length === 1 && mutation) {
+        const parentId = findParentId(file.layerHierarchy, targetId);
+        if (parentId) {
+          position = { after: targetId, parent: parentId };
+        }
+      }
+      if (!position) return;
+      const name = mutationLabels[mutationType];
+      const addDetails = {} as AddMutationDetails<typeof mutationType>;
+      const updatedImage = addMutation(
+        file,
+        name,
+        mutationType,
+        {},
+        position,
+        addDetails
+      );
+      updateMutationValues((values) => ({
+        ...values,
+        [addDetails.id]: updatedImage.defaultFrame[addDetails.id],
+      }));
+      setFile(updatedImage);
+    }
+  );
 
   return (
     <LayerTreeEnvironment
@@ -64,14 +121,37 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
           onKeyDown={addFolderAction}
           disabled={selectedItems.length > 1}
         />
-        <ToolButton
-          icon={<Icon>⚪️</Icon>}
-          label="+"
-          tooltip="Add mutation"
-          disabled
-        />
+        <Menu
+          portal
+          menuButton={({ open }) => (
+            <ToolButton
+              icon={<Icon>⚪️</Icon>}
+              label="+"
+              tooltip="Add mutation"
+              disabled={selectedItems.length !== 1}
+              active={open}
+            />
+          )}
+          direction="bottom"
+          align="center"
+          arrow
+          transition
+        >
+          {Object.keys(mutationLabels).map((key) => (
+            <MenuItem key={key} value={key} onClick={addMutationHandler}>
+              {iconMapping[key as MutationVector["type"]]}{" "}
+              {mutationLabels[key as MutationVector["type"]]}
+            </MenuItem>
+          ))}
+        </Menu>
         <ToolSeparator />
-        <ToolButton icon={<Icon>🗑</Icon>} disabled tooltip="Remove item" />
+        <ToolButton
+          icon={<Icon>🗑</Icon>}
+          disabled={!activeMutation}
+          onClick={removeItemAction}
+          onKeyDown={removeItemAction}
+          tooltip="Remove item"
+        />
       </ToolBar>
       <Tree treeId="composition" />
     </LayerTreeEnvironment>

@@ -1,12 +1,12 @@
-import React, { useCallback } from "react";
+import React from "react";
+import useEvent from "./useEvent";
 
 export const useToolAction = (
-  action: () => void,
-  deps: React.DependencyList
+  action: () => void
 ): ((
   e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>
 ) => void) =>
-  useCallback(
+  useEvent(
     (e: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>) => {
       if (
         "code" in e.nativeEvent &&
@@ -19,7 +19,5 @@ export const useToolAction = (
 
       e.preventDefault();
       action();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [...deps, action]
+    }
   );

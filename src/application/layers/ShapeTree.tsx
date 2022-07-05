@@ -39,7 +39,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
     }
     const [updatedImage] = addShape(file, "New Shape", position);
     setFile(updatedImage);
-  }, [file, selectedItems]);
+  });
 
   const addFolderAction = useToolAction(() => {
     let position: PlacementInfo | undefined = undefined;
@@ -55,14 +55,14 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
         position = { after: targetId, parent: parentId };
       }
     }
-    const [updatedImage] = addFolder(file, "New folder", position);
+    const updatedImage = addFolder(file, "New folder", position);
     setFile(updatedImage);
-  }, [file, selectedItems]);
+  });
 
   const removeItemAction = useToolAction(() => {
     const item = selectedItems[0];
     setFile((value) => removeShape(value, item));
-  }, [file, selectedItems]);
+  });
 
   return (
     <LayerTreeEnvironment

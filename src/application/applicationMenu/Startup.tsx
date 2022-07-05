@@ -2,11 +2,12 @@ import { useContext } from "react";
 import { isNew } from "../../animation/file2/new";
 import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
-import { Icon, Label, Logo, ToolButton } from "../../ui-components";
+import { Icon, Logo, ToolButton } from "../../ui-components";
 import { Kbd } from "../../ui-components/Kbd/Kbd";
 import { versionInfo } from "../../versionInfo";
 import { ApplicationContext } from "../contexts/ApplicationContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
 
 type StartupScreenProps = {
   texture: HTMLImageElement | null;
@@ -26,15 +27,15 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
       <div>
         <Logo />
         <h1>Welcome to Geppetto</h1>
-        <p>
+        <Paragraph>
           Geppetto is a free and open animation tool
           <br /> to create and embed WebGL animations
-        </p>
-        <p>
+        </Paragraph>
+        <Paragraph>
           Note: This is an early ALPHA build of Geppetto 2.0
           <br /> and is not yet ready for production use. (It's not feature
           complete yet!)
-        </p>
+        </Paragraph>
         {isNew(file) && (
           <p>
             <ToolButton
@@ -67,11 +68,11 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
             shadow
           />
         </p>
-        <Label size="small">
+        <Paragraph size="small">
           Version: {versionInfo.version} - {versionInfo.commit.slice(0, 6)},
           released{" "}
           {formatDistanceToNow(versionInfo.timestamp, { addSuffix: true })}
-        </Label>
+        </Paragraph>
       </div>
     );
   }

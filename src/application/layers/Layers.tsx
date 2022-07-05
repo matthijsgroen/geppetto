@@ -71,7 +71,7 @@ export const Layers: React.FC<LayersProps> = ({
 }) => {
   const translation = useScreenTranslation();
 
-  const [mouseMode, setMouseMode] = useState(MouseMode.Grab);
+  const [mouseMode, setMouseMode] = useState(MouseMode.Normal);
   const [gridSettings, setGridSettings] = useState<GridSettings>({
     enabled: false,
     magnetic: false,
@@ -244,14 +244,6 @@ export const Layers: React.FC<LayersProps> = ({
         />
         <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
         <ToolSeparator />
-        <ToolButton
-          active={mouseMode === MouseMode.Grab}
-          icon={<Icon>✋</Icon>}
-          tooltip="Move mode"
-          onClick={useCallback(() => {
-            setMouseMode(MouseMode.Grab);
-          }, [setMouseMode])}
-        />
         <ToolButton
           active={mouseMode === MouseMode.Normal}
           icon={<Icon>🔧</Icon>}

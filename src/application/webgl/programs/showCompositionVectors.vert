@@ -76,17 +76,18 @@ mat3 mutateOnce(mat3 startValue, int mutationIndex) {
     result = vec3(result.xy, result.z * mutationValue.x);
   }
 
-  if (mutationType == 6) { // Lightness
-    color = vec3(mutationValue.x * color.x, color.yz);
-  }
+  // We are only interested in the position, the other values are not used in rendering.
+  // if (mutationType == 6) { // Lightness
+  //   color = vec3(mutationValue.x * color.x, color.yz);
+  // }
 
-  if (mutationType == 7) { // Colorize setting
-    effect = vec3(mutationValue.xy, effect.z);
-  }
+  // if (mutationType == 7) { // Colorize setting
+  //   effect = vec3(mutationValue.xy, effect.z);
+  // }
 
-  if (mutationType == 8) { // Saturation
-    color = vec3(color.x, mutationValue.x * color.y, color.z);
-  }
+  // if (mutationType == 8) { // Saturation
+  //   color = vec3(color.x, mutationValue.x * color.y, color.z);
+  // }
 
   return mat3(
     result,
@@ -110,7 +111,6 @@ mat3 mutatePoint(mat3 startValue, int mutationIndex) {
 }
 
 void main() {
-  vActive = active;
   mat3 start = mat3(
     translate.xy, 1.0,
     0, 0, 0,
@@ -153,7 +153,7 @@ void main() {
   gl_Position = vec4(center + size, pos.z - 1.0, 1.0);
 
   vCircle = vec4(center, abs(size.x), abs(size.y));
-
+  vActive = active;
   vColor = color;
   vViewport = viewport;
 }
