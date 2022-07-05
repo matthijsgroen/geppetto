@@ -22,9 +22,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
 
-      - name: Install JS dependencies
-        uses: c-hive/gha-yarn-cache@v2
-        run: yarn install
       - name: Test
-        uses: c-hive/gha-yarn-cache@v2
+        uses: bahmutov/npm-install
         run: yarn test
