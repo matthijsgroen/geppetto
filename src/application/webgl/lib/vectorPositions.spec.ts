@@ -166,7 +166,7 @@ describe("vectorPositions", () => {
       });
 
       expect(positions).toEqual({
-        [transMutId]: [10, 60],
+        [transMutId]: [90, -20],
         [rotateMutId]: [50, 20],
       });
     });
