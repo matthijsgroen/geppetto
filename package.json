@@ -102,5 +102,8 @@
     "coveragePathIgnorePatterns": [
       "<rootDir>/.*.stories.tsx$"
     ]
-  }
+  },
+  "eslintIgnore": [
+    "/src/old/**"
+  ]
 }
