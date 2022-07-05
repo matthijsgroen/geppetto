@@ -7,7 +7,6 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     strategy:
@@ -16,15 +15,16 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - uses: c-hive/gha-yarn-cache@v2
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
-    - name: Install JS dependencies
-      run: yarn install
-    - name: Test
-      run: yarn test
+      - name: Install JS dependencies
+        uses: c-hive/gha-yarn-cache@v2
+        run: yarn install
+      - name: Test
+        uses: c-hive/gha-yarn-cache@v2
+        run: yarn test
