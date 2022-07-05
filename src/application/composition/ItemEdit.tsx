@@ -1,9 +1,13 @@
 import produce from "immer";
+import { useEffect, useState, useTransition } from "react";
 import { hasRadius, iconMapping } from "../../animation/file2/mutation";
 import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Title } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
-import { useUpdateControlValues } from "../contexts/ImageControlContext";
+import {
+  useMutationValues,
+  useUpdateMutationValues,
+} from "../contexts/ImageControlContext";
 import { BooleanControl } from "../controls/CheckControl";
 import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
@@ -22,6 +26,8 @@ type ItemEditProps = {
 type EditProps = {
   itemId: string;
 };
+
+const blankValue: Vec2 = [0, 0];
 
 const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
@@ -100,7 +106,21 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
 const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
   const mutation = file.mutations[itemId];
-  const update = useUpdateControlValues();
+  const updateMutations = useUpdateMutationValues();
+  const [, startTransition] = useTransition();
+
+  const mutationValues = useMutationValues();
+
+  const mutationValue: Vec2 = !itemId
+    ? blankValue
+    : mutationValues.current[itemId];
+  const [slideValue, setSlideValue] = useState(mutationValue);
+
+  useEffect(() => {
+    if (itemId) {
+      setSlideValue(mutationValues.current[itemId]);
+    }
+  }, [itemId, mutationValues]);
 
   const radiusChange = useEvent((newRadius: number) => {
     setFile(
@@ -134,12 +154,15 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
   });
 
   const valueChangeHandler = useEvent((newValue: Vec2) => {
-    setFile(
-      produce((draft) => {
-        draft.defaultFrame[itemId] = newValue;
-      })
-    );
-    update((controls) => ({ ...controls }));
+    updateMutations((mutations) => ({ ...mutations, [itemId]: newValue }));
+    setSlideValue(newValue);
+    startTransition(() => {
+      setFile(
+        produce((draft) => {
+          draft.defaultFrame[itemId] = newValue;
+        })
+      );
+    });
   });
 
   return (
@@ -172,8 +195,8 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
         )}
         <MutationControlled mutationId={itemId} />
         <MutationValueEdit
-          mutationId={itemId}
-          value={file.defaultFrame[itemId]}
+          mutationType={mutation.type}
+          value={slideValue}
           onValueChange={valueChangeHandler}
         />
       </ControlPanel>
@@ -230,32 +253,48 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
   const activeShapeId =
     activeMutator ||
     (selectedShapeIds.length === 1 ? selectedShapeIds[0] : null);
-  const hierarchyItem =
-    activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
+  const [, startTransition] = useTransition();
+  // const hierarchyItem =
+  //   activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
 
-  const update = useUpdateControlValues();
+  const mutationValues = useMutationValues();
+  const updateMutationValues = useUpdateMutationValues();
+
+  const mutationValue: Vec2 = !activeMutator
+    ? blankValue
+    : mutationValues.current[activeMutator];
+  const [slideValue, setSlideValue] = useState(mutationValue);
+
+  useEffect(() => {
+    if (activeMutator) {
+      setSlideValue(mutationValues.current[activeMutator]);
+    }
+  }, [activeMutator, mutationValues]);
 
   const valueChangeHandler = useEvent((newValue: Vec2) => {
     if (activeShapeId === null) return;
-    setFile(
-      produce((draft) => {
-        draft.defaultFrame[activeShapeId] = newValue;
-      })
-    );
-    update((controls) => ({ ...controls }));
+    setSlideValue(newValue);
+    updateMutationValues((mutations) => ({
+      ...mutations,
+      [activeShapeId]: newValue,
+    }));
+    startTransition(() => {
+      setFile(
+        produce((draft) => {
+          draft.defaultFrame[activeShapeId] = newValue;
+        })
+      );
+    });
   });
 
-  if (
-    activeShapeId !== null &&
-    hierarchyItem &&
-    hierarchyItem.type === "mutation"
-  ) {
+  if (activeMutator) {
+    const mutationType = file.mutations[activeMutator].type;
     return (
       <ControlPanel shadow>
-        <MutationControlled mutationId={activeShapeId} />
+        <MutationControlled mutationId={activeMutator} />
         <MutationValueEdit
-          mutationId={activeShapeId}
-          value={file.defaultFrame[activeShapeId]}
+          mutationType={mutationType}
+          value={slideValue}
           onValueChange={valueChangeHandler}
         />
       </ControlPanel>

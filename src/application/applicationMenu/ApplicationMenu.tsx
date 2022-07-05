@@ -20,9 +20,14 @@ import { ApplicationContext } from "../contexts/ApplicationContext";
 import { useAppInstall } from "../hooks/useAppInstall";
 import { useFile } from "./FileContext";
 
-import sceneryDemo from "../../demos/scenery.json";
+import sceneryDemoImg from "../../demos/scenery.json";
 import sceneryDemoImage from "../../demos/scenery.png";
-import { useUpdateControlValues } from "../contexts/ImageControlContext";
+import {
+  useUpdateControlValues,
+  useUpdateMutationValues,
+} from "../contexts/ImageControlContext";
+
+const sceneryDemo: GeppettoImage = sceneryDemoImg as unknown as GeppettoImage;
 
 type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
@@ -84,6 +89,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   const [, setTextureFile] = textureFileState;
   const [, setTextureFileName] = textureFileNameState;
   const controlUpdate = useUpdateControlValues();
+  const mutationUpdate = useUpdateMutationValues();
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -109,6 +115,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 fileNameState[1](filename);
                 setFile(image);
                 controlUpdate(() => image.controlValues);
+                mutationUpdate(() => image.defaultFrame);
               } catch (e) {
                 // user abort
               }
@@ -215,6 +222,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         setTextureFile,
         setTextureFileName,
         controlUpdate,
+        mutationUpdate,
       ]
     )
   );
@@ -237,13 +245,12 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         actions.openImageFile.handler();
       }
       if (message === "demoOpenScenery") {
-        if (verifyVersion1(sceneryDemo)) {
-          setFile(convertFromV1(sceneryDemo));
-        } else if (verifyVersion2(sceneryDemo)) {
+        if (verifyVersion2(sceneryDemo)) {
           setFile(sceneryDemo);
+          controlUpdate(() => sceneryDemo.controlValues);
+          mutationUpdate(() => sceneryDemo.defaultFrame);
         }
 
-        controlUpdate(() => sceneryDemo.controlValues);
         const image = new Image();
         image.addEventListener("load", () => {
           setTextureFile(image);
@@ -265,6 +272,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
     setTextureFile,
     setTextureFileName,
     controlUpdate,
+    mutationUpdate,
   ]);
 
   return (

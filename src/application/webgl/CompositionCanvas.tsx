@@ -10,8 +10,10 @@ import { GeppettoImage } from "../../animation/file2/types";
 import {
   useControlValues,
   useControlValueSubscription,
+  useMutationValues,
 } from "../contexts/ImageControlContext";
 import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
+import useEvent from "../hooks/useEvent";
 import { calculateVectorValues } from "./lib/vectorPositions";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";
@@ -31,6 +33,9 @@ const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
   fileA.layerFolders !== fileB.layerFolders ||
   fileA.layers !== fileB.layers ||
   fileA.mutations !== fileB.mutations;
+
+const mutationsControlsChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
+  fileA.controls !== fileB.controls || fileA.mutations !== fileB.mutations;
 
 const CompositionCanvas = forwardRef<
   HTMLDivElement,
@@ -68,41 +73,53 @@ const CompositionCanvas = forwardRef<
 
     const fileRef = useRef(newFile());
 
+    const updateControlValues = useEvent(
+      (
+        controlValues: GeppettoImage["controlValues"],
+        mutationValues: GeppettoImage["defaultFrame"]
+      ) => {
+        const vectorValues = calculateVectorValues(
+          fileRef.current,
+          mutationValues,
+          controlValues
+        );
+        composition.setVectorValues(vectorValues);
+        compositionMap.setVectorValues(vectorValues);
+        vectorMap.setVectorValues(vectorValues);
+      }
+    );
+
+    const controlValues = useControlValues();
+    const mutationValues = useMutationValues();
+    const subscribe = useControlValueSubscription();
+
     useEffect(() => {
       if (shapesChanged(file, fileRef.current)) {
         composition.setShapes(file);
         compositionMap.setShapes(file);
         vectorMap.setShapes(file);
       }
+      if (mutationsControlsChanged(file, fileRef.current)) {
+        updateControlValues(file.controlValues, file.defaultFrame);
+        mutationValues.current = file.defaultFrame;
+        controlValues.current = file.controlValues;
+      }
       fileRef.current = file;
-    }, [file, composition, compositionMap, vectorMap]);
-
-    const controlValues = useControlValues();
-    const subscribe = useControlValueSubscription();
-
-    useEffect(() => {
-      const updateControlValues = (
-        controlValues: GeppettoImage["controlValues"]
-      ) => {
-        const vectorValues = calculateVectorValues(
-          fileRef.current,
-          controlValues
-        );
-        composition.setVectorValues(vectorValues);
-        compositionMap.setVectorValues(vectorValues);
-        vectorMap.setVectorValues(vectorValues);
-      };
-      const unsubscribe = subscribe(updateControlValues);
-      updateControlValues(controlValues);
-      return unsubscribe;
     }, [
+      file,
       composition,
       compositionMap,
-      controlValues,
-      fileRef,
-      subscribe,
       vectorMap,
+      updateControlValues,
+      mutationValues,
+      controlValues,
     ]);
+
+    useEffect(() => {
+      const unsubscribe = subscribe(updateControlValues);
+      updateControlValues(controlValues.current, mutationValues.current);
+      return unsubscribe;
+    }, [controlValues, mutationValues, subscribe, updateControlValues]);
 
     useEffect(() => {
       compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);

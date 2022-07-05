@@ -4,6 +4,7 @@ import { useFile } from "../../applicationMenu/FileContext";
 import { VectorControl } from "../../controls/VectorControl";
 import { ValueSlider } from "./ValueSlider";
 import styles from "./MutationValueEdit.module.css";
+import { MutationVectorTypes } from "../../../animation/file1/types";
 
 const percentageFormatter = (value: number) => `${Math.round(value * 100)}%`;
 const lightnessFormatter = (value: number) =>
@@ -11,20 +12,17 @@ const lightnessFormatter = (value: number) =>
 const hueFormatter = (value: number) => `${Math.round(value * 360)} deg`;
 
 type MutationValueEditProps = {
-  mutationId: string;
+  mutationType: MutationVectorTypes;
   value: Vec2;
   onValueChange: (newValue: Vec2) => void;
 };
 
 export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
-  mutationId,
+  mutationType,
   value,
   onValueChange,
 }) => {
-  const [file] = useFile();
-  const mutation = file.mutations[mutationId];
-
-  if (mutation.type === "opacity") {
+  if (mutationType === "opacity") {
     return (
       <ValueSlider
         label="Opacity"
@@ -37,7 +35,7 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
       />
     );
   }
-  if (mutation.type === "saturation") {
+  if (mutationType === "saturation") {
     return (
       <ValueSlider
         label="Saturation"
@@ -50,7 +48,7 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
       />
     );
   }
-  if (mutation.type === "lightness") {
+  if (mutationType === "lightness") {
     return (
       <ValueSlider
         label="Lightness"
@@ -63,7 +61,7 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
       />
     );
   }
-  if (mutation.type === "rotate") {
+  if (mutationType === "rotate") {
     return (
       <ValueSlider
         label="Rotation"
@@ -75,16 +73,15 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
       />
     );
   }
-  if (mutation.type === "colorize") {
-    const activeValue = file.defaultFrame[mutationId];
+  if (mutationType === "colorize") {
     return (
       <>
         <Control label="Color">
           <div
             className={styles.colorPreview}
             style={{
-              backgroundColor: `hsl(${activeValue[0] * 360}deg, ${
-                activeValue[1] * 100
+              backgroundColor: `hsl(${value[0] * 360}deg, ${
+                value[1] * 100
               }%, 50%)`,
             }}
           ></div>

@@ -75,17 +75,11 @@ export const ScreenTranslationContext: FC<PropsWithChildren<{}>> = ({
   );
 };
 
-export const useScreenTranslation = () => {
-  const { translation } = useContext(ScreenTransContext);
-  return translation;
-};
+export const useScreenTranslation = () =>
+  useContext(ScreenTransContext).translation;
 
-export const useScreenSubscription = () => {
-  const { onUpdate } = useContext(ScreenTransContext);
-  return onUpdate;
-};
+export const useScreenSubscription = () =>
+  useContext(ScreenTransContext).onUpdate;
 
-export const useUpdateScreenTranslation = () => {
-  const { update } = useContext(ScreenTransContext);
-  return update;
-};
+export const useUpdateScreenTranslation = () =>
+  useContext(ScreenTransContext).update;

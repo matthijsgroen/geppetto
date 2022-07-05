@@ -29,7 +29,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   const controlValues = useControlValues();
   const updateControlValues = useUpdateControlValues();
 
-  const controlValue = isNoControl ? 0 : controlValues[activeControlId];
+  const controlValue = isNoControl ? 0 : controlValues.current[activeControlId];
   const [slideValue, setSlideValue] = useState(controlValue);
   useEffect(() => {
     if (activeControlId) {

@@ -47,6 +47,7 @@ import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
+import { useUpdateMutationValues } from "../contexts/ImageControlContext";
 import {
   useScreenTranslation,
   useUpdateScreenTranslation,
@@ -151,8 +152,14 @@ export const Composition: React.FC<CompositionProps> = ({
   const [focusedLayer, setFocusedLayer] = useState<string | undefined>();
   const [activeMutator, setActiveMutator] = useState<string | null>(null);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
+  const updateMutationValues = useUpdateMutationValues();
 
   const vectorValues = calculateVectorValues(file, file.controlValues);
+  const vectorValues = calculateVectorValues(
+    file,
+    file.defaultFrame,
+    file.controlValues
+  );
 
   const updateSelectedItems = useEvent(
     (selectedItemsUpdate: SetStateAction<string[]>) => {
@@ -370,6 +377,10 @@ export const Composition: React.FC<CompositionProps> = ({
         position,
         addDetails
       );
+      updateMutationValues((values) => ({
+        ...values,
+        [addDetails.id]: updatedImage.defaultFrame[addDetails.id],
+      }));
       setFile(updatedImage);
       setActiveMutator(addDetails.id);
       setFocusedLayer(addDetails.id);
@@ -473,7 +484,8 @@ export const Composition: React.FC<CompositionProps> = ({
                   </SubMenu>
                   <MenuItem disabled>Zoom to selected item</MenuItem>
                 </ControlledMenu>
-                {!showItemDetails && (
+
+                {!showItemDetails && activeMutator && (
                   <Inlay>
                     <InlayControlPanel
                       activeMutator={activeMutator}

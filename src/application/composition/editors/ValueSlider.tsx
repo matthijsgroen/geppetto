@@ -1,5 +1,5 @@
 import produce from "immer";
-import { ChangeEvent, useCallback, useTransition } from "react";
+import { ChangeEvent, useCallback } from "react";
 import { Vec2 } from "../../../types";
 import { Control } from "../../../ui-components";
 
@@ -26,18 +26,14 @@ export const ValueSlider: React.FC<ValueSliderProps> = ({
   value,
   onValueChange,
 }) => {
-  const [, startTransition] = useTransition();
-
   const sliderChangeHandler = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const newValue = event.currentTarget.valueAsNumber;
-      startTransition(() => {
-        onValueChange(
-          produce(value, (v) => {
-            v[vectorIndex] = newValue;
-          })
-        );
-      });
+      onValueChange(
+        produce(value, (v) => {
+          v[vectorIndex] = newValue;
+        })
+      );
     },
     [onValueChange, vectorIndex, value]
   );

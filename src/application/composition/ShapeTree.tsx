@@ -1,6 +1,7 @@
 import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
 import {
   addMutation,
+  AddMutationDetails,
   iconMapping,
   mutationLabels,
   removeMutation,
@@ -17,6 +18,7 @@ import {
   Tree,
 } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
+import { useUpdateMutationValues } from "../contexts/ImageControlContext";
 import useEvent from "../hooks/useEvent";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
@@ -35,6 +37,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
   const [selectedItems, setSelectedItems] = selectedItemsState;
   const activeMutation =
     (selectedItems.length === 1 && file.mutations[selectedItems[0]]) || null;
+  const updateMutationValues = useUpdateMutationValues();
 
   const addFolderAction = useToolAction(() => {
     let position: PlacementInfo | undefined = undefined;
@@ -84,7 +87,19 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       }
       if (!position) return;
       const name = mutationLabels[mutationType];
-      const updatedImage = addMutation(file, name, mutationType, {}, position);
+      const addDetails = {} as AddMutationDetails<typeof mutationType>;
+      const updatedImage = addMutation(
+        file,
+        name,
+        mutationType,
+        {},
+        position,
+        addDetails
+      );
+      updateMutationValues((values) => ({
+        ...values,
+        [addDetails.id]: updatedImage.defaultFrame[addDetails.id],
+      }));
       setFile(updatedImage);
     }
   );

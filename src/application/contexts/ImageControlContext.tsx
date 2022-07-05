@@ -8,21 +8,34 @@ import React, {
   MutableRefObject,
 } from "react";
 import { GeppettoImage } from "../../animation/file2/types";
+import useEvent from "../hooks/useEvent";
 
 type ControlValues = GeppettoImage["controlValues"];
+type MutationValues = GeppettoImage["defaultFrame"];
 
 type Unsubscribe = () => void;
 export type Subscription = (
-  listener: (controlValues: ControlValues) => void
+  listener: (
+    controlValues: ControlValues,
+    mutationValues: MutationValues
+  ) => void
 ) => Unsubscribe;
 
 const ImageCtrlContext = createContext<{
   controlValues: MutableRefObject<ControlValues>;
-  update: (updater: (current: ControlValues) => ControlValues) => void;
+  mutationValues: MutableRefObject<MutationValues>;
+  updateControlValues: (
+    updater: (current: ControlValues) => ControlValues
+  ) => void;
+  updateMutationValues: (
+    updater: (current: MutationValues) => MutationValues
+  ) => void;
   onUpdate: Subscription;
 }>({
   controlValues: { current: {} },
-  update: () => {},
+  mutationValues: { current: {} },
+  updateControlValues: () => {},
+  updateMutationValues: () => {},
   onUpdate: () => {
     return () => {};
   },
@@ -31,45 +44,72 @@ const ImageCtrlContext = createContext<{
 export const ImageControlContext: FC<PropsWithChildren<{}>> = ({
   children,
 }) => {
-  const listenersRef = useRef<((controlVal: ControlValues) => void)[]>([]);
-  const value = useRef<ControlValues>({});
+  const listenersRef = useRef<
+    ((controlValues: ControlValues, mutationValues: MutationValues) => void)[]
+  >([]);
+  const controlValues = useRef<ControlValues>({});
+  const mutationValues = useRef<MutationValues>({});
 
-  const update = useCallback(
+  const updateControlValues = useEvent(
     (handler: (current: ControlValues) => ControlValues) => {
-      const updated = handler(value.current);
-      value.current = updated;
+      const updated = handler(controlValues.current);
+      controlValues.current = updated;
       for (const listener of listenersRef.current) {
-        listener(value.current);
+        listener(controlValues.current, mutationValues.current);
       }
-    },
-    [value]
+    }
   );
-  const onUpdate = useCallback((handler: (trans: ControlValues) => void) => {
-    listenersRef.current = listenersRef.current.concat(handler);
-    return () => {
-      listenersRef.current = listenersRef.current.filter((h) => h !== handler);
-    };
-  }, []);
+  const updateMutationValues = useEvent(
+    (handler: (current: MutationValues) => MutationValues) => {
+      const updated = handler(mutationValues.current);
+      mutationValues.current = updated;
+      for (const listener of listenersRef.current) {
+        listener(controlValues.current, mutationValues.current);
+      }
+    }
+  );
+  const onUpdate = useCallback(
+    (
+      handler: (
+        controlValues: ControlValues,
+        mutationValues: MutationValues
+      ) => void
+    ) => {
+      listenersRef.current = listenersRef.current.concat(handler);
+      return () => {
+        listenersRef.current = listenersRef.current.filter(
+          (h) => h !== handler
+        );
+      };
+    },
+    []
+  );
   return (
     <ImageCtrlContext.Provider
-      value={{ controlValues: value, onUpdate, update }}
+      value={{
+        controlValues,
+        mutationValues,
+        onUpdate,
+        updateControlValues,
+        updateMutationValues,
+      }}
     >
       {children}
     </ImageCtrlContext.Provider>
   );
 };
 
-export const useControlValues = () => {
-  const { controlValues } = useContext(ImageCtrlContext);
-  return controlValues.current;
-};
+export const useControlValues = () =>
+  useContext(ImageCtrlContext).controlValues;
 
-export const useControlValueSubscription = () => {
-  const { onUpdate } = useContext(ImageCtrlContext);
-  return onUpdate;
-};
+export const useMutationValues = () =>
+  useContext(ImageCtrlContext).mutationValues;
 
-export const useUpdateControlValues = () => {
-  const { update } = useContext(ImageCtrlContext);
-  return update;
-};
+export const useControlValueSubscription = () =>
+  useContext(ImageCtrlContext).onUpdate;
+
+export const useUpdateControlValues = () =>
+  useContext(ImageCtrlContext).updateControlValues;
+
+export const useUpdateMutationValues = () =>
+  useContext(ImageCtrlContext).updateMutationValues;

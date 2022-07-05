@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { getPreviousOfType } from "../../../animation/file2/hierarchy";
 import { GeppettoImage } from "../../../animation/file2/types";
 import { Vec2 } from "../../../types";
@@ -16,9 +15,10 @@ type VectorValues = GeppettoImage["defaultFrame"];
 
 export const calculateVectorValues = (
   file: GeppettoImage,
+  mutationValues: GeppettoImage["defaultFrame"],
   controlValues: GeppettoImage["controlValues"]
 ): VectorValues => {
-  const result: VectorValues = { ...file.defaultFrame };
+  const result: VectorValues = { ...mutationValues };
   for (const [controlId, controlValue] of Object.entries(controlValues)) {
     const controlInfo = file.controls[controlId];
     if (!controlInfo) continue;
