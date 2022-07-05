@@ -113,6 +113,12 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     // target cannot be a layer (only for mutations)
     if (target.targetType === "item") {
       const targetItem = file.layerHierarchy[target.targetItem];
+      if (targetItem.type === "layer" && items.length === 1) {
+        const itemId = `${items[0].index}`;
+        if (file.mutations[itemId]) {
+          return true;
+        }
+      }
       return targetItem.type === "layerFolder" || targetItem.type === "root";
     }
     if (target.targetType === "between-items") {
@@ -162,8 +168,6 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
       setFile((fileData) => {
         const result = { ...fileData };
         for (const item of items) {
-          if (result.layerHierarchy[item.index].type === "mutation") continue;
-
           result.layerHierarchy = moveInHierarchy(
             result.layerHierarchy,
             `${item.index}`,
