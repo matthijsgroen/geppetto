@@ -138,6 +138,7 @@ export const v2Format: GeppettoImage = {
           controlValue: 1,
         },
         { start: 2500, event: "Breathing" },
+        { start: 3500, event: "Blink" },
       ],
     },
   },

@@ -105,7 +105,10 @@
       "<rootDir>/src/old/.*",
       "<rootDir>/.*/.*Canvas.tsx$",
       "<rootDir>/src/application/webgl/lib/webgl.ts$",
-      "<rootDir>/src/application/webgl/programs/.*"
+      "<rootDir>/src/application/webgl/programs/.*",
+      "<rootDir>/src/reportWebVitals.ts",
+      "<rootDir>/src/service-worker.ts",
+      "<rootDir>/src/serviceWorkerRegistration.ts"
     ],
     "coverageThreshold": {
       "global": {
@@ -115,10 +118,10 @@
         "functions": 4
       },
       "./src/animation/": {
-        "statements": 72,
-        "branches": 58,
-        "lines": 80,
-        "functions": 72
+        "statements": 81,
+        "branches": 62,
+        "lines": 83,
+        "functions": 74
       }
     }
   },

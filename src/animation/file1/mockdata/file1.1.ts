@@ -97,6 +97,11 @@ export const v1Format: ImageDefinition = {
           },
           event: "Breathing",
         },
+        {
+          time: 3500,
+          controlValues: {},
+          event: "Blink",
+        },
       ],
     },
   ],

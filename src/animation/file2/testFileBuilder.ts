@@ -79,31 +79,25 @@ export const fileBuilder = () => {
   return builder;
 };
 
-export const mutationIdByName = (file: GeppettoImage, name: string): string => {
+export const getMutationIdByName = (
+  file: GeppettoImage,
+  name: string
+): string => {
   const mut = Object.entries(file.mutations).find(([, m]) => m.name === name);
-  if (mut) {
-    return mut[0];
-  }
-  return "NOT_FOUND";
+  return mut ? mut[0] : "NOT_FOUND";
 };
 
-export const shapeIdByName = (file: GeppettoImage, name: string): string => {
+export const getShapeIdByName = (file: GeppettoImage, name: string): string => {
   const layer = Object.entries(file.layers).find(([, m]) => m.name === name);
-  if (layer) {
-    return layer[0];
-  }
-  return "NOT_FOUND";
+  return layer ? layer[0] : "NOT_FOUND";
 };
 
-export const shapeFolderIdByName = (
+export const getShapeFolderIdByName = (
   file: GeppettoImage,
   name: string
 ): string => {
   const layer = Object.entries(file.layerFolders).find(
     ([, m]) => m.name === name
   );
-  if (layer) {
-    return layer[0];
-  }
-  return "NOT_FOUND";
+  return layer ? layer[0] : "NOT_FOUND";
 };

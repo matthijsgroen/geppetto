@@ -1,6 +1,6 @@
 import {
   fileBuilder,
-  mutationIdByName,
+  getMutationIdByName,
 } from "../../../animation/file2/testFileBuilder";
 import { vectorPositions } from "./vectorPositions";
 
@@ -18,7 +18,7 @@ describe("vectorPositions", () => {
       )
       .build();
 
-    const mutId = mutationIdByName(file, "mutation");
+    const mutId = getMutationIdByName(file, "mutation");
 
     const positions = vectorPositions(file.mutations, file.layerHierarchy, {
       [mutId]: [40, 30],
@@ -41,8 +41,8 @@ describe("vectorPositions", () => {
         )
         .build();
 
-      const transMutId = mutationIdByName(file, "translate");
-      const rotateMutId = mutationIdByName(file, "rotate");
+      const transMutId = getMutationIdByName(file, "translate");
+      const rotateMutId = getMutationIdByName(file, "rotate");
 
       const positions = vectorPositions(file.mutations, file.layerHierarchy, {
         [transMutId]: [40, 30],
@@ -66,8 +66,8 @@ describe("vectorPositions", () => {
         )
         .build();
 
-      const transMutId = mutationIdByName(file, "translate");
-      const rotateMutId = mutationIdByName(file, "rotate");
+      const transMutId = getMutationIdByName(file, "translate");
+      const rotateMutId = getMutationIdByName(file, "rotate");
 
       const positions = vectorPositions(file.mutations, file.layerHierarchy, {
         [transMutId]: [40, 30],
@@ -97,9 +97,9 @@ describe("vectorPositions", () => {
         )
         .build();
 
-      const transMutId = mutationIdByName(file, "translate");
-      const trans2MutId = mutationIdByName(file, "translate2");
-      const rotateMutId = mutationIdByName(file, "rotate");
+      const transMutId = getMutationIdByName(file, "translate");
+      const trans2MutId = getMutationIdByName(file, "translate2");
+      const rotateMutId = getMutationIdByName(file, "rotate");
 
       const positions = vectorPositions(file.mutations, file.layerHierarchy, {
         [transMutId]: [40, 30],
@@ -127,9 +127,9 @@ describe("vectorPositions", () => {
         )
         .build();
 
-      const transMutId = mutationIdByName(file, "translate");
-      const rotateMutId = mutationIdByName(file, "rotate");
-      const rotate2MutId = mutationIdByName(file, "rotate2");
+      const transMutId = getMutationIdByName(file, "translate");
+      const rotateMutId = getMutationIdByName(file, "rotate");
+      const rotate2MutId = getMutationIdByName(file, "rotate2");
 
       const positions = vectorPositions(file.mutations, file.layerHierarchy, {
         [transMutId]: [40, 30],
@@ -157,8 +157,8 @@ describe("vectorPositions", () => {
         .addMutation("rotate", "rotate", { origin: [50, 20] }, "shape")
         .build();
 
-      const transMutId = mutationIdByName(file, "translate");
-      const rotateMutId = mutationIdByName(file, "rotate");
+      const transMutId = getMutationIdByName(file, "translate");
+      const rotateMutId = getMutationIdByName(file, "rotate");
 
       const positions = vectorPositions(file.mutations, file.layerHierarchy, {
         [transMutId]: [40, 30],
@@ -184,8 +184,8 @@ describe("vectorPositions", () => {
         .addMutation("stretch", "stretch", { origin: [70, 20] }, "shape")
         .build();
 
-      const transMutId = mutationIdByName(file, "translate");
-      const stretchMutId = mutationIdByName(file, "stretch");
+      const transMutId = getMutationIdByName(file, "translate");
+      const stretchMutId = getMutationIdByName(file, "stretch");
 
       const positions = vectorPositions(file.mutations, file.layerHierarchy, {
         [transMutId]: [40, 30],
@@ -213,9 +213,9 @@ describe("vectorPositions", () => {
         )
         .build();
 
-      const deformMutId = mutationIdByName(file, "deform");
-      const rotateMutId = mutationIdByName(file, "rotate");
-      const rotate2MutId = mutationIdByName(file, "rotate2");
+      const deformMutId = getMutationIdByName(file, "deform");
+      const rotateMutId = getMutationIdByName(file, "rotate");
+      const rotate2MutId = getMutationIdByName(file, "rotate2");
 
       const positions = vectorPositions(file.mutations, file.layerHierarchy, {
         [deformMutId]: [40, 30],
