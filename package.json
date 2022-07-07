@@ -101,7 +101,21 @@
     ],
     "coveragePathIgnorePatterns": [
       "<rootDir>/.*.stories.tsx$"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 5,
+        "functions": 6,
+        "lines": 7,
+        "statements": 7
+      },
+      "./src/animation/": {
+        "branches": 58,
+        "functions": 72,
+        "lines": 80,
+        "statements": 72
+      }
+    }
   },
   "eslintIgnore": [
     "/src/old/**"
