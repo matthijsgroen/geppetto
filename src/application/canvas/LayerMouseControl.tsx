@@ -6,11 +6,16 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useUpdateScreenTranslation } from "../contexts/ScreenTranslationContext";
+import {
+  useScreenTranslation,
+  useUpdateScreenTranslation,
+} from "../contexts/ScreenTranslationContext";
 import { Vec2 } from "geppetto-player";
 import useEvent from "../hooks/useEvent";
 import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
 import { vecSub } from "../webgl/lib/vertices";
+
+export type DragState = "start" | "move" | "end";
 
 export type LayerMouseControlProps = PropsWithChildren<{
   mode: MouseMode;
@@ -22,8 +27,8 @@ export type LayerMouseControlProps = PropsWithChildren<{
   onKeyDown?: (event: React.KeyboardEvent<HTMLElement>) => void;
   handleDrag?: (
     event: React.MouseEvent<HTMLElement>,
-    deltaX: number,
-    deltaY: number
+    imagePosition: Vec2,
+    dragState: DragState
   ) => boolean;
   hoverCursor?: (event: React.MouseEvent<HTMLElement>) => MouseMode;
 }>;
@@ -43,14 +48,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   const mouseDownRef = useRef<false | [number, number]>(false);
   const mouseMoveDeltaRef = useRef<[number, number]>([0, 0]);
 
-  // const handleKeyDown = useEvent((event: React.KeyboardEvent<HTMLElement>) => {
-  //   if (onKeyDown) onKeyDown(event);
-  //   console.log("keydown!");
-  //   if (event.shiftKey && handleDrag) {
-  //     setCursorMode(MouseMode.Grab);
-  //   }
-  // });
-
+  const translation = useScreenTranslation();
   const resetCursor = useEvent(() => {
     setCursorMode(mode);
   });
@@ -75,14 +73,21 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
     };
   }, [handleDrag, resetCursor]);
 
-  const handleMouseDown = useEvent((event: React.MouseEvent) => {
+  const handleMouseDown = useEvent((event: React.MouseEvent<HTMLElement>) => {
     if ((event.target as HTMLElement).nodeName !== "CANVAS") return;
-    const canvasPos = event.currentTarget.getBoundingClientRect();
-    const elementX = event.pageX - canvasPos.left;
-    const elementY = event.pageY - canvasPos.top;
+    const canvasRect = event.currentTarget.getBoundingClientRect();
+    const elementX = event.pageX - canvasRect.left;
+    const elementY = event.pageY - canvasRect.top;
 
     mouseDownRef.current = [elementX, elementY];
     mouseMoveDeltaRef.current = [0, 0];
+    if (handleDrag) {
+      handleDrag(
+        event,
+        pixelsToImage(translation, canvasRect)([elementX, elementY]),
+        "start"
+      );
+    }
   });
 
   const screenUpdater = useUpdateScreenTranslation();
@@ -110,17 +115,6 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
     const [prevDeltaX, prevDeltaY] = mouseMoveDeltaRef.current;
     mouseMoveDeltaRef.current = [deltaX, deltaY];
     screenUpdater((trans) => {
-      const moveDeltaX = (deltaX - prevDeltaX) / trans.zoom;
-      const moveDeltaY = (deltaY - prevDeltaY) / trans.zoom;
-      if (handleDrag) {
-        if (handleDrag(event, moveDeltaX, moveDeltaY)) {
-          setCursorMode(MouseMode.Grab);
-          return trans;
-        } else {
-          setCursorMode(mode);
-        }
-      }
-
       const newPanX = Math.min(
         1.0,
         Math.max(
@@ -139,15 +133,40 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
         )
       );
 
+      if (handleDrag) {
+        if (
+          handleDrag(
+            event,
+            pixelsToImage(trans, canvasRect)([elementX, elementY]),
+            "move"
+          )
+        ) {
+          setCursorMode(MouseMode.Grab);
+          return trans;
+        } else {
+          setCursorMode(mode);
+        }
+      }
+
       return { ...trans, panX: newPanX, panY: newPanY };
     });
   });
 
   const handleMouseUp = useEvent((event: React.MouseEvent<HTMLElement>) => {
-    if (onClick) {
+    if (onClick && cursorMode !== MouseMode.Grab) {
       onClick(event);
     }
     mouseDownRef.current = false;
+    if (handleDrag) {
+      const canvasRect = event.currentTarget.getBoundingClientRect();
+      const elementX = event.pageX - canvasRect.left;
+      const elementY = event.pageY - canvasRect.top;
+      handleDrag(
+        event,
+        pixelsToImage(translation, canvasRect)([elementX, elementY]),
+        "start"
+      );
+    }
   });
 
   const handleMouseWheel = useEvent(
