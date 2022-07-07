@@ -1,9 +1,9 @@
 import { addMutation, AddMutationDetails, removeMutation } from "./mutation";
 import {
   fileBuilder,
-  mutationIdByName,
-  shapeFolderIdByName,
-  shapeIdByName,
+  getMutationIdByName,
+  getShapeFolderIdByName,
+  getShapeIdByName,
 } from "./testFileBuilder";
 
 describe("addMutation", () => {
@@ -15,8 +15,8 @@ describe("addMutation", () => {
     describe("adding mutation to layer", () => {
       it("adds mutation to layer", () => {
         const startFile = fileWithFoldersAndLayers.build();
-        const shapeId = shapeIdByName(startFile, "shape1");
-        const folderId = shapeFolderIdByName(startFile, "folder1");
+        const shapeId = getShapeIdByName(startFile, "shape1");
+        const folderId = getShapeFolderIdByName(startFile, "folder1");
 
         const addDetails = {} as AddMutationDetails<"translate">;
         const result = addMutation(
@@ -67,8 +67,8 @@ describe("removeMutation", () => {
 
     it("removes all relevant data", () => {
       const file = fileWithMutation.build();
-      const mutationId = mutationIdByName(file, "Movement");
-      const shapeId = shapeIdByName(file, "shape1");
+      const mutationId = getMutationIdByName(file, "Movement");
+      const shapeId = getShapeIdByName(file, "shape1");
 
       const result = removeMutation(file, mutationId);
 

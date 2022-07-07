@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { dragItem } from "../../animation/file2/drag";
 import {
   findParentId,
   PlacementInfo,
@@ -44,7 +45,7 @@ import { ActionToolButton } from "../actions/ActionToolButton";
 import { useFile } from "../applicationMenu/FileContext";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
-import LayerMouseControl from "../canvas/LayerMouseControl";
+import LayerMouseControl, { DragState } from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
 import { useUpdateMutationValues } from "../contexts/ImageControlContext";
 import {
@@ -141,6 +142,13 @@ export const Composition: React.FC<CompositionProps> = ({
   const [activeMutator, setActiveMutator] = useState<string | null>(null);
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
   const updateMutationValues = useUpdateMutationValues();
+  const dragDropStatus = useRef<{
+    fileDragStart: GeppettoImage;
+    dragStart: Vec2;
+  }>({
+    fileDragStart: file,
+    dragStart: [0, 0],
+  });
 
   const vectorValues = calculateVectorValues(
     file,
@@ -297,14 +305,32 @@ export const Composition: React.FC<CompositionProps> = ({
       return event.shiftKey ? MouseMode.Grab : MouseMode.Normal;
     }
   );
-  // const handleDrag = useEvent(
-  //   (event: React.MouseEvent<HTMLElement>): boolean => {
-  //     if (!event.shiftKey) {
-  //       return false;
-  //     }
-  //     return true;
-  //   }
-  // );
+  const handleDrag = useEvent(
+    (
+      event: React.MouseEvent<HTMLElement>,
+      position: Vec2,
+      dragState: DragState
+    ): boolean => {
+      if (!event.shiftKey) {
+        return false;
+      }
+      const itemId = selectedItems[0];
+      if (itemId) {
+        if (dragState === "start") {
+          dragDropStatus.current.dragStart = position;
+          dragDropStatus.current.fileDragStart = file;
+        }
+        const dragged: Vec2 = [
+          position[0] - dragDropStatus.current.dragStart[0],
+          position[1] - dragDropStatus.current.dragStart[1],
+        ];
+        const origin = dragDropStatus.current.fileDragStart;
+
+        setFile(dragItem(origin, dragged, itemId));
+      }
+      return true;
+    }
+  );
   const [menuProps, toggleMenu] = useMenuState();
   const [anchorPoint, setAnchorPoint] = useState({
     x: 0,
@@ -438,7 +464,7 @@ export const Composition: React.FC<CompositionProps> = ({
               mode={MouseMode.Normal}
               maxZoomFactor={maxZoom}
               hoverCursor={hoverCursor}
-              // handleDrag={handleDrag}
+              handleDrag={handleDrag}
               onClick={handleClick}
               onContextMenu={handleContextMenu}
             >

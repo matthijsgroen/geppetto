@@ -27,7 +27,11 @@ jobs:
         uses: borales/actions-yarn@v3.0.0
         with:
           cmd: install # will run `yarn install` command
+      - name: Run Lint
+        uses: borales/actions-yarn@v3.0.0
+        with:
+          cmd: lint # will run `yarn lint` command
       - name: Run Tests
         uses: borales/actions-yarn@v3.0.0
         with:
-          cmd: test # will run `yarn test` command
+          cmd: test --coverage # will run `yarn test` command

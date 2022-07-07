@@ -15,4 +15,12 @@ describe("verifyFile", () => {
     const brokenFle = { ...v2Format, otherKey: true };
     expect(verifyFile(brokenFle)).toEqual(false);
   });
+
+  it("returns false for a string", () => {
+    expect(verifyFile("test")).toEqual(false);
+  });
+
+  it("returns false for null", () => {
+    expect(verifyFile(null)).toEqual(false);
+  });
 });

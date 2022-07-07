@@ -98,6 +98,34 @@
   "jest": {
     "transformIgnorePatterns": [
       "/node_modules/(?!delaunator|robust-predicates)"
-    ]
-  }
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/.*.stories.tsx$",
+      "<rootDir>/src/ui-components/.*",
+      "<rootDir>/src/old/.*",
+      "<rootDir>/.*/.*Canvas.tsx$",
+      "<rootDir>/src/application/webgl/lib/webgl.ts$",
+      "<rootDir>/src/application/webgl/programs/.*",
+      "<rootDir>/src/reportWebVitals.ts",
+      "<rootDir>/src/service-worker.ts",
+      "<rootDir>/src/serviceWorkerRegistration.ts"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "statements": 8,
+        "branches": 3,
+        "lines": 7,
+        "functions": 4
+      },
+      "./src/animation/": {
+        "statements": 81,
+        "branches": 62,
+        "lines": 83,
+        "functions": 74
+      }
+    }
+  },
+  "eslintIgnore": [
+    "/src/old/**"
+  ]
 }
