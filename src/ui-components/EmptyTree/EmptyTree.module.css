@@ -1,0 +1,12 @@
+.emptyTree {
+  border-radius: var(--control-border-radius);
+  color: var(--colors-text-default);
+  font: caption;
+
+  background-color: var(--colors-control-default);
+  flex: 1;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

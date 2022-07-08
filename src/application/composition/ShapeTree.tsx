@@ -1,17 +1,22 @@
-import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
+import {
+  findParentId,
+  isEmpty,
+  PlacementInfo,
+} from "../../animation/file2/hierarchy";
 import {
   addMutation,
   AddMutationDetails,
   iconMapping,
   mutationLabels,
-  removeMutation,
 } from "../../animation/file2/mutation";
-import { addFolder } from "../../animation/file2/shapes";
+import { addFolder, removeShape } from "../../animation/file2/shapes";
 import { MutationVector } from "../../animation/file2/types";
 import {
+  EmptyTree,
   Icon,
   Menu,
   MenuItem,
+  Paragraph,
   ToolBar,
   ToolButton,
   ToolSeparator,
@@ -37,6 +42,10 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
   const [selectedItems, setSelectedItems] = selectedItemsState;
   const activeMutation =
     (selectedItems.length === 1 && file.mutations[selectedItems[0]]) || null;
+  const selectedEmptyFolder =
+    selectedItems.length === 1 &&
+    file.layerFolders[selectedItems[0]] &&
+    (file.layerHierarchy[selectedItems[0]].children || []).length === 0;
   const updateMutationValues = useUpdateMutationValues();
 
   const addFolderAction = useToolAction(() => {
@@ -59,11 +68,8 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
 
   const removeItemAction = useToolAction(() => {
     const item = selectedItems[0];
-    const treeItem = file.layerHierarchy[item];
-    if (treeItem.type === "mutation") {
-      setSelectedItems([]);
-      setFile((value) => removeMutation(value, item));
-    }
+    setSelectedItems([]);
+    setFile(removeShape(item));
   });
 
   const addMutationHandler = useEvent(
@@ -147,13 +153,19 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
         <ToolSeparator />
         <ToolButton
           icon={<Icon>🗑</Icon>}
-          disabled={!activeMutation}
+          disabled={!(activeMutation || selectedEmptyFolder)}
           onClick={removeItemAction}
           onKeyDown={removeItemAction}
           tooltip="Remove item"
         />
       </ToolBar>
-      <Tree treeId="composition" />
+      {isEmpty(file.layerHierarchy) ? (
+        <EmptyTree>
+          <Paragraph>Start by adding a layer on the "Layers" screen.</Paragraph>
+        </EmptyTree>
+      ) : (
+        <Tree treeId="composition" />
+      )}
     </LayerTreeEnvironment>
   );
 };
