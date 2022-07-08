@@ -13,22 +13,23 @@ export const getNewId = (tree: Record<string, unknown>): string => {
   return `${id}`;
 };
 
+const ROOT_ID = "root";
+
 const addFirst = <T extends string>(
   hierarchy: Hierarchy<T>,
   newNode: Omit<TreeNode<T>, "parentId">,
-  parentId: string | null,
   itemId: string | null
 ): [hierarchy: Hierarchy<T>, newId: string] => {
-  const pId = parentId ? parentId : "root";
   const newId = itemId === null ? getNewId(hierarchy) : itemId;
+  const root: RootNode = hierarchy[ROOT_ID] as RootNode;
   return [
     {
       ...hierarchy,
-      [pId]: {
-        ...hierarchy[pId],
-        children: [newId].concat(hierarchy[pId].children ?? []),
+      [ROOT_ID]: {
+        ...root,
+        children: [newId].concat(root.children),
       },
-      [newId]: { ...newNode, parentId: pId },
+      [newId]: { ...newNode, parentId: ROOT_ID },
     },
     newId,
   ];
@@ -73,7 +74,7 @@ export const addInHierarchyWithId = <T extends string>(
   const newId = itemId === null ? getNewId(hierarchy) : itemId;
   if (position && "after" in position) {
     const after = hierarchy[position.after] as TreeNode<T>;
-    if (after) {
+    if (after && !isRootNode(after)) {
       return [
         moveNextInHierarchy(hierarchy, newId, newNode, position.after, "after"),
         newId,
@@ -82,7 +83,7 @@ export const addInHierarchyWithId = <T extends string>(
   }
   if (position && "before" in position) {
     const before = hierarchy[position.before] as TreeNode<T>;
-    if (before) {
+    if (before && !isRootNode(before)) {
       return [
         moveNextInHierarchy(
           hierarchy,
@@ -112,7 +113,7 @@ export const addInHierarchyWithId = <T extends string>(
       ];
     }
   }
-  return addFirst(hierarchy, newNode, null, itemId);
+  return addFirst(hierarchy, newNode, itemId);
 };
 
 export const addInHierarchy = <T extends string>(
@@ -160,14 +161,13 @@ const removeChildId = <T extends string>(
   hierarchy: Hierarchy<T>,
   itemId: string
 ): Hierarchy<T> => {
-  const item = findInHierarchy(hierarchy, itemId);
-  if (!item) return hierarchy;
+  const item = findInHierarchy(hierarchy, itemId) as RootNode | TreeNode<T>;
   const updatedHierarchy = {
     ...hierarchy,
   };
   if (!isRootNode(item)) {
     const parent = hierarchy[item.parentId];
-    const updatedChildren = (parent.children || []).filter(
+    const updatedChildren = (parent.children as string[]).filter(
       (id) => id !== itemId
     );
     const updatedParent: RootNode | TreeNode<T> = {
@@ -265,7 +265,9 @@ export const visit = <T extends string>(
     return;
   }
 
-  const root = Object.values(hierarchy).find((n) => n.type === "root");
+  const root = Object.values(hierarchy).find(
+    (n): n is RootNode => n.type === "root"
+  );
   for (const nodeId of root?.children || []) {
     const node = hierarchy[nodeId] as TreeNode<T>;
     const r = visitNode(hierarchy, node, nodeId, visitor);
@@ -286,7 +288,7 @@ export const getPreviousOfType = <T extends string>(
     activeParent = hierarchy[activeParent.parentId];
     let lastOfType: string | null = null;
 
-    for (const childId of activeParent.children || []) {
+    for (const childId of activeParent.children as string[]) {
       if (childId === nodeId) break;
       if (hierarchy[childId].type === type) {
         lastOfType = childId;
