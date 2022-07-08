@@ -4,6 +4,7 @@ import {
   getPreviousOfType,
   moveInHierarchy,
   removeFromHierarchy,
+  visit,
 } from "./hierarchy";
 import { Hierarchy } from "./types";
 
@@ -165,6 +166,52 @@ describe("moveInHierarchy", () => {
   });
 });
 
+describe("visit", () => {
+  const hierarchy: Hierarchy<"item" | "search"> = {
+    root: { type: "root", children: ["0", "2"] },
+    "0": { type: "item", parentId: "root" },
+    "2": { type: "item", parentId: "root", children: ["3", "4", "5", "6"] },
+    "3": { type: "search", parentId: "2" },
+    "4": { type: "search", parentId: "2" },
+    "5": { type: "item", parentId: "2", children: ["7", "8"] },
+    "6": { type: "item", parentId: "2", children: ["9"] },
+    "7": { type: "search", parentId: "5" },
+    "8": { type: "item", parentId: "5" },
+    "9": { type: "item", parentId: "6" },
+  };
+
+  it("will call the visit callback for each node in the tree", () => {
+    let counter = 0;
+    visit(hierarchy, () => {
+      counter++;
+    });
+    expect(counter).toEqual(9);
+  });
+
+  it("will abort traversal when SKIP is returned", () => {
+    let counter = 0;
+    visit(hierarchy, () => {
+      counter++;
+      if (counter === 3) {
+        return "SKIP";
+      }
+    });
+    expect(counter).toEqual(3);
+  });
+
+  it("accepts a starting node", () => {
+    let visitedIds: string[] = [];
+    visit(
+      hierarchy,
+      (_node, nodeId) => {
+        visitedIds.push(nodeId);
+      },
+      "6"
+    );
+    expect(visitedIds).toEqual(["6", "9"]);
+  });
+});
+
 describe("getPreviousOfType", () => {
   const hierarchy: Hierarchy<"item" | "search"> = {
     root: { type: "root", children: ["0", "2"] },
@@ -190,6 +237,11 @@ describe("getPreviousOfType", () => {
   });
 
   it("looks upwards in hierarchy (multiple times)", () => {
+    const result = getPreviousOfType(hierarchy, "search", "9");
+    expect(result).toEqual("4");
+  });
+
+  it("returns null when parent has no children", () => {
     const result = getPreviousOfType(hierarchy, "search", "9");
     expect(result).toEqual("4");
   });

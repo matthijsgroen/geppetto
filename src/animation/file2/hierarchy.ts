@@ -242,14 +242,16 @@ const visitNode = <T extends string>(
   node: TreeNode<T>,
   nodeId: string,
   visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP"
-): void => {
+): boolean => {
   const result = visitor(node, nodeId);
   if (node.children && result !== "SKIP") {
     for (const childId of node.children) {
       const childNode = hierarchy[childId] as TreeNode<T>;
-      visitNode(hierarchy, childNode, childId, visitor);
+      const r = visitNode(hierarchy, childNode, childId, visitor);
+      if (!r) return false;
     }
   }
+  return result !== "SKIP";
 };
 
 export const visit = <T extends string>(
@@ -266,7 +268,10 @@ export const visit = <T extends string>(
   const root = Object.values(hierarchy).find((n) => n.type === "root");
   for (const nodeId of root?.children || []) {
     const node = hierarchy[nodeId] as TreeNode<T>;
-    visitNode(hierarchy, node, nodeId, visitor);
+    const r = visitNode(hierarchy, node, nodeId, visitor);
+    if (!r) {
+      return;
+    }
   }
 };
 
@@ -279,12 +284,9 @@ export const getPreviousOfType = <T extends string>(
   let activeParent = hierarchy[nodeId];
   while (activeParent && !isRootNode(activeParent)) {
     activeParent = hierarchy[activeParent.parentId];
-    if (!activeParent.children) {
-      return null;
-    }
     let lastOfType: string | null = null;
 
-    for (const childId of activeParent.children) {
+    for (const childId of activeParent.children || []) {
       if (childId === nodeId) break;
       if (hierarchy[childId].type === type) {
         lastOfType = childId;
@@ -298,6 +300,11 @@ export const getPreviousOfType = <T extends string>(
   return null;
 };
 
+/**
+ * This code will be removed when the version is further along. This is just
+ * for debugging purposes, and will not be tested
+ */
+/* istanbul ignore next */
 export const visualizeTree = <T extends string>(
   hierarchy: Hierarchy<T>,
   omitTypes: string[] = [],
