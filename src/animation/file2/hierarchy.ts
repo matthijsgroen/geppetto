@@ -329,3 +329,6 @@ export const visualizeTree = <T extends string>(
 
   return result;
 };
+
+export const isEmpty = <T extends string>(hierarchy: Hierarchy<T>) =>
+  Object.keys(hierarchy).length <= 1;

@@ -1,5 +1,10 @@
 import { newFile } from "./new";
-import { addFolder, AddFolderDetails, addShape } from "./shapes";
+import { addFolder, AddFolderDetails, addShape, removeShape } from "./shapes";
+import {
+  fileBuilder,
+  getMutationIdByName,
+  getShapeIdByName,
+} from "./testFileBuilder";
 
 describe("shapes", () => {
   describe("addShape", () => {
@@ -144,6 +149,33 @@ describe("shapes", () => {
           collapsed: false,
         });
       });
+    });
+  });
+});
+
+describe("removeMutation", () => {
+  describe("default remove behavior", () => {
+    const fileWithMutation = fileBuilder();
+    fileWithMutation.addFolder("folder1");
+    fileWithMutation.addShape("shape1", "folder1");
+    fileWithMutation.addMutation(
+      "Movement",
+      "translate",
+      { radius: -1 },
+      "shape1"
+    );
+
+    it("removes all relevant data", () => {
+      const file = fileWithMutation.build();
+      const mutationId = getMutationIdByName(file, "Movement");
+      const shapeId = getShapeIdByName(file, "shape1");
+
+      const result = removeShape(mutationId)(file);
+
+      expect(result.layerHierarchy[shapeId].children).toEqual([]);
+      expect(result.layerHierarchy[mutationId]).toBeUndefined();
+      expect(result.mutations[mutationId]).toBeUndefined();
+      expect(result.defaultFrame[mutationId]).toBeUndefined();
     });
   });
 });

@@ -4,6 +4,7 @@ import {
   findInHierarchy,
   findParentId,
   getPreviousOfType,
+  isEmpty,
   moveInHierarchy,
   removeFromHierarchy,
   visit,
@@ -362,5 +363,31 @@ describe("getPreviousOfType", () => {
   it("returns null when parent has no children", () => {
     const result = getPreviousOfType(hierarchy, "search", "9");
     expect(result).toEqual("4");
+  });
+});
+
+describe("isEmpty", () => {
+  it("returns true when tree is empty", () => {
+    const hierarchy: Hierarchy<"item"> = {};
+    const result = isEmpty(hierarchy);
+    expect(result).toEqual(true);
+  });
+
+  it("returns true when tree has only root", () => {
+    const hierarchy: Hierarchy<"item"> = {
+      root: { type: "root", children: [] },
+    };
+    const result = isEmpty(hierarchy);
+    expect(result).toEqual(true);
+  });
+
+  it("returns false for populated tree", () => {
+    const hierarchy: Hierarchy<"item"> = {
+      root: { type: "root", children: ["0", "2"] },
+      "0": { type: "item", parentId: "root" },
+      "2": { type: "item", parentId: "root" },
+    };
+    const result = isEmpty(hierarchy);
+    expect(result).toEqual(false);
   });
 });
