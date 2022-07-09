@@ -4,22 +4,28 @@ const OPTION_KEY = "⎇";
 const CMD_KEY = "⌘";
 const SHIFT_KEY = "⇧";
 
-const keymap = {
+const keyMap = {
   Delete: "Del",
   Backspace: "Backspace",
   DelOrBackspace: "Del",
 };
 
-type SpecialKeys = keyof typeof keymap;
+const mouseMap = {
+  MouseDrag: "Drag",
+};
 
-const macKeymap: Record<SpecialKeys, string> = {
+type SpecialKeys = keyof typeof keyMap;
+
+type MouseInteractions = keyof typeof mouseMap;
+
+const macKeyMap: Record<SpecialKeys, string> = {
   Delete: "⌦",
   Backspace: "⌫",
   DelOrBackspace: "⌫",
 };
 
 export type Shortcut = {
-  key: `Key${string}` | SpecialKeys;
+  interaction: `Key${string}` | SpecialKeys | MouseInteractions;
   ctrlOrCmd?: boolean;
   shift?: boolean;
   alt?: boolean;
@@ -37,10 +43,13 @@ const macShortcut = (shortcut: Shortcut): string => {
   const option = shortcut.alt ? `${OPTION_KEY} ` : "";
 
   let key = "";
-  if (shortcut.key.startsWith("Key")) {
-    key = shortcut.key.slice(3);
+  if (shortcut.interaction.startsWith("Key")) {
+    key = shortcut.interaction.slice(3);
   } else {
-    key = macKeymap[shortcut.key as SpecialKeys] || "";
+    key =
+      macKeyMap[shortcut.interaction as SpecialKeys] ||
+      mouseMap[shortcut.interaction as MouseInteractions] ||
+      "";
   }
 
   return `${option}${shift}${cmd}${key}`;
@@ -57,10 +66,13 @@ export const shortcutStr = (shortcut: Shortcut): string => {
   const alt = shortcut.alt ? "Alt+" : "";
 
   let key = "";
-  if (shortcut.key.startsWith("Key")) {
-    key = shortcut.key.slice(3);
+  if (shortcut.interaction.startsWith("Key")) {
+    key = shortcut.interaction.slice(3);
   } else {
-    key = keymap[shortcut.key as SpecialKeys] || "";
+    key =
+      keyMap[shortcut.interaction as SpecialKeys] ||
+      mouseMap[shortcut.interaction as MouseInteractions] ||
+      "";
   }
 
   return `${ctrl}${alt}${shift}${key}`;
@@ -77,12 +89,12 @@ export const isEvent = (
   const delOrBackspace =
     (event.code === "Delete" &&
       !isMacBrowser &&
-      shortcut.key === "DelOrBackspace") ||
+      shortcut.interaction === "DelOrBackspace") ||
     (event.code === "Backspace" &&
       isMacBrowser &&
-      shortcut.key === "DelOrBackspace");
+      shortcut.interaction === "DelOrBackspace");
 
-  if (event.code !== shortcut.key && !delOrBackspace) return false;
+  if (event.code !== shortcut.interaction && !delOrBackspace) return false;
   if (event.shiftKey !== f(shortcut.shift)) return false;
   if (shortcut.ctrlOrCmd && !isMacBrowser && !event.ctrlKey) return false;
   if (shortcut.ctrlOrCmd && isMacBrowser && !event.metaKey) return false;

@@ -62,7 +62,7 @@ const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
       ]
     : coord;
 
-const DELETE_POINT: Shortcut = { key: "DelOrBackspace" };
+const DELETE_POINT: Shortcut = { interaction: "DelOrBackspace" };
 
 export const Layers: React.FC<LayersProps> = ({
   textureState,

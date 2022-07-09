@@ -22,15 +22,20 @@ export const Default: ComponentStory<typeof Menu> = () => (
     transition
   >
     <MenuItem>New File</MenuItem>
-    <MenuItem shortcut={{ key: "KeyS", ctrlOrCmd: true }}>Save</MenuItem>
+    <MenuItem shortcut={{ interaction: "KeyS", ctrlOrCmd: true }}>
+      Save
+    </MenuItem>
     <MenuDivider />
     <MenuHeader>Edit</MenuHeader>
     <SubMenu label="Edit">
-      <MenuItem shortcut={{ key: "KeyX", ctrlOrCmd: true, alt: true }}>
+      <MenuItem shortcut={{ interaction: "KeyX", ctrlOrCmd: true, alt: true }}>
         Cut
       </MenuItem>
-      <MenuItem shortcut={{ key: "KeyC", shift: true }}>Copy</MenuItem>
-      <MenuItem disabled shortcut={{ key: "KeyV", shift: true, alt: true }}>
+      <MenuItem shortcut={{ interaction: "KeyC", shift: true }}>Copy</MenuItem>
+      <MenuItem
+        disabled
+        shortcut={{ interaction: "KeyV", shift: true, alt: true }}
+      >
         Paste
       </MenuItem>
     </SubMenu>

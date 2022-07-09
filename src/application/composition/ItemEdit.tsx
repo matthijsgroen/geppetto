@@ -6,7 +6,7 @@ import {
   isShapeMutationVector,
 } from "../../animation/file2/mutation";
 import { Vec2 } from "../../types";
-import { Control, ControlPanel, Icon, Title } from "../../ui-components";
+import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
 import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
 import { useFile } from "../applicationMenu/FileContext";
 import {
@@ -62,7 +62,9 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
         </Control>
       </ControlPanel>
       <Paragraph size="small">
-        Use Shift+Mouse drag to move the folder contents
+        Use
+        <Kbd shortcut={{ interaction: "MouseDrag", shift: true }} /> to move the
+        folder contents
       </Paragraph>
     </>
   );
@@ -108,7 +110,9 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
         </Control>
       </ControlPanel>
       <Paragraph size="small">
-        Use Shift+Mouse drag to change the layer offset
+        Use
+        <Kbd shortcut={{ interaction: "MouseDrag", shift: true }} /> to change
+        the layer offset
       </Paragraph>
     </>
   );
@@ -215,7 +219,9 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
       </ControlPanel>
       {isShapeMutationVector(mutation) && (
         <Paragraph size="small">
-          Use Shift+Mouse drag to move the mutator origin
+          Use
+          <Kbd shortcut={{ interaction: "MouseDrag", shift: true }} /> to move
+          the mutator origin
         </Paragraph>
       )}
     </>

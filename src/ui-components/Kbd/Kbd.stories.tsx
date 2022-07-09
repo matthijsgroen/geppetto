@@ -11,24 +11,35 @@ export default {
     ctrlOrCmd: { control: "boolean" },
     shift: { control: "boolean" },
     alt: { control: "boolean" },
-    key: {
-      options: ["KeyO", "KeyS", "Backspace", "Delete", "DelOrBackspace"],
+    interaction: {
+      options: [
+        "KeyO",
+        "KeyS",
+        "Backspace",
+        "Delete",
+        "DelOrBackspace",
+        "MouseDrag",
+      ],
       control: "select",
     },
   },
   args: {
-    key: "KeyO",
+    interaction: "KeyO",
     disabled: false,
     ctrlOrCmd: false,
     shift: false,
     alt: false,
     mac: false,
+    dimmed: false,
+    inMenu: false,
   },
 } as ComponentMeta<typeof KbdElement>;
 
 type StoryProps = {
-  key: Shortcut["key"];
+  interaction: Shortcut["interaction"];
   disabled?: boolean;
+  dimmed?: boolean;
+  inMenu?: boolean;
   ctrlOrCmd: boolean;
   shift: boolean;
   alt: boolean;
@@ -36,18 +47,18 @@ type StoryProps = {
 };
 
 const Template: React.FC<StoryProps> = ({
-  disabled,
-  key = "KeyO",
+  interaction = "KeyO",
   ctrlOrCmd,
   shift,
   alt,
   mac,
+  ...props
 }) => {
-  const shortcut: Shortcut = { key, ctrlOrCmd, shift, alt, mac };
+  const shortcut: Shortcut = { interaction, ctrlOrCmd, shift, alt, mac };
   return (
     <div>
-      <p style={{ background: "white", margin: 0 }}>
-        <KbdElement shortcut={shortcut} disabled={disabled} />
+      <p style={{ background: "var(--colors-control-default)", margin: 0 }}>
+        <KbdElement shortcut={shortcut} {...props} />
       </p>
     </div>
   );

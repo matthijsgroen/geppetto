@@ -75,7 +75,7 @@ type CompositionProps = {
 
 const TOGGLE_INFO_SHORTCUT: Shortcut = {
   ctrlOrCmd: true,
-  key: "KeyI",
+  interaction: "KeyI",
 };
 
 const calculateScale = (element: Size, texture: Size) => {
@@ -191,7 +191,7 @@ export const Composition: React.FC<CompositionProps> = ({
         toggleWireFrames: {
           icon: "🩻",
           tooltip: "toggle wireframes",
-          shortcut: { alt: true, key: "KeyW" } as Shortcut,
+          shortcut: { alt: true, interaction: "KeyW" } as Shortcut,
           handler: () => {
             setShowWireFrames((prev) => !prev);
           },
