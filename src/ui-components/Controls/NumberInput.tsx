@@ -1,12 +1,12 @@
 import { ChangeEvent, KeyboardEventHandler, useCallback } from "react";
 import styles from "./Control.module.scss";
 
-export enum UpDown {
+enum UpDown {
   UP = "up",
   DOWN = "down",
 }
 
-export enum StepSize {
+enum StepSize {
   EXTRA_SMALL = "xs",
   SMALL = "s",
   MEDIUM = "m",
@@ -22,26 +22,21 @@ type NumberInputProps = {
   maxValue?: number;
   htmlId?: string;
   onChange?: (newValue: number) => void;
-  onStep?: (value: number, upDown: UpDown, size: StepSize) => number;
 };
 
-const stepSize = (size: StepSize): number =>
-  ({
-    [StepSize.EXTRA_SMALL]: 0.01,
-    [StepSize.SMALL]: 0.1,
-    [StepSize.MEDIUM]: 1,
-    [StepSize.LARGE]: 10,
-    [StepSize.EXTRA_LARGE]: 100,
-  }[size]);
+const stepSizes: Record<StepSize, number> = {
+  [StepSize.EXTRA_SMALL]: 0.01,
+  [StepSize.SMALL]: 0.1,
+  [StepSize.MEDIUM]: 1,
+  [StepSize.LARGE]: 10,
+  [StepSize.EXTRA_LARGE]: 100,
+};
 
-const defaultStepFn = (input: number, upDown: UpDown, size: StepSize): number =>
-  upDown === UpDown.UP ? input + stepSize(size) : input - stepSize(size);
+const onStep = (input: number, upDown: UpDown, size: StepSize): number =>
+  upDown === UpDown.UP ? input + stepSizes[size] : input - stepSizes[size];
 
 const numberStepControl =
-  (
-    handler: (value: number) => void,
-    onStep = defaultStepFn
-  ): KeyboardEventHandler<HTMLInputElement> =>
+  (handler: (value: number) => void): KeyboardEventHandler<HTMLInputElement> =>
   (e) => {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       const dir = e.key === "ArrowDown" ? UpDown.DOWN : UpDown.UP;
@@ -72,12 +67,16 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   minValue,
   maxValue,
   onChange,
-  onStep = defaultStepFn,
 }) => {
-  const changeHandler = useCallback(
+  const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       onChange && onChange(e.currentTarget.valueAsNumber);
     },
+    [onChange]
+  );
+
+  const handleKeyDown = useCallback(
+    () => numberStepControl((stepValue) => onChange && onChange(stepValue)),
     [onChange]
   );
 
@@ -88,11 +87,8 @@ export const NumberInput: React.FC<NumberInputProps> = ({
         type="number"
         id={htmlId}
         value={value}
-        onChange={changeHandler}
-        onKeyDown={numberStepControl(
-          (stepValue) => onChange && onChange(stepValue),
-          onStep
-        )}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
         min={minValue}
         max={maxValue}
       />
