@@ -284,6 +284,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
           icon={<LogoIcon />}
           active={open}
           notificationBadge={hasAppUpdate}
+          tooltip={"Application menu"}
         />
       )}
     >
