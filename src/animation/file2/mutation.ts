@@ -1,11 +1,7 @@
 import { Vec2 } from "geppetto-player";
 import produce from "immer";
 import { defaultValueForVector } from "../../application/webgl/lib/vertices";
-import {
-  addInHierarchy,
-  PlacementInfo,
-  removeFromHierarchy,
-} from "./hierarchy";
+import { addInHierarchy, PlacementInfo } from "./hierarchy";
 import { getUniqueName } from "./shapes";
 import {
   DeformationVector,
@@ -92,19 +88,3 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
     draft.defaultFrame[mutationId] = defaultValueForVector(mutationType);
   });
 };
-
-export const removeMutation = (
-  file: GeppettoImage,
-  mutationId: string
-): GeppettoImage =>
-  produce(file, (draft) => {
-    const [hierarchy] = removeFromHierarchy(draft.layerHierarchy, mutationId);
-    draft.layerHierarchy = hierarchy;
-    delete draft.mutations[mutationId];
-    delete draft.defaultFrame[mutationId];
-    Object.values(draft.controls).forEach((control) => {
-      control.steps.forEach((step) => {
-        delete step[mutationId];
-      });
-    });
-  });

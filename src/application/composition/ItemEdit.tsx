@@ -1,8 +1,13 @@
 import produce from "immer";
 import { useEffect, useState, useTransition } from "react";
-import { hasRadius, iconMapping } from "../../animation/file2/mutation";
+import {
+  hasRadius,
+  iconMapping,
+  isShapeMutationVector,
+} from "../../animation/file2/mutation";
 import { Vec2 } from "../../types";
-import { Control, ControlPanel, Icon, Title } from "../../ui-components";
+import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
+import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
 import { useFile } from "../applicationMenu/FileContext";
 import {
   useMutationValues,
@@ -56,6 +61,11 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
           />
         </Control>
       </ControlPanel>
+      <Paragraph size="small">
+        Use
+        <Kbd shortcut={{ interaction: "MouseDrag", shift: true }} /> to move the
+        folder contents
+      </Paragraph>
     </>
   );
 };
@@ -99,6 +109,11 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
           />
         </Control>
       </ControlPanel>
+      <Paragraph size="small">
+        Use
+        <Kbd shortcut={{ interaction: "MouseDrag", shift: true }} /> to change
+        the layer offset
+      </Paragraph>
     </>
   );
 };
@@ -171,11 +186,13 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
         <Icon>{iconMapping[mutation.type]}</Icon> {mutation.name}
       </Title>
       <ControlPanel>
-        <VectorControl
-          label="Origin"
-          value={mutation.origin}
-          onChange={originChangeHandler}
-        />
+        {isShapeMutationVector(mutation) && (
+          <VectorControl
+            label="Origin"
+            value={mutation.origin}
+            onChange={originChangeHandler}
+          />
+        )}
         {hasRadius(mutation) && (
           <>
             <BooleanControl
@@ -200,6 +217,13 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
           onValueChange={valueChangeHandler}
         />
       </ControlPanel>
+      {isShapeMutationVector(mutation) && (
+        <Paragraph size="small">
+          Use
+          <Kbd shortcut={{ interaction: "MouseDrag", shift: true }} /> to move
+          the mutator origin
+        </Paragraph>
+      )}
     </>
   );
 };
@@ -254,8 +278,6 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
     activeMutator ||
     (selectedShapeIds.length === 1 ? selectedShapeIds[0] : null);
   const [, startTransition] = useTransition();
-  // const hierarchyItem =
-  //   activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
 
   const mutationValues = useMutationValues();
   const updateMutationValues = useUpdateMutationValues();

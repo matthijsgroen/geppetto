@@ -45,7 +45,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
               size="small"
               shadow
             />
-            <Kbd shortcut={{ key: "KeyO", ctrlOrCmd: true }} />
+            <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
           </p>
         )}
         <p>
@@ -56,7 +56,9 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
             size="small"
             shadow
           />
-          <Kbd shortcut={{ key: "KeyO", ctrlOrCmd: true, shift: true }} />
+          <Kbd
+            shortcut={{ interaction: "KeyO", ctrlOrCmd: true, shift: true }}
+          />
         </p>
         <p>&mdash; Or &mdash;</p>
         <p>

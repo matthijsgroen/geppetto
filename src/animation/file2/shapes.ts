@@ -147,11 +147,8 @@ export const movePoint = (
     array[index] = newPoint;
   });
 
-export const removeShape = (
-  image: GeppettoImage,
-  shapeId: string
-): GeppettoImage =>
-  produce(image, (draft) => {
+export const removeShape = (shapeId: string) =>
+  produce<GeppettoImage>((draft) => {
     const affectedItems = collectChildIds(draft.layerHierarchy, shapeId).concat(
       shapeId
     );
@@ -161,8 +158,13 @@ export const removeShape = (
         delete draft.layers[itemId];
       }
       if (item.type === "mutation") {
-        // TODO: Check for each mutation if its part of a control / animation
         delete draft.mutations[itemId];
+        delete draft.defaultFrame[itemId];
+        Object.values(draft.controls).forEach((control) => {
+          control.steps.forEach((step) => {
+            delete step[itemId];
+          });
+        });
       }
       if (item.type === "layerFolder") {
         delete draft.layerFolders[itemId];

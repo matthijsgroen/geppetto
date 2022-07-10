@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
+import {
+  findParentId,
+  isEmpty,
+  PlacementInfo,
+} from "../../animation/file2/hierarchy";
 import { addFolder, addShape, removeShape } from "../../animation/file2/shapes";
 import {
+  EmptyTree,
   Icon,
   Panel,
+  Paragraph,
   ToolBar,
   ToolButton,
   ToolSeparator,
@@ -22,6 +28,14 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
   const [file, setFile] = useFile();
   const [selectedItems] = selectedItemsState;
   const focusedItemState = useState<string | undefined>(undefined);
+
+  const selectedEmptyFolder =
+    selectedItems.length === 1 &&
+    file.layerFolders[selectedItems[0]] &&
+    (file.layerHierarchy[selectedItems[0]].children || []).length === 0;
+
+  const selectedLayer =
+    selectedItems.length === 1 && file.layers[selectedItems[0]];
 
   const addShapeAction = useToolAction(() => {
     let position: PlacementInfo | undefined = undefined;
@@ -61,7 +75,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
 
   const removeItemAction = useToolAction(() => {
     const item = selectedItems[0];
-    setFile((value) => removeShape(value, item));
+    setFile(removeShape(item));
   });
 
   return (
@@ -92,13 +106,29 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
           <ToolButton icon={<Icon>📑</Icon>} disabled tooltip="Copy layer" />
           <ToolButton
             icon={<Icon>🗑</Icon>}
-            disabled={selectedItems.length !== 1}
+            disabled={!(selectedLayer || selectedEmptyFolder)}
             onClick={removeItemAction}
             onKeyDown={removeItemAction}
             tooltip="Remove item"
           />
         </ToolBar>
-        <Tree treeId="layers" />
+
+        {isEmpty(file.layerHierarchy) ? (
+          <EmptyTree>
+            <Paragraph>Add a layer to start</Paragraph>
+            <ToolButton
+              icon={<Icon>📄</Icon>}
+              label="+"
+              tooltip="Add layer"
+              shadow
+              onClick={addShapeAction}
+              onKeyDown={addShapeAction}
+              disabled={selectedItems.length > 1}
+            />
+          </EmptyTree>
+        ) : (
+          <Tree treeId="layers" />
+        )}
       </Panel>
     </LayerTreeEnvironment>
   );

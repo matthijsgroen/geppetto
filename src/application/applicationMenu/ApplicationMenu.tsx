@@ -71,10 +71,18 @@ const loadTextureImage = async (
   });
 };
 
-const FILE_OPEN: Shortcut = { key: "KeyO", ctrlOrCmd: true };
-const TEXTURE_OPEN: Shortcut = { key: "KeyO", shift: true, ctrlOrCmd: true };
-const FILE_SAVE_AS: Shortcut = { key: "KeyS", shift: true, ctrlOrCmd: true };
-const FILE_SAVE: Shortcut = { key: "KeyS", ctrlOrCmd: true };
+const FILE_OPEN: Shortcut = { interaction: "KeyO", ctrlOrCmd: true };
+const TEXTURE_OPEN: Shortcut = {
+  interaction: "KeyO",
+  shift: true,
+  ctrlOrCmd: true,
+};
+const FILE_SAVE_AS: Shortcut = {
+  interaction: "KeyS",
+  shift: true,
+  ctrlOrCmd: true,
+};
+const FILE_SAVE: Shortcut = { interaction: "KeyS", ctrlOrCmd: true };
 
 export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   fileNameState,
@@ -284,6 +292,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
           icon={<LogoIcon />}
           active={open}
           notificationBadge={hasAppUpdate}
+          tooltip={"Application menu"}
         />
       )}
     >

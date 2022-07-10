@@ -36,6 +36,7 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
       label,
       onClick,
       onKeyDown,
+      ...props
     },
     ref
   ) => {
@@ -43,6 +44,9 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
     const useSize = size === undefined ? toolbarProps.size : size ?? "default";
     return (
       <button
+        aria-label={tooltip}
+        {...props}
+        title={tooltip}
         type={"button"}
         onClick={onClick}
         onKeyDown={onKeyDown}
@@ -54,7 +58,6 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
           [styles.shadow]: shadow,
         })}
         disabled={disabled}
-        title={tooltip}
         ref={ref}
       >
         {icon}{" "}

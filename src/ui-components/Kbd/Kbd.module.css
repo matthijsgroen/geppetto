@@ -1,9 +1,19 @@
 .shortcut {
-  padding-left: 1em;
-  color: var(--colors-text-dimmed);
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  color: var(--colors-text-default);
   font-size: 0.8rem;
   font-family: system-ui;
   align-self: center;
+}
+
+.dimmed {
+  color: var(--colors-text-dimmed);
+}
+
+.inMenu {
+  padding-left: 1em;
+  padding-right: 0em;
 }
 
 .disabled {

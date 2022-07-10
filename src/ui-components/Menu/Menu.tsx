@@ -29,7 +29,12 @@ export const MenuItem: React.FC<Props> = ({ shortcut, children, ...props }) => (
           return (
             <div className={styles.shortcutDivider}>
               <span className={styles.wide}>{node}</span>
-              <Kbd shortcut={shortcut} disabled={state.disabled} />
+              <Kbd
+                shortcut={shortcut}
+                disabled={state.disabled}
+                inMenu
+                dimmed
+              />
             </div>
           );
         }

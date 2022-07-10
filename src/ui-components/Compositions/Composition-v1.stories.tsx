@@ -194,7 +194,7 @@ const Template: Story = () => (
               size={"small"}
               shadow
             />{" "}
-            <Kbd shortcut={{ key: "KeyO", ctrlOrCmd: true }} />
+            <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
           </p>
         </div>
       </Panel>

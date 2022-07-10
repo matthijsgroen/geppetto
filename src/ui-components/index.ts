@@ -10,6 +10,7 @@ export { ToolSeparator } from "./ToolSeparator/ToolSeparator";
 export { ToolTab } from "./ToolTab/ToolTab";
 export { ResizePanel, ResizeDirection } from "./ResizePanel/ResizePanel";
 export { Tree } from "./Tree/Tree";
+export { EmptyTree } from "./EmptyTree/EmptyTree";
 export type { TreeItem, TreeData, TreeItemIndex } from "./Tree/Tree";
 export { TreeEnvironment } from "./Tree/TreeEnvironment";
 export { Panel } from "./Panel/Panel";

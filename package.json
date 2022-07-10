@@ -118,10 +118,10 @@
         "functions": 4
       },
       "./src/animation/": {
-        "statements": 81,
-        "branches": 62,
-        "lines": 83,
-        "functions": 74
+        "statements": 88,
+        "branches": 77,
+        "lines": 88,
+        "functions": 79
       }
     }
   },

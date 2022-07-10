@@ -5,6 +5,8 @@ import styles from "./Kbd.module.css";
 type ShortcutProps = {
   shortcut: Shortcut;
   disabled?: boolean;
+  dimmed?: boolean;
+  inMenu?: boolean;
 };
 
 /**
@@ -16,10 +18,14 @@ type ShortcutProps = {
 export const Kbd: React.FC<ShortcutProps> = ({
   shortcut,
   disabled = false,
+  dimmed = false,
+  inMenu = false,
 }) => (
   <kbd
     className={className({
       [styles.shortcut]: true,
+      [styles.dimmed]: dimmed,
+      [styles.inMenu]: inMenu,
       [styles.disabled]: disabled,
     })}
   >
