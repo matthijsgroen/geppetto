@@ -1,6 +1,12 @@
 import produce from "immer";
 import { ChangeEvent, useEffect, useState, useTransition } from "react";
-import { Control, ControlPanel, Icon, Title } from "../../ui-components";
+import {
+  Control,
+  ControlPanel,
+  Icon,
+  Title,
+  ToolButton,
+} from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
 import {
   useControlValues,
@@ -10,10 +16,26 @@ import useEvent from "../hooks/useEvent";
 
 type ControlEditProps = {
   selectedControlIds: string[];
+  editControlSteps?: boolean;
+  onEditControlSteps?: (editing: boolean) => void;
 };
+
+const EditStepsToggle: React.FC<{
+  editControlSteps?: boolean;
+  onEditControlSteps: (editing: boolean) => void;
+}> = ({ onEditControlSteps, editControlSteps = false }) => (
+  <Control label="Control steps">
+    <ToolButton
+      label={editControlSteps ? "Done" : "Edit"}
+      onClick={useEvent(() => onEditControlSteps(!editControlSteps))}
+    />
+  </Control>
+);
 
 export const ControlEdit: React.FC<ControlEditProps> = ({
   selectedControlIds,
+  editControlSteps = false,
+  onEditControlSteps,
 }) => {
   const [file, setFile] = useFile();
   const activeControlId =
@@ -64,17 +86,25 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
         <Icon>⚙️</Icon> {control.name}
       </Title>
       <ControlPanel>
-        <Control label="Value">
-          <input
-            type={"range"}
-            min={0}
-            max={control.steps.length - 1}
-            step={0.01}
-            value={slideValue}
-            onChange={onChange}
+        {!editControlSteps && (
+          <Control label="Value">
+            <input
+              type={"range"}
+              min={0}
+              max={control.steps.length - 1}
+              step={0.01}
+              value={slideValue}
+              onChange={onChange}
+            />
+            <p>{slideValue}</p>
+          </Control>
+        )}
+        {onEditControlSteps && (
+          <EditStepsToggle
+            onEditControlSteps={onEditControlSteps}
+            editControlSteps={editControlSteps}
           />
-          <p>{slideValue}</p>
-        </Control>
+        )}
       </ControlPanel>
     </>
   );

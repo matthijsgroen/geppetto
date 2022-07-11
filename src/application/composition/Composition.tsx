@@ -62,6 +62,7 @@ import {
   calculateVectorValues,
   vectorPositions,
 } from "../webgl/lib/vectorPositions";
+import { ControlEdit } from "./ControlEdit";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
 import { InlayControlPanel, ItemEdit } from "./ItemEdit";
@@ -134,6 +135,7 @@ export const Composition: React.FC<CompositionProps> = ({
   const [file, setFile] = useFile();
   const [showItemDetails, setShowItemDetails] = useState(false);
   const [showWireFrames, setShowWireFrames] = useState(true);
+  const [controlEditMode, setControlEditMode] = useState(false);
 
   const maxZoom = maxZoomFactor(texture);
 
@@ -440,21 +442,37 @@ export const Composition: React.FC<CompositionProps> = ({
           minSize={150}
         >
           <Column>
-            <ResizePanel
-              direction={ResizeDirection.South}
-              minSize={300}
-              defaultSize={400}
-            >
-              <Panel padding={5}>
-                <ShapeTree
-                  selectedItemsState={[selectedItems, updateSelectedItems]}
-                  focusedItemState={[focusedLayer, setFocusedLayer]}
+            <Panel padding={5}>
+              <ShapeTree
+                selectedItemsState={[selectedItems, updateSelectedItems]}
+                focusedItemState={[focusedLayer, setFocusedLayer]}
+              />
+            </Panel>
+            {!controlEditMode && (
+              <ResizePanel
+                direction={ResizeDirection.North}
+                minSize={300}
+                defaultSize={400}
+              >
+                <ControlTree
+                  selectedControlsState={[
+                    selectedControls,
+                    setSelectedControls,
+                  ]}
+                  editControlSteps={controlEditMode}
+                  onEditControlSteps={setControlEditMode}
+                />
+              </ResizePanel>
+            )}
+            {controlEditMode && (
+              <Panel padding={5} fitContent={true}>
+                <ControlEdit
+                  selectedControlIds={selectedControls}
+                  editControlSteps={controlEditMode}
+                  onEditControlSteps={setControlEditMode}
                 />
               </Panel>
-            </ResizePanel>
-            <ControlTree
-              selectedControlsState={[selectedControls, setSelectedControls]}
-            />
+            )}
           </Column>
         </ResizePanel>
         <Panel workspace center>
