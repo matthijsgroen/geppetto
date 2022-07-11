@@ -12,6 +12,7 @@ export default {
     padding: 0,
     workspace: false,
     center: false,
+    fitContent: false,
   },
 } as ComponentMeta<typeof PanelComponent>;
 
