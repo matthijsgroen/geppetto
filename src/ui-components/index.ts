@@ -4,6 +4,7 @@ export { Title } from "./Title/Title";
 export { Icon } from "./Icon/Icon";
 
 export { ToolBar } from "./ToolBar/ToolBar";
+export { ToolGrid } from "./ToolGrid/ToolGrid";
 export { ToolButton } from "./ToolButton/ToolButton";
 export { ToolSpacer } from "./ToolSpacer/ToolSpacer";
 export { ToolSeparator } from "./ToolSeparator/ToolSeparator";
