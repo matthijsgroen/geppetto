@@ -30,7 +30,7 @@ void main(void) {
   }
 
   // Dark edge
-  if (distSquared > 0.9 && alpha > 0.9) {
+  if (distSquared > 0.85 && alpha > 0.85) {
     gl_FragColor = vec4(vColor.rgb * alpha * (1.0 - 0.5 * distSquared), alpha);
   }
 }
