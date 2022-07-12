@@ -410,6 +410,7 @@ export const Composition: React.FC<CompositionProps> = ({
       setSelectedItems([addDetails.id]);
     }
   );
+  const editingControl = controlEditMode ? selectedControls[0] : undefined;
 
   return (
     <Column>
@@ -446,6 +447,7 @@ export const Composition: React.FC<CompositionProps> = ({
               <ShapeTree
                 selectedItemsState={[selectedItems, updateSelectedItems]}
                 focusedItemState={[focusedLayer, setFocusedLayer]}
+                editControlId={editingControl}
               />
             </Panel>
             {!controlEditMode && (

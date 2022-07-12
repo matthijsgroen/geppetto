@@ -32,11 +32,13 @@ import { UseState } from "../types";
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
   focusedItemState: UseState<string | undefined>;
+  editControlId?: string;
 };
 
 export const ShapeTree: React.FC<ShapeTreeProps> = ({
   selectedItemsState,
   focusedItemState,
+  editControlId,
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
@@ -117,6 +119,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       showMutations
       toggleVisibility
       treeId="composition"
+      editControlId={editControlId}
     >
       <ToolBar size="small">
         <ToolButton

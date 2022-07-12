@@ -1,11 +1,18 @@
 import produce from "immer";
-import { ChangeEvent, useEffect, useState, useTransition } from "react";
+import {
+  ChangeEvent,
+  MouseEvent,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
 import {
   Control,
   ControlPanel,
   Icon,
   Title,
   ToolButton,
+  ToolGrid,
 } from "../../ui-components";
 import { useFile } from "../applicationMenu/FileContext";
 import {
@@ -76,6 +83,25 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
     });
   });
 
+  const handleStepSelect = useEvent((e: MouseEvent<HTMLButtonElement>) => {
+    if (activeControlId === null) return;
+    const value = Number(e.currentTarget.getAttribute("data-value"));
+    updateControlValues((current) => ({
+      ...current,
+      [activeControlId]: value,
+    }));
+  });
+
+  const handleEditControlSteps = useEvent((active: boolean) => {
+    if (activeControlId === null) return;
+
+    updateControlValues((current) => ({
+      ...current,
+      [activeControlId]: active ? 0 : file.controlValues[activeControlId],
+    }));
+    onEditControlSteps && onEditControlSteps(active);
+  });
+
   if (isNoControl) {
     return null;
   }
@@ -99,9 +125,25 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
             <p>{slideValue}</p>
           </Control>
         )}
+        {editControlSteps && (
+          <Control label="Steps">
+            <ToolGrid size="small">
+              {control.steps.map((_step, index) => (
+                <ToolButton
+                  label={`${index + 1}`}
+                  data-value={index}
+                  active={index === 0}
+                  key={index}
+                  onClick={handleStepSelect}
+                />
+              ))}
+              <ToolButton label="+" disabled />
+            </ToolGrid>
+          </Control>
+        )}
         {onEditControlSteps && (
           <EditStepsToggle
-            onEditControlSteps={onEditControlSteps}
+            onEditControlSteps={handleEditControlSteps}
             editControlSteps={editControlSteps}
           />
         )}
