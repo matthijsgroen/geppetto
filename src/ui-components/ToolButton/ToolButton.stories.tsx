@@ -10,6 +10,8 @@ export default {
   component: ToolButton,
   argTypes: {
     icon: { control: false },
+    onClick: { control: false },
+    onKeyDown: { control: false },
   },
   args: {
     disabled: false,

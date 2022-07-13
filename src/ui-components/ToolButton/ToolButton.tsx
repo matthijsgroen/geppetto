@@ -11,14 +11,14 @@ import { className } from "../className";
 import { ToolBarSize } from "../ToolBar/ToolBar";
 
 type ToolButtonProps = {
+  active?: boolean;
+  disabled?: boolean;
   icon?: React.ReactChild;
   label?: string;
-  active?: boolean;
-  shadow?: boolean;
-  disabled?: boolean;
-  tooltip?: string;
   notificationBadge?: boolean;
+  shadow?: boolean;
   size?: ToolBarSize;
+  tooltip?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
 };
