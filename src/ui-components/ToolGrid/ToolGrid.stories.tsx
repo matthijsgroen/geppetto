@@ -11,7 +11,6 @@ export default {
     children: { control: false, table: false },
   },
   args: {
-    size: "default",
     children: [
       <ToolButton icon={<Icon>💡</Icon>} key={0} />,
       <ToolButton active={true} icon={<Icon>🎓</Icon>} key={1} />,
@@ -28,8 +27,12 @@ const Template: ComponentStory<typeof ToolGrid> = (args) => (
 );
 
 export const Default = Template.bind({});
-export const Small: typeof Template = Template.bind({});
-Small.decorators = [
+export const Small = Template.bind({});
+Small.args = {
+  size: "small",
+};
+export const Wrapped: typeof Template = Template.bind({});
+Wrapped.decorators = [
   (Story) => (
     <div style={{ width: "6em" }}>
       <Story />
