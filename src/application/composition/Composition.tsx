@@ -62,7 +62,7 @@ import {
   calculateVectorValues,
   vectorPositions,
 } from "../webgl/lib/vectorPositions";
-import { ControlEdit } from "./ControlEdit";
+import { ControlEditSteps } from "./ControlEdit";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
 import { InlayControlPanel, ItemEdit } from "./ItemEdit";
@@ -136,6 +136,7 @@ export const Composition: React.FC<CompositionProps> = ({
   const [showItemDetails, setShowItemDetails] = useState(false);
   const [showWireFrames, setShowWireFrames] = useState(true);
   const [controlEditMode, setControlEditMode] = useState(false);
+  const [activeControlStep, setActiveControlStep] = useState<number>(0);
 
   const maxZoom = maxZoomFactor(texture);
 
@@ -461,17 +462,17 @@ export const Composition: React.FC<CompositionProps> = ({
                     selectedControls,
                     setSelectedControls,
                   ]}
-                  editControlSteps={controlEditMode}
-                  onEditControlSteps={setControlEditMode}
+                  onEditControlSteps={() => setControlEditMode(true)}
                 />
               </ResizePanel>
             )}
             {controlEditMode && (
               <Panel padding={5} fitContent={true}>
-                <ControlEdit
+                <ControlEditSteps
                   selectedControlIds={selectedControls}
-                  editControlSteps={controlEditMode}
-                  onEditControlSteps={setControlEditMode}
+                  activeControlStep={activeControlStep}
+                  onControlEditDone={() => setControlEditMode(false)}
+                  onControlStepSelect={setActiveControlStep}
                 />
               </Panel>
             )}
@@ -531,8 +532,8 @@ export const Composition: React.FC<CompositionProps> = ({
                   <Inlay>
                     <InlayControlPanel
                       activeMutator={activeMutator}
-                      selectedShapeIds={selectedItems}
-                      selectedControlIds={[]}
+                      editingControlId={editingControl}
+                      editingControlStep={activeControlStep}
                     />
                   </Inlay>
                 )}
@@ -551,7 +552,8 @@ export const Composition: React.FC<CompositionProps> = ({
                 <ItemEdit
                   activeMutator={activeMutator}
                   selectedShapeIds={selectedItems}
-                  selectedControlIds={[]}
+                  editingControlId={editingControl}
+                  editingControlStep={activeControlStep}
                 />
               </Panel>
             </Column>

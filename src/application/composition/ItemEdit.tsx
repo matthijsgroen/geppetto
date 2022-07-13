@@ -24,8 +24,8 @@ import {
 
 type ItemEditProps = {
   activeMutator: string | null;
-  selectedShapeIds: string[];
-  selectedControlIds: string[];
+  editingControlId?: string;
+  editingControlStep?: number;
 };
 
 type EditProps = {
@@ -228,11 +228,9 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
   );
 };
 
-export const ItemEdit: React.FC<ItemEditProps> = ({
-  selectedShapeIds,
-  activeMutator,
-  selectedControlIds,
-}) => {
+export const ItemEdit: React.FC<
+  ItemEditProps & { selectedShapeIds: string[] }
+> = ({ selectedShapeIds, activeMutator }) => {
   const [file] = useFile();
   const activeShapeId =
     activeMutator ||
@@ -271,12 +269,10 @@ export const ItemEdit: React.FC<ItemEditProps> = ({
 
 export const InlayControlPanel: React.FC<ItemEditProps> = ({
   activeMutator,
-  selectedShapeIds,
+  editingControlId,
+  editingControlStep = 0,
 }) => {
   const [file, setFile] = useFile();
-  const activeShapeId =
-    activeMutator ||
-    (selectedShapeIds.length === 1 ? selectedShapeIds[0] : null);
   const [, startTransition] = useTransition();
 
   const mutationValues = useMutationValues();
@@ -284,36 +280,62 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
 
   const mutationValue: Vec2 = !activeMutator
     ? blankValue
+    : editingControlId !== undefined
+    ? file.controls[editingControlId].steps[editingControlStep][activeMutator]
     : mutationValues.current[activeMutator];
   const [slideValue, setSlideValue] = useState(mutationValue);
 
   useEffect(() => {
     if (activeMutator) {
-      setSlideValue(mutationValues.current[activeMutator]);
+      const mutationValue: Vec2 = editingControlId
+        ? file.controls[editingControlId].steps[editingControlStep][
+            activeMutator
+          ]
+        : mutationValues.current[activeMutator];
+      setSlideValue(mutationValue);
     }
-  }, [activeMutator, mutationValues]);
+  }, [
+    activeMutator,
+    mutationValues,
+    editingControlId,
+    editingControlStep,
+    file.controls,
+  ]);
 
   const valueChangeHandler = useEvent((newValue: Vec2) => {
-    if (activeShapeId === null) return;
+    if (activeMutator === null) return;
     setSlideValue(newValue);
-    updateMutationValues((mutations) => ({
-      ...mutations,
-      [activeShapeId]: newValue,
-    }));
-    startTransition(() => {
+    if (editingControlId === undefined) {
+      updateMutationValues((mutations) => ({
+        ...mutations,
+        [activeMutator]: newValue,
+      }));
+      startTransition(() => {
+        setFile(
+          produce((draft) => {
+            draft.defaultFrame[activeMutator] = newValue;
+          })
+        );
+      });
+    } else {
       setFile(
         produce((draft) => {
-          draft.defaultFrame[activeShapeId] = newValue;
+          draft.controls[editingControlId].steps[editingControlStep][
+            activeMutator
+          ] = newValue;
         })
       );
-    });
+    }
   });
 
   if (activeMutator) {
     const mutationType = file.mutations[activeMutator].type;
     return (
       <ControlPanel shadow>
-        <MutationControlled mutationId={activeMutator} />
+        <MutationControlled
+          mutationId={activeMutator}
+          editingControlId={editingControlId}
+        />
         <MutationValueEdit
           mutationType={mutationType}
           value={slideValue}
