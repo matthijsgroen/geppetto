@@ -46,7 +46,12 @@
     "lint": "eslint src/**/*.ts{,x}",
     "test": "react-scripts test",
     "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "test-storybook": "test-storybook",
+    "build-storybook": "build-storybook -s public",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
+    "test-storybook:coverage": "test-storybook --coverage",
+    "coverage-report": "cp coverage/storybook/coverage-storybook.json coverage/coverage-storybook.json && nyc report --reporter=html -t coverage --report-dir coverage && nyc merge coverage/ coverage/coverage-complete.json",
+    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"yarn build-storybook --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && yarn test-storybook --maxWorkers=2 --coverage\""
   },
   "eslintConfig": {
     "extends": [
@@ -71,6 +76,7 @@
     "@babel/plugin-proposal-optional-chaining": "^7.13.12",
     "@craco/craco": "^6.4.3",
     "@storybook/addon-actions": "^6.5.9",
+    "@storybook/addon-coverage": "^0.0.2",
     "@storybook/addon-essentials": "^6.5.9",
     "@storybook/addon-interactions": "^6.5.9",
     "@storybook/addon-links": "^6.5.9",
@@ -93,7 +99,9 @@
     "@types/wicg-file-system-access": "^2020.9.5",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
-    "raw.macro": "^0.4.2"
+    "concurrently": "^7.2.2",
+    "raw.macro": "^0.4.2",
+    "wait-on": "^6.0.1"
   },
   "jest": {
     "transformIgnorePatterns": [
