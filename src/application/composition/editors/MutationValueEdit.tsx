@@ -1,10 +1,11 @@
 import { Vec2 } from "../../../types";
-import { Control } from "../../../ui-components";
+import { Control, TextButton } from "../../../ui-components";
 import { useFile } from "../../applicationMenu/FileContext";
 import { VectorControl } from "../../controls/VectorControl";
 import { ValueSlider } from "./ValueSlider";
 import styles from "./MutationValueEdit.module.css";
 import { MutationVectorTypes } from "../../../animation/file1/types";
+import React, { Fragment } from "react";
 
 const percentageFormatter = (value: number) => `${Math.round(value * 100)}%`;
 const lightnessFormatter = (value: number) =>
@@ -111,9 +112,10 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
   return <VectorControl label="Value" value={value} onChange={onValueChange} />;
 };
 
-export const MutationControlled: React.FC<{ mutationId: string }> = ({
-  mutationId,
-}) => {
+export const MutationControlled: React.FC<{
+  mutationId: string;
+  editingControlId?: string;
+}> = ({ mutationId, editingControlId }) => {
   const [file] = useFile();
 
   const affectingControls = Object.entries(file.controls).filter(
@@ -125,7 +127,22 @@ export const MutationControlled: React.FC<{ mutationId: string }> = ({
   if (affectingControls.length > 0) {
     return (
       <Control label="Controlled by">
-        <p>{affectingControls.map(([, c]) => c.name).join(", ")}</p>
+        <p>
+          {affectingControls.map(([id, c], idx, list) =>
+            idx === list.length - 1 ? (
+              <TextButton key={id}>
+                {id === editingControlId ? <strong>{c.name}</strong> : c.name}
+              </TextButton>
+            ) : (
+              <Fragment key={id}>
+                <TextButton>
+                  {id === editingControlId ? <strong>{c.name}</strong> : c.name}
+                </TextButton>
+                {", "}
+              </Fragment>
+            )
+          )}
+        </p>
       </Control>
     );
   }
