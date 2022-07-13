@@ -9,7 +9,7 @@ type LabelProps = PropsWithChildren<{
 }>;
 
 /**
- * Used for displaying labels on TabBars and Controls
+ * Used for displaying a paragraph of text. By default, this text is selectable by the user.
  */
 export const Paragraph: React.FC<LabelProps> = ({
   children,
