@@ -24,3 +24,4 @@ export { ControlPanel } from "./Controls/ControlPanel";
 export { Control } from "./Controls/Control";
 export { NumberInput } from "./Controls/NumberInput";
 export { Logo, LogoIcon } from "./Logo/Logo";
+export { TextButton } from "./TextButton/TextButton";
