@@ -1,0 +1,10 @@
+.textButton {
+  display: inline;
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: var(--colors-text-default);
+}
+.textButton:hover:enabled {
+  color: var(--colors-text-active);
+}
