@@ -8,9 +8,6 @@ on:
       - package.json
       - src/ui-components/**
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
 jobs:
   deploy:
     # The type of runner that the job will run on
@@ -24,7 +21,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      - name: Build website
+      - name: Build storybook
         run: yarn build-storybook
 
       - name: Deploy 🚀
