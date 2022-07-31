@@ -1,0 +1,35 @@
+name: "Deploy Application"
+
+on:
+  push:
+    branches: [next]
+    paths:
+      - package.json
+      - src/**
+
+jobs:
+  deploy:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install --prefer-offline --frozen-lockfile --immutable
+
+      - name: Build application
+        run: yarn build
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build
+          target-folder: docs/app
