@@ -3,6 +3,9 @@ name: "Deploy Application"
 on:
   push:
     branches: [next]
+    paths:
+      - package.json
+      - src/**
 
 jobs:
   deploy:
