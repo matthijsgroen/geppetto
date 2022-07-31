@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: ["next"]
 
+permissions:
+  contents: read # Required when overriding permissions
+  pull-requests: write # allow action to modify your PR
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -63,3 +67,4 @@ jobs:
         uses: romeovs/lcov-reporter-action@v0.2.16
         with:
           lcov-file: ./coverage/complete/lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
