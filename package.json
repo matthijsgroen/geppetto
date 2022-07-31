@@ -48,7 +48,7 @@
     "build-storybook": "build-storybook -s public",
     "test:coverage": "react-scripts test --coverage --watchAll=false",
     "test-storybook:coverage": "test-storybook --coverage",
-    "coverage-report": "cp coverage/storybook/coverage-storybook.json coverage/coverage-storybook.json && nyc report --reporter=lcovonly -t coverage --report-dir coverage && nyc merge coverage/ coverage/coverage-complete.info",
+    "coverage-report": "cp coverage/storybook/coverage-storybook.json coverage/coverage-storybook.json && nyc report --reporter=lcovonly --reporter=html -t coverage --report-dir coverage/complete",
     "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"yarn build-storybook --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && yarn test-storybook --maxWorkers=2 --coverage\""
   },
   "eslintConfig": {
