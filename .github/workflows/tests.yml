@@ -62,4 +62,4 @@ jobs:
       - name: Report coverage
         uses: codecov/codecov-action@v3
         with:
-          path: "./coverage/complete/lcov.info"
+          files: "./coverage/complete/lcov.info"
