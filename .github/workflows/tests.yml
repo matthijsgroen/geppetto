@@ -60,7 +60,6 @@ jobs:
         run: yarn coverage-report
 
       - name: Report coverage
-        uses: ArtiomTr/jest-coverage-report-action@v2
+        uses: romeovs/lcov-reporter-action@v0.2.16
         with:
-          coverage-file: ./coverage/coverage-complete.json
-          base-coverage-file: ./coverage/coverage-complete.json
+          lcov-file: ./coverage/coverage-complete.info
