@@ -59,10 +59,8 @@ jobs:
       - name: Build coverage report
         run: yarn coverage-report
 
-      - name: Coverage Diff
-        uses: greatwizard/coverage-diff-action@v1
+      - name: Report coverage
+        uses: ArtiomTr/jest-coverage-report-action@v2
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-          # Path of the json-summary file to analyze.
-          coverage-filename: coverage/coverage-complete.json
+          coverage-file: ./coverage/coverage-complete.json
+          base-coverage-file: ./coverage/coverage-complete.json
