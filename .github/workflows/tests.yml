@@ -59,5 +59,10 @@ jobs:
       - name: Build coverage report
         run: yarn coverage-report
 
-      - name: Report coverage
-        uses: sidx1024/report-nyc-coverage-github-action@v1.2
+      - name: Coverage Diff
+        uses: greatwizard/coverage-diff-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Path of the json-summary file to analyze.
+          coverage-filename: coverage/coverage-complete.json
