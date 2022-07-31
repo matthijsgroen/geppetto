@@ -60,4 +60,4 @@ jobs:
         run: yarn coverage-report
 
       - name: Report coverage
-        uses: sidx1024/report-nyc-coverage-github-action@v1.1
+        uses: sidx1024/report-nyc-coverage-github-action@v1.2
