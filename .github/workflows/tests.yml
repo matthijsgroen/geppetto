@@ -60,6 +60,6 @@ jobs:
         run: yarn coverage-report
 
       - name: Report coverage
-        uses: VeryGoodOpenSource/very_good_coverage@v1
+        uses: codecov/codecov-action@v3
         with:
           path: "./coverage/complete/lcov.info"
