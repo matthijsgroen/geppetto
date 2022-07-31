@@ -22,9 +22,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
-      - run: yarn install
-      - run: yarn lint
+          cache: "yarn"
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --immutable
+
+      - name: Check linting rules
+        run: yarn lint
 
   test:
     runs-on: ubuntu-latest
@@ -40,6 +43,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "npm"
-      - run: yarn install
-      - run: yarn test --coverage
+          cache: "yarn"
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile --immutable
+
+      - name: Run tests
+        run: yarn test --coverage

@@ -17,9 +17,14 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: "yarn"
 
       - name: Install Dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile --immutable
 
       - name: Build storybook
         run: yarn build-storybook
