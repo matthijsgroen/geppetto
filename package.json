@@ -42,7 +42,6 @@
     "prebuild": "bin/writeVersion.js",
     "build": "craco build",
     "deploy": "bin/deploy.sh",
-    "deploy-storybook": "bin/deploy-storybook.sh",
     "lint": "eslint src/**/*.ts{,x}",
     "test": "react-scripts test",
     "storybook": "start-storybook -p 6006 -s public",
