@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { isNew } from "../../animation/file2/new";
+import { isNewFile } from "../../animation/file2/new";
 import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import { Icon, Logo, ToolButton } from "../../ui-components";
@@ -36,7 +36,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
           <br /> and is not yet ready for production use. (It's not feature
           complete yet!)
         </Paragraph>
-        {isNew(file) && (
+        {isNewFile(file) && (
           <p>
             <ToolButton
               icon={<Icon>📄</Icon>}
