@@ -107,7 +107,6 @@
     ],
     "coveragePathIgnorePatterns": [
       "<rootDir>/.*.stories.tsx$",
-      "<rootDir>/src/ui-components/.*",
       "<rootDir>/src/old/.*",
       "<rootDir>/.*/.*Canvas.tsx$",
       "<rootDir>/src/application/webgl/lib/webgl.ts$",

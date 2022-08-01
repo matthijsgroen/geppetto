@@ -56,10 +56,5 @@ jobs:
       - name: Run storybook tests
         run: yarn test-storybook:ci
 
-      - name: Build coverage report
-        run: yarn coverage-report
-
       - name: Report coverage
         uses: codecov/codecov-action@v3
-        with:
-          files: "./coverage/complete/lcov.info"
