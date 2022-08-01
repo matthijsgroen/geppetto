@@ -212,6 +212,12 @@ body,
   width: 2.25rem;
 }
 
+.ToolGrid_toolGrid__SIjdT {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
 .ToolButton_toolButton__VnQl1 {
   display: inline-block;
   color: var(--colors-text-default);
@@ -1094,5 +1100,16 @@ body,
   margin: 0 auto;
 }
 
+.TextButton_textButton__w9O1b {
+  display: inline;
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: var(--colors-text-default);
+}
+.TextButton_textButton__w9O1b:hover:enabled {
+  color: var(--colors-text-active);
+}
 
-/*# sourceMappingURL=main.ef2b1cbe.css.map*/
+
+/*# sourceMappingURL=main.453d0e8c.css.map*/
