@@ -5,6 +5,10 @@ import { Paragraph as ParagraphElement } from "./Paragraph";
 export default {
   title: "Elements/Paragraph",
   component: ParagraphElement,
+  args: {
+    selectable: true,
+    size: "default",
+  },
 } as ComponentMeta<typeof ParagraphElement>;
 
 const Template: ComponentStory<typeof ParagraphElement> = (args) => (

@@ -43,7 +43,6 @@ const onStep = (input: number, upDown: UpDown, size: StepSize): number =>
 const numberStepControl =
   (handler: (value: number) => void): KeyboardEventHandler<HTMLInputElement> =>
   (e) => {
-    console.log("foo", e);
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       const dir = e.key === "ArrowDown" ? UpDown.DOWN : UpDown.UP;
       let size: StepSize = StepSize.MEDIUM;
@@ -59,7 +58,6 @@ const numberStepControl =
       if (e.altKey && e.shiftKey) {
         size = StepSize.EXTRA_SMALL;
       }
-      console.log(dir, size);
 
       handler(onStep(e.currentTarget.valueAsNumber, dir, size));
       e.preventDefault();

@@ -12,10 +12,12 @@ import { ControlEdit } from "./ControlEdit";
 
 type ControlTreeProps = {
   selectedControlsState: UseState<string[]>;
+  onEditControlSteps?: () => void;
 };
 
 export const ControlTree: React.FC<ControlTreeProps> = ({
   selectedControlsState,
+  onEditControlSteps,
 }) => {
   const [selectedControls] = selectedControlsState;
 
@@ -30,7 +32,10 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
           <ToolButton icon={<Icon>⚙️</Icon>} label={"+"} />
         </ToolBar>
         <Tree treeId="controls" />
-        <ControlEdit selectedControlIds={selectedControls} />
+        <ControlEdit
+          selectedControlIds={selectedControls}
+          onEditControlSteps={onEditControlSteps}
+        />
       </Panel>
     </ControlTreeEnvironment>
   );

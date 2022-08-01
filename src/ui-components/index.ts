@@ -4,6 +4,7 @@ export { Title } from "./Title/Title";
 export { Icon } from "./Icon/Icon";
 
 export { ToolBar } from "./ToolBar/ToolBar";
+export { ToolGrid } from "./ToolGrid/ToolGrid";
 export { ToolButton } from "./ToolButton/ToolButton";
 export { ToolSpacer } from "./ToolSpacer/ToolSpacer";
 export { ToolSeparator } from "./ToolSeparator/ToolSeparator";
@@ -23,3 +24,4 @@ export { ControlPanel } from "./Controls/ControlPanel";
 export { Control } from "./Controls/Control";
 export { NumberInput } from "./Controls/NumberInput";
 export { Logo, LogoIcon } from "./Logo/Logo";
+export { TextButton } from "./TextButton/TextButton";

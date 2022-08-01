@@ -62,6 +62,7 @@ import {
   calculateVectorValues,
   vectorPositions,
 } from "../webgl/lib/vectorPositions";
+import { ControlEditSteps } from "./ControlEdit";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";
 import { InlayControlPanel, ItemEdit } from "./ItemEdit";
@@ -134,6 +135,8 @@ export const Composition: React.FC<CompositionProps> = ({
   const [file, setFile] = useFile();
   const [showItemDetails, setShowItemDetails] = useState(false);
   const [showWireFrames, setShowWireFrames] = useState(true);
+  const [controlEditMode, setControlEditMode] = useState(false);
+  const [activeControlStep, setActiveControlStep] = useState<number>(0);
 
   const maxZoom = maxZoomFactor(texture);
 
@@ -408,6 +411,7 @@ export const Composition: React.FC<CompositionProps> = ({
       setSelectedItems([addDetails.id]);
     }
   );
+  const editingControl = controlEditMode ? selectedControls[0] : undefined;
 
   return (
     <Column>
@@ -440,21 +444,38 @@ export const Composition: React.FC<CompositionProps> = ({
           minSize={150}
         >
           <Column>
-            <ResizePanel
-              direction={ResizeDirection.South}
-              minSize={300}
-              defaultSize={400}
-            >
-              <Panel padding={5}>
-                <ShapeTree
-                  selectedItemsState={[selectedItems, updateSelectedItems]}
-                  focusedItemState={[focusedLayer, setFocusedLayer]}
+            <Panel padding={5}>
+              <ShapeTree
+                selectedItemsState={[selectedItems, updateSelectedItems]}
+                focusedItemState={[focusedLayer, setFocusedLayer]}
+                editControlId={editingControl}
+              />
+            </Panel>
+            {!controlEditMode && (
+              <ResizePanel
+                direction={ResizeDirection.North}
+                minSize={300}
+                defaultSize={400}
+              >
+                <ControlTree
+                  selectedControlsState={[
+                    selectedControls,
+                    setSelectedControls,
+                  ]}
+                  onEditControlSteps={() => setControlEditMode(true)}
+                />
+              </ResizePanel>
+            )}
+            {controlEditMode && (
+              <Panel padding={5} fitContent={true}>
+                <ControlEditSteps
+                  selectedControlIds={selectedControls}
+                  activeControlStep={activeControlStep}
+                  onControlEditDone={() => setControlEditMode(false)}
+                  onControlStepSelect={setActiveControlStep}
                 />
               </Panel>
-            </ResizePanel>
-            <ControlTree
-              selectedControlsState={[selectedControls, setSelectedControls]}
-            />
+            )}
           </Column>
         </ResizePanel>
         <Panel workspace center>
@@ -511,8 +532,8 @@ export const Composition: React.FC<CompositionProps> = ({
                   <Inlay>
                     <InlayControlPanel
                       activeMutator={activeMutator}
-                      selectedShapeIds={selectedItems}
-                      selectedControlIds={[]}
+                      editingControlId={editingControl}
+                      editingControlStep={activeControlStep}
                     />
                   </Inlay>
                 )}
@@ -531,7 +552,8 @@ export const Composition: React.FC<CompositionProps> = ({
                 <ItemEdit
                   activeMutator={activeMutator}
                   selectedShapeIds={selectedItems}
-                  selectedControlIds={[]}
+                  editingControlId={editingControl}
+                  editingControlStep={activeControlStep}
                 />
               </Panel>
             </Column>

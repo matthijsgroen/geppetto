@@ -18,12 +18,14 @@ import useEvent from "../hooks/useEvent";
 import produce from "immer";
 import { GeppettoImage, NodeType } from "../../animation/file2/types";
 import { ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
+import { MutationControlContext } from "./mutationControlContext";
 
 type LayerTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
   focusedItemState: UseState<string | undefined>;
   showMutations?: boolean;
   toggleVisibility?: boolean;
+  editControlId?: string;
   treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
 };
@@ -53,6 +55,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   selectedItemsState,
   focusedItemState,
   treeId,
+  editControlId,
   showMutations = false,
   toggleVisibility = false,
 }) => {
@@ -215,65 +218,67 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   });
 
   return (
-    <TreeEnvironment
-      items={items}
-      onSelectItems={useEvent((items: TreeItemIndex[]) => {
-        const ids = items.map((e) => `${e}`);
-        setSelectedItems(ids);
-      })}
-      canRename={true}
-      canDrag={onlyOne}
-      canDropAt={canDropAt}
-      canDragAndDrop={true}
-      canReorderItems={true}
-      onRenameItem={useEvent((item: LayerItem, newName: string) => {
-        setFile((fileData) =>
-          rename(fileData, `${item.index}`, item.data.type, newName)
-        );
-      })}
-      onDrop={onDrop}
-      onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
-        const treeNode = file.layerHierarchy[item.index];
-        if (treeNode.type === "layerFolder") {
-          setFile(
-            produce((draft) => {
-              draft.layerFolders[item.index].collapsed = false;
-            })
+    <MutationControlContext editControlId={editControlId}>
+      <TreeEnvironment
+        items={items}
+        onSelectItems={useEvent((items: TreeItemIndex[]) => {
+          const ids = items.map((e) => `${e}`);
+          setSelectedItems(ids);
+        })}
+        canRename={true}
+        canDrag={onlyOne}
+        canDropAt={canDropAt}
+        canDragAndDrop={true}
+        canReorderItems={true}
+        onRenameItem={useEvent((item: LayerItem, newName: string) => {
+          setFile((fileData) =>
+            rename(fileData, `${item.index}`, item.data.type, newName)
           );
-        }
-        if (treeNode.type === "layer") {
-          setExpandedLayers((layers) => layers.concat(`${item.index}`));
-        }
-      })}
-      onCollapseItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
-        const treeNode = file.layerHierarchy[item.index];
-        if (treeNode.type === "layerFolder") {
-          setFile(
-            produce((draft) => {
-              draft.layerFolders[item.index].collapsed = true;
-            })
-          );
-        }
-        if (treeNode.type === "layer") {
-          setExpandedLayers((layers) =>
-            layers.filter((layer) => layer !== item.index)
-          );
-        }
-      })}
-      onFocusItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
-        setFocusedItem(`${item.index}`);
-      })}
-      canDropOnItemWithChildren={true}
-      canDropOnItemWithoutChildren={true}
-      viewState={{
-        [treeId]: {
-          expandedItems,
-          selectedItems,
-          focusedItem,
-        },
-      }}
-    >
-      {children}
-    </TreeEnvironment>
+        })}
+        onDrop={onDrop}
+        onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+          const treeNode = file.layerHierarchy[item.index];
+          if (treeNode.type === "layerFolder") {
+            setFile(
+              produce((draft) => {
+                draft.layerFolders[item.index].collapsed = false;
+              })
+            );
+          }
+          if (treeNode.type === "layer") {
+            setExpandedLayers((layers) => layers.concat(`${item.index}`));
+          }
+        })}
+        onCollapseItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+          const treeNode = file.layerHierarchy[item.index];
+          if (treeNode.type === "layerFolder") {
+            setFile(
+              produce((draft) => {
+                draft.layerFolders[item.index].collapsed = true;
+              })
+            );
+          }
+          if (treeNode.type === "layer") {
+            setExpandedLayers((layers) =>
+              layers.filter((layer) => layer !== item.index)
+            );
+          }
+        })}
+        onFocusItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+          setFocusedItem(`${item.index}`);
+        })}
+        canDropOnItemWithChildren={true}
+        canDropOnItemWithoutChildren={true}
+        viewState={{
+          [treeId]: {
+            expandedItems,
+            selectedItems,
+            focusedItem,
+          },
+        }}
+      >
+        {children}
+      </TreeEnvironment>
+    </MutationControlContext>
   );
 };

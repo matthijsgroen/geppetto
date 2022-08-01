@@ -5,7 +5,9 @@ name: CI
 
 on:
   push:
+    branches: ["next"]
   pull_request:
+    branches: ["next"]
 
 jobs:
   lint:
@@ -48,5 +50,16 @@ jobs:
       - name: Install Dependencies
         run: yarn install --prefer-offline --frozen-lockfile --immutable
 
-      - name: Run tests
+      - name: Run unit tests
         run: yarn test --coverage
+
+      - name: Run storybook tests
+        run: yarn test-storybook:ci
+
+      - name: Build coverage report
+        run: yarn coverage-report
+
+      - name: Report coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: "./coverage/complete/lcov.info"

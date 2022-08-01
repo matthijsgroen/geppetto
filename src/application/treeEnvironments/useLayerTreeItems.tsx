@@ -10,12 +10,13 @@ import {
   TreeItemIndex,
 } from "../../ui-components";
 import { TREE_ROOT } from "../../ui-components/Tree/Tree";
+import { ControlEditMode } from "./mutationControlContext";
 
 export type LayerItem = TreeItem<
   TreeData<"layer" | "layerFolder" | "mutation">
 >;
 
-export type ActionButton = "visibility";
+export type ActionButton = "visibility" | "controlMutation";
 
 const populateTree = (
   newFile: GeppettoImage,
@@ -142,16 +143,31 @@ const populateTree = (
     }
     if (item.type === "mutation") {
       const mutationData = newFile.mutations[nodeId];
+      const data: TreeData<NodeType> = {
+        name: mutationData.name,
+        icon: iconMapping[mutationData.type],
+        type: "mutation",
+      };
+      data.itemTools = (
+        <ControlEditMode
+          render={(ids) => (
+            <ToolButton
+              size="small"
+              icon={<Icon>📍</Icon>}
+              active={ids.includes(nodeId)}
+              onClick={() => {
+                actionHandler(`${nodeId}`, "controlMutation");
+              }}
+            />
+          )}
+        />
+      );
       result.current[nodeId] = {
         index: nodeId,
         canMove: true,
         hasChildren: childIds.length > 0,
         children: childIds,
-        data: {
-          name: mutationData.name,
-          icon: iconMapping[mutationData.type],
-          type: "mutation",
-        },
+        data,
         canRename: true,
       };
     }

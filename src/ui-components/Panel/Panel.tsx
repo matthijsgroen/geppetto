@@ -5,12 +5,14 @@ type PanelProps = PropsWithChildren<{
   padding?: number;
   workspace?: boolean;
   center?: boolean;
+  fitContent?: boolean;
 }>;
 
 const StyledPanel = styled.div<{
   padding: number;
   workspace: boolean;
   center: boolean;
+  fitContent: boolean;
 }>`
   padding: ${(props) => props.padding}px;
   background-color: ${(props) =>
@@ -21,7 +23,7 @@ const StyledPanel = styled.div<{
     ${(props) =>
       props.workspace ? props.theme.colors.controlEdge : "transparent"};
   color: ${(props) => props.theme.colors.textDefault};
-  flex: 1;
+  flex: ${({ fitContent }) => (fitContent ? "0 0 fit-content" : "1")};
   flex-direction: column;
   display: flex;
   overflow: hidden;
@@ -43,8 +45,14 @@ export const Panel: React.FC<PanelProps> = ({
   padding = 0,
   workspace = false,
   center = false,
+  fitContent = false,
 }) => (
-  <StyledPanel padding={padding} workspace={workspace} center={center}>
+  <StyledPanel
+    padding={padding}
+    workspace={workspace}
+    center={center}
+    fitContent={fitContent}
+  >
     {children}
   </StyledPanel>
 );
