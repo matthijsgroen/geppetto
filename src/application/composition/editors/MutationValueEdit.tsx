@@ -1,6 +1,6 @@
 import { Vec2 } from "../../../types";
 import { Control, TextButton } from "../../../ui-components";
-import { useFile } from "../../applicationMenu/FileContext";
+import { useFile } from "../../contexts/FileContext";
 import { VectorControl } from "../../controls/VectorControl";
 import { ValueSlider } from "./ValueSlider";
 import styles from "./MutationValueEdit.module.css";

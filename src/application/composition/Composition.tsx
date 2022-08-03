@@ -42,7 +42,7 @@ import {
   useMenuState,
 } from "../../ui-components";
 import { ActionToolButton } from "../actions/ActionToolButton";
-import { useFile } from "../applicationMenu/FileContext";
+import { useFile } from "../contexts/FileContext";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl, { DragState } from "../canvas/LayerMouseControl";

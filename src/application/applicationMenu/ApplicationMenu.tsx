@@ -18,7 +18,7 @@ import { ActionMenuItem } from "../actions/ActionMenuItem";
 import { useAppUpdate } from "../hooks/useAppUpdate";
 import { ApplicationContext } from "../contexts/ApplicationContext";
 import { useAppInstall } from "../hooks/useAppInstall";
-import { useFile } from "./FileContext";
+import { useFile } from "../contexts/FileContext";
 
 import sceneryDemoImg from "../../demos/scenery.json";
 import sceneryDemoImage from "../../demos/scenery.png";

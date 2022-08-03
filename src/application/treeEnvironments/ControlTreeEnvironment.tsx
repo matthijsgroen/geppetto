@@ -8,7 +8,7 @@ import {
   TreeEnvironment,
 } from "../../ui-components";
 import { UseState } from "../types";
-import { useFile } from "../applicationMenu/FileContext";
+import { useFile } from "../contexts/FileContext";
 import { useControlTreeItems } from "./useControlTreeItems";
 import useEvent from "../hooks/useEvent";
 

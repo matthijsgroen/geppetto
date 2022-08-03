@@ -15,7 +15,7 @@ import {
   ToolSeparator,
   Tree,
 } from "../../ui-components";
-import { useFile } from "../applicationMenu/FileContext";
+import { useFile } from "../contexts/FileContext";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
 import { UseState } from "../types";

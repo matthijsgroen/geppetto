@@ -35,7 +35,7 @@ import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
 import { useActionMap } from "../hooks/useActionMap";
 import { ActionToolButton } from "../actions/ActionToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
-import { useFile } from "../applicationMenu/FileContext";
+import { useFile } from "../contexts/FileContext";
 import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
 import { useEvent } from "../hooks/useEvent";
 

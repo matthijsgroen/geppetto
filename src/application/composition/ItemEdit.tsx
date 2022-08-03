@@ -8,7 +8,7 @@ import {
 import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
 import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
-import { useFile } from "../applicationMenu/FileContext";
+import { useFile } from "../contexts/FileContext";
 import {
   useMutationValues,
   useUpdateMutationValues,
