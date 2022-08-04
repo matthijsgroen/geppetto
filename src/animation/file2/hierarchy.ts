@@ -236,27 +236,28 @@ export const moveInHierarchy = <T extends string>(
 };
 
 export const SKIP_CHILDREN = "SKIP";
+export const ABORT_TRAVERSE = "ABORT";
 
 const visitNode = <T extends string>(
   hierarchy: Hierarchy<T>,
   node: TreeNode<T>,
   nodeId: string,
-  visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP"
+  visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP" | "ABORT"
 ): boolean => {
   const result = visitor(node, nodeId);
-  if (node.children && result !== "SKIP") {
+  if (node.children && result !== "SKIP" && result !== "ABORT") {
     for (const childId of node.children) {
       const childNode = hierarchy[childId] as TreeNode<T>;
       const r = visitNode(hierarchy, childNode, childId, visitor);
       if (!r) return false;
     }
   }
-  return result !== "SKIP";
+  return result !== "ABORT";
 };
 
 export const visit = <T extends string>(
   hierarchy: Hierarchy<T>,
-  visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP",
+  visitor: (node: TreeNode<T>, nodeId: string) => void | "SKIP" | "ABORT",
   startId?: string
 ): void => {
   if (startId) {

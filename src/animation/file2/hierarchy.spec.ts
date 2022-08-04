@@ -1,4 +1,5 @@
 import {
+  ABORT_TRAVERSE,
   addInHierarchy,
   addInHierarchyWithId,
   findInHierarchy,
@@ -7,6 +8,7 @@ import {
   isEmpty,
   moveInHierarchy,
   removeFromHierarchy,
+  SKIP_CHILDREN,
   visit,
 } from "./hierarchy";
 import { Hierarchy } from "./types";
@@ -307,15 +309,28 @@ describe("visit", () => {
     expect(counter).toEqual(0);
   });
 
-  it("will abort traversal when SKIP is returned", () => {
+  it("will abort deeper traversal when SKIP is returned", () => {
     let counter = 0;
     visit(hierarchy, () => {
       counter++;
-      if (counter === 3) {
-        return "SKIP";
+      if (counter === 5) {
+        return SKIP_CHILDREN;
       }
     });
-    expect(counter).toEqual(3);
+    // only the children of node 5 are skipped
+    expect(counter).toEqual(7);
+  });
+
+  it("will abort entire traversal when ABORT is returned", () => {
+    let counter = 0;
+    visit(hierarchy, () => {
+      counter++;
+      if (counter === 5) {
+        return ABORT_TRAVERSE;
+      }
+    });
+    // traversal is aborted after node 5
+    expect(counter).toEqual(5);
   });
 
   it("accepts a starting node", () => {
