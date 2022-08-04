@@ -5,6 +5,7 @@ import {
   addShape,
   removeShape,
   toggleFolderVisibility,
+  toggleLayerVisibility,
 } from "./shapes";
 import {
   fileBuilder,
@@ -158,6 +159,54 @@ describe("shapes", () => {
       });
     });
   });
+
+  describe("visibility", () => {
+    describe("layer", () => {
+      it("toggles from visible to hidden", () => {
+        const file = fileBuilder().addShape("MyLayer").build();
+        const layerId = getShapeIdByName(file, "MyLayer");
+
+        const updatedFile = toggleLayerVisibility(layerId)(file);
+
+        expect(file.layers[layerId].visible).toBe(true);
+        expect(updatedFile.layers[layerId].visible).toBe(false);
+      });
+
+      it("toggles from hidden to visible", () => {
+        const file = fileBuilder().addShape("MyLayer").build();
+        const layerId = getShapeIdByName(file, "MyLayer");
+        const startFile = toggleLayerVisibility(layerId)(file);
+
+        const updatedFile = toggleLayerVisibility(layerId)(startFile);
+
+        expect(startFile.layers[layerId].visible).toBe(false);
+        expect(updatedFile.layers[layerId].visible).toBe(true);
+      });
+    });
+
+    describe("folder", () => {
+      it("toggles from visible to hidden", () => {
+        const file = fileBuilder().addFolder("My Folder").build();
+        const folderId = getShapeFolderIdByName(file, "My Folder");
+
+        const updatedFile = toggleFolderVisibility(folderId)(file);
+
+        expect(file.layerFolders[folderId].visible).toBe(true);
+        expect(updatedFile.layerFolders[folderId].visible).toBe(false);
+      });
+
+      it("toggles from hidden to visible", () => {
+        const file = fileBuilder().addFolder("My Folder").build();
+        const folderId = getShapeFolderIdByName(file, "My Folder");
+        const startFile = toggleFolderVisibility(folderId)(file);
+
+        const updatedFile = toggleFolderVisibility(folderId)(startFile);
+
+        expect(startFile.layerFolders[folderId].visible).toBe(false);
+        expect(updatedFile.layerFolders[folderId].visible).toBe(true);
+      });
+    });
+  });
 });
 
 describe("removeMutation", () => {
@@ -183,31 +232,6 @@ describe("removeMutation", () => {
       expect(result.layerHierarchy[mutationId]).toBeUndefined();
       expect(result.mutations[mutationId]).toBeUndefined();
       expect(result.defaultFrame[mutationId]).toBeUndefined();
-    });
-  });
-
-  describe("visibility", () => {
-    describe("layer", () => {
-      it("toggles from visible to hidden", () => {
-        const file = fileBuilder().addFolder("My Folder").build();
-        const folderId = getShapeFolderIdByName(file, "My Folder");
-
-        const updatedFile = toggleFolderVisibility(folderId)(file);
-
-        expect(file.layerFolders[folderId].visible).toBe(true);
-        expect(updatedFile.layerFolders[folderId].visible).toBe(false);
-      });
-
-      it("toggles from hidden to visible", () => {
-        const file = fileBuilder().addFolder("My Folder").build();
-        const folderId = getShapeFolderIdByName(file, "My Folder");
-        const startFile = toggleFolderVisibility(folderId)(file);
-
-        const updatedFile = toggleFolderVisibility(folderId)(startFile);
-
-        expect(startFile.layerFolders[folderId].visible).toBe(false);
-        expect(updatedFile.layerFolders[folderId].visible).toBe(true);
-      });
     });
   });
 });
