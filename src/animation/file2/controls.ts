@@ -1,4 +1,5 @@
 import produce from "immer";
+import { ControlStyle } from "../../old/components/Toolbar";
 import { addInHierarchy, PlacementInfo } from "./hierarchy";
 import { getUniqueName } from "./shapes";
 import { ControlDefinition, GeppettoImage } from "./types";
@@ -26,4 +27,12 @@ export const addControl = (
 
     draft.controlHierarchy = controlHierarchy;
     draft.controls[newId] = control;
+  });
+
+export const addControlStep = (controlId: string) =>
+  produce<GeppettoImage>((draft) => {
+    const steps = draft.controls[controlId].steps;
+    const lastStep = steps[steps.length - 1];
+    const newStep = { ...lastStep };
+    steps.push(newStep);
   });

@@ -3,6 +3,7 @@ import { addFolder, addShape } from "./shapes";
 import { addMutation } from "./mutation";
 import { GeppettoImage, MutationVector } from "./types";
 import { Vec2 } from "../../types";
+import { addControl } from "./controls";
 
 export const fileBuilder = () => {
   let file = newFile();
@@ -71,6 +72,21 @@ export const fileBuilder = () => {
 
       return builder;
     },
+    addControl: (name: string, parentName?: string) => {
+      if (parentName !== undefined) {
+        const parentId = Object.entries(file.controlFolders).find(
+          ([, f]) => f.name === parentName
+        );
+        if (parentId) {
+          file = addControl(name, { parent: parentId[0] })(file);
+
+          return builder;
+        }
+      }
+      file = addControl(name)(file);
+
+      return builder;
+    },
     build: () => file,
   };
 
@@ -98,4 +114,14 @@ export const getShapeFolderIdByName = (
     ([, m]) => m.name === name
   );
   return layer ? layer[0] : "NOT_FOUND";
+};
+
+export const getControlIdByName = (
+  file: GeppettoImage,
+  name: string
+): string => {
+  const control = Object.entries(file.controls).find(
+    ([, m]) => m.name === name
+  );
+  return control ? control[0] : "NOT_FOUND";
 };
