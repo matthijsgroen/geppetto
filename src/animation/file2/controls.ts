@@ -1,5 +1,4 @@
 import produce from "immer";
-import { ControlStyle } from "../../old/components/Toolbar";
 import { addInHierarchy, PlacementInfo } from "./hierarchy";
 import { getUniqueName } from "./shapes";
 import { ControlDefinition, GeppettoImage } from "./types";

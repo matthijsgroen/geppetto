@@ -6,6 +6,7 @@ import {
   useState,
   useTransition,
 } from "react";
+import { addControlStep } from "../../animation/file2/controls";
 import {
   Control,
   ControlPanel,
@@ -136,7 +137,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   onControlStepSelect,
   activeControlStep,
 }) => {
-  const [file] = useFile();
+  const [file, setFile] = useFile();
   const activeControlId =
     selectedControlIds.length === 1 ? selectedControlIds[0] : null;
   const hierarchyItem =
@@ -168,6 +169,18 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
     onControlEditDone && onControlEditDone();
   });
 
+  const handleAddStep = useEvent(() => {
+    if (activeControlId === null) return;
+    const value = file.controls[activeControlId].steps.length;
+    console.log(value);
+    setFile(addControlStep(activeControlId));
+    updateControlValues((current) => ({
+      ...current,
+      [activeControlId]: value,
+    }));
+    onControlStepSelect && onControlStepSelect(value);
+  });
+
   if (isNoControl) {
     return null;
   }
@@ -189,7 +202,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
                 onClick={handleStepSelect}
               />
             ))}
-            <ToolButton label="+" disabled />
+            <ToolButton label="+" onClick={handleAddStep} />
           </ToolGrid>
         </Control>
         {onControlEditDone && (

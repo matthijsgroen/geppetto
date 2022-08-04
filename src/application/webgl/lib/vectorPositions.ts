@@ -24,9 +24,10 @@ export const calculateVectorValues = (
     if (!controlInfo) continue;
     const minStep = Math.floor(controlValue);
     const maxStep = Math.ceil(controlValue);
+    const stepLimit = controlInfo.steps.length - 1;
 
-    const minValue = controlInfo.steps[minStep];
-    const maxValue = controlInfo.steps[maxStep];
+    const minValue = controlInfo.steps[Math.min(minStep, stepLimit)];
+    const maxValue = controlInfo.steps[Math.min(maxStep, stepLimit)];
 
     const mixValue = controlValue - minStep;
 
