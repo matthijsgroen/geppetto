@@ -1,5 +1,5 @@
 import { ItemEdit } from "./ItemEdit";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import {
   fileBuilder,
   getShapeFolderIdByName,
