@@ -42,7 +42,7 @@ import {
   useMenuState,
 } from "../../ui-components";
 import { ActionToolButton } from "../actions/ActionToolButton";
-import { useFile } from "../applicationMenu/FileContext";
+import { useFile } from "../contexts/FileContext";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl, { DragState } from "../canvas/LayerMouseControl";
@@ -534,6 +534,9 @@ export const Composition: React.FC<CompositionProps> = ({
                       activeMutator={activeMutator}
                       editingControlId={editingControl}
                       editingControlStep={activeControlStep}
+                      onSelectControl={(controlId) =>
+                        setSelectedControls([controlId])
+                      }
                     />
                   </Inlay>
                 )}
@@ -554,6 +557,9 @@ export const Composition: React.FC<CompositionProps> = ({
                   selectedShapeIds={selectedItems}
                   editingControlId={editingControl}
                   editingControlStep={activeControlStep}
+                  onSelectControl={(controlId) =>
+                    setSelectedControls([controlId])
+                  }
                 />
               </Panel>
             </Column>

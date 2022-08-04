@@ -1,6 +1,6 @@
 import { Vec2 } from "../../../types";
 import { Control, TextButton } from "../../../ui-components";
-import { useFile } from "../../applicationMenu/FileContext";
+import { useFile } from "../../contexts/FileContext";
 import { VectorControl } from "../../controls/VectorControl";
 import { ValueSlider } from "./ValueSlider";
 import styles from "./MutationValueEdit.module.css";
@@ -115,7 +115,8 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
 export const MutationControlled: React.FC<{
   mutationId: string;
   editingControlId?: string;
-}> = ({ mutationId, editingControlId }) => {
+  onSelectControl?: (controlId: string) => void;
+}> = ({ mutationId, editingControlId, onSelectControl }) => {
   const [file] = useFile();
 
   const affectingControls = Object.entries(file.controls).filter(
@@ -130,12 +131,17 @@ export const MutationControlled: React.FC<{
         <p>
           {affectingControls.map(([id, c], idx, list) =>
             idx === list.length - 1 ? (
-              <TextButton key={id}>
+              <TextButton
+                key={id}
+                onClick={() => onSelectControl && onSelectControl(id)}
+              >
                 {id === editingControlId ? <strong>{c.name}</strong> : c.name}
               </TextButton>
             ) : (
               <Fragment key={id}>
-                <TextButton>
+                <TextButton
+                  onClick={() => onSelectControl && onSelectControl(id)}
+                >
                   {id === editingControlId ? <strong>{c.name}</strong> : c.name}
                 </TextButton>
                 {", "}

@@ -3,21 +3,23 @@ import { newFile } from "../../animation/file2/new";
 import { GeppettoImage } from "../../animation/file2/types";
 import { UpdateState, UseState } from "../types";
 
-export const ImageContext = createContext<{
+export const ImageFileContext = createContext<{
   file: GeppettoImage;
   setFile: UpdateState<GeppettoImage>;
 }>({ file: newFile(), setFile: () => {} });
 
-export const FileContext: React.FC<PropsWithChildren<{}>> = ({ children }) => {
-  const [file, setFile] = useState<GeppettoImage>(newFile());
+export const FileContext: React.FC<
+  PropsWithChildren<{ startFile?: GeppettoImage }>
+> = ({ children, startFile = newFile() }) => {
+  const [file, setFile] = useState<GeppettoImage>(startFile);
   return (
-    <ImageContext.Provider value={{ file, setFile }}>
+    <ImageFileContext.Provider value={{ file, setFile }}>
       {children}
-    </ImageContext.Provider>
+    </ImageFileContext.Provider>
   );
 };
 
 export const useFile = (): UseState<GeppettoImage> => {
-  const value = useContext(ImageContext);
+  const value = useContext(ImageFileContext);
   return [value.file, value.setFile];
 };

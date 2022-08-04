@@ -13,7 +13,7 @@ import {
   TreeEnvironment,
 } from "../../ui-components";
 import { UseState } from "../types";
-import { useFile } from "../applicationMenu/FileContext";
+import { useFile } from "../contexts/FileContext";
 import useEvent from "../hooks/useEvent";
 import produce from "immer";
 import { GeppettoImage, NodeType } from "../../animation/file2/types";

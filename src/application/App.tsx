@@ -6,7 +6,7 @@ import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
 import { AppSection } from "./types";
 import { Composition } from "./composition/Composition";
 import { AppContext } from "./contexts/ApplicationContext";
-import { FileContext } from "./applicationMenu/FileContext";
+import { FileContext } from "./contexts/FileContext";
 import { ScreenTranslationContext } from "./contexts/ScreenTranslationContext";
 import { ImageControlContext } from "./contexts/ImageControlContext";
 
