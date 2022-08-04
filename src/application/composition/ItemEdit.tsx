@@ -5,6 +5,10 @@ import {
   iconMapping,
   isShapeMutationVector,
 } from "../../animation/file2/mutation";
+import {
+  toggleFolderVisibility,
+  toggleLayerVisibility,
+} from "../../animation/file2/shapes";
 import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
 import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
@@ -26,10 +30,12 @@ type ItemEditProps = {
   activeMutator: string | null;
   editingControlId?: string;
   editingControlStep?: number;
+  onSelectControl?: (controlId: string) => void;
 };
 
 type EditProps = {
   itemId: string;
+  onSelectControl?: (controlId: string) => void;
 };
 
 const blankValue: Vec2 = [0, 0];
@@ -39,12 +45,7 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
   const layerFolder = file.layerFolders[itemId];
 
   const handleClick = useEvent(() => {
-    setFile(
-      produce((draft) => {
-        draft.layerFolders[itemId].visible =
-          !draft.layerFolders[itemId].visible;
-      })
-    );
+    setFile(toggleFolderVisibility(itemId));
   });
 
   return (
@@ -53,11 +54,12 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
         <Icon>📁</Icon> {layerFolder.name}
       </Title>
       <ControlPanel>
-        <Control label="Visible">
+        <Control label="Visible" htmlFor={`${itemId}_visibility`}>
           <input
             type="checkbox"
             checked={layerFolder.visible}
             onChange={handleClick}
+            id={`${itemId}_visibility`}
           />
         </Control>
       </ControlPanel>
@@ -75,11 +77,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   const layer = file.layers[itemId];
 
   const handleClick = useEvent(() => {
-    setFile(
-      produce((draft) => {
-        draft.layers[itemId].visible = !draft.layers[itemId].visible;
-      })
-    );
+    setFile(toggleLayerVisibility(itemId));
   });
 
   const offsetChangeHandler = useEvent((newValue: Vec2) => {
@@ -118,7 +116,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   );
 };
 
-const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
+const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
   const [file, setFile] = useFile();
   const mutation = file.mutations[itemId];
   const updateMutations = useUpdateMutationValues();
@@ -210,7 +208,10 @@ const MutationEdit: React.FC<EditProps> = ({ itemId }) => {
             )}
           </>
         )}
-        <MutationControlled mutationId={itemId} />
+        <MutationControlled
+          mutationId={itemId}
+          onSelectControl={onSelectControl}
+        />
         <MutationValueEdit
           mutationType={mutation.type}
           value={slideValue}
@@ -270,6 +271,7 @@ export const ItemEdit: React.FC<
 export const InlayControlPanel: React.FC<ItemEditProps> = ({
   activeMutator,
   editingControlId,
+  onSelectControl,
   editingControlStep = 0,
 }) => {
   const [file, setFile] = useFile();
@@ -334,6 +336,7 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
       <ControlPanel shadow>
         <MutationControlled
           mutationId={activeMutator}
+          onSelectControl={onSelectControl}
           editingControlId={editingControlId}
         />
         <MutationValueEdit
