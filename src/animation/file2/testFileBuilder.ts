@@ -29,14 +29,12 @@ export const fileBuilder = () => {
           ([, f]) => f.name === parentName
         );
         if (parentId) {
-          const [updated] = addShape(file, name, { parent: parentId[0] });
-          file = updated;
+          file = addShape(name, { parent: parentId[0] })(file);
 
           return builder;
         }
       }
-      const [updated] = addShape(file, name);
-      file = updated;
+      file = addShape(name)(file);
 
       return builder;
     },

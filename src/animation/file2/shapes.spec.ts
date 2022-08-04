@@ -3,6 +3,7 @@ import {
   addFolder,
   AddFolderDetails,
   addShape,
+  AddShapeDetails,
   removeShape,
   toggleFolderVisibility,
   toggleLayerVisibility,
@@ -19,37 +20,68 @@ describe("shapes", () => {
     it("creates a shape as first element", () => {
       const file = newFile();
 
-      const [image, result, newId] = addShape(file, "New shape");
+      const result: AddShapeDetails | {} = {};
+      const image = addShape("New shape", undefined, result)(file);
       expect(image.layerHierarchy["0"]).toEqual({
         type: "layer",
         parentId: "root",
       });
 
-      expect(result).toEqual({
+      expect(result).toHaveProperty("layer", {
         name: "New shape",
         visible: true,
         points: [],
         translate: [0, 0],
       });
-      expect(newId).toEqual("0");
+      expect(result).toHaveProperty("id", "0");
     });
 
     describe("positioning", () => {
       it("can place a shape after another", () => {
         const file = newFile();
-        const [firstShape] = addShape(file, "New shape");
+        const firstShape = addShape("New shape")(file);
 
-        const [result, shape] = addShape(firstShape, "New shape", {
-          after: "0",
-        });
+        const result: AddShapeDetails | {} = {};
+        const image = addShape(
+          "New shape",
+          {
+            after: "0",
+          },
+          result
+        )(firstShape);
 
-        expect(result.layerHierarchy[1]).toEqual({
+        expect(image.layerHierarchy[1]).toEqual({
           parentId: "root",
           type: "layer",
         });
 
-        expect(shape).toEqual({
+        expect(result).toHaveProperty("layer", {
           name: "New shape (1)",
+          visible: true,
+          points: [],
+          translate: [0, 0],
+        });
+      });
+    });
+
+    describe("naming", () => {
+      it("makes a name unique if start suggestion is already taken", () => {
+        const file = fileBuilder()
+          .addShape("New shape")
+          .addShape("New shape")
+          .build();
+
+        const result: AddShapeDetails | {} = {};
+        addShape(
+          "New shape",
+          {
+            after: "0",
+          },
+          result
+        )(file);
+
+        expect(result).toHaveProperty("layer", {
+          name: "New shape (2)",
           visible: true,
           points: [],
           translate: [0, 0],
