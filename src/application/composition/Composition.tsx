@@ -534,6 +534,9 @@ export const Composition: React.FC<CompositionProps> = ({
                       activeMutator={activeMutator}
                       editingControlId={editingControl}
                       editingControlStep={activeControlStep}
+                      onSelectControl={(controlId) =>
+                        setSelectedControls([controlId])
+                      }
                     />
                   </Inlay>
                 )}
@@ -554,6 +557,9 @@ export const Composition: React.FC<CompositionProps> = ({
                   selectedShapeIds={selectedItems}
                   editingControlId={editingControl}
                   editingControlStep={activeControlStep}
+                  onSelectControl={(controlId) =>
+                    setSelectedControls([controlId])
+                  }
                 />
               </Panel>
             </Column>
