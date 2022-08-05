@@ -5,8 +5,7 @@ import {
   addShape,
   AddShapeDetails,
   removeShape,
-  toggleFolderVisibility,
-  toggleLayerVisibility,
+  toggleVisibility,
 } from "./shapes";
 import {
   fileBuilder,
@@ -198,7 +197,7 @@ describe("shapes", () => {
         const file = fileBuilder().addShape("MyLayer").build();
         const layerId = getShapeIdByName(file, "MyLayer");
 
-        const updatedFile = toggleLayerVisibility(layerId)(file);
+        const updatedFile = toggleVisibility(layerId)(file);
 
         expect(file.layers[layerId].visible).toBe(true);
         expect(updatedFile.layers[layerId].visible).toBe(false);
@@ -207,9 +206,9 @@ describe("shapes", () => {
       it("toggles from hidden to visible", () => {
         const file = fileBuilder().addShape("MyLayer").build();
         const layerId = getShapeIdByName(file, "MyLayer");
-        const startFile = toggleLayerVisibility(layerId)(file);
+        const startFile = toggleVisibility(layerId)(file);
 
-        const updatedFile = toggleLayerVisibility(layerId)(startFile);
+        const updatedFile = toggleVisibility(layerId)(startFile);
 
         expect(startFile.layers[layerId].visible).toBe(false);
         expect(updatedFile.layers[layerId].visible).toBe(true);
@@ -221,7 +220,7 @@ describe("shapes", () => {
         const file = fileBuilder().addFolder("My Folder").build();
         const folderId = getShapeFolderIdByName(file, "My Folder");
 
-        const updatedFile = toggleFolderVisibility(folderId)(file);
+        const updatedFile = toggleVisibility(folderId)(file);
 
         expect(file.layerFolders[folderId].visible).toBe(true);
         expect(updatedFile.layerFolders[folderId].visible).toBe(false);
@@ -230,9 +229,9 @@ describe("shapes", () => {
       it("toggles from hidden to visible", () => {
         const file = fileBuilder().addFolder("My Folder").build();
         const folderId = getShapeFolderIdByName(file, "My Folder");
-        const startFile = toggleFolderVisibility(folderId)(file);
+        const startFile = toggleVisibility(folderId)(file);
 
-        const updatedFile = toggleFolderVisibility(folderId)(startFile);
+        const updatedFile = toggleVisibility(folderId)(startFile);
 
         expect(startFile.layerFolders[folderId].visible).toBe(false);
         expect(updatedFile.layerFolders[folderId].visible).toBe(true);

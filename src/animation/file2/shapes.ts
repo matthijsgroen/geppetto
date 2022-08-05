@@ -186,12 +186,13 @@ export const removeShape = (shapeId: string) =>
 export const hasPoints = (file: GeppettoImage) =>
   Object.values(file.layers).some((l) => l.points.length > 2);
 
-export const toggleFolderVisibility = (itemId: string) =>
-  produce<GeppettoImage>((draft) => {
-    draft.layerFolders[itemId].visible = !draft.layerFolders[itemId].visible;
-  });
-
-export const toggleLayerVisibility = (itemId: string) =>
-  produce<GeppettoImage>((draft) => {
-    draft.layers[itemId].visible = !draft.layers[itemId].visible;
+export const toggleVisibility = (itemId: string) =>
+  produce((draft) => {
+    const item = draft.layerHierarchy[itemId];
+    if (item.type === "layer") {
+      draft.layers[itemId].visible = !draft.layers[itemId].visible;
+    }
+    if (item.type === "layerFolder") {
+      draft.layerFolders[itemId].visible = !draft.layerFolders[itemId].visible;
+    }
   });

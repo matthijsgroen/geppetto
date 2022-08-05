@@ -5,7 +5,7 @@ import {
   moveInHierarchy,
   visit,
 } from "../../animation/file2/hierarchy";
-import { rename } from "../../animation/file2/shapes";
+import { rename, toggleVisibility } from "../../animation/file2/shapes";
 import {
   TreeData,
   TreeItem,
@@ -24,7 +24,7 @@ type LayerTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
   focusedItemState: UseState<string | undefined>;
   showMutations?: boolean;
-  toggleVisibility?: boolean;
+  showVisibilityToggle?: boolean;
   editControlId?: string;
   treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
@@ -57,7 +57,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   treeId,
   editControlId,
   showMutations = false,
-  toggleVisibility = false,
+  showVisibilityToggle = false,
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
@@ -66,18 +66,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   const actionButtonPress = useEvent(
     (itemId: string, buttonId: ActionButton) => {
       if (buttonId === "visibility") {
-        setFile(
-          produce((draft) => {
-            const item = draft.layerHierarchy[itemId];
-            if (item.type === "layer") {
-              draft.layers[itemId].visible = !draft.layers[itemId].visible;
-            }
-            if (item.type === "layerFolder") {
-              draft.layerFolders[itemId].visible =
-                !draft.layerFolders[itemId].visible;
-            }
-          })
-        );
+        setFile(toggleVisibility(itemId));
       }
     }
   );
@@ -108,7 +97,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     file,
     actionButtonPress,
     showMutations,
-    toggleVisibility
+    showVisibilityToggle
     // expandedItems
   );
 

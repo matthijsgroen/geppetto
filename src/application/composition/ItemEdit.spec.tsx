@@ -5,7 +5,7 @@ import {
   getShapeFolderIdByName,
 } from "../../animation/file2/testFileBuilder";
 import { renderWithFile } from "../testUtils/renderWithFile";
-import { toggleFolderVisibility } from "../../animation/file2/shapes";
+import { toggleVisibility } from "../../animation/file2/shapes";
 
 describe("ItemEdit", () => {
   describe("when nothing is selected", () => {
@@ -32,7 +32,7 @@ describe("ItemEdit", () => {
     it("shows visible state unchecked for hidden folder", () => {
       const file = fileBuilder().addFolder("My Folder").build();
       const folderId = getShapeFolderIdByName(file, "My Folder");
-      const fileWithFolderVisibility = toggleFolderVisibility(folderId)(file);
+      const fileWithFolderVisibility = toggleVisibility(folderId)(file);
 
       renderWithFile(
         fileWithFolderVisibility,
