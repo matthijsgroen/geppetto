@@ -19,6 +19,11 @@ import produce from "immer";
 import { GeppettoImage, NodeType } from "../../animation/file2/types";
 import { ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
 import { MutationControlContext } from "./mutationControlContext";
+import {
+  addMutationToControl,
+  isMutationUnderControl,
+  removeMutationFromControl,
+} from "../../animation/file2/controls";
 
 type LayerTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
@@ -67,6 +72,13 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
     (itemId: string, buttonId: ActionButton) => {
       if (buttonId === "visibility") {
         setFile(toggleVisibility(itemId));
+      }
+      if (buttonId === "controlMutation" && editControlId) {
+        if (isMutationUnderControl(file, editControlId, itemId)) {
+          setFile(removeMutationFromControl(editControlId, itemId));
+        } else {
+          setFile(addMutationToControl(editControlId, itemId));
+        }
       }
     }
   );

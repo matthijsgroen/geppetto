@@ -1,7 +1,18 @@
 import produce from "immer";
-import { addControl, AddControlDetails, addControlStep } from "./controls";
+import {
+  addControl,
+  AddControlDetails,
+  addControlStep,
+  addMutationToControl,
+  isMutationUnderControl,
+  removeMutationFromControl,
+} from "./controls";
 import { newFile } from "./new";
-import { fileBuilder, getControlIdByName } from "./testFileBuilder";
+import {
+  fileBuilder,
+  getControlIdByName,
+  getMutationIdByName,
+} from "./testFileBuilder";
 
 describe("addControl", () => {
   it("adds a control to the provided file", () => {
@@ -51,6 +62,71 @@ describe("addControlStep", () => {
     });
     expect(updatedFile.controls[controlId].steps[1]).not.toBe(
       updatedFile.controls[controlId].steps[2]
+    );
+  });
+});
+
+describe("addMutationToControl", () => {
+  it("copies mutation value to control", () => {
+    const file = fileBuilder()
+      .addControl("control1")
+      .addShape("shape1")
+      .addMutation(
+        "mutation",
+        "translate",
+        { origin: [10, 20], radius: -1 },
+        "shape1"
+      )
+      .setMutationValue("mutation", [50, -10])
+      .build();
+
+    const controlId = getControlIdByName(file, "control1");
+    const mutationId = getMutationIdByName(file, "mutation");
+
+    const updatedFile = addMutationToControl(controlId, mutationId)(file);
+
+    expect(updatedFile.controls[controlId].steps).toEqual([
+      {
+        [mutationId]: [50, -10],
+      },
+      {
+        [mutationId]: [50, -10],
+      },
+    ]);
+
+    expect(isMutationUnderControl(updatedFile, controlId, mutationId)).toEqual(
+      true
+    );
+  });
+});
+
+describe("removeMutationFromControl", () => {
+  it("removes mutation from all steps", () => {
+    const file = fileBuilder()
+      .addControl("control1")
+      .addShape("shape1")
+      .addMutation(
+        "mutation",
+        "translate",
+        { origin: [10, 20], radius: -1 },
+        "shape1"
+      )
+      .setMutationValue("mutation", [50, -10])
+      .build();
+
+    const controlId = getControlIdByName(file, "control1");
+    const mutationId = getMutationIdByName(file, "mutation");
+
+    const updatedFile = addMutationToControl(controlId, mutationId)(file);
+
+    const resultFile = removeMutationFromControl(
+      controlId,
+      mutationId
+    )(updatedFile);
+
+    expect(resultFile.controls[controlId].steps).toEqual([{}, {}]);
+    expect(isMutationUnderControl(resultFile, controlId, mutationId)).toEqual(
+      false
     );
   });
 });

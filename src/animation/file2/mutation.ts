@@ -88,3 +88,8 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
     draft.defaultFrame[mutationId] = defaultValueForVector(mutationType);
   });
 };
+
+export const updateMutationValue = (itemId: string, newValue: Vec2) =>
+  produce((draft) => {
+    draft.defaultFrame[itemId] = newValue;
+  });

@@ -1,6 +1,6 @@
 import { newFile } from "./new";
 import { addFolder, addShape } from "./shapes";
-import { addMutation } from "./mutation";
+import { addMutation, updateMutationValue } from "./mutation";
 import { GeppettoImage, MutationVector } from "./types";
 import { Vec2 } from "../../types";
 import { addControl } from "./controls";
@@ -84,6 +84,12 @@ export const fileBuilder = () => {
         }
       }
       file = addControl(name)(file);
+
+      return builder;
+    },
+    setMutationValue: (name: string, value: Vec2) => {
+      const mutId = getMutationIdByName(file, name);
+      file = updateMutationValue(mutId, value)(file);
 
       return builder;
     },

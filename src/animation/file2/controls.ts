@@ -35,3 +35,27 @@ export const addControlStep = (controlId: string) =>
     const newStep = { ...lastStep };
     steps.push(newStep);
   });
+
+export const addMutationToControl = (controlId: string, mutationId: string) =>
+  produce<GeppettoImage>((draft) => {
+    const startValue = draft.defaultFrame[mutationId];
+    for (const step of draft.controls[controlId].steps) {
+      step[mutationId] = startValue;
+    }
+  });
+
+export const removeMutationFromControl = (
+  controlId: string,
+  mutationId: string
+) =>
+  produce<GeppettoImage>((draft) => {
+    for (const step of draft.controls[controlId].steps) {
+      delete step[mutationId];
+    }
+  });
+
+export const isMutationUnderControl = (
+  file: GeppettoImage,
+  controlId: string,
+  mutationId: string
+) => file.controls[controlId].steps.some((step) => step[mutationId]);

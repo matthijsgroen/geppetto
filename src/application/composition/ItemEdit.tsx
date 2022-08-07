@@ -4,6 +4,7 @@ import {
   hasRadius,
   iconMapping,
   isShapeMutationVector,
+  updateMutationValue,
 } from "../../animation/file2/mutation";
 import { toggleVisibility } from "../../animation/file2/shapes";
 import { Vec2 } from "../../types";
@@ -167,11 +168,7 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
     updateMutations((mutations) => ({ ...mutations, [itemId]: newValue }));
     setSlideValue(newValue);
     startTransition(() => {
-      setFile(
-        produce((draft) => {
-          draft.defaultFrame[itemId] = newValue;
-        })
-      );
+      setFile(updateMutationValue(itemId, newValue));
     });
   });
 
