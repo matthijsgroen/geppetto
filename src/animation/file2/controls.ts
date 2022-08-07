@@ -36,6 +36,13 @@ export const addControlStep = (controlId: string) =>
     steps.push(newStep);
   });
 
+export const removeControlStep = (controlId: string, stepIndex: number) =>
+  produce<GeppettoImage>((draft) => {
+    const steps = draft.controls[controlId].steps;
+    if (steps.length === 2) return;
+    steps.splice(stepIndex, 1);
+  });
+
 export const addMutationToControl = (controlId: string, mutationId: string) =>
   produce<GeppettoImage>((draft) => {
     const startValue = draft.defaultFrame[mutationId];

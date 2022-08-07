@@ -5,6 +5,7 @@ import {
   addControlStep,
   addMutationToControl,
   isMutationUnderControl,
+  removeControlStep,
   removeMutationFromControl,
 } from "./controls";
 import { newFile } from "./new";
@@ -63,6 +64,45 @@ describe("addControlStep", () => {
     expect(updatedFile.controls[controlId].steps[1]).not.toBe(
       updatedFile.controls[controlId].steps[2]
     );
+  });
+});
+
+describe("removeControlStep", () => {
+  const file = fileBuilder()
+    .addControl("control1")
+    .addShape("shape1")
+    .addMutation(
+      "mutation",
+      "translate",
+      { origin: [10, 20], radius: -1 },
+      "shape1"
+    )
+    .setMutationValue("mutation", [50, -10])
+    .build();
+
+  const controlId = getControlIdByName(file, "control1");
+  const mutationId = getMutationIdByName(file, "mutation");
+
+  it("needs a minimum of 2 steps", () => {
+    const controlMutationFile = addMutationToControl(
+      controlId,
+      mutationId
+    )(file);
+    expect(controlMutationFile.controls[controlId].steps).toHaveLength(2);
+
+    const resultFile = removeControlStep(controlId, 0)(controlMutationFile);
+    expect(resultFile.controls[controlId].steps).toHaveLength(2);
+  });
+
+  it("removes step from control", () => {
+    const controlMutationFile = addMutationToControl(
+      controlId,
+      mutationId
+    )(addControlStep(controlId)(file));
+    expect(controlMutationFile.controls[controlId].steps).toHaveLength(3);
+
+    const resultFile = removeControlStep(controlId, 0)(controlMutationFile);
+    expect(resultFile.controls[controlId].steps).toHaveLength(2);
   });
 });
 
