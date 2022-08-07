@@ -65,6 +65,16 @@ describe("addControlStep", () => {
       updatedFile.controls[controlId].steps[2]
     );
   });
+
+  it("can insert steps between others", () => {
+    const file = fileBuilder().addControl("Control").build();
+    const controlId = getControlIdByName(file, "Control");
+
+    const updatedFile = addControlStep(controlId, 0)(file);
+
+    expect(file.controls[controlId].steps).toHaveLength(2);
+    expect(updatedFile.controls[controlId].steps).toHaveLength(3);
+  });
 });
 
 describe("removeControlStep", () => {

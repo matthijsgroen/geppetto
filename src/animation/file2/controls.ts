@@ -28,12 +28,13 @@ export const addControl = (
     draft.controls[newId] = control;
   });
 
-export const addControlStep = (controlId: string) =>
+export const addControlStep = (controlId: string, stepIndex = -1) =>
   produce<GeppettoImage>((draft) => {
     const steps = draft.controls[controlId].steps;
-    const lastStep = steps[steps.length - 1];
+    const index = stepIndex === -1 ? steps.length - 1 : stepIndex;
+    const lastStep = steps[index];
     const newStep = { ...lastStep };
-    steps.push(newStep);
+    steps.splice(index + 1, 0, newStep);
   });
 
 export const removeControlStep = (controlId: string, stepIndex: number) =>
