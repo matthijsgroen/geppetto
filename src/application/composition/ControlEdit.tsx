@@ -243,7 +243,6 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   const handleAddStep = useEvent(() => {
     if (activeControlId === null) return;
     const value = file.controls[activeControlId].steps.length;
-    console.log(value);
     setFile(insertControlStep(activeControlId));
     updateControlValues((current) => ({
       ...current,
