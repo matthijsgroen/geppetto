@@ -2,7 +2,7 @@ import produce from "immer";
 import {
   addControl,
   AddControlDetails,
-  addControlStep,
+  insertControlStep,
   addMutationToControl,
   isMutationUnderControl,
   removeControlStep,
@@ -35,12 +35,12 @@ describe("addControl", () => {
   });
 });
 
-describe("addControlStep", () => {
+describe("insertControlStep", () => {
   it("adds a step to an exiting control", () => {
     const file = fileBuilder().addControl("Control").build();
     const controlId = getControlIdByName(file, "Control");
 
-    const updatedFile = addControlStep(controlId)(file);
+    const updatedFile = insertControlStep(controlId)(file);
 
     expect(file.controls[controlId].steps).toHaveLength(2);
     expect(updatedFile.controls[controlId].steps).toHaveLength(3);
@@ -53,7 +53,7 @@ describe("addControlStep", () => {
       draft.controls[controlId].steps[1].MutationId = [1, 3];
     });
 
-    const updatedFile = addControlStep(controlId)(fileWithValue);
+    const updatedFile = insertControlStep(controlId)(fileWithValue);
 
     expect(updatedFile.controls[controlId].steps[1]).toEqual({
       MutationId: [1, 3],
@@ -70,7 +70,7 @@ describe("addControlStep", () => {
     const file = fileBuilder().addControl("Control").build();
     const controlId = getControlIdByName(file, "Control");
 
-    const updatedFile = addControlStep(controlId, 0)(file);
+    const updatedFile = insertControlStep(controlId, 0)(file);
 
     expect(file.controls[controlId].steps).toHaveLength(2);
     expect(updatedFile.controls[controlId].steps).toHaveLength(3);
@@ -108,7 +108,7 @@ describe("removeControlStep", () => {
     const controlMutationFile = addMutationToControl(
       controlId,
       mutationId
-    )(addControlStep(controlId)(file));
+    )(insertControlStep(controlId)(file));
     expect(controlMutationFile.controls[controlId].steps).toHaveLength(3);
 
     const resultFile = removeControlStep(controlId, 0)(controlMutationFile);
