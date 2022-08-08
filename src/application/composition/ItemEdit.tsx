@@ -4,11 +4,9 @@ import {
   hasRadius,
   iconMapping,
   isShapeMutationVector,
+  updateMutationValue,
 } from "../../animation/file2/mutation";
-import {
-  toggleFolderVisibility,
-  toggleLayerVisibility,
-} from "../../animation/file2/shapes";
+import { toggleVisibility } from "../../animation/file2/shapes";
 import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
 import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
@@ -45,7 +43,7 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
   const layerFolder = file.layerFolders[itemId];
 
   const handleClick = useEvent(() => {
-    setFile(toggleFolderVisibility(itemId));
+    setFile(toggleVisibility(itemId));
   });
 
   return (
@@ -77,7 +75,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   const layer = file.layers[itemId];
 
   const handleClick = useEvent(() => {
-    setFile(toggleLayerVisibility(itemId));
+    setFile(toggleVisibility(itemId));
   });
 
   const offsetChangeHandler = useEvent((newValue: Vec2) => {
@@ -170,11 +168,7 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
     updateMutations((mutations) => ({ ...mutations, [itemId]: newValue }));
     setSlideValue(newValue);
     startTransition(() => {
-      setFile(
-        produce((draft) => {
-          draft.defaultFrame[itemId] = newValue;
-        })
-      );
+      setFile(updateMutationValue(itemId, newValue));
     });
   });
 

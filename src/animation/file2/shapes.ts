@@ -23,33 +23,34 @@ export const getUniqueName = (
   return `${name} (${counter})`;
 };
 
-export const addShape = (
-  image: GeppettoImage,
-  shapeName: string,
-  position?: PlacementInfo
-): [GeppettoImage, Layer, string] => {
-  const newName = getUniqueName(shapeName, image.layers);
-  const layer: Layer = {
-    name: newName,
-    visible: true,
-    points: [],
-    translate: [0, 0],
-  };
-  const [layerHierarchy, newId] = addInHierarchy(
-    image.layerHierarchy,
-    { type: "layer" },
-    position
-  );
+export type AddShapeDetails = { shape: Layer; id: string };
 
-  return [
-    produce(image, (draft) => {
-      draft.layerHierarchy = layerHierarchy;
-      draft.layers[newId] = layer;
-    }),
-    layer,
-    newId,
-  ];
-};
+export const addShape = (
+  shapeName: string,
+  position?: PlacementInfo,
+  dataResult?: AddShapeDetails | {}
+) =>
+  produce<GeppettoImage>((draft) => {
+    const newName = getUniqueName(shapeName, draft.layers);
+    const layer: Layer = {
+      name: newName,
+      visible: true,
+      points: [],
+      translate: [0, 0],
+    };
+    const [layerHierarchy, newId] = addInHierarchy<NodeType>(
+      draft.layerHierarchy,
+      { type: "layer" },
+      position
+    );
+
+    if (dataResult) {
+      Object.assign(dataResult, { id: newId, layer });
+    }
+
+    draft.layerHierarchy = layerHierarchy;
+    draft.layers[newId] = layer;
+  });
 
 export type AddFolderDetails = { folder: LayerFolder; id: string };
 
@@ -185,12 +186,13 @@ export const removeShape = (shapeId: string) =>
 export const hasPoints = (file: GeppettoImage) =>
   Object.values(file.layers).some((l) => l.points.length > 2);
 
-export const toggleFolderVisibility = (itemId: string) =>
-  produce<GeppettoImage>((draft) => {
-    draft.layerFolders[itemId].visible = !draft.layerFolders[itemId].visible;
-  });
-
-export const toggleLayerVisibility = (itemId: string) =>
-  produce<GeppettoImage>((draft) => {
-    draft.layers[itemId].visible = !draft.layers[itemId].visible;
+export const toggleVisibility = (itemId: string) =>
+  produce((draft) => {
+    const item = draft.layerHierarchy[itemId];
+    if (item.type === "layer") {
+      draft.layers[itemId].visible = !draft.layers[itemId].visible;
+    }
+    if (item.type === "layerFolder") {
+      draft.layerFolders[itemId].visible = !draft.layerFolders[itemId].visible;
+    }
   });

@@ -21,6 +21,7 @@ type ToolButtonProps = {
   tooltip?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
+  onContextMenu?: MouseEventHandler<HTMLButtonElement>;
 };
 
 export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
@@ -36,6 +37,7 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
       label,
       onClick,
       onKeyDown,
+      onContextMenu,
       ...props
     },
     ref
@@ -50,6 +52,7 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
         type={"button"}
         onClick={onClick}
         onKeyDown={onKeyDown}
+        onContextMenu={onContextMenu}
         className={className({
           [styles.toolButton]: true,
           [styles.active]: active,

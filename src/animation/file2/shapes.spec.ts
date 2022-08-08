@@ -3,8 +3,9 @@ import {
   addFolder,
   AddFolderDetails,
   addShape,
+  AddShapeDetails,
   removeShape,
-  toggleFolderVisibility,
+  toggleVisibility,
 } from "./shapes";
 import {
   fileBuilder,
@@ -18,37 +19,68 @@ describe("shapes", () => {
     it("creates a shape as first element", () => {
       const file = newFile();
 
-      const [image, result, newId] = addShape(file, "New shape");
+      const result: AddShapeDetails | {} = {};
+      const image = addShape("New shape", undefined, result)(file);
       expect(image.layerHierarchy["0"]).toEqual({
         type: "layer",
         parentId: "root",
       });
 
-      expect(result).toEqual({
+      expect(result).toHaveProperty("layer", {
         name: "New shape",
         visible: true,
         points: [],
         translate: [0, 0],
       });
-      expect(newId).toEqual("0");
+      expect(result).toHaveProperty("id", "0");
     });
 
     describe("positioning", () => {
       it("can place a shape after another", () => {
         const file = newFile();
-        const [firstShape] = addShape(file, "New shape");
+        const firstShape = addShape("New shape")(file);
 
-        const [result, shape] = addShape(firstShape, "New shape", {
-          after: "0",
-        });
+        const result: AddShapeDetails | {} = {};
+        const image = addShape(
+          "New shape",
+          {
+            after: "0",
+          },
+          result
+        )(firstShape);
 
-        expect(result.layerHierarchy[1]).toEqual({
+        expect(image.layerHierarchy[1]).toEqual({
           parentId: "root",
           type: "layer",
         });
 
-        expect(shape).toEqual({
+        expect(result).toHaveProperty("layer", {
           name: "New shape (1)",
+          visible: true,
+          points: [],
+          translate: [0, 0],
+        });
+      });
+    });
+
+    describe("naming", () => {
+      it("makes a name unique if start suggestion is already taken", () => {
+        const file = fileBuilder()
+          .addShape("New shape")
+          .addShape("New shape")
+          .build();
+
+        const result: AddShapeDetails | {} = {};
+        addShape(
+          "New shape",
+          {
+            after: "0",
+          },
+          result
+        )(file);
+
+        expect(result).toHaveProperty("layer", {
+          name: "New shape (2)",
           visible: true,
           points: [],
           translate: [0, 0],
@@ -158,6 +190,54 @@ describe("shapes", () => {
       });
     });
   });
+
+  describe("visibility", () => {
+    describe("layer", () => {
+      it("toggles from visible to hidden", () => {
+        const file = fileBuilder().addShape("MyLayer").build();
+        const layerId = getShapeIdByName(file, "MyLayer");
+
+        const updatedFile = toggleVisibility(layerId)(file);
+
+        expect(file.layers[layerId].visible).toBe(true);
+        expect(updatedFile.layers[layerId].visible).toBe(false);
+      });
+
+      it("toggles from hidden to visible", () => {
+        const file = fileBuilder().addShape("MyLayer").build();
+        const layerId = getShapeIdByName(file, "MyLayer");
+        const startFile = toggleVisibility(layerId)(file);
+
+        const updatedFile = toggleVisibility(layerId)(startFile);
+
+        expect(startFile.layers[layerId].visible).toBe(false);
+        expect(updatedFile.layers[layerId].visible).toBe(true);
+      });
+    });
+
+    describe("folder", () => {
+      it("toggles from visible to hidden", () => {
+        const file = fileBuilder().addFolder("My Folder").build();
+        const folderId = getShapeFolderIdByName(file, "My Folder");
+
+        const updatedFile = toggleVisibility(folderId)(file);
+
+        expect(file.layerFolders[folderId].visible).toBe(true);
+        expect(updatedFile.layerFolders[folderId].visible).toBe(false);
+      });
+
+      it("toggles from hidden to visible", () => {
+        const file = fileBuilder().addFolder("My Folder").build();
+        const folderId = getShapeFolderIdByName(file, "My Folder");
+        const startFile = toggleVisibility(folderId)(file);
+
+        const updatedFile = toggleVisibility(folderId)(startFile);
+
+        expect(startFile.layerFolders[folderId].visible).toBe(false);
+        expect(updatedFile.layerFolders[folderId].visible).toBe(true);
+      });
+    });
+  });
 });
 
 describe("removeMutation", () => {
@@ -183,31 +263,6 @@ describe("removeMutation", () => {
       expect(result.layerHierarchy[mutationId]).toBeUndefined();
       expect(result.mutations[mutationId]).toBeUndefined();
       expect(result.defaultFrame[mutationId]).toBeUndefined();
-    });
-  });
-
-  describe("visibility", () => {
-    describe("layer", () => {
-      it("toggles from visible to hidden", () => {
-        const file = fileBuilder().addFolder("My Folder").build();
-        const folderId = getShapeFolderIdByName(file, "My Folder");
-
-        const updatedFile = toggleFolderVisibility(folderId)(file);
-
-        expect(file.layerFolders[folderId].visible).toBe(true);
-        expect(updatedFile.layerFolders[folderId].visible).toBe(false);
-      });
-
-      it("toggles from hidden to visible", () => {
-        const file = fileBuilder().addFolder("My Folder").build();
-        const folderId = getShapeFolderIdByName(file, "My Folder");
-        const startFile = toggleFolderVisibility(folderId)(file);
-
-        const updatedFile = toggleFolderVisibility(folderId)(startFile);
-
-        expect(startFile.layerFolders[folderId].visible).toBe(false);
-        expect(updatedFile.layerFolders[folderId].visible).toBe(true);
-      });
     });
   });
 });

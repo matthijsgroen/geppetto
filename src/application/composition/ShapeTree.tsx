@@ -117,7 +117,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       selectedItemsState={selectedItemsState}
       focusedItemState={focusedItemState}
       showMutations
-      toggleVisibility
+      showVisibilityToggle
       treeId="composition"
       editControlId={editControlId}
     >

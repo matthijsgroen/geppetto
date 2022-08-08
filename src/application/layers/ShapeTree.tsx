@@ -51,8 +51,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
         position = { after: targetId, parent: parentId };
       }
     }
-    const [updatedImage] = addShape(file, "New Shape", position);
-    setFile(updatedImage);
+    setFile(addShape("New Shape", position));
   });
 
   const addFolderAction = useToolAction(() => {

@@ -1,6 +1,11 @@
-import { addMutation, AddMutationDetails } from "./mutation";
+import {
+  addMutation,
+  AddMutationDetails,
+  updateMutationValue,
+} from "./mutation";
 import {
   fileBuilder,
+  getMutationIdByName,
   getShapeFolderIdByName,
   getShapeIdByName,
 } from "./testFileBuilder";
@@ -49,5 +54,26 @@ describe("addMutation", () => {
         expect(result.defaultFrame[addDetails.id]).toEqual([0, 0]);
       });
     });
+  });
+});
+
+describe("updateMutationValue", () => {
+  it("sets new vec2 value", () => {
+    const file = fileBuilder()
+      .addShape("foo")
+      .addMutation(
+        "mutation",
+        "translate",
+        { origin: [0, 0], radius: -1 },
+        "foo"
+      )
+      .build();
+
+    const mutationId = getMutationIdByName(file, "mutation");
+
+    const updatedFile = updateMutationValue(mutationId, [30, 20])(file);
+
+    expect(file.defaultFrame[mutationId]).toEqual([0, 0]);
+    expect(updatedFile.defaultFrame[mutationId]).toEqual([30, 20]);
   });
 });

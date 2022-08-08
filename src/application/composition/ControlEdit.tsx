@@ -2,17 +2,25 @@ import produce from "immer";
 import {
   ChangeEvent,
   MouseEvent,
+  KeyboardEvent,
   useEffect,
   useState,
   useTransition,
 } from "react";
 import {
+  insertControlStep,
+  removeControlStep,
+} from "../../animation/file2/controls";
+import {
   Control,
+  ControlledMenu,
   ControlPanel,
   Icon,
+  MenuItem,
   Title,
   ToolButton,
   ToolGrid,
+  useMenuState,
 } from "../../ui-components";
 import { useFile } from "../contexts/FileContext";
 import {
@@ -136,11 +144,29 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   onControlStepSelect,
   activeControlStep,
 }) => {
-  const [file] = useFile();
+  const [file, setFile] = useFile();
   const activeControlId =
     selectedControlIds.length === 1 ? selectedControlIds[0] : null;
   const hierarchyItem =
     activeControlId !== null ? file.controlHierarchy[activeControlId] : null;
+  const [anchorPoint, setAnchorPoint] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [selectedStep, setSelectedStep] = useState(-1);
+  const [menuProps, toggleMenu] = useMenuState();
+
+  const handleContextMenu = useEvent((event: MouseEvent<HTMLElement>): void => {
+    if (activeControlId === null) return;
+    const value = Number(event.currentTarget.getAttribute("data-value"));
+    event.preventDefault();
+    setSelectedStep(value);
+    setAnchorPoint({
+      x: event.clientX,
+      y: event.clientY,
+    });
+    toggleMenu(true);
+  });
 
   const isNoControl =
     activeControlId === null ||
@@ -148,14 +174,60 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
     hierarchyItem.type !== "control";
   const updateControlValues = useUpdateControlValues();
 
-  const handleStepSelect = useEvent((e: MouseEvent<HTMLButtonElement>) => {
+  const handleStepSelect = useEvent((event: MouseEvent<HTMLButtonElement>) => {
     if (activeControlId === null) return;
-    const value = Number(e.currentTarget.getAttribute("data-value"));
+    const value = Number(event.currentTarget.getAttribute("data-value"));
     updateControlValues((current) => ({
       ...current,
       [activeControlId]: value,
     }));
     onControlStepSelect && onControlStepSelect(value);
+  });
+
+  const handleStepKeyDown = useEvent((e: KeyboardEvent<HTMLButtonElement>) => {
+    if (activeControlId === null) return;
+    if (e.key === "Backspace" || e.key === "Delete") {
+      const value = Number(e.currentTarget.getAttribute("data-value"));
+      const afterRemoveValue = value > 1 ? value - 1 : value;
+
+      setFile(removeControlStep(activeControlId, value));
+      setTimeout(() => {
+        updateControlValues((current) => ({
+          ...current,
+          [activeControlId]: afterRemoveValue,
+        }));
+        onControlStepSelect && onControlStepSelect(afterRemoveValue);
+      }, 0);
+    }
+  });
+
+  const handleDeleteStepContext = useEvent(() => {
+    const value = selectedStep;
+    if (selectedStep === -1 || !activeControlId) return;
+    const afterRemoveValue = value > 1 ? value - 1 : value;
+
+    setFile(removeControlStep(activeControlId, value));
+    setTimeout(() => {
+      updateControlValues((current) => ({
+        ...current,
+        [activeControlId]: afterRemoveValue,
+      }));
+      onControlStepSelect && onControlStepSelect(afterRemoveValue);
+    }, 0);
+  });
+
+  const handleAddStepContext = useEvent(() => {
+    const value = selectedStep;
+    if (selectedStep === -1 || !activeControlId) return;
+
+    setFile(insertControlStep(activeControlId, value));
+    setTimeout(() => {
+      updateControlValues((current) => ({
+        ...current,
+        [activeControlId]: value,
+      }));
+      onControlStepSelect && onControlStepSelect(value);
+    }, 0);
   });
 
   const handleControlEditDone = useEvent(() => {
@@ -168,6 +240,17 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
     onControlEditDone && onControlEditDone();
   });
 
+  const handleAddStep = useEvent(() => {
+    if (activeControlId === null) return;
+    const value = file.controls[activeControlId].steps.length;
+    setFile(insertControlStep(activeControlId));
+    updateControlValues((current) => ({
+      ...current,
+      [activeControlId]: value,
+    }));
+    onControlStepSelect && onControlStepSelect(value);
+  });
+
   if (isNoControl) {
     return null;
   }
@@ -178,6 +261,20 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
         <Icon>⚙️</Icon> {control.name}
       </Title>
       <ControlPanel>
+        <ControlledMenu
+          {...menuProps}
+          anchorPoint={anchorPoint}
+          onClose={() => toggleMenu(false)}
+        >
+          <MenuItem
+            shortcut={{ interaction: "DelOrBackspace" }}
+            onClick={handleDeleteStepContext}
+          >
+            Delete step
+          </MenuItem>
+          <MenuItem onClick={handleAddStepContext}>Insert step</MenuItem>
+        </ControlledMenu>
+
         <Control label="Steps">
           <ToolGrid size="small">
             {control.steps.map((_step, index) => (
@@ -187,9 +284,11 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
                 active={index === activeControlStep}
                 key={index}
                 onClick={handleStepSelect}
+                onKeyDown={handleStepKeyDown}
+                onContextMenu={handleContextMenu}
               />
             ))}
-            <ToolButton label="+" disabled />
+            <ToolButton label="+" onClick={handleAddStep} />
           </ToolGrid>
         </Control>
         {onControlEditDone && (
