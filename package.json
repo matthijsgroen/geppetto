@@ -117,16 +117,16 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 8,
-        "branches": 3,
-        "lines": 7,
-        "functions": 4
+        "statements": 16,
+        "branches": 8,
+        "lines": 16,
+        "functions": 11
       },
       "./src/animation/": {
-        "statements": 88,
-        "branches": 77,
-        "lines": 88,
-        "functions": 79
+        "statements": 92,
+        "branches": 83,
+        "lines": 93,
+        "functions": 84
       }
     },
     "moduleNameMapper": {
