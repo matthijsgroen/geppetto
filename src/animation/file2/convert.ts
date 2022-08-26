@@ -93,20 +93,14 @@ const getMutationId = (target: GeppettoImage, name: string) => {
   const result = Object.entries(target.mutations).find(
     ([, m]) => m.name === name
   );
-  if (result === undefined) {
-    return "error";
-  }
-  return result[0];
+  return result?.[0];
 };
 
 const getControlId = (target: GeppettoImage, name: string) => {
   const result = Object.entries(target.controls).find(
     ([, m]) => m.name === name
   );
-  if (result === undefined) {
-    return "error";
-  }
-  return result[0];
+  return result?.[0];
 };
 
 const populateControls = (
@@ -214,8 +208,7 @@ export const convertFromV1 = (imageDef: ImageDefinition): GeppettoImage => {
     imageDef.shapes,
     result,
     createId,
-    result.layerHierarchy,
-    null
+    result.layerHierarchy
   );
   result.layerHierarchy["root"] = { type: "root", children: childIds };
 

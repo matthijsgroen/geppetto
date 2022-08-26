@@ -44,6 +44,12 @@ export const v1Format: ImageDefinition = {
           ],
           translate: [10, 3],
         },
+        {
+          name: "arm",
+          type: "folder",
+          mutationVectors: [],
+          items: [],
+        },
       ],
     },
     {
