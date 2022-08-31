@@ -1,6 +1,8 @@
 import {
   addMutation,
   AddMutationDetails,
+  hasRadius,
+  isShapeMutationVector,
   updateMutationValue,
 } from "./mutation";
 import {
@@ -9,6 +11,7 @@ import {
   getShapeFolderIdByName,
   getShapeIdByName,
 } from "./testFileBuilder";
+import { MutationVector } from "./types";
 
 describe("addMutation", () => {
   describe("default add behavior", () => {
@@ -75,5 +78,91 @@ describe("updateMutationValue", () => {
 
     expect(file.defaultFrame[mutationId]).toEqual([0, 0]);
     expect(updatedFile.defaultFrame[mutationId]).toEqual([30, 20]);
+  });
+});
+
+describe("hasRadius", () => {
+  it.each<{ vector: MutationVector; result: boolean }>([
+    {
+      vector: {
+        type: "translate",
+        name: "TranslationVector",
+        origin: [0, 0],
+        radius: -1,
+      },
+      result: true,
+    },
+    {
+      vector: {
+        type: "deform",
+        name: "DeformationVector",
+        origin: [0, 0],
+        radius: 10,
+      },
+      result: true,
+    },
+    {
+      vector: { type: "opacity", name: "OpacityVector", origin: [5, 5] },
+      result: false,
+    },
+    {
+      vector: { type: "rotate", name: "RotationVector", origin: [0, 0] },
+      result: false,
+    },
+    {
+      vector: { type: "stretch", name: "StretchVector", origin: [0, 0] },
+      result: false,
+    },
+  ])("returns $result for a $vector.name", ({ result, vector }) => {
+    expect(hasRadius(vector)).toEqual(result);
+  });
+});
+
+describe("isShapeMutationVector", () => {
+  it.each<{ vector: MutationVector; result: boolean }>([
+    {
+      vector: {
+        type: "translate",
+        name: "TranslationVector",
+        origin: [0, 0],
+        radius: -1,
+      },
+      result: true,
+    },
+    {
+      vector: {
+        type: "deform",
+        name: "DeformationVector",
+        origin: [0, 0],
+        radius: 10,
+      },
+      result: true,
+    },
+    {
+      vector: { type: "opacity", name: "OpacityVector", origin: [5, 5] },
+      result: true,
+    },
+    {
+      vector: { type: "rotate", name: "RotationVector", origin: [0, 0] },
+      result: true,
+    },
+    {
+      vector: { type: "stretch", name: "StretchVector", origin: [0, 0] },
+      result: true,
+    },
+    {
+      vector: { type: "colorize", name: "ColorizeVector", origin: [0, 0] },
+      result: false,
+    },
+    {
+      vector: { type: "lightness", name: "LightnessVector", origin: [0, 0] },
+      result: false,
+    },
+    {
+      vector: { type: "saturation", name: "SaturationVector", origin: [0, 0] },
+      result: false,
+    },
+  ])("returns $result for a $vector.name", ({ result, vector }) => {
+    expect(isShapeMutationVector(vector)).toEqual(result);
   });
 });
