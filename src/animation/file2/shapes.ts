@@ -55,35 +55,33 @@ export const addShape = (
 export type AddFolderDetails = { folder: LayerFolder; id: string };
 
 export const addFolder = (
-  image: GeppettoImage,
   folderName: string,
   position?: PlacementInfo,
   dataResult?: AddFolderDetails | {}
-): GeppettoImage => {
-  const newName = getUniqueName(folderName, image.layerFolders);
-  const folder: LayerFolder = {
-    name: newName,
-    visible: true,
-    collapsed: false,
-  };
-  const [layerHierarchy, newId] = addInHierarchy(
-    image.layerHierarchy,
-    { type: "layerFolder" },
-    position
-  );
+) =>
+  produce<GeppettoImage>((draft) => {
+    const newName = getUniqueName(folderName, draft.layerFolders);
+    const folder: LayerFolder = {
+      name: newName,
+      visible: true,
+      collapsed: false,
+    };
+    const [layerHierarchy, newId] = addInHierarchy<NodeType>(
+      draft.layerHierarchy,
+      { type: "layerFolder" },
+      position
+    );
 
-  if (dataResult) {
-    Object.assign(dataResult, {
-      folder,
-      id: newId,
-    });
-  }
+    if (dataResult) {
+      Object.assign(dataResult, {
+        folder,
+        id: newId,
+      });
+    }
 
-  return produce(image, (draft) => {
     draft.layerHierarchy = layerHierarchy;
     draft.layerFolders[newId] = folder;
   });
-};
 
 type RenameableItems<O> = Pick<
   O,

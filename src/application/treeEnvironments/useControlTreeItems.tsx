@@ -14,26 +14,20 @@ const populateTree = (
 ) => {
   const hierarchy = newFile.controlHierarchy;
 
-  const changedNodes = Object.keys(newFile.layerHierarchy).filter((key) => {
-    const item = newFile.layerHierarchy[key];
-    if (item !== previousFile.layerHierarchy[key]) {
+  const changedNodes = Object.keys(newFile.controlHierarchy).filter((key) => {
+    const item = newFile.controlHierarchy[key];
+    if (item !== previousFile.controlHierarchy[key]) {
       return true;
     }
     if (
-      item.type === "layer" &&
-      newFile.layers[key] !== previousFile.layers[key]
+      item.type === "control" &&
+      newFile.controls[key] !== previousFile.controls[key]
     ) {
       return true;
     }
     if (
-      item.type === "layerFolder" &&
-      newFile.layerFolders[key] !== previousFile.layerFolders[key]
-    ) {
-      return true;
-    }
-    if (
-      item.type === "mutation" &&
-      newFile.mutations[key] !== previousFile.mutations[key]
+      item.type === "controlFolder" &&
+      newFile.controlFolders[key] !== previousFile.controlFolders[key]
     ) {
       return true;
     }

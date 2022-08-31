@@ -94,7 +94,8 @@ describe("shapes", () => {
       const file = newFile();
 
       const resultDetails: AddFolderDetails = {} as AddFolderDetails;
-      const image = addFolder(file, "New folder", undefined, resultDetails);
+      const image = addFolder("New folder", undefined, resultDetails)(file);
+
       expect(image.layerHierarchy[0]).toEqual({
         parentId: "root",
         type: "layerFolder",
@@ -110,17 +111,16 @@ describe("shapes", () => {
     describe("positioning", () => {
       it("can place a folder after another", () => {
         const file = newFile();
-        const firstFolder = addFolder(file, "New folder");
+        const firstFolder = addFolder("New folder")(file);
 
         const resultDetails: AddFolderDetails = {} as AddFolderDetails;
         const result = addFolder(
-          firstFolder,
           "New folder",
           {
             after: "0",
           },
           resultDetails
-        );
+        )(firstFolder);
 
         expect(result.layerHierarchy[1]).toEqual({
           parentId: "root",
@@ -136,16 +136,15 @@ describe("shapes", () => {
 
       it("can place a folder inside another", () => {
         const file = newFile();
-        const firstFolder = addFolder(file, "New shape");
+        const firstFolder = addFolder("New shape")(file);
         const resultDetails: AddFolderDetails = {} as AddFolderDetails;
         const result = addFolder(
-          firstFolder,
           "New folder",
           {
             parent: "0",
           },
           resultDetails
-        );
+        )(firstFolder);
 
         expect(result.layerHierarchy[resultDetails.id]).toEqual({
           parentId: "0",
@@ -161,21 +160,20 @@ describe("shapes", () => {
 
       it("can place a folder after child inside another", () => {
         const file = newFile();
-        const firstFolder = addFolder(file, "Folder 1");
-        const nestedFolder = addFolder(firstFolder, "Folder 2", {
+        const firstFolder = addFolder("Folder 1")(file);
+        const nestedFolder = addFolder("Folder 2", {
           parent: "0",
-        });
+        })(firstFolder);
 
         const resultDetails: AddFolderDetails = {} as AddFolderDetails;
         const result = addFolder(
-          nestedFolder,
           "New folder",
           {
             parent: "0",
             after: "1",
           },
           resultDetails
-        );
+        )(nestedFolder);
 
         expect(result.layerHierarchy[resultDetails.id]).toEqual({
           parentId: "0",

@@ -68,8 +68,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
         position = { after: targetId, parent: parentId };
       }
     }
-    const updatedImage = addFolder(file, "New folder", position);
-    setFile(updatedImage);
+    setFile(addFolder("New folder", position));
   });
 
   const removeItemAction = useToolAction(() => {

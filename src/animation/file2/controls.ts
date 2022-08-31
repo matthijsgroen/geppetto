@@ -26,6 +26,7 @@ export const addControl = (
 
     draft.controlHierarchy = controlHierarchy;
     draft.controls[newId] = control;
+    draft.controlValues[newId] = 0;
   });
 
 export const insertControlStep = (controlId: string, stepIndex = -1) =>
