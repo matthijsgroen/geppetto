@@ -89,18 +89,18 @@ const populateShapes = (
   return childIds;
 };
 
-const getMutationId = (target: GeppettoImage, name: string) => {
+const getMutationId = (target: GeppettoImage, name: string): string => {
   const result = Object.entries(target.mutations).find(
     ([, m]) => m.name === name
   );
-  return result?.[0];
+  return result?.[0] ?? "error";
 };
 
-const getControlId = (target: GeppettoImage, name: string) => {
+const getControlId = (target: GeppettoImage, name: string): string => {
   const result = Object.entries(target.controls).find(
     ([, m]) => m.name === name
   );
-  return result?.[0];
+  return result?.[0] ?? "error";
 };
 
 const populateControls = (
