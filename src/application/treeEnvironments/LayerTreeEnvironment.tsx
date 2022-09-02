@@ -232,9 +232,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         canDragAndDrop={true}
         canReorderItems={true}
         onRenameItem={useEvent((item: LayerItem, newName: string) => {
-          setFile((fileData) =>
-            rename(fileData, `${item.index}`, item.data.type, newName)
-          );
+          setFile(rename(`${item.index}`, item.data.type, newName));
         })}
         onDrop={onDrop}
         onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {

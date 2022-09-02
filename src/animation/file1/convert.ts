@@ -25,7 +25,6 @@ const convertMutations = (
   const result: MutationVector[] = [];
   for (const itemId of children) {
     const item = items[itemId];
-    if (!item) continue;
     if (item.type === "mutation") {
       const mutation = source.mutations[itemId];
       result.push({
@@ -47,7 +46,6 @@ const convertShapes = (
 
   for (const childId of parent?.children || []) {
     const item = items[childId];
-    if (!item) continue;
 
     if (item.type === "layer") {
       const layer = source.layers[childId];

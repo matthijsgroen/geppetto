@@ -96,18 +96,11 @@ const typeToGroupKey: Record<NodeType, keyof RenameableItems<GeppettoImage>> = {
   mutation: "mutations",
 };
 
-export const rename = (
-  image: GeppettoImage,
-  itemId: string,
-  itemType: NodeType,
-  newName: string
-): GeppettoImage => {
-  const groupKey = typeToGroupKey[itemType];
-
-  return produce(image, (draft) => {
+export const rename = (itemId: string, itemType: NodeType, newName: string) =>
+  produce<GeppettoImage>((draft) => {
+    const groupKey = typeToGroupKey[itemType];
     draft[groupKey][itemId].name = newName;
   });
-};
 
 export const addPoint = (
   image: GeppettoImage,

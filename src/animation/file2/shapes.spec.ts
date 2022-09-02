@@ -5,6 +5,7 @@ import {
   addShape,
   AddShapeDetails,
   removeShape,
+  rename,
   toggleVisibility,
 } from "./shapes";
 import {
@@ -235,6 +236,37 @@ describe("shapes", () => {
         expect(updatedFile.layerFolders[folderId].visible).toBe(true);
       });
     });
+  });
+});
+
+describe("rename", () => {
+  const fileBuild = fileBuilder();
+  fileBuild.addFolder("folder1");
+  fileBuild.addShape("shape1", "folder1");
+  fileBuild.addMutation("Movement", "translate", { radius: -1 }, "shape1");
+
+  it("changes the name of a shape", () => {
+    const file = fileBuild.build();
+    const shapeId = getShapeIdByName(file, "shape1");
+
+    const newFile = rename(shapeId, "layer", "newShapeName")(file);
+    expect(newFile.layers[shapeId].name).toEqual("newShapeName");
+  });
+
+  it("changes the name of a folder", () => {
+    const file = fileBuild.build();
+    const folderId = getShapeFolderIdByName(file, "folder1");
+
+    const newFile = rename(folderId, "layerFolder", "newFolderName")(file);
+    expect(newFile.layerFolders[folderId].name).toEqual("newFolderName");
+  });
+
+  it("changes the name of a mutation", () => {
+    const file = fileBuild.build();
+    const mutationId = getMutationIdByName(file, "Movement");
+
+    const newFile = rename(mutationId, "mutation", "UpdatedMovement")(file);
+    expect(newFile.mutations[mutationId].name).toEqual("UpdatedMovement");
   });
 });
 
