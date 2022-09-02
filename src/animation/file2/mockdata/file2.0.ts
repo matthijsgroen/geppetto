@@ -9,18 +9,24 @@ export const v2Format: GeppettoImage = {
     pan: [0, 0],
   },
   layerHierarchy: {
-    root: { type: "root", children: ["0", "1", "6"] },
+    root: { type: "root", children: ["0", "1", "7"] },
     "0": { type: "layer", parentId: "root" },
-    "1": { type: "layerFolder", parentId: "root", children: ["2", "5"] },
+    "1": { type: "layerFolder", parentId: "root", children: ["2", "5", "6"] },
     "2": { type: "layer", parentId: "1", children: ["3", "4"] },
     "3": { type: "mutation", parentId: "2" },
     "4": { type: "mutation", parentId: "2" },
     "5": { type: "layer", parentId: "1" },
-    "6": { type: "layer", parentId: "root" },
+    "6": { type: "layerFolder", parentId: "1", children: [] },
+    "7": { type: "layer", parentId: "root" },
   },
   layerFolders: {
     "1": {
       name: "body",
+      visible: true,
+      collapsed: false,
+    },
+    "6": {
+      name: "arm",
       visible: true,
       collapsed: false,
     },
@@ -56,7 +62,7 @@ export const v2Format: GeppettoImage = {
       ],
       translate: [10, 3],
     },
-    "6": {
+    "7": {
       name: "background",
       visible: true,
       points: [

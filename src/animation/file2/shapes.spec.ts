@@ -5,6 +5,7 @@ import {
   addShape,
   AddShapeDetails,
   removeShape,
+  rename,
   toggleVisibility,
 } from "./shapes";
 import {
@@ -94,7 +95,8 @@ describe("shapes", () => {
       const file = newFile();
 
       const resultDetails: AddFolderDetails = {} as AddFolderDetails;
-      const image = addFolder(file, "New folder", undefined, resultDetails);
+      const image = addFolder("New folder", undefined, resultDetails)(file);
+
       expect(image.layerHierarchy[0]).toEqual({
         parentId: "root",
         type: "layerFolder",
@@ -110,17 +112,16 @@ describe("shapes", () => {
     describe("positioning", () => {
       it("can place a folder after another", () => {
         const file = newFile();
-        const firstFolder = addFolder(file, "New folder");
+        const firstFolder = addFolder("New folder")(file);
 
         const resultDetails: AddFolderDetails = {} as AddFolderDetails;
         const result = addFolder(
-          firstFolder,
           "New folder",
           {
             after: "0",
           },
           resultDetails
-        );
+        )(firstFolder);
 
         expect(result.layerHierarchy[1]).toEqual({
           parentId: "root",
@@ -136,16 +137,15 @@ describe("shapes", () => {
 
       it("can place a folder inside another", () => {
         const file = newFile();
-        const firstFolder = addFolder(file, "New shape");
+        const firstFolder = addFolder("New shape")(file);
         const resultDetails: AddFolderDetails = {} as AddFolderDetails;
         const result = addFolder(
-          firstFolder,
           "New folder",
           {
             parent: "0",
           },
           resultDetails
-        );
+        )(firstFolder);
 
         expect(result.layerHierarchy[resultDetails.id]).toEqual({
           parentId: "0",
@@ -161,21 +161,20 @@ describe("shapes", () => {
 
       it("can place a folder after child inside another", () => {
         const file = newFile();
-        const firstFolder = addFolder(file, "Folder 1");
-        const nestedFolder = addFolder(firstFolder, "Folder 2", {
+        const firstFolder = addFolder("Folder 1")(file);
+        const nestedFolder = addFolder("Folder 2", {
           parent: "0",
-        });
+        })(firstFolder);
 
         const resultDetails: AddFolderDetails = {} as AddFolderDetails;
         const result = addFolder(
-          nestedFolder,
           "New folder",
           {
             parent: "0",
             after: "1",
           },
           resultDetails
-        );
+        )(nestedFolder);
 
         expect(result.layerHierarchy[resultDetails.id]).toEqual({
           parentId: "0",
@@ -237,6 +236,37 @@ describe("shapes", () => {
         expect(updatedFile.layerFolders[folderId].visible).toBe(true);
       });
     });
+  });
+});
+
+describe("rename", () => {
+  const fileBuild = fileBuilder();
+  fileBuild.addFolder("folder1");
+  fileBuild.addShape("shape1", "folder1");
+  fileBuild.addMutation("Movement", "translate", { radius: -1 }, "shape1");
+
+  it("changes the name of a shape", () => {
+    const file = fileBuild.build();
+    const shapeId = getShapeIdByName(file, "shape1");
+
+    const newFile = rename(shapeId, "layer", "newShapeName")(file);
+    expect(newFile.layers[shapeId].name).toEqual("newShapeName");
+  });
+
+  it("changes the name of a folder", () => {
+    const file = fileBuild.build();
+    const folderId = getShapeFolderIdByName(file, "folder1");
+
+    const newFile = rename(folderId, "layerFolder", "newFolderName")(file);
+    expect(newFile.layerFolders[folderId].name).toEqual("newFolderName");
+  });
+
+  it("changes the name of a mutation", () => {
+    const file = fileBuild.build();
+    const mutationId = getMutationIdByName(file, "Movement");
+
+    const newFile = rename(mutationId, "mutation", "UpdatedMovement")(file);
+    expect(newFile.mutations[mutationId].name).toEqual("UpdatedMovement");
   });
 });
 
