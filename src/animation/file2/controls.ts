@@ -1,5 +1,9 @@
 import produce from "immer";
-import { addInHierarchy, PlacementInfo } from "./hierarchy";
+import {
+  addInHierarchy,
+  PlacementInfo,
+  removeFromHierarchy,
+} from "./hierarchy";
 import { getUniqueName } from "./shapes";
 import { ControlDefinition, GeppettoImage } from "./types";
 
@@ -27,6 +31,16 @@ export const addControl = (
     draft.controlHierarchy = controlHierarchy;
     draft.controls[newId] = control;
     draft.controlValues[newId] = 0;
+  });
+
+export const removeControls = (controlIds: string[]) =>
+  produce<GeppettoImage>((draft) => {
+    for (const controlId of controlIds) {
+      delete draft.controlValues[controlId];
+      const [result] = removeFromHierarchy(draft.controlHierarchy, controlId);
+      draft.controlHierarchy = result;
+      delete draft.controls[controlId];
+    }
   });
 
 export const insertControlStep = (controlId: string, stepIndex = -1) =>

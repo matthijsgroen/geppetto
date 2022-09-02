@@ -1,4 +1,4 @@
-import { addControl, AddControlDetails } from "../../animation/file2/controls";
+import { addControl, removeControls } from "../../animation/file2/controls";
 import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
 import {
   Icon,
@@ -6,6 +6,7 @@ import {
   Title,
   ToolBar,
   ToolButton,
+  ToolSeparator,
   Tree,
 } from "../../ui-components";
 import { useFile } from "../contexts/FileContext";
@@ -43,6 +44,10 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
     setFile(addControl("New Control", position));
   });
 
+  const removeControlAction = useToolAction(() => {
+    setFile(removeControls(selectedControls));
+  });
+
   return (
     <ControlTreeEnvironment
       selectedItemsState={selectedControlsState}
@@ -53,9 +58,18 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
         <ToolBar size="small">
           <ToolButton
             icon={<Icon>⚙️</Icon>}
+            tooltip={"Add control"}
             label={"+"}
             onClick={addControlAction}
             onKeyDown={addControlAction}
+          />
+          <ToolSeparator />
+          <ToolButton
+            icon={<Icon>🗑</Icon>}
+            tooltip={"Remove control"}
+            onClick={removeControlAction}
+            onKeyDown={removeControlAction}
+            disabled={selectedControls.length !== 1}
           />
         </ToolBar>
         <Tree treeId="controls" />

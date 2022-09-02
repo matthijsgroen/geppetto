@@ -1,4 +1,5 @@
 import produce from "immer";
+import { isExportDeclaration } from "typescript";
 import {
   addControl,
   AddControlDetails,
@@ -7,6 +8,7 @@ import {
   isMutationUnderControl,
   removeControlStep,
   removeMutationFromControl,
+  removeControls,
 } from "./controls";
 import { newFile } from "./new";
 import {
@@ -32,6 +34,18 @@ describe("addControl", () => {
       type: "slider",
     });
     expect(result).toHaveProperty("id", "0");
+  });
+});
+
+describe("removeControls", () => {
+  it("removes the selected controls", () => {
+    const file = fileBuilder().addControl("Control").build();
+    const controlId = getControlIdByName(file, "Control");
+
+    const updatedFile = removeControls([controlId])(file);
+    expect(updatedFile.controlValues).not.toHaveProperty(controlId);
+    expect(updatedFile.controlHierarchy).not.toHaveProperty(controlId);
+    expect(updatedFile.controls).not.toHaveProperty(controlId);
   });
 });
 
