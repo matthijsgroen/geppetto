@@ -43,7 +43,7 @@ const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {
     return (
       <>
-        <ToolButton icon={<Icon>👁</Icon>} active />
+        <ToolButton size="small" icon={<Icon>👁</Icon>} active />
       </>
     );
   }

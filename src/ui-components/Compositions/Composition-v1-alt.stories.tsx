@@ -44,14 +44,18 @@ const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {
     return (
       <>
-        <ToolButton icon={<Icon>👁</Icon>} active />
+        <ToolButton size="small" icon={<Icon>👁</Icon>} active />
       </>
     );
   }
   if (data.type === "mutation") {
     return (
       <>
-        <ToolButton icon={<Icon>📍</Icon>} active={data.name === "Mutation"} />
+        <ToolButton
+          size="small"
+          icon={<Icon>📍</Icon>}
+          active={data.name === "Mutation"}
+        />
       </>
     );
   }
