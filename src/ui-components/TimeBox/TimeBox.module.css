@@ -1,0 +1,25 @@
+.timeBox {
+  min-height: 1.25em;
+  min-width: 4em;
+  width: fit-content;
+  position: relative;
+  background-color: hotpink;
+}
+
+.timeBar {
+  height: 0.25em;
+  background-color: var(--colors-control-default);
+  width: 100%;
+  border-radius: 0.125em;
+}
+
+.timeBarActive {
+  background-color: var(--colors-control-active);
+}
+
+.timeEvent {
+  height: 1em;
+  background-color: var(--colors-control-default);
+  position: absolute;
+  border-radius: 2px;
+}
