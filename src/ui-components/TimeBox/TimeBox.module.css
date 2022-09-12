@@ -3,14 +3,14 @@
   min-width: 4em;
   width: fit-content;
   position: relative;
-  background-color: hotpink;
+  transition: font-size 100ms;
 }
 
 .timeBar {
-  height: 0.25em;
+  height: 0.25rem;
   background-color: var(--colors-control-default);
   width: 100%;
-  border-radius: 0.125em;
+  border-radius: 0.125rem;
 }
 
 .timeBarActive {
@@ -18,8 +18,38 @@
 }
 
 .timeEvent {
-  height: 1em;
+  height: 2rem;
   background-color: var(--colors-control-default);
   position: absolute;
   border-radius: 2px;
+  box-shadow: 1px 1px 2px #0003;
+  line-height: 1rem;
+}
+
+.timeEvent label {
+  font-size: 1rem;
+  color: var(--colors-text-default);
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.curve {
+  width: 100%;
+  height: 1rem;
+  background-color: var(--colors-control-active-dimmed);
+}
+.curveLinear {
+  clip-path: url(#linearCurve);
+}
+.curveEaseIn {
+  clip-path: url(#easeInCurve);
+}
+.curveEaseOut {
+  clip-path: url(#easeOutCurve);
+}
+.curveEaseInOut {
+  clip-path: url(#easeInOutCurve);
 }

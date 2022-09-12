@@ -131,7 +131,7 @@ const Template: Story = () => (
               </TreeEnvironment>
             </Panel>
           </ResizePanel>
-          <Panel padding={5} center workspace scrollable>
+          <Panel padding={5} workspace scrollable>
             <TimeBox zoom={1.0}></TimeBox>
           </Panel>
         </Row>

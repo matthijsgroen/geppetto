@@ -1,6 +1,10 @@
 import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { TimeBox as TimeBoxComponent, TimeEvent } from "./TimeBox";
+import {
+  TimeBox as TimeBoxComponent,
+  TimeEvent,
+  TimeLineCurves,
+} from "./TimeBox";
 
 export default {
   title: "Components/TimeBox",
@@ -8,10 +12,19 @@ export default {
 } as ComponentMeta<typeof TimeBoxComponent>;
 
 const Template: ComponentStory<typeof TimeBoxComponent> = (args) => (
-  <TimeBoxComponent {...args}>
-    <TimeEvent start={3000} end={5000} label={"Control1"} />
-    <TimeEvent start={6000} end={9000} label={"Control2"} />
-  </TimeBoxComponent>
+  <>
+    <TimeLineCurves />
+    <TimeBoxComponent {...args}>
+      <TimeEvent start={1000} end={4000} label={"Control2"} curve="easeIn" />
+      <TimeEvent start={6000} end={9000} label={"Control2"} curve="easeOut" />
+      <TimeEvent
+        start={3000}
+        end={5000}
+        label={"Control with a really long name"}
+        curve={"easeInOut"}
+      />
+    </TimeBoxComponent>
+  </>
 );
 
 export const TimeBox = Template.bind({});
