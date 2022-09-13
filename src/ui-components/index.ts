@@ -25,4 +25,5 @@ export { Control } from "./Controls/Control";
 export { NumberInput } from "./Controls/NumberInput";
 export { Logo, LogoIcon } from "./Logo/Logo";
 export { TextButton } from "./TextButton/TextButton";
-export { TimeBox, TimeEvent } from "./TimeBox/TimeBox";
+export { TimeBox } from "./TimeBar/TimeBox";
+export { TimeEvent } from "./TimeBar/TimeEvent";

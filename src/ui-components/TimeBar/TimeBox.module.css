@@ -4,6 +4,7 @@
   width: fit-content;
   position: relative;
   transition: font-size 100ms;
+  background-color: hotpink;
 }
 
 .timeBar {

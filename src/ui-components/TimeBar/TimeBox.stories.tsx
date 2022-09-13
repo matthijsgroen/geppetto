@@ -1,13 +1,10 @@
 import React from "react";
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import {
-  TimeBox as TimeBoxComponent,
-  TimeEvent,
-  TimeLineCurves,
-} from "./TimeBox";
+import { TimeBox as TimeBoxComponent } from "./TimeBox";
+import { TimeEvent, TimeLineCurves } from "./TimeEvent";
 
 export default {
-  title: "Components/TimeBox",
+  title: "Components/TimeBar/TimeBox",
   component: TimeBoxComponent,
 } as ComponentMeta<typeof TimeBoxComponent>;
 
