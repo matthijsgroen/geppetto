@@ -1,27 +1,19 @@
 .timeBox {
-  min-height: 1.25em;
+  display: inline-grid;
+  grid-auto-columns: calc(3 * 0.01em); /* 1s = 3em */
+  grid-auto-rows: 2rem;
+
   min-width: 4em;
-  width: fit-content;
-  position: relative;
   transition: font-size 100ms;
-  background-color: hotpink;
+  border-top: 0.25rem solid var(--colors-control-default);
 }
 
-.timeBar {
-  height: 0.25rem;
-  background-color: var(--colors-control-default);
-  width: 100%;
-  border-radius: 0.125rem;
-}
-
-.timeBarActive {
-  background-color: var(--colors-control-active);
+.timeBoxActive {
+  border-top: 0.25rem solid var(--colors-control-active);
 }
 
 .timeEvent {
-  height: 2rem;
   background-color: var(--colors-control-default);
-  position: absolute;
   border-radius: 2px;
   box-shadow: 1px 1px 2px #0003;
   line-height: 1rem;

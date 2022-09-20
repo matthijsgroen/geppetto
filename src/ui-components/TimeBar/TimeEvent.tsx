@@ -1,31 +1,33 @@
 import { className } from "../className";
-import { EM_SCALE } from "./constants";
-import { useEventMapping } from "./TimeBox";
 import styles from "./TimeBox.module.css";
 
 type EasingCurve = "linear" | "easeIn" | "easeOut" | "easeInOut";
 
 type TimeEventProps = {
-  start: number;
-  end: number;
+  /** Start time in ms */
+  startTime: number;
+  /** End time in ms */
+  endTime: number;
+  row: number;
   curve?: EasingCurve | "none";
   label: string;
 };
 
 export const TimeEvent: React.FC<TimeEventProps> = ({
-  start,
-  end,
+  startTime,
+  endTime,
+  row,
   label,
   curve = "none",
 }) => {
-  const row = useEventMapping(start, end, label);
   return (
     <div
       className={styles.timeEvent}
       style={{
-        left: `${start * EM_SCALE}em`,
-        width: `${(end - start) * EM_SCALE}em`,
-        top: `${row * 2 + 0.25}rem`,
+        gridColumn: `${Math.floor(startTime / 10) + 1} / span ${Math.floor(
+          (endTime - startTime) / 10
+        )}`,
+        gridRow: 1 + row,
       }}
     >
       <label>{label}</label>

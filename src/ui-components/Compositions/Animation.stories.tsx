@@ -16,6 +16,7 @@ import {
   Row,
   SubMenu,
   TimeBox,
+  TimeEvent,
   Title,
   ToolBar,
   ToolButton,
@@ -24,6 +25,7 @@ import {
   Tree,
   TreeEnvironment,
 } from "..";
+import { TimeLineCurves } from "../TimeBar/TimeEvent";
 import {
   storyTreeItems,
   ToolsProvider,
@@ -132,7 +134,23 @@ const Template: Story = () => (
             </Panel>
           </ResizePanel>
           <Panel padding={5} workspace scrollable>
-            <TimeBox zoom={1.0}></TimeBox>
+            <TimeLineCurves />
+            <TimeBox zoom={1.0}>
+              <TimeEvent
+                startTime={0}
+                endTime={4000}
+                row={0}
+                label={"Sun"}
+                curve={"easeOut"}
+              />
+              <TimeEvent
+                startTime={8000}
+                endTime={12000}
+                row={0}
+                label={"Sun"}
+                curve={"easeIn"}
+              />
+            </TimeBox>
           </Panel>
         </Row>
       </ResizePanel>

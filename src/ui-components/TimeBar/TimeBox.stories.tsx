@@ -12,11 +12,24 @@ const Template: ComponentStory<typeof TimeBoxComponent> = (args) => (
   <>
     <TimeLineCurves />
     <TimeBoxComponent {...args}>
-      <TimeEvent start={1000} end={4000} label={"Control2"} curve="easeIn" />
-      <TimeEvent start={6000} end={9000} label={"Control2"} curve="easeOut" />
       <TimeEvent
-        start={3000}
-        end={5000}
+        startTime={1000}
+        endTime={4000}
+        row={0}
+        label={"Control2"}
+        curve="easeIn"
+      />
+      <TimeEvent
+        startTime={6000}
+        endTime={9000}
+        row={0}
+        label={"Control2"}
+        curve="easeOut"
+      />
+      <TimeEvent
+        startTime={3000}
+        endTime={5000}
+        row={1}
         label={"Control with a really long name"}
         curve={"easeInOut"}
       />
