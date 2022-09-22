@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Column,
   Control,
@@ -10,8 +10,6 @@ import {
   ResizeDirection,
   ResizePanel,
   Row,
-  TimeBox,
-  TimeLineCurves,
   Title,
   ToolBar,
   ToolSeparator,
@@ -23,6 +21,8 @@ import { AppSection, UseState } from "../types";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import { useFile } from "../contexts/FileContext";
+import { AnimationTree } from "./AnimationTree";
+import { AnimationTimeLines } from "./AnimationTimeLines";
 
 type LayersProps = {
   onSectionChange?: (newSection: AppSection) => void;
@@ -36,6 +36,7 @@ export const Animation: React.FC<LayersProps> = ({
   menu,
 }) => {
   const texture = textureState[0];
+  const selectedAnimationsState = useState<string[]>([]);
   const [file] = useFile();
 
   return (
@@ -72,20 +73,16 @@ export const Animation: React.FC<LayersProps> = ({
             defaultSize={175}
           >
             <Panel padding={5}>
-              <TreeEnvironment items={{}} viewState={{}}>
-                <EmptyTree>
-                  <Paragraph>
-                    Start by adding a layer on the "Layers" screen.
-                  </Paragraph>
-                </EmptyTree>
-              </TreeEnvironment>
+              <AnimationTree
+                selectedAnimationsState={selectedAnimationsState}
+                onSectionChange={onSectionChange}
+              />
             </Panel>
           </ResizePanel>
           <Panel padding={5} workspace scrollable>
-            <TimeLineCurves />
-            <div>
-              <TimeBox zoom={1.0}></TimeBox>
-            </div>
+            <AnimationTimeLines
+              selectedAnimations={selectedAnimationsState[0]}
+            />
           </Panel>
         </Row>
       </ResizePanel>
