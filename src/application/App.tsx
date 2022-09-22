@@ -5,6 +5,7 @@ import { defaultTheme } from "./theme/default";
 import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
 import { AppSection } from "./types";
 import { Composition } from "./composition/Composition";
+import { Animation } from "./animation/Animation";
 import { AppContext } from "./contexts/ApplicationContext";
 import { FileContext } from "./contexts/FileContext";
 import { ScreenTranslationContext } from "./contexts/ScreenTranslationContext";
@@ -64,6 +65,13 @@ const App: React.FC = () => {
             <ScreenTranslationContext>
               {appSection === "composition" && (
                 <Composition
+                  menu={applicationMenu}
+                  textureState={textureFileState}
+                  onSectionChange={setAppSection}
+                />
+              )}
+              {appSection === "animation" && (
+                <Animation
                   menu={applicationMenu}
                   textureState={textureFileState}
                   onSectionChange={setAppSection}

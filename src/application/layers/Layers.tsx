@@ -242,7 +242,11 @@ export const Layers: React.FC<LayersProps> = ({
           label={"Composition"}
           onClick={() => onSectionChange && onSectionChange("composition")}
         />
-        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
+        <ToolTab
+          icon={<Icon>🏃</Icon>}
+          label={"Animation"}
+          onClick={() => onSectionChange && onSectionChange("animation")}
+        />
         <ToolSeparator />
         <ToolButton
           active={mouseMode === MouseMode.Normal}

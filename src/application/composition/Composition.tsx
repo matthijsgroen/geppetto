@@ -424,7 +424,11 @@ export const Composition: React.FC<CompositionProps> = ({
           onClick={() => onSectionChange && onSectionChange("layers")}
         />
         <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} active />
-        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
+        <ToolTab
+          icon={<Icon>🏃</Icon>}
+          label={"Animation"}
+          onClick={() => onSectionChange && onSectionChange("animation")}
+        />
         <ToolSeparator />
         <ActionToolButton
           action={actions.toggleWireFrames}
