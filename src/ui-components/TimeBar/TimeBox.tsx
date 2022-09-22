@@ -7,14 +7,9 @@ type TimeBoxProps = PropsWithChildren<{
    * @default 1.0
    */
   zoom?: number;
-  active?: boolean;
 }>;
 
-export const TimeBox: React.FC<TimeBoxProps> = ({
-  children,
-  active = false,
-  zoom = 1.0,
-}) => {
+export const TimeBox: React.FC<TimeBoxProps> = ({ children, zoom = 1.0 }) => {
   return (
     <div
       style={{
@@ -23,7 +18,6 @@ export const TimeBox: React.FC<TimeBoxProps> = ({
       role={"grid"}
       className={className({
         [styles.timeBox]: true,
-        [styles.timeBoxActive]: active,
       })}
     >
       {children}

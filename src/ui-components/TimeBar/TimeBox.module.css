@@ -8,7 +8,7 @@
   border-top: 0.25rem solid var(--colors-control-default);
 }
 
-.timeBoxActive {
+.timeBox:focus-within {
   border-top: 0.25rem solid var(--colors-control-active);
 }
 

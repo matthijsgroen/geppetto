@@ -33,7 +33,7 @@ export const TimeEvent = forwardRef<HTMLDivElement, TimeEventProps>(
       ref={ref}
       {...eventHandlers}
     >
-      <label>{label}</label>
+      <label title={label}>{label}</label>
       <div
         className={className({
           [styles.curve]: easing !== "none",
