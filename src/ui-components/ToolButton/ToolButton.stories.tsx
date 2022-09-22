@@ -3,6 +3,7 @@ import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { ToolButton } from "./ToolButton";
 import { Icon } from "../Icon/Icon";
+import { controlPropsArgTypes } from "../generic/ControlPropsStoryHelpers";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -10,8 +11,7 @@ export default {
   component: ToolButton,
   argTypes: {
     icon: { control: false },
-    onClick: { control: false },
-    onKeyDown: { control: false },
+    ...controlPropsArgTypes,
   },
   args: {
     disabled: false,

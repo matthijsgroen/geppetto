@@ -17,21 +17,21 @@ const Template: ComponentStory<typeof TimeBoxComponent> = (args) => (
         endTime={4000}
         row={0}
         label={"Control2"}
-        curve="easeIn"
+        easing="easeIn"
       />
       <TimeEvent
         startTime={6000}
         endTime={9000}
         row={0}
         label={"Control2"}
-        curve="easeOut"
+        easing="easeOut"
       />
       <TimeEvent
         startTime={3000}
         endTime={5000}
         row={1}
         label={"Control with a really long name"}
-        curve={"easeInOut"}
+        easing={"easeInOut"}
       />
     </TimeBoxComponent>
   </>

@@ -20,6 +20,7 @@ export const TimeBox: React.FC<TimeBoxProps> = ({
       style={{
         fontSize: 16 * zoom,
       }}
+      role={"grid"}
       className={className({
         [styles.timeBox]: true,
         [styles.timeBoxActive]: active,
@@ -29,3 +30,4 @@ export const TimeBox: React.FC<TimeBoxProps> = ({
     </div>
   );
 };
+TimeBox.displayName = "TimeBox";

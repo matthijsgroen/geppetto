@@ -1,4 +1,6 @@
+import { forwardRef } from "react";
 import { className } from "../className";
+import { ControlEventProps } from "../generic/ControlProps";
 import styles from "./TimeBox.module.css";
 
 type EasingCurve = "linear" | "easeIn" | "easeOut" | "easeInOut";
@@ -9,40 +11,42 @@ type TimeEventProps = {
   /** End time in ms */
   endTime: number;
   row: number;
-  curve?: EasingCurve | "none";
+  easing?: EasingCurve | "none";
   label: string;
-};
+} & ControlEventProps<HTMLDivElement>;
 
-export const TimeEvent: React.FC<TimeEventProps> = ({
-  startTime,
-  endTime,
-  row,
-  label,
-  curve = "none",
-}) => {
-  return (
+export const TimeEvent = forwardRef<HTMLDivElement, TimeEventProps>(
+  (
+    { startTime, endTime, row, label, easing = "none", ...eventHandlers },
+    ref
+  ) => (
     <div
       className={styles.timeEvent}
+      tabIndex={0}
+      role={"gridcell"}
       style={{
         gridColumn: `${Math.floor(startTime / 10) + 1} / span ${Math.floor(
           (endTime - startTime) / 10
         )}`,
         gridRow: 1 + row,
       }}
+      ref={ref}
+      {...eventHandlers}
     >
       <label>{label}</label>
       <div
         className={className({
-          [styles.curve]: curve !== "none",
-          [styles.curveLinear]: curve === "linear",
-          [styles.curveEaseIn]: curve === "easeIn",
-          [styles.curveEaseOut]: curve === "easeOut",
-          [styles.curveEaseInOut]: curve === "easeInOut",
+          [styles.curve]: easing !== "none",
+          [styles.curveLinear]: easing === "linear",
+          [styles.curveEaseIn]: easing === "easeIn",
+          [styles.curveEaseOut]: easing === "easeOut",
+          [styles.curveEaseInOut]: easing === "easeInOut",
         })}
       ></div>
     </div>
-  );
-};
+  )
+);
+TimeEvent.displayName = "TimeEvent";
 
 export const TimeLineCurves: React.FC = () => (
   <>

@@ -141,14 +141,14 @@ const Template: Story = () => (
                 endTime={4000}
                 row={0}
                 label={"Sun"}
-                curve={"easeOut"}
+                easing={"easeOut"}
               />
               <TimeEvent
                 startTime={8000}
                 endTime={12000}
                 row={0}
                 label={"Sun"}
-                curve={"easeIn"}
+                easing={"easeIn"}
               />
             </TimeBox>
           </Panel>

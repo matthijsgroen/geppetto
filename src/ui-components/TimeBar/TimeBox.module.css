@@ -18,6 +18,10 @@
   box-shadow: 1px 1px 2px #0003;
   line-height: 1rem;
 }
+.timeEvent:focus {
+  outline: 2px solid var(--colors-control-focus);
+  z-index: 1;
+}
 
 .timeEvent label {
   font-size: 1rem;
