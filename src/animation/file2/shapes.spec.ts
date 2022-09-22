@@ -1,9 +1,13 @@
+import { Vec2 } from "geppetto-player";
 import { newFile } from "./new";
 import {
   addFolder,
   AddFolderDetails,
+  addPoint,
   addShape,
   AddShapeDetails,
+  deletePoint,
+  movePoint,
   removeShape,
   rename,
   toggleVisibility,
@@ -14,6 +18,7 @@ import {
   getShapeFolderIdByName,
   getShapeIdByName,
 } from "./testFileBuilder";
+import { GeppettoImage } from "./types";
 
 describe("shapes", () => {
   describe("addShape", () => {
@@ -267,6 +272,71 @@ describe("rename", () => {
 
     const newFile = rename(mutationId, "mutation", "UpdatedMovement")(file);
     expect(newFile.mutations[mutationId].name).toEqual("UpdatedMovement");
+  });
+});
+
+describe("addPoint", () => {
+  const fileBuild = fileBuilder();
+
+  it("adds a point to a layer", () => {
+    const file = fileBuild.addShape("My Layer").build();
+    const layerId = getShapeIdByName(file, "My Layer");
+
+    const result = addPoint(file, layerId, [50, 10]);
+    expect(result.layers[layerId].points).toEqual([[50, 10]]);
+  });
+});
+
+const addPoints = (
+  file: GeppettoImage,
+  layerId: string,
+  points: Vec2[]
+): GeppettoImage =>
+  points.reduce<GeppettoImage>(
+    (image, current) => addPoint(image, layerId, current),
+    file
+  );
+
+describe("deletePoint", () => {
+  const fileBuild = fileBuilder();
+
+  it("adds a point to a layer", () => {
+    const file = fileBuild.addShape("My Layer").build();
+    const layerId = getShapeIdByName(file, "My Layer");
+    const startFile = addPoints(file, layerId, [
+      [50, 10],
+      [40, 10],
+      [30, 10],
+    ]);
+
+    const result = deletePoint(startFile, layerId, [40, 10]);
+
+    expect(result.layers[layerId].points).toEqual([
+      [50, 10],
+      [30, 10],
+    ]);
+  });
+});
+
+describe("movePoint", () => {
+  const fileBuild = fileBuilder();
+
+  it("updates location of a point", () => {
+    const file = fileBuild.addShape("My Layer").build();
+    const layerId = getShapeIdByName(file, "My Layer");
+    const startFile = addPoints(file, layerId, [
+      [50, 10],
+      [40, 10],
+      [30, 10],
+    ]);
+
+    const result = movePoint(startFile, layerId, [40, 10], [45, 6]);
+
+    expect(result.layers[layerId].points).toEqual([
+      [50, 10],
+      [45, 6],
+      [30, 10],
+    ]);
   });
 });
 
