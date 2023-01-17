@@ -1,6 +1,8 @@
 import { fireEvent } from "@storybook/testing-library";
 import { fireEvent as reactFireEvent } from "@testing-library/react";
 
+// This implementation is based upon: https://testing-library.com/docs/example-drag/
+
 function getElementClientCenter(element: HTMLElement) {
   const { left, top, width, height } = element.getBoundingClientRect();
   return {
