@@ -103,10 +103,10 @@ Default.play = async ({ canvasElement }) => {
   const panel = resizeHandle.parentElement;
   if (panel) {
     const style = window.getComputedStyle(panel);
-    expect(style.width).toEqual("125px");
+    expect(style).toHaveProperty("width", "125px");
 
     await drag(resizeHandle, { delta: { x: 100, y: 0 }, steps: 1 });
     const resizedStyle = window.getComputedStyle(panel);
-    expect(resizedStyle.width).toEqual("225px");
+    expect(resizedStyle).toHaveProperty("width", "225px");
   }
 };
