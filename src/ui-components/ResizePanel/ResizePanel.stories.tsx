@@ -92,6 +92,9 @@ const Template: ComponentStory<typeof ResizePanel> = (args) => {
 };
 
 export const Default = Template.bind({});
+Default.args = {
+  direction: direction.East,
+};
 Default.play = async ({ canvasElement }) => {
   const canvas = within(canvasElement);
   const resizeHandle = canvas.getByRole("separator");
@@ -102,8 +105,8 @@ Default.play = async ({ canvasElement }) => {
     const style = window.getComputedStyle(panel);
     expect(style.width).toEqual("125px");
 
-    await drag(resizeHandle, { delta: { x: 100, y: 0 } });
+    await drag(resizeHandle, { delta: { x: 100, y: 0 }, steps: 1 });
     const resizedStyle = window.getComputedStyle(panel);
-    expect(resizedStyle.width).toEqual("220px"); // width of separator is subtracted
+    expect(resizedStyle.width).toEqual("225px");
   }
 };

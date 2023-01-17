@@ -1,4 +1,5 @@
 import { fireEvent } from "@storybook/testing-library";
+import { fireEvent as reactFireEvent } from "@testing-library/react";
 
 function getElementClientCenter(element: HTMLElement) {
   const { left, top, width, height } = element.getBoundingClientRect();
@@ -40,15 +41,16 @@ export default async function drag(
     clientY: from.y,
   };
 
-  fireEvent.mouseEnter(element, current);
-  fireEvent.mouseOver(element, current);
-  fireEvent.mouseMove(element, current);
-  fireEvent.mouseDown(element, current);
+  reactFireEvent.mouseEnter(element, current);
+  reactFireEvent.mouseOver(element, current);
+  reactFireEvent.mouseMove(element, current);
+  await fireEvent.mouseDown(element, current);
   for (let i = 0; i < steps; i++) {
     current.clientX += step.x;
     current.clientY += step.y;
     await sleep(duration / steps);
-    fireEvent.mouseMove(element, current);
+    await fireEvent.mouseMove(element, current);
   }
-  fireEvent.mouseUp(element, current);
+  await fireEvent.mouseUp(element, current);
+  await sleep(5);
 }
