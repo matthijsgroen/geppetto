@@ -3,6 +3,9 @@ import { Column } from "../Column/Column";
 import { Panel } from "../Panel/Panel";
 import { Row } from "../Row/Row";
 import { ResizeDirection, ResizePanel } from "./ResizePanel";
+import { expect } from "@storybook/jest";
+import { within } from "@storybook/testing-library";
+import drag from "./dragTestHelper";
 
 const direction = {
   North: ResizeDirection.North,
@@ -26,6 +29,7 @@ export default {
     direction: direction.East,
     minSize: 40,
     maxSize: 400,
+    defaultSize: 125,
   },
 } as ComponentMeta<typeof ResizePanel>;
 
@@ -88,3 +92,18 @@ const Template: ComponentStory<typeof ResizePanel> = (args) => {
 };
 
 export const Default = Template.bind({});
+Default.play = async ({ canvasElement }) => {
+  const canvas = within(canvasElement);
+  const resizeHandle = canvas.getByRole("separator");
+  expect(resizeHandle).toHaveAttribute("aria-orientation", "vertical");
+
+  const panel = resizeHandle.parentElement;
+  if (panel) {
+    const style = window.getComputedStyle(panel);
+    expect(style.width).toEqual("125px");
+
+    await drag(resizeHandle, { delta: { x: 100, y: 0 } });
+    const resizedStyle = window.getComputedStyle(panel);
+    expect(resizedStyle.width).toEqual("220px"); // width of separator is subtracted
+  }
+};
