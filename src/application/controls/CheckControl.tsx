@@ -1,26 +1,17 @@
-import { ChangeEvent, useCallback } from "react";
-import { Control } from "../../ui-components";
+import { Control, CheckInput } from "../../ui-components";
 
-type BooleanControlProps = {
+type CheckControlProps = {
   label?: string;
   value?: boolean;
   onChange?: (newValue: boolean) => void;
 };
 
-export const BooleanControl: React.FC<BooleanControlProps> = ({
+export const CheckControl: React.FC<CheckControlProps> = ({
   label,
   value = false,
   onChange,
-}) => {
-  const eventHandler = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      onChange && onChange(e.currentTarget.checked);
-    },
-    [onChange]
-  );
-  return (
-    <Control label={label}>
-      <input type="checkbox" checked={value} onChange={eventHandler} />
-    </Control>
-  );
-};
+}) => (
+  <Control label={label}>
+    <CheckInput value={value} onChange={onChange} />
+  </Control>
+);

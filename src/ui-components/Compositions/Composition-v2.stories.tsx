@@ -1,5 +1,6 @@
 import { Story } from "@storybook/react";
 import {
+  CheckInput,
   Column,
   Control,
   ControlPanel,
@@ -118,7 +119,7 @@ const Template: Story = () => (
           <Title>Opacity (4)</Title>
           <ControlPanel>
             <Control label="Visible">
-              <input type="checkbox" />
+              <CheckInput value={true} />
             </Control>
             <Control label="Origin">
               <NumberInput value={10} prefix="x:" />
@@ -129,7 +130,7 @@ const Template: Story = () => (
               <NumberInput value={20} prefix="y:" />
             </Control>
             <Control label="Use Radius">
-              <input type="checkbox" checked />
+              <CheckInput value={true} />
             </Control>
             <Control label="Radius">
               <NumberInput value={10} />

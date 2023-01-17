@@ -4,7 +4,7 @@ import {
   KeyboardEventHandler,
   useCallback,
 } from "react";
-import styles from "./Control.module.scss";
+import styles from "./NumberInput.module.scss";
 
 enum UpDown {
   UP = "up",
@@ -87,7 +87,7 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   );
 
   return (
-    <label className={styles.controlShort}>
+    <label className={styles.numberInput}>
       {prefix}
       <input
         type="number"

@@ -1,8 +1,9 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react";
 import { Panel } from "../Panel/Panel";
+import { CheckInput } from "../Inputs/CheckInput";
 import { Control as ControlComponent } from "./Control";
 import { ControlPanel } from "./ControlPanel";
-import { NumberInput } from "./NumberInput";
+import { NumberInput } from "../Inputs/NumberInput";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const story = {
@@ -28,7 +29,7 @@ const Template: ComponentStory<typeof ControlComponent> = (args) => (
 
 export const Control = Template.bind({});
 Control.args = {
-  children: <input type="checkbox" id="InputField" />,
+  children: <CheckInput value={false} htmlId="InputField" />,
 };
 
 export const NumberControl = Template.bind({});
@@ -50,5 +51,5 @@ SliderControl.args = {
 
 export const CheckControl = Template.bind({});
 CheckControl.args = {
-  children: <input type="checkbox" checked id="InputField" />,
+  children: <CheckInput value={true} htmlId="InputField" />,
 };
