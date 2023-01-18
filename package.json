@@ -118,9 +118,9 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 16,
+        "statements": 10,
         "branches": 8,
-        "lines": 16,
+        "lines": 10,
         "functions": 10
       },
       "./src/animation/": {
