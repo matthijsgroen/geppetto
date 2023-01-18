@@ -98,6 +98,7 @@
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "concurrently": "^7.2.2",
+    "eslint": "^8.32.0",
     "jest-environment-jsdom": "28.1.3",
     "raw.macro": "^0.4.2",
     "wait-on": "^6.0.1"
