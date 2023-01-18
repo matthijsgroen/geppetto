@@ -26,7 +26,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile --immutable
+        run: yarn install --immutable
 
       - name: Check linting rules
         run: yarn lint
@@ -48,7 +48,7 @@ jobs:
           cache: "yarn"
 
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile --immutable
+        run: yarn install --immutable
 
       - name: Run unit tests
         run: yarn test --coverage
