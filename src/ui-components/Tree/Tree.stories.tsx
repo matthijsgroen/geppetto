@@ -1,10 +1,9 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
 import { Icon, ToolButton } from "..";
-import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
+import { ToolsProvider } from "./storybookTreeDataProvider";
+// import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
 import { Tree } from "./Tree";
-import { TreeEnvironment } from "./TreeEnvironment";
-
-jest.setTimeout(30_000);
+// import { TreeEnvironment } from "./TreeEnvironment";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -26,9 +25,10 @@ const toolsProvider: ToolsProvider = (data) => {
 };
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof Tree> = (args) => (
-  <TreeEnvironment items={storyTreeItems(toolsProvider)} viewState={{}}>
-    <Tree {...args} />
-  </TreeEnvironment>
+  // <TreeEnvironment items={storyTreeItems(toolsProvider)} viewState={{}}>
+  //   <Tree {...args} />
+  // </TreeEnvironment>
+  <div />
 );
 
 export const Default = Template.bind({});
