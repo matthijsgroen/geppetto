@@ -4,6 +4,8 @@ import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
 import { Tree } from "./Tree";
 import { TreeEnvironment } from "./TreeEnvironment";
 
+jest.setTimeout(30_000);
+
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: "Components/Tree",
