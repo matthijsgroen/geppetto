@@ -53,7 +53,7 @@ const populateTree = (
       result.current[nodeId] = {
         index: nodeId,
         canMove: false,
-        hasChildren: true,
+        isFolder: true,
         children: item.children,
         data: {
           name: "Root",
@@ -78,7 +78,7 @@ const populateTree = (
       result.current[nodeId] = {
         index: nodeId,
         canMove: true,
-        hasChildren: false,
+        isFolder: false,
         children: [],
         data,
         canRename: true,
@@ -94,7 +94,7 @@ const populateTree = (
       result.current[nodeId] = {
         index: nodeId,
         canMove: true,
-        hasChildren: childIds.length > 0,
+        isFolder: childIds.length > 0,
         children: childIds,
         data,
         canRename: true,

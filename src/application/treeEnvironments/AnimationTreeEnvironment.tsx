@@ -46,7 +46,7 @@ export const AnimationTreeEnvironment: React.FC<AnimationTreeEnvironmentProps> =
       (items: ControlItem[], target: DraggingPosition) => {
         items.reverse();
         const updatedItems: string[] = [];
-        if (target.targetType === "item") {
+        if (target.targetType === "item" || target.targetType === "root") {
           const targetId = `${target.targetItem}`;
           updatedItems.push(targetId);
           setFile((fileData) => {
@@ -131,8 +131,8 @@ export const AnimationTreeEnvironment: React.FC<AnimationTreeEnvironmentProps> =
         onFocusItem={useEvent((item: ControlItem) => {
           setFocusedItem(`${item.index}`);
         })}
-        canDropOnItemWithChildren={true}
-        canDropOnItemWithoutChildren={true}
+        canDropOnFolder={true}
+        canDropOnNonFolder={true}
         viewState={{
           [treeId]: {
             expandedItems: [], // TODO: expand when folders get supported

@@ -1,18 +1,17 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { Icon, ToolButton } from "..";
-import { ToolsProvider } from "./storybookTreeDataProvider";
-// import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
-import { Tree } from "./Tree";
-// import { TreeEnvironment } from "./TreeEnvironment";
+import { Icon, Panel, ToolButton } from "..";
+import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
+import { Tree as TreeComponent } from "./Tree";
+import { TreeEnvironment } from "./TreeEnvironment";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
   title: "Components/Tree",
-  component: Tree,
+  component: TreeComponent,
   args: {
     treeId: "tree-1",
   },
-} as ComponentMeta<typeof Tree>;
+} as ComponentMeta<typeof TreeComponent>;
 
 const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {
@@ -24,11 +23,12 @@ const toolsProvider: ToolsProvider = (data) => {
   }
 };
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof Tree> = (args) => (
-  // <TreeEnvironment items={storyTreeItems(toolsProvider)} viewState={{}}>
-  //   <Tree {...args} />
-  // </TreeEnvironment>
-  <div />
+const Template: ComponentStory<typeof TreeComponent> = (args) => (
+  <Panel>
+    {/* <TreeEnvironment items={storyTreeItems(toolsProvider)} viewState={{}}>
+      <Tree {...args} />
+    </TreeEnvironment> */}
+  </Panel>
 );
 
 export const Default = Template.bind({});

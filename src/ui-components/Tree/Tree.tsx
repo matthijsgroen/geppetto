@@ -44,7 +44,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
       {...context.itemContainerWithChildrenProps}
       className={cx(
         "rct-tree-item-li",
-        item.hasChildren && "rct-tree-item-li-hasChildren",
+        item.isFolder && "rct-tree-item-li-isFolder",
         context.isSelected && "rct-tree-item-li-selected",
         context.isExpanded && "rct-tree-item-li-expanded",
         context.isFocused && "rct-tree-item-li-focused",
@@ -57,7 +57,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
         style={{ paddingLeft: `${depth * renderDepthOffset}px` }}
         className={cx(
           "rct-tree-item-title-container",
-          item.hasChildren && "rct-tree-item-title-container-hasChildren",
+          item.isFolder && "rct-tree-item-title-container-hasChildren",
           context.isSelected && "rct-tree-item-title-container-selected",
           context.isExpanded && "rct-tree-item-title-container-expanded",
           context.isFocused && "rct-tree-item-title-container-focused",
@@ -74,7 +74,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
           type={type}
           className={cx(
             "rct-tree-item-button",
-            item.hasChildren && "rct-tree-item-button-hasChildren",
+            item.isFolder && "rct-tree-item-button-hasChildren",
             context.isSelected && "rct-tree-item-button-selected",
             context.isExpanded && "rct-tree-item-button-expanded",
             context.isFocused && "rct-tree-item-button-focused",
