@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import type { ComponentStory, ComponentMeta } from "@storybook/react";
 import { expect } from "@storybook/jest";
 import { userEvent, waitFor, within } from "@storybook/testing-library";
 import { ToolButton } from "./ToolButton";
@@ -6,7 +6,7 @@ import { Icon } from "../Icon/Icon";
 import { controlPropsArgTypes } from "../generic/ControlPropsStoryHelpers";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const story: ComponentMeta<typeof ToolButton> = {
   title: "Components/ToolButton",
   component: ToolButton,
   argTypes: {
@@ -19,7 +19,9 @@ export default {
     notificationBadge: false,
     shadow: false,
   },
-} as ComponentMeta<typeof ToolButton>;
+};
+
+export default story;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof ToolButton> = (args) => (

@@ -90,7 +90,9 @@ const Template: Story = () => (
       <ToolButton icon={<Icon>📏</Icon>} tooltip="Toggle grid visibility" />
       <Menu
         portal
-        menuButton={({ open }) => <ToolButton active={open} label="32" />}
+        menuButton={({ open }: { open: boolean }) => (
+          <ToolButton active={open} label="32" />
+        )}
         direction="bottom"
         align="center"
         arrow
