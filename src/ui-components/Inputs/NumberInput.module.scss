@@ -1,0 +1,54 @@
+.numberInput {
+  display: inline-block;
+  border-top: 2px solid var(--colors-background-panel);
+  border-bottom: 2px solid var(--colors-background-panel);
+  padding: 2px;
+  background-color: var(--colors-background-panel);
+  color: var(--colors-text-dimmed);
+  box-shadow: 1px 1px 2px #0003;
+  cursor: text;
+}
+
+.numberInput input {
+  background-color: transparent;
+  border: 0;
+  color: var(--colors-text-dimmed);
+  width: 4ch;
+}
+.numberInput input[type="number"]:focus {
+  width: 6ch; /* extra width for spinner */
+}
+.numberInput input[type="number"]:not(:focus)::-webkit-outer-spin-button,
+.numberInput input[type="number"]:not(:focus)::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox */
+.numberInput input[type="number"]:not(:focus) {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.numberInput input:focus {
+  outline: none;
+  color: var(--colors-text-default);
+}
+.numberInput:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-left: 2px solid var(--colors-background-panel);
+}
+.numberInput:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-right: 2px solid var(--colors-background-panel);
+}
+
+.numberInput:focus-within {
+  border-color: var(--colors-control-focus);
+  background-color: var(--colors-control-edge);
+  color: var(--colors-text-default);
+}
+.numberInput:hover:not(:focus-within) {
+  border-color: var(--colors-control-highlight);
+}

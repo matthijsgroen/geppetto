@@ -1,0 +1,52 @@
+.timeBox {
+  display: inline-grid;
+  grid-auto-columns: calc(3 * 0.01em); /* 1s = 3em */
+  grid-auto-rows: 2rem;
+
+  min-width: 4em;
+  transition: font-size 100ms;
+  border-top: 0.25rem solid var(--colors-control-default);
+}
+
+.timeBox:focus-within {
+  border-top: 0.25rem solid var(--colors-control-active);
+}
+
+.timeEvent {
+  background-color: var(--colors-control-default);
+  border-radius: 2px;
+  box-shadow: 1px 1px 2px #0003;
+  line-height: 1rem;
+}
+.timeEvent:focus {
+  outline: 2px solid var(--colors-control-focus);
+  z-index: 1;
+}
+
+.timeEvent label {
+  font-size: 1rem;
+  color: var(--colors-text-default);
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.curve {
+  width: 100%;
+  height: 1rem;
+  background-color: var(--colors-control-active-dimmed);
+}
+.curveLinear {
+  clip-path: url(#linearCurve);
+}
+.curveEaseIn {
+  clip-path: url(#easeInCurve);
+}
+.curveEaseOut {
+  clip-path: url(#easeOutCurve);
+}
+.curveEaseInOut {
+  clip-path: url(#easeInOutCurve);
+}

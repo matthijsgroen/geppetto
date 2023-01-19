@@ -27,18 +27,20 @@ import { useUpdateMutationValues } from "../contexts/ImageControlContext";
 import useEvent from "../hooks/useEvent";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
-import { UseState } from "../types";
+import { AppSection, UseState } from "../types";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
   focusedItemState: UseState<string | undefined>;
   editControlId?: string;
+  onSectionChange?: (newSection: AppSection) => void;
 };
 
 export const ShapeTree: React.FC<ShapeTreeProps> = ({
   selectedItemsState,
   focusedItemState,
   editControlId,
+  onSectionChange,
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
@@ -163,7 +165,18 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       </ToolBar>
       {isEmpty(file.layerHierarchy) ? (
         <EmptyTree>
-          <Paragraph>Start by adding a layer on the "Layers" screen.</Paragraph>
+          <Paragraph>
+            Start by adding a layer on the
+            <ToolButton
+              size="small"
+              icon={<Icon>🧬</Icon>}
+              label="Layers screen"
+              tooltip="Go to layers screen"
+              shadow
+              onClick={() => onSectionChange && onSectionChange("layers")}
+            />
+            .
+          </Paragraph>
         </EmptyTree>
       ) : (
         <Tree treeId="composition" />

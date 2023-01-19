@@ -29,7 +29,7 @@ const interactionManager: InteractionManager = {
         }
       } else {
         actions.selectItem();
-        if (!item.hasChildren) {
+        if (!item.isFolder) {
           actions.primaryAction();
         }
       }

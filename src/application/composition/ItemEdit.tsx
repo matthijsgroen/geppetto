@@ -8,14 +8,21 @@ import {
 } from "../../animation/file2/mutation";
 import { toggleVisibility } from "../../animation/file2/shapes";
 import { Vec2 } from "../../types";
-import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
+import {
+  CheckInput,
+  Control,
+  ControlPanel,
+  Icon,
+  Kbd,
+  Title,
+} from "../../ui-components";
 import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
 import { useFile } from "../contexts/FileContext";
 import {
   useMutationValues,
   useUpdateMutationValues,
 } from "../contexts/ImageControlContext";
-import { BooleanControl } from "../controls/CheckControl";
+import { CheckControl } from "../controls/CheckControl";
 import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
 import useEvent from "../hooks/useEvent";
@@ -53,11 +60,10 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
       </Title>
       <ControlPanel>
         <Control label="Visible" htmlFor={`${itemId}_visibility`}>
-          <input
-            type="checkbox"
-            checked={layerFolder.visible}
+          <CheckInput
+            value={layerFolder.visible}
             onChange={handleClick}
-            id={`${itemId}_visibility`}
+            htmlId={`${itemId}_visibility`}
           />
         </Control>
       </ControlPanel>
@@ -98,11 +104,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
           onChange={offsetChangeHandler}
         />
         <Control label="Visible">
-          <input
-            type="checkbox"
-            checked={layer.visible}
-            onChange={handleClick}
-          />
+          <CheckInput value={layer.visible} onChange={handleClick} />
         </Control>
       </ControlPanel>
       <Paragraph size="small">
@@ -187,7 +189,7 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
         )}
         {hasRadius(mutation) && (
           <>
-            <BooleanControl
+            <CheckControl
               label="Use radius"
               value={mutation.radius !== -1}
               onChange={toggleRadius}

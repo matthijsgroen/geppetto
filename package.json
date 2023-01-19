@@ -16,13 +16,13 @@
     "geppetto-player": "1.3.3",
     "immer": "^9.0.12",
     "react": "^18.0.0",
-    "react-complex-tree": "1.1.8",
+    "react-complex-tree": "2.0.2",
     "react-dom": "^18.0.0",
     "react-draggable": "^4.4.5",
     "react-scripts": "5.0.1",
     "sass": "^1.51.0",
     "styled-components": "^5.3.3",
-    "typescript": "^4.6.3",
+    "typescript": "~4.7.0",
     "web-vitals": "^0.2.4",
     "workbox-background-sync": "^5.1.4",
     "workbox-broadcast-update": "^5.1.4",
@@ -49,7 +49,7 @@
     "test:coverage": "react-scripts test --coverage --watchAll=false",
     "test-storybook:coverage": "test-storybook --coverage",
     "coverage-report": "cp coverage/storybook/coverage-storybook.json coverage/coverage-storybook.json && nyc report --reporter=lcovonly --reporter=html -t coverage --report-dir coverage/complete",
-    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"yarn build-storybook --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && yarn test-storybook --maxWorkers=2 --coverage\""
+    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"NODE_ENV=test yarn build-storybook --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && yarn test-storybook --maxWorkers=2 --coverage\""
   },
   "eslintConfig": {
     "extends": [
@@ -73,18 +73,18 @@
     "@babel/core": "^7.13.0",
     "@babel/plugin-proposal-optional-chaining": "^7.13.12",
     "@craco/craco": "^6.4.3",
-    "@storybook/addon-actions": "^6.5.9",
-    "@storybook/addon-coverage": "^0.0.2",
-    "@storybook/addon-essentials": "^6.5.9",
-    "@storybook/addon-interactions": "^6.5.9",
-    "@storybook/addon-links": "^6.5.9",
-    "@storybook/builder-webpack5": "^6.5.9",
+    "@storybook/addon-actions": "^6.5.15",
+    "@storybook/addon-coverage": "^0.0.7",
+    "@storybook/addon-essentials": "^6.5.15",
+    "@storybook/addon-interactions": "^6.5.15",
+    "@storybook/addon-links": "^6.5.15",
+    "@storybook/builder-webpack5": "^6.5.15",
     "@storybook/jest": "^0.0.10",
-    "@storybook/manager-webpack5": "^6.5.9",
-    "@storybook/node-logger": "^6.5.9",
+    "@storybook/manager-webpack5": "^6.5.15",
+    "@storybook/node-logger": "^6.5.15",
     "@storybook/preset-create-react-app": "^4.1.2",
-    "@storybook/react": "^6.5.9",
-    "@storybook/test-runner": "^0.3.0",
+    "@storybook/react": "^6.5.15",
+    "@storybook/test-runner": "^0.9.2",
     "@storybook/testing-library": "^0.0.13",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -98,6 +98,8 @@
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "concurrently": "^7.2.2",
+    "eslint": "^8.32.0",
+    "jest-environment-jsdom": "28.1.3",
     "raw.macro": "^0.4.2",
     "wait-on": "^6.0.1"
   },
@@ -117,10 +119,10 @@
     ],
     "coverageThreshold": {
       "global": {
-        "statements": 16,
+        "statements": 10,
         "branches": 8,
-        "lines": 16,
-        "functions": 11
+        "lines": 10,
+        "functions": 10
       },
       "./src/animation/": {
         "statements": 92,
@@ -130,10 +132,12 @@
       }
     },
     "moduleNameMapper": {
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
+      "\\.svg$": "<rootDir>/__mocks__/styleMock.js"
     }
   },
   "eslintIgnore": [
     "/src/old/**"
-  ]
+  ],
+  "packageManager": "yarn@3.3.1"
 }

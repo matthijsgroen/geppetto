@@ -1,5 +1,6 @@
 import { Story } from "@storybook/react";
 import {
+  CheckInput,
   Column,
   Control,
   ControlPanel,
@@ -44,14 +45,18 @@ const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {
     return (
       <>
-        <ToolButton icon={<Icon>👁</Icon>} active />
+        <ToolButton size="small" icon={<Icon>👁</Icon>} active />
       </>
     );
   }
   if (data.type === "mutation") {
     return (
       <>
-        <ToolButton icon={<Icon>📍</Icon>} active={data.name === "Mutation"} />
+        <ToolButton
+          size="small"
+          icon={<Icon>📍</Icon>}
+          active={data.name === "Mutation"}
+        />
       </>
     );
   }
@@ -205,7 +210,7 @@ const Template: Story = () => (
             <Title>Opacity (4)</Title>
             <ControlPanel>
               <Control label="Visible">
-                <input type="checkbox" checked />
+                <CheckInput value={true} />
               </Control>
               <Control label="Origin">
                 <NumberInput value={10} prefix="x:" />
@@ -216,7 +221,7 @@ const Template: Story = () => (
                 <NumberInput value={20} prefix="y:" />
               </Control>
               <Control label="Use Radius">
-                <input type="checkbox" checked />
+                <CheckInput value={true} />
               </Control>
               <Control label="Radius">
                 <NumberInput value={10} />

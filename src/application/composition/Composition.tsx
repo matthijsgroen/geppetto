@@ -143,7 +143,7 @@ export const Composition: React.FC<CompositionProps> = ({
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [focusedLayer, setFocusedLayer] = useState<string | undefined>();
   const [activeMutator, setActiveMutator] = useState<string | null>(null);
-  const [selectedControls, setSelectedControls] = useState<string[]>([]);
+  const selectedControlsState = useState<string[]>([]);
   const updateMutationValues = useUpdateMutationValues();
   const dragDropStatus = useRef<{
     fileDragStart: GeppettoImage;
@@ -411,6 +411,7 @@ export const Composition: React.FC<CompositionProps> = ({
       setSelectedItems([addDetails.id]);
     }
   );
+  const [selectedControls, setSelectedControls] = selectedControlsState;
   const editingControl = controlEditMode ? selectedControls[0] : undefined;
 
   return (
@@ -424,7 +425,11 @@ export const Composition: React.FC<CompositionProps> = ({
           onClick={() => onSectionChange && onSectionChange("layers")}
         />
         <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} active />
-        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
+        <ToolTab
+          icon={<Icon>🏃</Icon>}
+          label={"Animation"}
+          onClick={() => onSectionChange && onSectionChange("animation")}
+        />
         <ToolSeparator />
         <ActionToolButton
           action={actions.toggleWireFrames}
@@ -449,6 +454,7 @@ export const Composition: React.FC<CompositionProps> = ({
                 selectedItemsState={[selectedItems, updateSelectedItems]}
                 focusedItemState={[focusedLayer, setFocusedLayer]}
                 editControlId={editingControl}
+                onSectionChange={onSectionChange}
               />
             </Panel>
             {!controlEditMode && (
@@ -458,10 +464,7 @@ export const Composition: React.FC<CompositionProps> = ({
                 defaultSize={400}
               >
                 <ControlTree
-                  selectedControlsState={[
-                    selectedControls,
-                    setSelectedControls,
-                  ]}
+                  selectedControlsState={selectedControlsState}
                   onEditControlSteps={() => setControlEditMode(true)}
                 />
               </ResizePanel>

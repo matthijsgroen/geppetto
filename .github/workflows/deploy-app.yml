@@ -26,7 +26,7 @@ jobs:
           cache: "yarn"
 
       - name: Install Dependencies
-        run: yarn install --prefer-offline --frozen-lockfile --immutable
+        run: yarn install --immutable
 
       - name: Build application
         run: yarn build

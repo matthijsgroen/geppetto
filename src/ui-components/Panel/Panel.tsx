@@ -6,6 +6,7 @@ type PanelProps = PropsWithChildren<{
   workspace?: boolean;
   center?: boolean;
   fitContent?: boolean;
+  scrollable?: boolean;
 }>;
 
 const StyledPanel = styled.div<{
@@ -13,6 +14,7 @@ const StyledPanel = styled.div<{
   workspace: boolean;
   center: boolean;
   fitContent: boolean;
+  scrollable: boolean;
 }>`
   padding: ${(props) => props.padding}px;
   background-color: ${(props) =>
@@ -26,7 +28,7 @@ const StyledPanel = styled.div<{
   flex: ${({ fitContent }) => (fitContent ? "0 0 fit-content" : "1")};
   flex-direction: column;
   display: flex;
-  overflow: hidden;
+  overflow: ${({ scrollable }) => (scrollable ? "scroll" : "hidden")};
   ${(props) =>
     props.center
       ? css`
@@ -46,12 +48,14 @@ export const Panel: React.FC<PanelProps> = ({
   workspace = false,
   center = false,
   fitContent = false,
+  scrollable = false,
 }) => (
   <StyledPanel
     padding={padding}
     workspace={workspace}
     center={center}
     fitContent={fitContent}
+    scrollable={scrollable}
   >
     {children}
   </StyledPanel>

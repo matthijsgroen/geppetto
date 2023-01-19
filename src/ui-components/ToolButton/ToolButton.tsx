@@ -1,14 +1,10 @@
-import {
-  forwardRef,
-  useContext,
-  MouseEventHandler,
-  KeyboardEventHandler,
-} from "react";
+import { forwardRef, useContext } from "react";
 import { Label } from "../Label/Label";
 import { ToolbarContext } from "../ToolBar/ToolBarContext";
 import styles from "./ToolButton.module.css";
 import { className } from "../className";
 import { ToolBarSize } from "../ToolBar/ToolBar";
+import { ControlEventProps } from "../generic/ControlProps";
 
 type ToolButtonProps = {
   active?: boolean;
@@ -19,10 +15,7 @@ type ToolButtonProps = {
   shadow?: boolean;
   size?: ToolBarSize;
   tooltip?: string;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
-  onContextMenu?: MouseEventHandler<HTMLButtonElement>;
-};
+} & ControlEventProps<HTMLButtonElement>;
 
 export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
   (
@@ -35,9 +28,6 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
       disabled,
       tooltip,
       label,
-      onClick,
-      onKeyDown,
-      onContextMenu,
       ...props
     },
     ref
@@ -50,9 +40,6 @@ export const ToolButton = forwardRef<HTMLButtonElement, ToolButtonProps>(
         {...props}
         title={tooltip}
         type={"button"}
-        onClick={onClick}
-        onKeyDown={onKeyDown}
-        onContextMenu={onContextMenu}
         className={className({
           [styles.toolButton]: true,
           [styles.active]: active,

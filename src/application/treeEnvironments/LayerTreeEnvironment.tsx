@@ -167,7 +167,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
 
   const onDrop = useEvent((items: LayerItem[], target: DraggingPosition) => {
     items.reverse();
-    if (target.targetType === "item") {
+    if (target.targetType === "item" || target.targetType === "root") {
       const targetId = `${target.targetItem}`;
       setFile((fileData) => {
         const result = { ...fileData };
@@ -266,8 +266,8 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         onFocusItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
           setFocusedItem(`${item.index}`);
         })}
-        canDropOnItemWithChildren={true}
-        canDropOnItemWithoutChildren={true}
+        canDropOnFolder={true}
+        canDropOnNonFolder={true}
         viewState={{
           [treeId]: {
             expandedItems,

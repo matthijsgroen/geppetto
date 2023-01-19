@@ -1,5 +1,6 @@
 import { ComponentMeta, Story } from "@storybook/react";
 import { ComponentProps } from "react";
+import { CheckInput } from "../Inputs/CheckInput";
 import { Control } from "./Control";
 import { ControlPanel as ControlPanelComponent } from "./ControlPanel";
 
@@ -27,7 +28,7 @@ const Template: Story<
       {children}
       {Array.from({ length: extraControlCount ?? 0 }).map((_, index) => (
         <Control label={`Extra Field ${index + 1}`} key={index}>
-          <input type="checkbox" />
+          <CheckInput value={true} />
         </Control>
       ))}
     </ControlPanelComponent>
@@ -38,10 +39,10 @@ export const ControlPanel = Template.bind({});
 ControlPanel.args = {
   children: [
     <Control label="Hello" key="field1">
-      <input type="checkbox" />
+      <CheckInput value={true} />
     </Control>,
     <Control label="Hello with a really long name" key="field2">
-      <input type="checkbox" />
+      <CheckInput value={true} />
     </Control>,
   ],
 };

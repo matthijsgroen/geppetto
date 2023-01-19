@@ -13,6 +13,7 @@ export default {
     workspace: false,
     center: false,
     fitContent: false,
+    scrollable: false,
   },
 } as ComponentMeta<typeof PanelComponent>;
 
@@ -24,4 +25,22 @@ const Template: ComponentStory<typeof PanelComponent> = (args) => (
 export const Panel = Template.bind({});
 Panel.args = {
   children: "Lorem Ipsum",
+};
+
+export const ScrollableWorkspace = Template.bind({});
+ScrollableWorkspace.args = {
+  children: (
+    <div
+      style={{ width: "120vw", height: 30, backgroundColor: "hotpink" }}
+    ></div>
+  ),
+  workspace: true,
+  scrollable: true,
+  padding: 10,
+};
+
+export const FitContent = Template.bind({});
+FitContent.args = {
+  children: "Lorem Ipsum",
+  fitContent: true,
 };
