@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { expect } from "@storybook/jest";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { expect, fn } from "@storybook/test";
+import { userEvent, waitFor, within } from "@storybook/test";
 import { TextButton } from "./TextButton";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -12,6 +12,7 @@ export default {
   },
   args: {
     children: "Hello world",
+    onClick: fn(),
   },
 } as ComponentMeta<typeof TextButton>;
 

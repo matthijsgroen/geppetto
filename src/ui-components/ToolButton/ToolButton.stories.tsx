@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { expect } from "@storybook/jest";
-import { userEvent, waitFor, within } from "@storybook/testing-library";
+import { expect, fn } from "@storybook/test";
+import { userEvent, waitFor, within } from "@storybook/test";
 import { ToolButton } from "./ToolButton";
 import { Icon } from "../Icon/Icon";
 
@@ -18,6 +18,7 @@ export default {
     active: false,
     notificationBadge: false,
     shadow: false,
+    onClick: fn(),
   },
 } as ComponentMeta<typeof ToolButton>;
 
