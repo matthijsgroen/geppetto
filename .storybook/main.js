@@ -3,9 +3,8 @@ module.exports = {
 
   addons: [
     "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
     "@storybook/preset-create-react-app",
+    "@storybook/addon-docs"
   ],
 
   framework: {
@@ -13,11 +12,7 @@ module.exports = {
     options: {},
   },
 
-  docs: {
-    autodocs: true,
-  },
-
   typescript: {
     reactDocgen: "react-docgen-typescript",
-  },
+  }
 };

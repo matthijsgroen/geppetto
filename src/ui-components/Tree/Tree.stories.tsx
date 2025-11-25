@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { Icon, ToolButton } from "..";
 import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
 import { Tree } from "./Tree";

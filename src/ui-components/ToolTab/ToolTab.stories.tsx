@@ -1,6 +1,6 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { expect, fn } from "@storybook/test";
-import { userEvent, waitFor, within } from "@storybook/test";
+import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import { expect, fn } from "storybook/test";
+import { userEvent, waitFor, within } from "storybook/test";
 import { ToolTab as ToolTabComponent } from "./ToolTab";
 import { Icon } from "../Icon/Icon";
 

@@ -1,4 +1,4 @@
-import { ComponentMeta, Story } from "@storybook/react";
+import { ComponentMeta, Story } from "@storybook/react-webpack5";
 import { ComponentProps } from "react";
 import { Control } from "./Control";
 import { ControlPanel as ControlPanelComponent } from "./ControlPanel";

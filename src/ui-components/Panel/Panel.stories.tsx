@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { Panel as PanelComponent } from "./Panel";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

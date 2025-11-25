@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { Icon } from "../Icon/Icon";
 import { ToolButton } from "../ToolButton/ToolButton";
 import { Menu, MenuDivider, MenuHeader, MenuItem, SubMenu } from "./Menu";

@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentMeta } from "@storybook/react";
+import { ComponentMeta } from "@storybook/react-webpack5";
 import { Kbd as KbdElement } from "./Kbd";
 import { Shortcut } from "./shortcut";
 

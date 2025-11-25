@@ -1,6 +1,6 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
-import { expect, fn } from "@storybook/test";
-import { userEvent, waitFor, within } from "@storybook/test";
+import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import { expect, fn } from "storybook/test";
+import { userEvent, waitFor, within } from "storybook/test";
 import { TextButton } from "./TextButton";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

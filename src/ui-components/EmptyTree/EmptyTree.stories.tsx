@@ -1,4 +1,4 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react";
+import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { EmptyTree } from "./EmptyTree";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

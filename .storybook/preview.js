@@ -3,7 +3,7 @@ import { defaultTheme } from "../src/application/theme/default";
 import "../src/index.css";
 
 export const parameters = {
-  backgrounds: { disable: true },
+  backgrounds: { disabled: true },
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {
     matchers: {
@@ -43,3 +43,4 @@ const withThemeProvider = (Story, context) => {
   );
 };
 export const decorators = [withThemeProvider];
+export const tags = ["autodocs"];

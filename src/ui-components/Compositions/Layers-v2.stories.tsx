@@ -1,4 +1,4 @@
-import { Story } from "@storybook/react";
+import { Story } from "@storybook/react-webpack5";
 import {
   Column,
   Icon,
