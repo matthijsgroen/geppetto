@@ -1,4 +1,3 @@
-import raw from "raw.macro";
 import { collectChildIds, visit } from "../../../animation/file2/hierarchy";
 import { GeppettoImage, Keyframe } from "../../../animation/file2/types";
 import { ScreenTranslation } from "../../types";
@@ -10,8 +9,8 @@ import {
   MAX_MUTATION_VECTORS,
 } from "./utils";
 
-const compositionVertexShader = raw("./showCompositionMap.vert");
-const compositionFragmentShader = raw("./showCompositionMap.frag");
+import compositionVertexShader from "./showCompositionMap.vert";
+import compositionFragmentShader from "./showCompositionMap.frag";
 
 export const showCompositionMap = (
   trans: ScreenTranslation

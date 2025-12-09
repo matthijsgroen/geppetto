@@ -3,6 +3,7 @@ import { Icon, ToolButton } from "..";
 import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
 import { Tree } from "./Tree";
 import { TreeEnvironment } from "./TreeEnvironment";
+import { ComponentProps } from "react";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -23,7 +24,9 @@ const toolsProvider: ToolsProvider = (data) => {
   }
 };
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof Tree> = (args) => (
+const Template: ComponentStory<typeof Tree> = (
+  args: ComponentProps<typeof Tree>
+) => (
   <TreeEnvironment items={storyTreeItems(toolsProvider)} viewState={{}}>
     <Tree {...args} />
   </TreeEnvironment>
