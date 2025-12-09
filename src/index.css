@@ -1,9 +1,11 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 html,
 body,
 #root {
-  background: var(--colors-background-workspace);
+  @apply bg-neutral-400 dark:bg-zinc-800;
   font: caption;
   user-select: none;
 }

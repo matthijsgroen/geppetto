@@ -1,17 +1,16 @@
-import React from "react";
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import { StoryObj, Meta } from "@storybook/react-vite";
 import { Title as TitleElement } from "./Title";
 
-export default {
+const meta = {
   title: "Elements/Title",
   component: TitleElement,
-} as ComponentMeta<typeof TitleElement>;
+} satisfies Meta<typeof TitleElement>;
+export default meta;
 
-const Template: ComponentStory<typeof TitleElement> = (args) => (
-  <TitleElement {...args} />
-);
+type Story = StoryObj<typeof meta>;
 
-export const Title = Template.bind({});
-Title.args = {
-  children: "️Hello world",
+export const Title: Story = {
+  args: {
+    children: "️Hello world",
+  },
 };

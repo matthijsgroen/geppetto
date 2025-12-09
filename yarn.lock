@@ -964,6 +964,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/addon-themes@npm:^10.1.5":
+  version: 10.1.5
+  resolution: "@storybook/addon-themes@npm:10.1.5"
+  dependencies:
+    ts-dedent: "npm:^2.0.0"
+  peerDependencies:
+    storybook: ^10.1.5
+  checksum: 10c0/6c7cc064f4cef72ab9b121db93ab620ba2cd26d9c20c3bc455be172522a9c32672f77476b295a60dac0a0e4cebf43004d1234f06e531cf1718d716681e652b54
+  languageName: node
+  linkType: hard
+
 "@storybook/builder-vite@npm:10.1.5":
   version: 10.1.5
   resolution: "@storybook/builder-vite@npm:10.1.5"
@@ -2399,6 +2410,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "geppetto@workspace:."
   dependencies:
+    "@storybook/addon-themes": "npm:^10.1.5"
     "@storybook/react-vite": "npm:^10.1.5"
     "@szhsin/react-menu": "npm:^3.0.0"
     "@tailwindcss/vite": "npm:^4.1.17"

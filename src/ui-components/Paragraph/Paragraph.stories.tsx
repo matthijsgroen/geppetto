@@ -1,21 +1,26 @@
-import React from "react";
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import { StoryObj, Meta } from "@storybook/react-vite";
 import { Paragraph as ParagraphElement } from "./Paragraph";
 
-export default {
+const meta = {
   title: "Elements/Paragraph",
   component: ParagraphElement,
+  argTypes: {
+    size: {
+      control: { type: "radio" },
+      options: ["small", "default"],
+    },
+  },
   args: {
     selectable: true,
     size: "default",
   },
-} as ComponentMeta<typeof ParagraphElement>;
+} satisfies Meta<typeof ParagraphElement>;
+export default meta;
 
-const Template: ComponentStory<typeof ParagraphElement> = (args) => (
-  <ParagraphElement {...args} />
-);
+type Story = StoryObj<typeof meta>;
 
-export const Paragraph = Template.bind({});
-Paragraph.args = {
-  children: "️Hello world",
+export const Paragraph: Story = {
+  args: {
+    children: "️Hello world",
+  },
 };

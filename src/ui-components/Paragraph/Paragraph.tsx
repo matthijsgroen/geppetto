@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { className } from "../className";
 import { ToolBarSize } from "../ToolBar/ToolBar";
-import styles from "./Paragraph.module.css";
+// import styles from "./Paragraph.module.css";
 
 type LabelProps = PropsWithChildren<{
   size?: ToolBarSize;
@@ -18,9 +18,9 @@ export const Paragraph: React.FC<LabelProps> = ({
 }) => (
   <p
     className={className({
-      [styles.paragraph]: true,
-      [styles.small]: size === "small",
-      [styles.selectable]: selectable,
+      ["font-caption py-1 text-zinc-800 dark:text-zinc-100"]: true,
+      ["text-xs"]: size === "small",
+      ["select-text"]: selectable,
     })}
   >
     {children}
