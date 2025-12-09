@@ -35,7 +35,7 @@ const Template: ComponentStory<typeof ResizePanel> = (args) => {
     return (
       <Row>
         <ResizePanel {...args}>
-          <Panel padding={10}>
+          <Panel padding="md">
             <p>Resizable panel</p>
           </Panel>
         </ResizePanel>
@@ -52,7 +52,7 @@ const Template: ComponentStory<typeof ResizePanel> = (args) => {
           <p>Other content</p>
         </Panel>
         <ResizePanel {...args}>
-          <Panel padding={10}>
+          <Panel padding="md">
             <p>Resizable panel</p>
           </Panel>
         </ResizePanel>
@@ -63,7 +63,7 @@ const Template: ComponentStory<typeof ResizePanel> = (args) => {
     return (
       <Column>
         <ResizePanel {...args}>
-          <Panel padding={10}>
+          <Panel padding="md">
             <p>Resizable panel</p>
           </Panel>
         </ResizePanel>
@@ -79,7 +79,7 @@ const Template: ComponentStory<typeof ResizePanel> = (args) => {
         <p>Other content</p>
       </Panel>
       <ResizePanel {...args}>
-        <Panel padding={10}>
+        <Panel padding="md">
           <p>Resizable panel</p>
         </Panel>
       </ResizePanel>

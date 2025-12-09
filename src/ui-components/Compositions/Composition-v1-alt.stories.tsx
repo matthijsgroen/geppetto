@@ -109,7 +109,7 @@ const Template: Story = () => (
         defaultSize={250}
       >
         <Column>
-          <Panel padding={5}>
+          <Panel padding="sm">
             <ToolBar size="small">
               <ToolButton
                 icon={<Icon>📄</Icon>}
@@ -144,7 +144,7 @@ const Template: Story = () => (
             minSize={200}
             defaultSize={300}
           >
-            <Panel padding={5}>
+            <Panel padding="sm">
               <Title>Controls</Title>
               <ToolBar size="small">
                 <ToolButton
@@ -201,7 +201,7 @@ const Template: Story = () => (
         defaultSize={250}
       >
         <Column>
-          <Panel padding={5}>
+          <Panel padding="sm">
             <Title>Opacity (4)</Title>
             <ControlPanel>
               <Control label="Visible">

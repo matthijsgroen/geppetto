@@ -1,6 +1,5 @@
 import { Shortcut, shortcutStr } from "./shortcut";
-import { className } from "../className";
-import styles from "./Kbd.module.css";
+import { clsx } from "clsx";
 
 type ShortcutProps = {
   shortcut: Shortcut;
@@ -22,11 +21,12 @@ export const Kbd: React.FC<ShortcutProps> = ({
   inMenu = false,
 }) => (
   <kbd
-    className={className({
-      [styles.shortcut]: true,
-      [styles.dimmed]: dimmed,
-      [styles.inMenu]: inMenu,
-      [styles.disabled]: disabled,
+    className={clsx("text-sm font-system self-center", {
+      ["px-2"]: !inMenu,
+      ["text-zinc-800 dark:text-zinc-100"]: !dimmed,
+      ["text-zinc-800/50 dark:text-neutral-400"]: dimmed,
+      ["pl-4"]: inMenu,
+      ["opacity-60"]: disabled,
     })}
   >
     {shortcutStr(shortcut)}

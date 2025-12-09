@@ -82,7 +82,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
       focusedItemState={focusedItemState}
       treeId="layers"
     >
-      <Panel padding={5}>
+      <Panel padding="sm">
         <ToolBar size="small">
           <ToolButton
             icon={<Icon>📄</Icon>}

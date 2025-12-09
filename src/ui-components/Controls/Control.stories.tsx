@@ -17,7 +17,7 @@ export default story;
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 const Template: ComponentStory<typeof ControlComponent> = (args) => (
-  <Panel padding={5}>
+  <Panel padding="sm">
     <ControlPanel>
       <ControlComponent label={args.label} htmlFor={"InputField"}>
         {args.children}

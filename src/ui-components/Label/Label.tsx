@@ -1,7 +1,6 @@
 import { PropsWithChildren } from "react";
 import { className } from "../className";
 import { ToolBarSize } from "../ToolBar/ToolBar";
-import styles from "./Label.module.css";
 
 type LabelProps = PropsWithChildren<{
   active?: boolean;
@@ -24,11 +23,12 @@ export const Label: React.FC<LabelProps> = ({
 }) => (
   <label
     className={className({
-      [styles.label]: true,
-      [styles.active]: active,
-      [styles.small]: size === "small",
-      [styles.vertical]: vertical,
-      [styles.selectable]: selectable,
+      ["font-caption py-1"]: true,
+      ["text-zinc-800 dark:text-zinc-100"]: !active,
+      ["text-slate-500 dark:text-green-500"]: active,
+      ["text-xs"]: size === "small",
+      ["text-vertical"]: vertical,
+      ["select-text"]: selectable,
     })}
     htmlFor={htmlFor}
   >

@@ -2,14 +2,27 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-html,
-body,
-#root {
-  @apply bg-neutral-400 dark:bg-zinc-800;
-  font: caption;
-  user-select: none;
+@theme {
+  --font-system:  system-ui;
+  --text-shadow-xs: 0px 0px 1px;
 }
 
-#root {
+@utility text-vertical {
+  writing-mode: vertical-lr;
+}
+
+@utility font-caption {
+  @layer base {
+    font: caption;
+  }
+}
+
+html,
+body,
+#root, #storybook-root {
+  @apply bg-neutral-400 dark:bg-zinc-800 size-full font-caption select-none;
+}
+
+#root, #storybook-root {
   display: flex;
 }

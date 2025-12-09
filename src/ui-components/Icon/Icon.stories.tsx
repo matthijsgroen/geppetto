@@ -1,17 +1,16 @@
-import React from "react";
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import { StoryObj, Meta } from "@storybook/react-vite";
 import { Icon as IconElement } from "./Icon";
 
-export default {
+const meta = {
   title: "Elements/Icon",
   component: IconElement,
-} as ComponentMeta<typeof IconElement>;
+} satisfies Meta<typeof IconElement>;
+export default meta;
 
-const Template: ComponentStory<typeof IconElement> = (args) => (
-  <IconElement {...args} />
-);
+type Story = StoryObj<typeof meta>;
 
-export const Icon = Template.bind({});
-Icon.args = {
-  children: "️💡",
+export const Icon: Story = {
+  args: {
+    children: "️💡",
+  },
 };

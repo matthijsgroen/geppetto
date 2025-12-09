@@ -1,13 +1,41 @@
 import React from "react";
-import { ComponentMeta } from "@storybook/react-webpack5";
+import { Meta, StoryObj } from "@storybook/react-vite";
 import { Kbd as KbdElement } from "./Kbd";
 import { Shortcut } from "./shortcut";
 
-export default {
+type StoryProps = {
+  interaction: Shortcut["interaction"];
+  disabled?: boolean;
+  dimmed?: boolean;
+  inMenu?: boolean;
+  ctrlOrCmd: boolean;
+  shift: boolean;
+  alt: boolean;
+  mac: boolean;
+};
+
+const StoryTemplate: React.FC<StoryProps> = ({
+  interaction = "KeyO",
+  ctrlOrCmd,
+  shift,
+  alt,
+  mac,
+  ...props
+}) => {
+  const shortcut: Shortcut = { interaction, ctrlOrCmd, shift, alt, mac };
+  return (
+    <div>
+      <p style={{ background: "var(--colors-control-default)", margin: 0 }}>
+        <KbdElement shortcut={shortcut} {...props} />
+      </p>
+    </div>
+  );
+};
+
+const meta = {
   title: "Elements/Kbd",
-  component: KbdElement,
+  component: StoryTemplate,
   argTypes: {
-    shortcut: { control: false },
     ctrlOrCmd: { control: "boolean" },
     shift: { control: "boolean" },
     alt: { control: "boolean" },
@@ -33,35 +61,9 @@ export default {
     dimmed: false,
     inMenu: false,
   },
-} as ComponentMeta<typeof KbdElement>;
+} satisfies Meta<StoryProps>;
+export default meta;
 
-type StoryProps = {
-  interaction: Shortcut["interaction"];
-  disabled?: boolean;
-  dimmed?: boolean;
-  inMenu?: boolean;
-  ctrlOrCmd: boolean;
-  shift: boolean;
-  alt: boolean;
-  mac: boolean;
-};
+type Story = StoryObj<typeof meta>;
 
-const Template: React.FC<StoryProps> = ({
-  interaction = "KeyO",
-  ctrlOrCmd,
-  shift,
-  alt,
-  mac,
-  ...props
-}) => {
-  const shortcut: Shortcut = { interaction, ctrlOrCmd, shift, alt, mac };
-  return (
-    <div>
-      <p style={{ background: "var(--colors-control-default)", margin: 0 }}>
-        <KbdElement shortcut={shortcut} {...props} />
-      </p>
-    </div>
-  );
-};
-
-export const Kbd = Template.bind({});
+export const Kbd: Story = {};

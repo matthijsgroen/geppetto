@@ -444,7 +444,7 @@ export const Composition: React.FC<CompositionProps> = ({
           minSize={150}
         >
           <Column>
-            <Panel padding={5}>
+            <Panel padding="sm">
               <ShapeTree
                 selectedItemsState={[selectedItems, updateSelectedItems]}
                 focusedItemState={[focusedLayer, setFocusedLayer]}
@@ -467,7 +467,7 @@ export const Composition: React.FC<CompositionProps> = ({
               </ResizePanel>
             )}
             {controlEditMode && (
-              <Panel padding={5} fitContent={true}>
+              <Panel padding="sm" fitContent={true}>
                 <ControlEditSteps
                   selectedControlIds={selectedControls}
                   activeControlStep={activeControlStep}
@@ -551,7 +551,7 @@ export const Composition: React.FC<CompositionProps> = ({
             minSize={150}
           >
             <Column>
-              <Panel padding={5}>
+              <Panel padding="sm">
                 <ItemEdit
                   activeMutator={activeMutator}
                   selectedShapeIds={selectedItems}

@@ -1,40 +1,12 @@
+import clsx from "clsx";
 import { PropsWithChildren } from "react";
-import styled, { css } from "styled-components";
 
 type PanelProps = PropsWithChildren<{
-  padding?: number;
+  padding?: "sm" | "md";
   workspace?: boolean;
   center?: boolean;
   fitContent?: boolean;
 }>;
-
-const StyledPanel = styled.div<{
-  padding: number;
-  workspace: boolean;
-  center: boolean;
-  fitContent: boolean;
-}>`
-  padding: ${(props) => props.padding}px;
-  background-color: ${(props) =>
-    props.workspace
-      ? props.theme.colors.backgroundWorkspace
-      : props.theme.colors.backgroundPanel};
-  border: 1px solid
-    ${(props) =>
-      props.workspace ? props.theme.colors.controlEdge : "transparent"};
-  color: ${(props) => props.theme.colors.textDefault};
-  flex: ${({ fitContent }) => (fitContent ? "0 0 fit-content" : "1")};
-  flex-direction: column;
-  display: flex;
-  overflow: hidden;
-  ${(props) =>
-    props.center
-      ? css`
-          align-items: center;
-          justify-content: center;
-        `
-      : ""}
-`;
 
 /**
  * Basic component that applies the proper theme color as background,
@@ -42,17 +14,27 @@ const StyledPanel = styled.div<{
  */
 export const Panel: React.FC<PanelProps> = ({
   children,
-  padding = 0,
+  padding,
   workspace = false,
   center = false,
   fitContent = false,
 }) => (
-  <StyledPanel
-    padding={padding}
-    workspace={workspace}
-    center={center}
-    fitContent={fitContent}
+  <div
+    className={clsx({
+      "p-1": padding === "sm",
+      "p-2": padding === "md",
+      "bg-neutral-400 dark:bg-zinc-800": workspace,
+      "bg-gray-200 dark:bg-neutral-700": !workspace,
+      border: true,
+      "border-transparent": !workspace,
+      "border-zinc-800/20": workspace,
+      "text-zinc-800 dark:text-zinc-100": true,
+      "flex flex-col overflow-hidden": true,
+      "flex-1": !fitContent,
+      "flex-[0_0_fit-content]": fitContent,
+      "items-center justify-center": center,
+    })}
   >
     {children}
-  </StyledPanel>
+  </div>
 );

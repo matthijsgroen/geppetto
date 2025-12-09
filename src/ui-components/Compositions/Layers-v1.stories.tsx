@@ -138,7 +138,7 @@ const Template: Story = () => (
               tooltip="Remove item"
             />
           </ToolBar>
-          <Panel padding={5}>
+          <Panel padding="sm">
             <TreeEnvironment
               items={storyTreeItems(noToolsProvider)}
               viewState={{}}

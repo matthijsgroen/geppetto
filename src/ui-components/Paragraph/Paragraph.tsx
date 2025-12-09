@@ -1,7 +1,6 @@
 import { PropsWithChildren } from "react";
-import { className } from "../className";
 import { ToolBarSize } from "../ToolBar/ToolBar";
-// import styles from "./Paragraph.module.css";
+import clsx from "clsx";
 
 type LabelProps = PropsWithChildren<{
   size?: ToolBarSize;
@@ -17,10 +16,9 @@ export const Paragraph: React.FC<LabelProps> = ({
   selectable = true,
 }) => (
   <p
-    className={className({
-      ["font-caption py-1 text-zinc-800 dark:text-zinc-100"]: true,
-      ["text-xs"]: size === "small",
-      ["select-text"]: selectable,
+    className={clsx("font-caption py-1 text-zinc-800 dark:text-zinc-100", {
+      "text-xs": size === "small",
+      "select-text": selectable,
     })}
   >
     {children}

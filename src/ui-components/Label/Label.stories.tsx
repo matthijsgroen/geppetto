@@ -1,17 +1,25 @@
-import React from "react";
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import { Meta, StoryObj } from "@storybook/react-vite";
 import { Label as LabelElement } from "./Label";
 
-export default {
+const meta = {
   title: "Elements/Label",
   component: LabelElement,
-} as ComponentMeta<typeof LabelElement>;
+  argTypes: {
+    size: {
+      control: { type: "radio" },
+      options: ["small", "default"],
+    },
+  },
+  args: {
+    children: "️Hello world",
+    vertical: false,
+    selectable: false,
+    active: false,
+    size: "default",
+  },
+} satisfies Meta<typeof LabelElement>;
+export default meta;
 
-const Template: ComponentStory<typeof LabelElement> = (args) => (
-  <LabelElement {...args} />
-);
+type Story = StoryObj<typeof meta>;
 
-export const Label = Template.bind({});
-Label.args = {
-  children: "️Hello world",
-};
+export const Label: Story = {};

@@ -53,7 +53,7 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
       selectedItemsState={selectedControlsState}
       treeId="controls"
     >
-      <Panel padding={5}>
+      <Panel padding="sm">
         <Title>Controls</Title>
         <ToolBar size="small">
           <ToolButton

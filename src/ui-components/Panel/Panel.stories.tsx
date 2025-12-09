@@ -1,27 +1,34 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import { StoryObj, Meta } from "@storybook/react-vite";
 import { Panel as PanelComponent } from "./Panel";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "Components/Panel",
   component: PanelComponent,
   argTypes: {
-    children: { control: false, table: false },
+    children: { control: false },
+    padding: {
+      control: { type: "radio" },
+      options: ["none", "sm", "md"],
+      mapping: {
+        none: undefined,
+        sm: "sm",
+        md: "md",
+      },
+    },
   },
   args: {
-    padding: 0,
+    padding: "sm",
     workspace: false,
     center: false,
     fitContent: false,
   },
-} as ComponentMeta<typeof PanelComponent>;
+} satisfies Meta<typeof PanelComponent>;
+export default meta;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof PanelComponent> = (args) => (
-  <PanelComponent {...args} />
-);
+type Story = StoryObj<typeof meta>;
 
-export const Panel = Template.bind({});
-Panel.args = {
-  children: "Lorem Ipsum",
+export const Panel: Story = {
+  args: {
+    children: "Lorem Ipsum",
+  },
 };

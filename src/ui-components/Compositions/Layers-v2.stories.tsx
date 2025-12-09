@@ -83,7 +83,7 @@ const Template: Story = () => (
       defaultSize={250}
     >
       <Column>
-        <Panel padding={5}>
+        <Panel padding="sm">
           <Title>Layers</Title>
           <ToolBar size="small">
             <ToolButton icon={<Icon>📄</Icon>} label="+" tooltip="Add layer" />
