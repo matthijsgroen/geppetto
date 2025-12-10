@@ -1,8 +1,6 @@
-import React from "react";
-import styles from "./ToolSpacer.module.css";
+import { FC } from "react";
 
 /**
  * Pushes controls to the right, allowing tools on the right side of the toolbar
  */
-export const ToolSpacer: React.FC = () => <span className={styles.spacer} />;
-ToolSpacer.displayName = "ToolSpacer";
+export const ToolSpacer: FC = () => <span className="flex flex-1" />;

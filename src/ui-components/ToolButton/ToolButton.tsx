@@ -1,4 +1,11 @@
-import { useContext, MouseEventHandler, KeyboardEventHandler, FC } from "react";
+import {
+  use,
+  MouseEventHandler,
+  KeyboardEventHandler,
+  FC,
+  ReactNode,
+  Ref,
+} from "react";
 import { Label } from "../Label/Label";
 import { ToolbarContext } from "../ToolBar/ToolBarContext";
 import { ToolBarSize } from "../ToolBar/ToolBar";
@@ -7,7 +14,7 @@ import clsx from "clsx";
 type ToolButtonProps = {
   active?: boolean;
   disabled?: boolean;
-  icon?: React.ReactChild;
+  icon?: ReactNode;
   label?: string;
   notificationBadge?: boolean;
   shadow?: boolean;
@@ -16,7 +23,7 @@ type ToolButtonProps = {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
   onContextMenu?: MouseEventHandler<HTMLButtonElement>;
-  ref?: React.Ref<HTMLButtonElement>;
+  ref?: Ref<HTMLButtonElement>;
 };
 
 export const ToolButton: FC<ToolButtonProps> = ({
@@ -34,7 +41,7 @@ export const ToolButton: FC<ToolButtonProps> = ({
   ref,
   ...props
 }) => {
-  const toolbarProps = useContext(ToolbarContext);
+  const toolbarProps = use(ToolbarContext);
   const useSize = size === undefined ? toolbarProps.size : size ?? "default";
   return (
     <button

@@ -1,7 +1,6 @@
-import React, { PropsWithChildren } from "react";
+import { FC, PropsWithChildren } from "react";
 import { ToolbarContext } from "./ToolBarContext";
-import styles from "./ToolBar.module.css";
-import { className } from "../className";
+import clsx from "clsx";
 
 export type ToolBarSize = "default" | "small";
 
@@ -10,26 +9,33 @@ type ToolBarProps = PropsWithChildren<{
   vertical?: boolean;
 }>;
 
-export const ToolBar: React.FC<ToolBarProps> = ({
+export const ToolBar: FC<ToolBarProps> = ({
   children,
   size = "default",
   vertical = false,
 }) => (
   <ToolbarContext.Provider value={{ size, vertical }}>
     <div
-      className={className({
-        [styles.outer]: true,
-        [styles.horizontal]: !vertical,
-        [styles.vertical]: vertical,
-        [styles.small]: size === "small",
-      })}
+      className={clsx(
+        "hide-scrollbar shrink-0 bg-panel-light dark:bg-panel-dark",
+        {
+          "overflow-x-scroll overflow-y-visible": !vertical,
+          "overflow-x-visible overflow-y-scroll": vertical,
+          "h-12": size === "default" && !vertical,
+          "w-12": size === "default" && vertical,
+          "h-9": size === "small" && !vertical,
+          "w-9": size === "small" && vertical,
+        }
+      )}
     >
       <div
-        className={className({
-          [styles.inner]: true,
-          [styles.horizontal]: !vertical,
-          [styles.vertical]: vertical,
-          [styles.small]: size === "small",
+        className={clsx("flex-0 flex items-center", {
+          "flex-row min-w-fit px-1 [&_>_*+*]:ml-1": !vertical,
+          "flex-col min-h-fit py-1.5 [&_>_*+*]:mt-1": vertical,
+          "h-12": size === "default" && !vertical,
+          "w-12": size === "default" && vertical,
+          "h-9": size === "small" && !vertical,
+          "w-9": size === "small" && vertical,
         })}
       >
         {children}
@@ -37,4 +43,10 @@ export const ToolBar: React.FC<ToolBarProps> = ({
     </div>
   </ToolbarContext.Provider>
 );
-ToolBar.displayName = "ToolBar";
+
+// .inner.inner.horizontal > * + * {
+//   margin-left: 0.25rem;
+// }
+// .inner.inner.vertical > * + * {
+//   margin-top: 0.25rem;
+// }

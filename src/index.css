@@ -47,6 +47,14 @@
   writing-mode: vertical-lr;
 }
 
+@utility hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 @utility font-caption {
   @layer base {
     font: caption;

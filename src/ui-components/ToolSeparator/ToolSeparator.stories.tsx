@@ -1,22 +1,23 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { ToolBar } from "../ToolBar/ToolBar";
 import { Icon } from "../Icon/Icon";
 import { ToolButton } from "../ToolButton/ToolButton";
 import { ToolSeparator as ToolSeparatorComponent } from "./ToolSeparator";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "Components/ToolSeparator",
   component: ToolSeparatorComponent,
-} as ComponentMeta<typeof ToolSeparatorComponent>;
+} satisfies Meta<typeof ToolSeparatorComponent>;
+export default meta;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ToolSeparatorComponent> = () => (
-  <ToolBar>
-    <ToolButton icon={<Icon>💡</Icon>} />
-    <ToolSeparatorComponent />
-    <ToolButton icon={<Icon>🚨</Icon>} />
-  </ToolBar>
-);
+type Story = StoryObj<typeof ToolSeparatorComponent>;
 
-export const ToolSeparator = Template.bind({});
+export const ToolSeparator: Story = {
+  render: () => (
+    <ToolBar>
+      <ToolButton icon={<Icon>💡</Icon>} />
+      <ToolSeparatorComponent />
+      <ToolButton icon={<Icon>🚨</Icon>} />
+    </ToolBar>
+  ),
+};

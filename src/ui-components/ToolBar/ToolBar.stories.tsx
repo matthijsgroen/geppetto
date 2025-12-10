@@ -1,17 +1,18 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { ToolBar } from "./ToolBar";
 import { Icon } from "../Icon/Icon";
 import { ToolButton } from "../ToolButton/ToolButton";
 import { ToolSeparator } from "../ToolSeparator/ToolSeparator";
 import { ToolSpacer } from "../ToolSpacer/ToolSpacer";
 import { ToolTab } from "../ToolTab/ToolTab";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "Components/ToolBar",
   component: ToolBar,
   argTypes: {
-    children: { control: false, table: false },
+    children: { control: false },
+    size: { control: "radio", options: ["default", "small"] },
+    vertical: { control: "boolean" },
   },
   args: {
     size: "default",
@@ -27,24 +28,25 @@ export default {
       <ToolButton icon={<Icon>🚧</Icon>} key={6} />,
     ],
   },
-} as ComponentMeta<typeof ToolBar>;
+} satisfies Meta<typeof ToolBar>;
+export default meta;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ToolBar> = (args) => (
-  <ToolBar {...args} />
-);
+type Story = StoryObj<typeof ToolBar>;
 
-export const Default: typeof Template = Template.bind({});
-Default.args = { size: "default" };
+export const Default: Story = {
+  args: { size: "default" },
+};
 
-export const Small: typeof Template = Template.bind({});
-Small.args = { size: "small" };
+export const Small: Story = {
+  args: { size: "small" },
+};
 
-export const Narrow: typeof Template = Template.bind({});
-Narrow.decorators = [
-  (Story) => (
-    <div style={{ width: "200px" }}>
-      <Story />
-    </div>
-  ),
-];
+export const Narrow: Story = {
+  decorators: [
+    (Story) => (
+      <div style={{ width: "200px" }}>
+        <Story />
+      </div>
+    ),
+  ],
+};

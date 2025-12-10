@@ -1,24 +1,26 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { ToolBar } from "../ToolBar/ToolBar";
 import { Icon } from "../Icon/Icon";
 import { ToolButton } from "../ToolButton/ToolButton";
 import { ToolSpacer as ToolSpacerComponent } from "./ToolSpacer";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
+const meta = {
   title: "Components/ToolSpacer",
   component: ToolSpacerComponent,
-} as ComponentMeta<typeof ToolSpacerComponent>;
+} satisfies Meta<typeof ToolSpacerComponent>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ToolSpacerComponent> = () => (
-  <div style={{ width: "100%" }}>
-    <ToolBar>
-      <ToolButton icon={<Icon>💡</Icon>} />
-      <ToolSpacerComponent />
-      <ToolButton icon={<Icon>🚨</Icon>} />
-    </ToolBar>
-  </div>
-);
+export default meta;
 
-export const ToolSpacer = Template.bind({});
+type Story = StoryObj<typeof ToolSpacerComponent>;
+
+export const ToolSpacer: Story = {
+  render: () => (
+    <div style={{ width: "100%" }}>
+      <ToolBar>
+        <ToolButton icon={<Icon>💡</Icon>} />
+        <ToolSpacerComponent />
+        <ToolButton icon={<Icon>🚨</Icon>} />
+      </ToolBar>
+    </div>
+  ),
+};
