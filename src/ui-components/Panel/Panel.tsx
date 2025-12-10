@@ -23,12 +23,13 @@ export const Panel: React.FC<PanelProps> = ({
     className={clsx({
       "p-1": padding === "sm",
       "p-2": padding === "md",
-      "bg-neutral-400 dark:bg-zinc-800": workspace,
-      "bg-gray-200 dark:bg-neutral-700": !workspace,
+      "bg-workspace-light dark:bg-workspace-dark": workspace,
+      "bg-panel-light dark:bg-panel-dark": !workspace,
       border: true,
       "border-transparent": !workspace,
-      "border-zinc-800/20": workspace,
-      "text-zinc-800 dark:text-zinc-100": true,
+      "border-control-edge-light/20 dark:border-control-edge-dark/30":
+        workspace,
+      "text-text-light dark:text-text-dark": true,
       "flex flex-col overflow-hidden": true,
       "flex-1": !fitContent,
       "flex-[0_0_fit-content]": fitContent,

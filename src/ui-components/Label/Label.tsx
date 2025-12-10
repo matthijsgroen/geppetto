@@ -24,8 +24,8 @@ export const Label: React.FC<LabelProps> = ({
   <label
     className={className({
       ["font-caption py-1"]: true,
-      ["text-zinc-800 dark:text-zinc-100"]: !active,
-      ["text-slate-500 dark:text-green-500"]: active,
+      ["text-text-light dark:text-text-dark"]: !active,
+      ["text-active-light dark:text-active-dark"]: active,
       ["text-xs"]: size === "small",
       ["text-vertical"]: vertical,
       ["select-text"]: selectable,

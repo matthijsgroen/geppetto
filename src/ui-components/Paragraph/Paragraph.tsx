@@ -16,7 +16,7 @@ export const Paragraph: React.FC<LabelProps> = ({
   selectable = true,
 }) => (
   <p
-    className={clsx("font-caption py-1 text-zinc-800 dark:text-zinc-100", {
+    className={clsx("font-caption py-1 text-text-light dark:text-text-dark", {
       "text-xs": size === "small",
       "select-text": selectable,
     })}

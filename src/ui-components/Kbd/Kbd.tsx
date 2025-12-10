@@ -23,8 +23,8 @@ export const Kbd: React.FC<ShortcutProps> = ({
   <kbd
     className={clsx("text-sm font-system self-center", {
       ["px-2"]: !inMenu,
-      ["text-zinc-800 dark:text-zinc-100"]: !dimmed,
-      ["text-zinc-800/50 dark:text-neutral-400"]: dimmed,
+      ["text-text-light dark:text-text-dark"]: !dimmed,
+      ["text-dimmed-light/50 dark:text-dimmed-dark/50"]: dimmed,
       ["pl-4"]: inMenu,
       ["opacity-60"]: disabled,
     })}
