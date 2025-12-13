@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["vite-plugin-glsl/ext"]
+    "types": ["vite/client", "vite-plugin-glsl/ext"]
   },
   "include": ["src"]
 }

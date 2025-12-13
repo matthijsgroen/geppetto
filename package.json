@@ -57,6 +57,7 @@
     "@types/react-dom": "^19.2.3",
     "@types/wicg-file-system-access": "^2020.9.5",
     "concurrently": "^7.2.2",
+    "sass-embedded": "^1.96.0",
     "storybook": "^10.1.5",
     "vite": "^7.2.7",
     "vite-plugin-glsl": "^1.5.5",

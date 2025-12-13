@@ -1,18 +1,8 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { Icon, ToolButton } from "..";
 import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
 import { Tree } from "./Tree";
 import { TreeEnvironment } from "./TreeEnvironment";
-import { ComponentProps } from "react";
-
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
-  title: "Components/Tree",
-  component: Tree,
-  args: {
-    treeId: "tree-1",
-  },
-} as ComponentMeta<typeof Tree>;
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {
@@ -23,13 +13,23 @@ const toolsProvider: ToolsProvider = (data) => {
     );
   }
 };
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof Tree> = (
-  args: ComponentProps<typeof Tree>
-) => (
-  <TreeEnvironment items={storyTreeItems(toolsProvider)} viewState={{}}>
-    <Tree {...args} />
-  </TreeEnvironment>
-);
 
-export const Default = Template.bind({});
+const meta = {
+  title: "Components/Tree",
+  component: Tree,
+  args: {
+    treeId: "tree-1",
+  },
+  decorators: [
+    (Story) => (
+      <TreeEnvironment items={storyTreeItems(toolsProvider)} viewState={{}}>
+        <Story />
+      </TreeEnvironment>
+    ),
+  ],
+} as Meta<typeof Tree>;
+export default meta;
+
+type Story = StoryObj<typeof Tree>;
+
+export const Default: Story = {};
