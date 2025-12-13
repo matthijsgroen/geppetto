@@ -18,6 +18,7 @@
   --color-notification-light: var(--color-red-600);
   --color-notification-dark: var(--color-red-400);
 
+  --color-control-default: var(--color-white);
   /** Should be used as /20 */
   --color-control-edge-light: var(--color-neutral-800);
   --color-control-highlight-light: var(--color-sky-200);
@@ -25,6 +26,7 @@
   --color-control-active-light: var(--color-sky-400);
   --color-control-focus-light: var(--color-blue-500);
 
+  --color-control-default-dark: var(--color-zinc-900);
   /** Should be used as /30 */
   --color-control-edge-dark: var(--color-zinc-100);
   --color-control-highlight-dark: var(--color-green-600);

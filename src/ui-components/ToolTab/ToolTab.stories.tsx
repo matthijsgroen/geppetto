@@ -1,8 +1,8 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { expect, fn } from "storybook/test";
 import { userEvent, waitFor, within } from "storybook/test";
 import { ToolTab as ToolTabComponent } from "./ToolTab";
 import { Icon } from "../Icon/Icon";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -15,48 +15,50 @@ export default {
   args: {
     disabled: false,
     active: false,
+    vertical: false,
     onClick: fn(),
   },
-} as ComponentMeta<typeof ToolTabComponent>;
+} as Meta<typeof ToolTabComponent>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof ToolTabComponent> = (args) => (
-  <ToolTabComponent {...args} />
-);
+type Story = StoryObj<typeof ToolTabComponent>;
 
-export const ToolTab = Template.bind({});
-ToolTab.args = {
-  icon: <Icon>💡</Icon>,
-  label: "Canvas",
-};
-ToolTab.play = async ({ args, canvasElement }) => {
-  const canvas = within(canvasElement);
+export const ToolTab: Story = {
+  args: {
+    icon: <Icon>💡</Icon>,
+    label: "Canvas",
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
 
-  await userEvent.click(canvas.getByRole("button"));
-  await waitFor(() => expect(args.onClick).toHaveBeenCalled());
+    await userEvent.click(canvas.getByRole("button"));
+    await waitFor(() => expect(args.onClick).toHaveBeenCalled());
+  },
 };
 
-export const Active = Template.bind({});
-Active.args = {
-  icon: <Icon>💡</Icon>,
-  active: true,
+export const Active: Story = {
+  args: {
+    icon: <Icon>💡</Icon>,
+    active: true,
+  },
 };
 
-export const Disabled = Template.bind({});
-Disabled.args = {
-  icon: <Icon>💡</Icon>,
-  disabled: true,
-};
-Disabled.play = async ({ args, canvasElement }) => {
-  const canvas = within(canvasElement);
+export const Disabled: Story = {
+  args: {
+    icon: <Icon>💡</Icon>,
+    disabled: true,
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
 
-  await userEvent.click(canvas.getByRole("button"));
-  await waitFor(() => expect(args.onClick).not.toHaveBeenCalled());
+    await userEvent.click(canvas.getByRole("button"));
+    await waitFor(() => expect(args.onClick).not.toHaveBeenCalled());
+  },
 };
 
-export const ActiveDisabled = Template.bind({});
-ActiveDisabled.args = {
-  icon: <Icon>💡</Icon>,
-  disabled: true,
-  active: true,
+export const ActiveDisabled: Story = {
+  args: {
+    icon: <Icon>💡</Icon>,
+    disabled: true,
+    active: true,
+  },
 };
