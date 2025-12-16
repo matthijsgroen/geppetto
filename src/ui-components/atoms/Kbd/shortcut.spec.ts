@@ -1,4 +1,5 @@
 import { shortcutStr } from "./shortcut";
+import { describe, it, expect } from "vitest";
 
 describe("shortcutStr", () => {
   describe("for mac", () => {

@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
-import { Icon } from "../Icon/Icon";
-import { ToolButton } from "../ToolButton/ToolButton";
+import { Icon } from "../atoms/Icon/Icon";
+import { ToolButton } from "../atoms/ToolButton/ToolButton";
 import { Menu, MenuDivider, MenuHeader, MenuItem, SubMenu } from "./Menu";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

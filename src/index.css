@@ -12,37 +12,40 @@
   --color-workspace-light: var(--color-neutral-500);
   --color-workspace-dark: var(--color-zinc-800);
 
-  --color-panel-light: var(--color-neutral-200);
-  --color-panel-dark: var(--color-neutral-700);
+  --color-panel: var(--color-neutral-200);
 
-  --color-notification-light: var(--color-red-600);
-  --color-notification-dark: var(--color-red-400);
+  --color-notification: var(--color-red-600);
 
   --color-control-default: var(--color-white);
   /** Should be used as /20 */
   --color-control-edge-light: var(--color-neutral-800);
-  --color-control-highlight-light: var(--color-sky-200);
+  --color-control-highlight: var(--color-sky-200);
   --color-control-active-dimmed-light: var(--color-sky-300);
-  --color-control-active-light: var(--color-sky-400);
-  --color-control-focus-light: var(--color-blue-500);
+  --color-control-active: var(--color-sky-400);
+  --color-control-focus: var(--color-blue-500);
 
   --color-control-default-dark: var(--color-zinc-900);
   /** Should be used as /30 */
   --color-control-edge-dark: var(--color-zinc-100);
-  --color-control-highlight-dark: var(--color-green-600);
   --color-control-active-dimmed-dark: var(--color-green-700);
-  --color-control-active-dark: var(--color-green-700);
-  --color-control-focus-dark: var(--color-green-600);
 
-  --color-text-light: var(--color-zinc-800);
-  --color-text-dark: var(--color-zinc-100);
+  --color-text: var(--color-zinc-800);
+  --color-dimmed: color-mix(in oklch, var(--color-zinc-800), transparent 50%);
 
-  /* Should be used as /50 */
-  --color-dimmed-light: var(--color-zinc-800);
-  --color-dimmed-dark: var(--color-neutral-400);
+  --color-active: var(--color-slate-500);
+}
 
-  --color-active-light: var(--color-slate-500);
-  --color-active-dark: var(--color-green-500);
+.dark {
+  --color-panel: var(--color-neutral-700);
+  --color-notification: var(--color-red-400);
+
+  --color-text: var(--color-zinc-100);
+  --color-dimmed: color-mix(in oklch, var(--color-neutral-400), transparent 50%);
+  --color-control-focus: var(--color-green-600);
+  --color-control-highlight: var(--color-green-600);
+
+  --color-active: var(--color-green-500);
+  --color-control-active: var(--color-green-700);
 }
 
 @utility text-vertical {

@@ -1,8 +1,9 @@
-import type { Preview } from "@storybook/react-vite";
+import { definePreview } from "@storybook/react-vite";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import "../src/index.css";
 
-const preview: Preview = {
+export default definePreview({
+  addons: [],
   parameters: {
     controls: {
       matchers: {
@@ -11,17 +12,16 @@ const preview: Preview = {
       },
     },
   },
-  tags: ["autodocs"],
-};
-
-export default preview;
-
-export const decorators = [
-  withThemeByClassName({
-    themes: {
-      light: "light",
-      dark: "dark",
-    },
-    defaultTheme: "light",
-  }),
-];
+  decorators: [
+    withThemeByClassName({
+      themes: {
+        light: "light",
+        dark: "dark",
+      },
+      defaultTheme: "light",
+    }),
+  ],
+  initialGlobals: {
+    theme: "light",
+  },
+});

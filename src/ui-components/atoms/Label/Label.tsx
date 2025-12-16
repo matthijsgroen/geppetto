@@ -1,6 +1,6 @@
-import { PropsWithChildren } from "react";
-import { className } from "../className";
-import { ToolBarSize } from "../ToolBar/ToolBar";
+import { FC, PropsWithChildren } from "react";
+import { className } from "../../className";
+import { ToolBarSize } from "../../ToolBar/ToolBar";
 
 type LabelProps = PropsWithChildren<{
   active?: boolean;
@@ -13,7 +13,7 @@ type LabelProps = PropsWithChildren<{
 /**
  * Used for displaying labels on TabBars and Controls
  */
-export const Label: React.FC<LabelProps> = ({
+export const Label: FC<LabelProps> = ({
   children,
   htmlFor,
   active = false,
@@ -24,8 +24,8 @@ export const Label: React.FC<LabelProps> = ({
   <label
     className={className({
       ["font-caption py-1"]: true,
-      ["text-text-light dark:text-text-dark"]: !active,
-      ["text-active-light dark:text-active-dark"]: active,
+      ["text-text"]: !active,
+      ["text-active"]: active,
       ["text-xs"]: size === "small",
       ["text-vertical"]: vertical,
       ["select-text"]: selectable,

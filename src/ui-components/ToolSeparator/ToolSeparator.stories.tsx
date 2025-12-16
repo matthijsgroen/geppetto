@@ -1,6 +1,6 @@
 import { ToolBar } from "../ToolBar/ToolBar";
-import { Icon } from "../Icon/Icon";
-import { ToolButton } from "../ToolButton/ToolButton";
+import { Icon } from "../atoms/Icon/Icon";
+import { ToolButton } from "../atoms/ToolButton/ToolButton";
 import { ToolSeparator as ToolSeparatorComponent } from "./ToolSeparator";
 import { Meta, StoryObj } from "@storybook/react-vite";
 

@@ -1,6 +1,6 @@
 import { ToolBar } from "./ToolBar";
-import { Icon } from "../Icon/Icon";
-import { ToolButton } from "../ToolButton/ToolButton";
+import { Icon } from "../atoms/Icon/Icon";
+import { ToolButton } from "../atoms/ToolButton/ToolButton";
 import { ToolSeparator } from "../ToolSeparator/ToolSeparator";
 import { ToolSpacer } from "../ToolSpacer/ToolSpacer";
 import { ToolTab } from "../ToolTab/ToolTab";

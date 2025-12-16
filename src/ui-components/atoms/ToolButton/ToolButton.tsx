@@ -7,8 +7,8 @@ import {
   Ref,
 } from "react";
 import { Label } from "../Label/Label";
-import { ToolbarContext } from "../ToolBar/ToolBarContext";
-import { ToolBarSize } from "../ToolBar/ToolBar";
+import { ToolbarContext } from "../../ToolBar/ToolBarContext";
+import { ToolBarSize } from "../../ToolBar/ToolBar";
 import clsx from "clsx";
 
 type ToolButtonProps = {
@@ -54,16 +54,14 @@ export const ToolButton: FC<ToolButtonProps> = ({
       onContextMenu={onContextMenu}
       className={clsx(
         "inline-block relative align-center border-0 whitespace-nowrap outline-2 outline-transparent",
-        "disabled:opacity-50 focus:outline-control-focus-light dark:focus:outline-control-focus-dark hover:enabled:bg-control-highlight-light dark:hover:enabled:bg-control-highlight-dark",
+        "disabled:opacity-50 focus:outline-control-focus hover:enabled:bg-control-highlight",
         {
-          "text-text-light dark:text-text-dark bg-panel-light dark:bg-panel-dark ":
-            !active,
-          "text-active-light dark:text-active-dark bg-control-active-light dark:bg-control-active-dark":
-            active,
+          "text-text bg-panel": !active,
+          "text-active bg-control-active": active,
           "text-xs h-6 min-w-6 rounded-control-small px-1": useSize === "small",
           "inline-block h-8 min-w-8 rounded-control px-2":
             useSize === "default",
-          "before:content-['.'] before:block before:size-2.5 before:bg-notification-light dark:before:bg-notification-dark before:text-transparent before:absolute before:rounded-full":
+          "before:content-['.'] before:block before:size-2.5 before:bg-notification before:text-transparent before:absolute before:rounded-full":
             notificationBadge,
           "before:-right-1 before:-top-1":
             notificationBadge && useSize === "default",

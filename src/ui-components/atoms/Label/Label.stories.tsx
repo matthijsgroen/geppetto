@@ -1,8 +1,8 @@
-import { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { Label as LabelElement } from "./Label";
 
-const meta = {
-  title: "Elements/Label",
+const meta = preview.meta({
+  title: "Atoms/Label",
   component: LabelElement,
   argTypes: {
     size: {
@@ -17,9 +17,7 @@ const meta = {
     active: false,
     size: "default",
   },
-} satisfies Meta<typeof LabelElement>;
+});
 export default meta;
 
-type Story = StoryObj<typeof meta>;
-
-export const Label: Story = {};
+export const Label = meta.story({});

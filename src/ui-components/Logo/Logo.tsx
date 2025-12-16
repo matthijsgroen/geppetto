@@ -1,6 +1,6 @@
 import styles from "./Logo.module.css";
 import { ReactComponent as Image } from "./geppetto.svg";
-import { Icon } from "../Icon/Icon";
+import { Icon } from "../atoms/Icon/Icon";
 
 export const LogoIcon: React.FC = () => (
   <Icon>

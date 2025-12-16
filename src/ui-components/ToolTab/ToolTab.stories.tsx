@@ -1,7 +1,7 @@
 import { expect, fn } from "storybook/test";
 import { userEvent, waitFor, within } from "storybook/test";
 import { ToolTab as ToolTabComponent } from "./ToolTab";
-import { Icon } from "../Icon/Icon";
+import { Icon } from "../atoms/Icon/Icon";
 import { Meta, StoryObj } from "@storybook/react-vite";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export

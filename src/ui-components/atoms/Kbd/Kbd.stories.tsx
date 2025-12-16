@@ -1,5 +1,5 @@
 import React from "react";
-import { Meta, StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { Kbd as KbdElement } from "./Kbd";
 import { Shortcut } from "./shortcut";
 
@@ -32,8 +32,8 @@ const StoryTemplate: React.FC<StoryProps> = ({
   );
 };
 
-const meta = {
-  title: "Elements/Kbd",
+const meta = preview.meta({
+  title: "Atoms/Kbd",
   component: StoryTemplate,
   argTypes: {
     ctrlOrCmd: { control: "boolean" },
@@ -61,9 +61,7 @@ const meta = {
     dimmed: false,
     inMenu: false,
   },
-} satisfies Meta<StoryProps>;
+});
 export default meta;
 
-type Story = StoryObj<typeof meta>;
-
-export const Kbd: Story = {};
+export const Kbd = meta.story();

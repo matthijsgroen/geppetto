@@ -1,11 +1,11 @@
-export { Label } from "./Label/Label";
-export { Paragraph } from "./Paragraph/Paragraph";
-export { Title } from "./Title/Title";
-export { Icon } from "./Icon/Icon";
+export { Label } from "./atoms/Label/Label";
+export { Paragraph } from "./atoms/Paragraph/Paragraph";
+export { Title } from "./atoms/Title/Title";
+export { Icon } from "./atoms/Icon/Icon";
 
 export { ToolBar } from "./ToolBar/ToolBar";
 export { ToolGrid } from "./ToolGrid/ToolGrid";
-export { ToolButton } from "./ToolButton/ToolButton";
+export { ToolButton } from "./atoms/ToolButton/ToolButton";
 export { ToolSpacer } from "./ToolSpacer/ToolSpacer";
 export { ToolSeparator } from "./ToolSeparator/ToolSeparator";
 export { ToolTab } from "./ToolTab/ToolTab";
@@ -18,8 +18,8 @@ export { Panel } from "./Panel/Panel";
 export { Column } from "./Column/Column";
 export { Row } from "./Row/Row";
 export * from "./Menu/Menu";
-export * from "./Kbd/shortcut";
-export * from "./Kbd/Kbd";
+export * from "./atoms/Kbd/shortcut";
+export * from "./atoms/Kbd/Kbd";
 export { ControlPanel } from "./Controls/ControlPanel";
 export { Control } from "./Controls/Control";
 export { NumberInput } from "./Controls/NumberInput";

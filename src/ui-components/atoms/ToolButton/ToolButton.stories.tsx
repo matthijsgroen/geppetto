@@ -1,10 +1,10 @@
-import { StoryObj, Meta } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { ToolButton } from "./ToolButton";
 import { Icon } from "../Icon/Icon";
 import { fn, waitFor, expect } from "storybook/test";
 
-const meta = {
-  title: "Components/ToolButton",
+const meta = preview.meta({
+  title: "Atoms/ToolButton",
   component: ToolButton,
   argTypes: {
     icon: { control: false },
@@ -22,12 +22,10 @@ const meta = {
     shadow: false,
     onClick: fn(),
   },
-} satisfies Meta<typeof ToolButton>;
+});
 export default meta;
 
-type Story = StoryObj<typeof ToolButton>;
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-export const Default: Story = {
+export const Default = meta.story({
   args: {
     icon: <Icon>💡</Icon>,
   },
@@ -35,23 +33,23 @@ export const Default: Story = {
     await userEvent.click(canvas.getByRole("button"));
     await expect(args.onClick).toHaveBeenCalled();
   },
-};
+});
 
-export const Active: Story = {
+export const Active = meta.story({
   args: {
     icon: <Icon>💡</Icon>,
     active: true,
   },
-};
+});
 
-export const WithLabel: Story = {
+export const WithLabel = meta.story({
   args: {
     icon: <Icon>💡</Icon>,
     label: "Button",
   },
-};
+});
 
-export const Disabled: Story = {
+export const Disabled = meta.story({
   args: {
     icon: <Icon>💡</Icon>,
     disabled: true,
@@ -60,12 +58,12 @@ export const Disabled: Story = {
     await userEvent.click(canvas.getByRole("button"));
     await waitFor(() => expect(args.onClick).not.toHaveBeenCalled());
   },
-};
+});
 
-export const ActiveDisabled: Story = {
+export const ActiveDisabled = meta.story({
   args: {
     icon: <Icon>💡</Icon>,
     disabled: true,
     active: true,
   },
-};
+});

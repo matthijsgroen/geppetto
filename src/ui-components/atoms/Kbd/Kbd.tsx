@@ -1,3 +1,4 @@
+import { FC } from "react";
 import { Shortcut, shortcutStr } from "./shortcut";
 import { clsx } from "clsx";
 
@@ -14,7 +15,7 @@ type ShortcutProps = {
  * than on windows/linux. Mac tends to show shortcuts with symbols,
  * win/lin shows shortcuts by text combined with a `+` sign.
  */
-export const Kbd: React.FC<ShortcutProps> = ({
+export const Kbd: FC<ShortcutProps> = ({
   shortcut,
   disabled = false,
   dimmed = false,
@@ -22,11 +23,11 @@ export const Kbd: React.FC<ShortcutProps> = ({
 }) => (
   <kbd
     className={clsx("text-sm font-system self-center", {
-      ["px-2"]: !inMenu,
-      ["text-text-light dark:text-text-dark"]: !dimmed,
-      ["text-dimmed-light/50 dark:text-dimmed-dark/50"]: dimmed,
-      ["pl-4"]: inMenu,
-      ["opacity-60"]: disabled,
+      "px-2": !inMenu,
+      "text-text": !dimmed,
+      "text-dimmed": dimmed,
+      "pl-4": inMenu,
+      "opacity-60": disabled,
     })}
   >
     {shortcutStr(shortcut)}

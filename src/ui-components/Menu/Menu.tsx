@@ -3,8 +3,8 @@ import "@szhsin/react-menu/dist/transitions/slide.css";
 import "./menu.css";
 import styles from "./menu.module.css";
 import { MenuItem as ReactMenuItem, MenuItemProps } from "@szhsin/react-menu";
-import { Kbd } from "../Kbd/Kbd";
-import { Shortcut } from "../Kbd/shortcut";
+import { Kbd } from "../atoms/Kbd/Kbd";
+import { Shortcut } from "../atoms/Kbd/shortcut";
 export {
   Menu,
   ControlledMenu,

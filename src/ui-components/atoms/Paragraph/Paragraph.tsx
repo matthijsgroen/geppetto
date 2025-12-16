@@ -1,5 +1,5 @@
-import { PropsWithChildren } from "react";
-import { ToolBarSize } from "../ToolBar/ToolBar";
+import { FC, PropsWithChildren } from "react";
+import { ToolBarSize } from "../../ToolBar/ToolBar";
 import clsx from "clsx";
 
 type LabelProps = PropsWithChildren<{
@@ -10,13 +10,13 @@ type LabelProps = PropsWithChildren<{
 /**
  * Used for displaying a paragraph of text. By default, this text is selectable by the user.
  */
-export const Paragraph: React.FC<LabelProps> = ({
+export const Paragraph: FC<LabelProps> = ({
   children,
   size = "default",
   selectable = true,
 }) => (
   <p
-    className={clsx("font-caption py-1 text-text-light dark:text-text-dark", {
+    className={clsx("font-caption py-1 text-text", {
       "text-xs": size === "small",
       "select-text": selectable,
     })}

@@ -1,5 +1,5 @@
 import { FC, ReactNode, Ref, use } from "react";
-import { Label } from "../Label/Label";
+import { Label } from "../atoms/Label/Label";
 import { ToolBarSize } from "../ToolBar/ToolBar";
 import { ToolbarContext } from "../ToolBar/ToolBarContext";
 import { clsx } from "clsx";

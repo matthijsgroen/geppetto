@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Icon } from "../../ui-components/Icon/Icon";
+import { Icon } from "../../ui-components/atoms/Icon/Icon";
 import RenameableLabel from "./RenameableLabel";
 
 interface MenuItemProps {

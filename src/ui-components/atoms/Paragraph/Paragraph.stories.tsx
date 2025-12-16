@@ -1,8 +1,8 @@
-import { StoryObj, Meta } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 import { Paragraph as ParagraphElement } from "./Paragraph";
 
-const meta = {
-  title: "Elements/Paragraph",
+const meta = preview.meta({
+  title: "Atoms/Paragraph",
   component: ParagraphElement,
   argTypes: {
     size: {
@@ -14,13 +14,11 @@ const meta = {
     selectable: true,
     size: "default",
   },
-} satisfies Meta<typeof ParagraphElement>;
+});
 export default meta;
 
-type Story = StoryObj<typeof meta>;
-
-export const Paragraph: Story = {
+export const Paragraph = meta.story({
   args: {
     children: "️Hello world",
   },
-};
+});

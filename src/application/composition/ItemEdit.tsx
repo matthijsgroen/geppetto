@@ -9,7 +9,7 @@ import {
 import { toggleVisibility } from "../../animation/file2/shapes";
 import { Vec2 } from "../../types";
 import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
-import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
+import { Paragraph } from "../../ui-components/atoms/Paragraph/Paragraph";
 import { useFile } from "../contexts/FileContext";
 import {
   useMutationValues,

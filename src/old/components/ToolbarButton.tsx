@@ -1,6 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
-import { Icon } from "../../ui-components/Icon/Icon";
+import { Icon } from "../../ui-components/atoms/Icon/Icon";
 
 interface ToolbarButtonProps {
   icon: string;

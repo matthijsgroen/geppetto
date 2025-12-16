@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { ToolGrid } from "./ToolGrid";
-import { Icon } from "../Icon/Icon";
-import { ToolButton } from "../ToolButton/ToolButton";
+import { Icon } from "../atoms/Icon/Icon";
+import { ToolButton } from "../atoms/ToolButton/ToolButton";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

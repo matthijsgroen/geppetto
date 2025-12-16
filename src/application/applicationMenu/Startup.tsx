@@ -3,11 +3,11 @@ import { isNewFile } from "../../animation/file2/new";
 import { hasPoints } from "../../animation/file2/shapes";
 import { GeppettoImage } from "../../animation/file2/types";
 import { Icon, Logo, ToolButton } from "../../ui-components";
-import { Kbd } from "../../ui-components/Kbd/Kbd";
+import { Kbd } from "../../ui-components/atoms/Kbd/Kbd";
 import { versionInfo } from "../../versionInfo";
 import { ApplicationContext } from "../contexts/ApplicationContext";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
+import { Paragraph } from "../../ui-components/atoms/Paragraph/Paragraph";
 
 type StartupScreenProps = {
   texture: HTMLImageElement | null;
