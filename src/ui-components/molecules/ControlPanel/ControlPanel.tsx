@@ -43,7 +43,12 @@ export const ControlPanel: FC<ControlPanelProps> = ({
       )}
       style={height !== null ? { height } : {}}
     >
-      <div ref={innerRef}>{children}</div>
+      <div
+        ref={innerRef}
+        className="[&>_*+*]:border-t [&>_*+*]:border-control-edge"
+      >
+        {children}
+      </div>
     </form>
   );
 };

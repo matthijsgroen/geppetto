@@ -1,7 +1,7 @@
 import produce from "immer";
 import { ChangeEvent, useCallback } from "react";
 import { Vec2 } from "../../../types";
-import { Control } from "../../../ui-components";
+import { Control, RangeInput } from "../../../ui-components";
 
 const defaultFormatter = (value: number) => `${value}`;
 
@@ -39,8 +39,7 @@ export const ValueSlider: React.FC<ValueSliderProps> = ({
   );
   return (
     <Control label={label}>
-      <input
-        type="range"
+      <RangeInput
         value={value[vectorIndex]}
         onChange={sliderChangeHandler}
         min={min}

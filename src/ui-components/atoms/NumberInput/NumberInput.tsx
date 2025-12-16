@@ -1,10 +1,10 @@
 import {
   ChangeEvent,
+  FC,
   KeyboardEvent,
   KeyboardEventHandler,
   useCallback,
 } from "react";
-import styles from "./Control.module.scss";
 
 enum UpDown {
   UP = "up",
@@ -64,7 +64,7 @@ const numberStepControl =
     }
   };
 
-export const NumberInput: React.FC<NumberInputProps> = ({
+export const NumberInput: FC<NumberInputProps> = ({
   prefix,
   postfix,
   htmlId,
@@ -87,9 +87,10 @@ export const NumberInput: React.FC<NumberInputProps> = ({
   );
 
   return (
-    <label className={styles.controlShort}>
+    <label className="inline-block bg-panel p-1 border-t-2 border-b-2 border-panel text-dimmed shadow-sm cursor-text h-fit first:rounded-l-sm last:rounded-r-sm hover:focus-within:border-control-focus focus-within:border-control-focus focus-within:text-text first:border-l-2 last:border-r-2 hover:border-control-highlight">
       {prefix}
       <input
+        className="bg-transparent border-0 text-dimmed w-[4ch] focus:w-[6ch] hide-spinner focus:outline-none focus:text-text"
         type="number"
         id={htmlId}
         value={value}

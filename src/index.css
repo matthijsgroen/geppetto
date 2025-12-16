@@ -11,6 +11,8 @@
   
   --shadow-xl: 5px 5px 5px #0003;
   --shadow-md: 2px 2px 2px #0004;
+  --shadow-sm: 1px 1px 2px #0003;
+  --shadow-inset-sm: inset 1px 1px 2px #0003;
 }
 
 @theme {
@@ -22,7 +24,7 @@
   --color-control-default: var(--color-white);
   --color-control-edge: color-mix(in oklch, var(--color-neutral-800), transparent 80%);
   --color-control-focus: var(--color-blue-500);
-  --color-control-highlight: var(--color-sky-200);
+  --color-control-highlight: var(--color-blue-300);
   --color-control-active: var(--color-sky-600);
   --color-control-active-dimmed: var(--color-sky-300);
 
@@ -40,7 +42,7 @@
   --color-control-default: var(--color-zinc-900);
   --color-control-edge: color-mix(in oklch, var(--color-zinc-100), transparent 70%);
   --color-control-focus: var(--color-green-600);
-  --color-control-highlight: var(--color-green-600);
+  --color-control-highlight: var(--color-green-500);
   --color-control-active: var(--color-green-700);
   --color-control-active-dimmed: var(--color-green-700);
 
@@ -61,9 +63,40 @@
   scrollbar-width: none; /* Firefox */
 }
 
+@utility hide-spinner {
+  &:not(:focus)::-webkit-outer-spin-button,
+  &:not(:focus)::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  &:not(:focus) {
+    appearance: textfield;
+  }
+}
+
 @utility font-caption {
   @layer base {
     font: caption;
+  }
+}
+
+@custom-variant track {
+  &::-webkit-slider-runnable-track {
+    @slot;
+  }
+  &::-moz-range-track {
+    @slot;
+  }
+}
+
+@custom-variant thumb {
+  &::-webkit-slider-thumb {
+    appearance: none;
+    @slot;
+  }
+  &::-moz-range-thumb {
+    @slot;
   }
 }
 

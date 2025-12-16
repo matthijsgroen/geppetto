@@ -13,11 +13,13 @@ import {
   NumberInput,
   Panel,
   Paragraph,
+  RangeInput,
   ResizeDirection,
   ResizePanel,
   Row,
   SubMenu,
   Title,
+  ToggleInput,
   ToolBar,
   ToolButton,
   ToolSeparator,
@@ -126,7 +128,7 @@ export const Version2 = meta.story({
             <Title>Opacity (4)</Title>
             <ControlPanel>
               <Control label="Visible">
-                <input type="checkbox" />
+                <ToggleInput />
               </Control>
               <Control label="Origin">
                 <NumberInput value={10} prefix="x:" />
@@ -137,7 +139,7 @@ export const Version2 = meta.story({
                 <NumberInput value={20} prefix="y:" />
               </Control>
               <Control label="Use Radius">
-                <input type="checkbox" checked />
+                <ToggleInput checked />
               </Control>
               <Control label="Radius">
                 <NumberInput value={10} />
@@ -175,7 +177,7 @@ export const Version2 = meta.story({
               <Title>Left Arm</Title>
               <ControlPanel>
                 <Control label="Value">
-                  <input type="range" />
+                  <RangeInput />
                 </Control>
                 <Control label="Steps">
                   <ToolButton icon={"1"} size={"small"} />

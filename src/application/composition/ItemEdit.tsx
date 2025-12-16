@@ -8,8 +8,15 @@ import {
 } from "../../animation/file2/mutation";
 import { toggleVisibility } from "../../animation/file2/shapes";
 import { Vec2 } from "../../types";
-import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
-import { Paragraph } from "../../ui-components/atoms/Paragraph/Paragraph";
+import {
+  Control,
+  ControlPanel,
+  Icon,
+  Kbd,
+  Title,
+  Paragraph,
+  ToggleInput,
+} from "../../ui-components";
 import { useFile } from "../contexts/FileContext";
 import {
   useMutationValues,
@@ -53,8 +60,7 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
       </Title>
       <ControlPanel>
         <Control label="Visible" htmlFor={`${itemId}_visibility`}>
-          <input
-            type="checkbox"
+          <ToggleInput
             checked={layerFolder.visible}
             onChange={handleClick}
             id={`${itemId}_visibility`}
@@ -98,11 +104,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
           onChange={offsetChangeHandler}
         />
         <Control label="Visible">
-          <input
-            type="checkbox"
-            checked={layer.visible}
-            onChange={handleClick}
-          />
+          <ToggleInput checked={layer.visible} onChange={handleClick} />
         </Control>
       </ControlPanel>
       <Paragraph size="small">

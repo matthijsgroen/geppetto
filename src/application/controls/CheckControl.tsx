@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback } from "react";
-import { Control } from "../../ui-components";
+import { Control, ToggleInput } from "../../ui-components";
 
 type BooleanControlProps = {
   label?: string;
@@ -20,7 +20,7 @@ export const BooleanControl: React.FC<BooleanControlProps> = ({
   );
   return (
     <Control label={label}>
-      <input type="checkbox" checked={value} onChange={eventHandler} />
+      <ToggleInput checked={value} onChange={eventHandler} />
     </Control>
   );
 };
