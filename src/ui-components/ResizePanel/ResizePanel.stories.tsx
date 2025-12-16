@@ -1,7 +1,7 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
-import { Column } from "../Column/Column";
+import { Column } from "../molecules/Column/Column";
 import { Panel } from "../molecules/Panel/Panel";
-import { Row } from "../Row/Row";
+import { Row } from "../molecules/Row/Row";
 import { ResizeDirection, ResizePanel } from "./ResizePanel";
 
 const direction = {

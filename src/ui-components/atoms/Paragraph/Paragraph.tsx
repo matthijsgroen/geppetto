@@ -16,7 +16,7 @@ export const Paragraph: FC<LabelProps> = ({
   selectable = true,
 }) => (
   <p
-    className={clsx("font-caption py-1 text-text", {
+    className={clsx("font-caption py-2 text-text", {
       "text-xs": size === "small",
       "select-text": selectable,
     })}

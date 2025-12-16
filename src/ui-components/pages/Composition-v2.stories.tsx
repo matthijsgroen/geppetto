@@ -1,4 +1,3 @@
-import { Story } from "@storybook/react-webpack5";
 import {
   Column,
   Control,
@@ -13,6 +12,7 @@ import {
   MenuItem,
   NumberInput,
   Panel,
+  Paragraph,
   ResizeDirection,
   ResizePanel,
   Row,
@@ -29,15 +29,12 @@ import {
   storyTreeItems,
   ToolsProvider,
 } from "../Tree/storybookTreeDataProvider";
+import preview from "#.storybook/preview";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-const story = {
-  title: "Compositions/Composition",
-  argTypes: {
-    children: { control: false, table: false },
-  },
-};
-export default story;
+const meta = preview.meta({
+  title: "Pages/Composition",
+});
+export default meta;
 
 const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {
@@ -51,67 +48,75 @@ const toolsProvider: ToolsProvider = (data) => {
 
 const noToolsProvider: ToolsProvider = () => null;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: Story = () => (
-  <Column>
-    <ToolBar>
-      <Menu
-        portal={true}
-        transition
-        menuButton={({ open }) => (
-          <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
-        )}
-      >
-        <MenuItem>↻ Restart for app update...</MenuItem>
-        <MenuItem>⇣ Install application locally</MenuItem>
-        <SubMenu label="File">
-          <MenuItem>New</MenuItem>
-          <MenuDivider />
-          <MenuItem>Open</MenuItem>
-          <MenuItem>Load texture</MenuItem>
-          <MenuDivider />
-          <MenuItem>Reload texture</MenuItem>
-          <MenuDivider />
-          <MenuItem disabled>Save</MenuItem>
-          <MenuItem>Save as...</MenuItem>
-        </SubMenu>
-        <MenuHeader>Edit</MenuHeader>
-        <SubMenu label="Edit">
-          <MenuItem>Cut</MenuItem>
-          <MenuItem>Copy</MenuItem>
-          <MenuItem>Paste</MenuItem>
-        </SubMenu>
-        <MenuItem>Print...</MenuItem>
-      </Menu>
-      <ToolSeparator />
-
-      <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} />
-      <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} active />
-      <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} />
-    </ToolBar>
-
+export const Version2 = meta.story({
+  render: () => (
     <Row>
+      <ToolBar vertical>
+        <Menu
+          portal={true}
+          transition
+          menuButton={({ open }) => (
+            <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
+          )}
+        >
+          <MenuItem>↻ Restart for app update...</MenuItem>
+          <MenuItem>⇣ Install application locally</MenuItem>
+          <SubMenu label="File">
+            <MenuItem>New</MenuItem>
+            <MenuDivider />
+            <MenuItem>Open</MenuItem>
+            <MenuItem>Load texture</MenuItem>
+            <MenuDivider />
+            <MenuItem>Reload texture</MenuItem>
+            <MenuDivider />
+            <MenuItem disabled>Save</MenuItem>
+            <MenuItem>Save as...</MenuItem>
+          </SubMenu>
+          <MenuHeader>Edit</MenuHeader>
+          <SubMenu label="Edit">
+            <MenuItem>Cut</MenuItem>
+            <MenuItem>Copy</MenuItem>
+            <MenuItem>Paste</MenuItem>
+          </SubMenu>
+          <MenuItem>Print...</MenuItem>
+        </Menu>
+
+        <ToolSeparator />
+        <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} />
+        <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} active />
+        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} />
+      </ToolBar>
+
       <ResizePanel
         direction={ResizeDirection.East}
         minSize={100}
         defaultSize={250}
       >
         <Column>
-          <ToolBar size="small">
-            <ToolButton icon={<Icon>📄</Icon>} label="+" tooltip="Add layer" />
-            <ToolButton icon={<Icon>📁</Icon>} label="+" tooltip="Add folder" />
-            <ToolButton
-              icon={<Icon>📑</Icon>}
-              disabled={true}
-              tooltip="Copy layer"
-            />
-            <ToolButton
-              icon={<Icon>🗑</Icon>}
-              disabled={true}
-              tooltip="Remove item"
-            />
-          </ToolBar>
           <Panel padding="sm">
+            <Title>Composition</Title>
+            <ToolBar size="small">
+              <ToolButton
+                icon={<Icon>📄</Icon>}
+                label="+"
+                tooltip="Add layer"
+              />
+              <ToolButton
+                icon={<Icon>📁</Icon>}
+                label="+"
+                tooltip="Add folder"
+              />
+              <ToolButton
+                icon={<Icon>📑</Icon>}
+                disabled={true}
+                tooltip="Copy layer"
+              />
+              <ToolButton
+                icon={<Icon>🗑</Icon>}
+                disabled={true}
+                tooltip="Remove item"
+              />
+            </ToolBar>
             <TreeEnvironment
               items={storyTreeItems(toolsProvider)}
               viewState={{}}
@@ -121,7 +126,7 @@ const Template: Story = () => (
             <Title>Opacity (4)</Title>
             <ControlPanel>
               <Control label="Visible">
-                <input type="checkbox" checked />
+                <input type="checkbox" />
               </Control>
               <Control label="Origin">
                 <NumberInput value={10} prefix="x:" />
@@ -182,24 +187,24 @@ const Template: Story = () => (
           </ResizePanel>
         </Column>
       </ResizePanel>
-      <Panel center workspace>
-        <div>
-          <Logo />
-          <h1>Welcome to Geppetto</h1>
-          <p>Some introduction text here...</p>
-          <p>
-            <ToolButton
-              icon={<Icon>📄</Icon>}
-              label="Load file..."
-              size={"small"}
-              shadow
-            />{" "}
-            <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
-          </p>
-        </div>
-      </Panel>
+      <Column>
+        <Panel center workspace>
+          <div>
+            <Logo />
+            <h1>Welcome to Geppetto</h1>
+            <Paragraph>Some introduction text here...</Paragraph>
+            <Paragraph>
+              <ToolButton
+                icon={<Icon>📄</Icon>}
+                label="Load file..."
+                size={"small"}
+                shadow
+              />{" "}
+              <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
+            </Paragraph>
+          </div>
+        </Panel>
+      </Column>
     </Row>
-  </Column>
-);
-
-export const Version1 = Template.bind({});
+  ),
+});

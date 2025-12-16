@@ -17,7 +17,7 @@
   --color-notification: var(--color-red-600);
 
   --color-control-default: var(--color-white);
-  --color-control-edge: color-mix(in oklch, var(--color-neutral-800), transparent 20%);
+  --color-control-edge: color-mix(in oklch, var(--color-neutral-800), transparent 80%);
   --color-control-focus: var(--color-blue-500);
   --color-control-highlight: var(--color-sky-200);
   --color-control-active: var(--color-sky-400);
@@ -35,7 +35,7 @@
   --color-notification: var(--color-red-400);
 
   --color-control-default: var(--color-zinc-900);
-  --color-control-edge: color-mix(in oklch, var(--color-zinc-100), transparent 30%);
+  --color-control-edge: color-mix(in oklch, var(--color-zinc-100), transparent 70%);
   --color-control-focus: var(--color-green-600);
   --color-control-highlight: var(--color-green-600);
   --color-control-active: var(--color-green-700);
