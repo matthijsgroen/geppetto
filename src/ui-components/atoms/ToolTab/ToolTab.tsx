@@ -39,8 +39,8 @@ export const ToolTab: FC<ToolTabProps> = ({
       className={clsx(
         "font-caption inline-flex bg-panel enabled:hover:bg-control-highlight disabled:opacity-50 focus-visible:outline-active bg-no-repeat items-center outline-2 outline-transparent whitespace-nowrap",
         {
-          "text-text": !active,
-          "text-active border-active": active,
+          "text-text border-transparent": !active,
+          "text-active border-control-active": active,
           "border-b-3 mt-0.5 gap-2 px-4": !useVertical,
           "h-[calc(3rem-3px)]": !useVertical && useSize === "default",
           "h-[calc(2.25rem-3px)]": !useVertical && useSize === "small",
