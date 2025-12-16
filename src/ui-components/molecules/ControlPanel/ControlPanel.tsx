@@ -1,6 +1,5 @@
-import { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { className } from "../className";
-import styles from "./ControlPanel.module.css";
+import { FC, PropsWithChildren, useEffect, useRef, useState } from "react";
+import clsx from "clsx";
 
 type ControlPanelProps = PropsWithChildren<{ shadow?: boolean }>;
 
@@ -9,7 +8,7 @@ type ControlPanelProps = PropsWithChildren<{ shadow?: boolean }>;
  * using controls.
  * @see Control
  */
-export const ControlPanel: React.FC<ControlPanelProps> = ({
+export const ControlPanel: FC<ControlPanelProps> = ({
   children,
   shadow = false,
 }) => {
@@ -35,10 +34,13 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   return (
     <form
-      className={className({
-        [styles.controlPanel]: true,
-        [styles.shadow]: shadow,
-      })}
+      className={clsx(
+        "bg-control-default rounded-lg overflow-y-hidden hide-scrollbar shrink-0",
+        "transition-[height,width] duration-300 ease-in-out",
+        {
+          "shadow-md": shadow,
+        }
+      )}
       style={height !== null ? { height } : {}}
     >
       <div ref={innerRef}>{children}</div>

@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
 import { Panel } from "../molecules/Panel/Panel";
 import { Control as ControlComponent } from "./Control";
-import { ControlPanel } from "./ControlPanel";
+import { ControlPanel } from "../molecules/ControlPanel/ControlPanel";
 import { NumberInput } from "./NumberInput";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
@@ -26,8 +26,8 @@ const Template: ComponentStory<typeof ControlComponent> = (args) => (
   </Panel>
 );
 
-export const Control = Template.bind({});
-Control.args = {
+export const ToggleControl = Template.bind({});
+ToggleControl.args = {
   children: <input type="checkbox" id="InputField" />,
 };
 

@@ -20,7 +20,7 @@ export { Row } from "./molecules/Row/Row";
 export * from "./Menu/Menu";
 export * from "./atoms/Kbd/shortcut";
 export * from "./atoms/Kbd/Kbd";
-export { ControlPanel } from "./Controls/ControlPanel";
+export { ControlPanel } from "./molecules/ControlPanel/ControlPanel";
 export { Control } from "./Controls/Control";
 export { NumberInput } from "./Controls/NumberInput";
 export { Logo, LogoIcon } from "./atoms/Logo/Logo";

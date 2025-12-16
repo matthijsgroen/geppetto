@@ -8,6 +8,9 @@
 
   --radius-control: 0.5rem; /* 8px */
   --radius-control-small: 0.25rem; /* 4px */
+  
+  --shadow-xl: 5px 5px 5px #0003;
+  --shadow-md: 2px 2px 2px #0004;
 }
 
 @theme {
@@ -20,7 +23,7 @@
   --color-control-edge: color-mix(in oklch, var(--color-neutral-800), transparent 80%);
   --color-control-focus: var(--color-blue-500);
   --color-control-highlight: var(--color-sky-200);
-  --color-control-active: var(--color-sky-400);
+  --color-control-active: var(--color-sky-600);
   --color-control-active-dimmed: var(--color-sky-300);
 
   --color-text: var(--color-zinc-800);
