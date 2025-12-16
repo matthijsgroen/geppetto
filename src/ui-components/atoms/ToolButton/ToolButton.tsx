@@ -7,8 +7,8 @@ import {
   Ref,
 } from "react";
 import { Label } from "../Label/Label";
-import { ToolbarContext } from "../../ToolBar/ToolBarContext";
-import { ToolBarSize } from "../../ToolBar/ToolBar";
+import { ToolbarContext } from "../../molecules/ToolBar/ToolBarContext";
+import { ToolBarSize } from "../../molecules/ToolBar/ToolBar";
 import clsx from "clsx";
 
 type ToolButtonProps = {

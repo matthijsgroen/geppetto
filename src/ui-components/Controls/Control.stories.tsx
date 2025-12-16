@@ -1,5 +1,5 @@
 import { ComponentMeta, ComponentStory } from "@storybook/react-webpack5";
-import { Panel } from "../Panel/Panel";
+import { Panel } from "../molecules/Panel/Panel";
 import { Control as ControlComponent } from "./Control";
 import { ControlPanel } from "./ControlPanel";
 import { NumberInput } from "./NumberInput";

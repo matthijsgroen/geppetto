@@ -8,44 +8,42 @@
 
   --radius-control: 0.5rem; /* 8px */
   --radius-control-small: 0.25rem; /* 4px */
+}
 
-  --color-workspace-light: var(--color-neutral-500);
-  --color-workspace-dark: var(--color-zinc-800);
+@theme {
+  --color-workspace: var(--color-neutral-500);
 
   --color-panel: var(--color-neutral-200);
-
   --color-notification: var(--color-red-600);
 
   --color-control-default: var(--color-white);
-  /** Should be used as /20 */
-  --color-control-edge-light: var(--color-neutral-800);
-  --color-control-highlight: var(--color-sky-200);
-  --color-control-active-dimmed-light: var(--color-sky-300);
-  --color-control-active: var(--color-sky-400);
+  --color-control-edge: color-mix(in oklch, var(--color-neutral-800), transparent 20%);
   --color-control-focus: var(--color-blue-500);
-
-  --color-control-default-dark: var(--color-zinc-900);
-  /** Should be used as /30 */
-  --color-control-edge-dark: var(--color-zinc-100);
-  --color-control-active-dimmed-dark: var(--color-green-700);
+  --color-control-highlight: var(--color-sky-200);
+  --color-control-active: var(--color-sky-400);
+  --color-control-active-dimmed: var(--color-sky-300);
 
   --color-text: var(--color-zinc-800);
   --color-dimmed: color-mix(in oklch, var(--color-zinc-800), transparent 50%);
-
   --color-active: var(--color-slate-500);
 }
 
 .dark {
+  --color-workspace: var(--color-zinc-800);
+
   --color-panel: var(--color-neutral-700);
   --color-notification: var(--color-red-400);
 
-  --color-text: var(--color-zinc-100);
-  --color-dimmed: color-mix(in oklch, var(--color-neutral-400), transparent 50%);
+  --color-control-default: var(--color-zinc-900);
+  --color-control-edge: color-mix(in oklch, var(--color-zinc-100), transparent 30%);
   --color-control-focus: var(--color-green-600);
   --color-control-highlight: var(--color-green-600);
-
-  --color-active: var(--color-green-500);
   --color-control-active: var(--color-green-700);
+  --color-control-active-dimmed: var(--color-green-700);
+
+  --color-text: var(--color-zinc-100);
+  --color-dimmed: color-mix(in oklch, var(--color-neutral-400), transparent 50%);
+  --color-active: var(--color-green-500);
 }
 
 @utility text-vertical {

@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren } from "react";
 import { className } from "../../className";
-import { ToolBarSize } from "../../ToolBar/ToolBar";
+import { ToolBarSize } from "../../molecules/ToolBar/ToolBar";
 
 type LabelProps = PropsWithChildren<{
   active?: boolean;

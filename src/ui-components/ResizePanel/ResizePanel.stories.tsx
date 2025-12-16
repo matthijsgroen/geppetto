@@ -1,6 +1,6 @@
 import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { Column } from "../Column/Column";
-import { Panel } from "../Panel/Panel";
+import { Panel } from "../molecules/Panel/Panel";
 import { Row } from "../Row/Row";
 import { ResizeDirection, ResizePanel } from "./ResizePanel";
 

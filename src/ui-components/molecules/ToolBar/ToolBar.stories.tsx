@@ -1,13 +1,13 @@
 import { ToolBar } from "./ToolBar";
-import { Icon } from "../atoms/Icon/Icon";
-import { ToolButton } from "../atoms/ToolButton/ToolButton";
-import { ToolSeparator } from "../ToolSeparator/ToolSeparator";
-import { ToolSpacer } from "../ToolSpacer/ToolSpacer";
-import { ToolTab } from "../ToolTab/ToolTab";
-import { Meta, StoryObj } from "@storybook/react-vite";
+import { Icon } from "../../atoms/Icon/Icon";
+import { ToolButton } from "../../atoms/ToolButton/ToolButton";
+import { ToolSeparator } from "../../atoms/ToolSeparator/ToolSeparator";
+import { ToolSpacer } from "../../atoms/ToolSpacer/ToolSpacer";
+import { ToolTab } from "../../atoms/ToolTab/ToolTab";
+import preview from "#.storybook/preview";
 
-const meta = {
-  title: "Components/ToolBar",
+const meta = preview.meta({
+  title: "Molecules/ToolBar",
   component: ToolBar,
   argTypes: {
     children: { control: false },
@@ -28,20 +28,18 @@ const meta = {
       <ToolButton icon={<Icon>🚧</Icon>} key={6} />,
     ],
   },
-} satisfies Meta<typeof ToolBar>;
+});
 export default meta;
 
-type Story = StoryObj<typeof ToolBar>;
-
-export const Default: Story = {
+export const Default = meta.story({
   args: { size: "default" },
-};
+});
 
-export const Small: Story = {
+export const Small = meta.story({
   args: { size: "small" },
-};
+});
 
-export const Narrow: Story = {
+export const Narrow = meta.story({
   decorators: [
     (Story) => (
       <div style={{ width: "200px" }}>
@@ -49,4 +47,4 @@ export const Narrow: Story = {
       </div>
     ),
   ],
-};
+});

@@ -16,17 +16,14 @@ export const ToolBar: FC<ToolBarProps> = ({
 }) => (
   <ToolbarContext.Provider value={{ size, vertical }}>
     <div
-      className={clsx(
-        "hide-scrollbar shrink-0 bg-panel-light dark:bg-panel-dark",
-        {
-          "overflow-x-scroll overflow-y-visible": !vertical,
-          "overflow-x-visible overflow-y-scroll": vertical,
-          "h-12": size === "default" && !vertical,
-          "w-12": size === "default" && vertical,
-          "h-9": size === "small" && !vertical,
-          "w-9": size === "small" && vertical,
-        }
-      )}
+      className={clsx("hide-scrollbar shrink-0 bg-panel", {
+        "overflow-x-scroll overflow-y-visible": !vertical,
+        "overflow-x-visible overflow-y-scroll": vertical,
+        "h-12": size === "default" && !vertical,
+        "w-12": size === "default" && vertical,
+        "h-9": size === "small" && !vertical,
+        "w-9": size === "small" && vertical,
+      })}
     >
       <div
         className={clsx("flex-0 flex items-center", {
@@ -43,10 +40,3 @@ export const ToolBar: FC<ToolBarProps> = ({
     </div>
   </ToolbarContext.Provider>
 );
-
-// .inner.inner.horizontal > * + * {
-//   margin-left: 0.25rem;
-// }
-// .inner.inner.vertical > * + * {
-//   margin-top: 0.25rem;
-// }

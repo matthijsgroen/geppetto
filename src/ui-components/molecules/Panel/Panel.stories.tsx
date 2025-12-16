@@ -1,8 +1,8 @@
-import { StoryObj, Meta } from "@storybook/react-vite";
 import { Panel as PanelComponent } from "./Panel";
+import preview from "#.storybook/preview";
 
-const meta = {
-  title: "Components/Panel",
+const meta = preview.meta({
+  title: "Molecules/Panel",
   component: PanelComponent,
   argTypes: {
     children: { control: false },
@@ -22,13 +22,11 @@ const meta = {
     center: false,
     fitContent: false,
   },
-} satisfies Meta<typeof PanelComponent>;
+});
 export default meta;
 
-type Story = StoryObj<typeof meta>;
-
-export const Panel: Story = {
+export const Panel = meta.story({
   args: {
     children: "Lorem Ipsum",
   },
-};
+});

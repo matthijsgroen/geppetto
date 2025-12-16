@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren } from "react";
-import { ToolBarSize } from "../../ToolBar/ToolBar";
+import { ToolBarSize } from "../../molecules/ToolBar/ToolBar";
 import clsx from "clsx";
 
 type LabelProps = PropsWithChildren<{
