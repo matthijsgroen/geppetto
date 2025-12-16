@@ -15,7 +15,7 @@ import {
 import { UseState } from "../types";
 import { useFile } from "../contexts/FileContext";
 import useEvent from "../hooks/useEvent";
-import produce from "immer";
+import { produce } from "immer";
 import { GeppettoImage, NodeType } from "../../animation/file2/types";
 import { ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
 import { MutationControlContext } from "./mutationControlContext";

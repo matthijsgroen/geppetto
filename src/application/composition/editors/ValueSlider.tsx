@@ -1,4 +1,4 @@
-import produce from "immer";
+import { produce } from "immer";
 import { ChangeEvent, useCallback } from "react";
 import { Vec2 } from "../../../types";
 import { Control, RangeInput } from "../../../ui-components";

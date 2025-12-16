@@ -1,4 +1,4 @@
-import produce from "immer";
+import { produce } from "immer";
 import { Vec2 } from "../../types";
 import {
   addInHierarchy,

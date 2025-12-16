@@ -1,5 +1,5 @@
 import { Vec2 } from "geppetto-player";
-import produce from "immer";
+import { produce } from "immer";
 import { defaultValueForVector } from "../../application/webgl/lib/vertices";
 import { addInHierarchy, PlacementInfo } from "./hierarchy";
 import { getUniqueName } from "./shapes";

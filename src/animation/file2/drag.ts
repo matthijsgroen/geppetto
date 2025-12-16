@@ -1,4 +1,4 @@
-import produce from "immer";
+import { produce } from "immer";
 import { vecAdd } from "../../application/webgl/lib/vertices";
 import { Vec2 } from "../../types";
 import { collectChildIds } from "./hierarchy";
