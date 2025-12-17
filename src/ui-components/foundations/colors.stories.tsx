@@ -1,5 +1,7 @@
 import preview from "#.storybook/preview";
 
+import { FoundationItem, FoundationList } from "./foundation";
+
 const meta = preview.meta({
   title: "Foundations/Colors",
   args: {},
@@ -8,7 +10,7 @@ export default meta;
 
 export const Colors = meta.story({
   render: () => (
-    <div className="flex flex-row flex-wrap gap-8 self-start p-8">
+    <FoundationList title="Colors">
       {[
         "bg-control-default",
         "bg-workspace",
@@ -27,17 +29,12 @@ export const Colors = meta.story({
         "bg-dimmed",
         "bg-active",
       ].map((color) => (
-        <div key={color} className="flex w-60 flex-row items-center gap-2">
-          <div className="flex flex-1 items-center">
-            <p>{color.slice(3)}</p>
+        <FoundationItem key={color} label={color.slice(3)}>
+          <div className={`${color} rounded-control size-20 shadow-md`}>
+            &nbsp;
           </div>
-          <div>
-            <div className={`${color} size-20 rounded-control shadow-md`}>
-              &nbsp;
-            </div>
-          </div>
-        </div>
+        </FoundationItem>
       ))}
-    </div>
+    </FoundationList>
   ),
 });
