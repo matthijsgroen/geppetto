@@ -8,6 +8,7 @@
 
   --radius-control: 0.5rem; /* 8px */
   --radius-control-small: 0.25rem; /* 4px */
+  --radius-control-large: 1.5rem; /* 24px */
   
   --shadow-xl: 5px 5px 5px #0003;
   --shadow-md: 2px 2px 2px #0004;

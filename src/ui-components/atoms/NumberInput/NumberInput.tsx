@@ -87,7 +87,7 @@ export const NumberInput: FC<NumberInputProps> = ({
   );
 
   return (
-    <label className="inline-block bg-panel p-1 border-t-2 border-b-2 border-panel text-dimmed shadow-sm cursor-text h-fit first:rounded-l-sm last:rounded-r-sm hover:focus-within:border-control-focus focus-within:border-control-focus focus-within:text-text first:border-l-2 last:border-r-2 hover:border-control-highlight">
+    <label className="inline-block bg-panel p-1 border-t-2 border-b-2 border-panel text-dimmed shadow-sm cursor-text h-fit first:rounded-l-control-small last:rounded-r-control-small hover:focus-within:border-control-focus focus-within:border-control-focus focus-within:text-text first:border-l-2 last:border-r-2 hover:border-control-highlight">
       {prefix}
       <input
         className="bg-transparent border-0 text-dimmed w-[4ch] focus:w-[6ch] hide-spinner focus:outline-none focus:text-text"

@@ -11,6 +11,18 @@ export default definePreview({
         date: /Date$/i,
       },
     },
+    options: {
+      storySort: {
+        order: [
+          "Foundations",
+          "Atoms",
+          "Molecules",
+          "Organisms",
+          "Templates",
+          "Pages",
+        ],
+      },
+    },
   },
   decorators: [
     withThemeByClassName({

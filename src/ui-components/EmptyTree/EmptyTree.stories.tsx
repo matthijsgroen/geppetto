@@ -1,16 +1,17 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
 import { EmptyTree } from "./EmptyTree";
+import preview from "#.storybook/preview";
 
-// More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
-export default {
-  title: "Components/EmptyTree",
+const meta = preview.meta({
+  title: "Molecules/EmptyTree",
   component: EmptyTree,
   args: {},
-} as ComponentMeta<typeof EmptyTree>;
+});
+export default meta;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-const Template: ComponentStory<typeof EmptyTree> = (args) => (
-  <EmptyTree {...args} />
-);
+export const Empty = meta.story();
 
-export const Default = Template.bind({});
+export const WithContent = meta.story({
+  args: {
+    children: "No items to display",
+  },
+});
