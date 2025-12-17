@@ -27,7 +27,7 @@ import {
 import {
   storyTreeItems,
   type ToolsProvider,
-} from "../Tree/storybookTreeDataProvider";
+} from "../organisms/Tree/storybookTreeDataProvider";
 
 const meta = preview.meta({
   title: "Pages/Layers",

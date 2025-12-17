@@ -1,6 +1,6 @@
-import { type Meta, type StoryObj } from "@storybook/react-vite";
+import preview from "#.storybook/preview";
 
-import { Icon, ToolButton } from "..";
+import { Icon, ToolButton } from "../..";
 import {
   storyTreeItems,
   type ToolsProvider,
@@ -18,8 +18,8 @@ const toolsProvider: ToolsProvider = (data) => {
   }
 };
 
-const meta = {
-  title: "Components/Tree",
+const meta = preview.meta({
+  title: "Organisms/Tree",
   component: Tree,
   args: {
     treeId: "tree-1",
@@ -31,9 +31,7 @@ const meta = {
       </TreeEnvironment>
     ),
   ],
-} as Meta<typeof Tree>;
+});
 export default meta;
 
-type Story = StoryObj<typeof Tree>;
-
-export const Default: Story = {};
+export const Default = meta.story();

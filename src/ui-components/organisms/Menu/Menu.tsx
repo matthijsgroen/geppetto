@@ -7,9 +7,8 @@ import {
   type MenuItemProps,
 } from "@szhsin/react-menu";
 
-import { Kbd } from "../atoms/Kbd/Kbd";
-import { type Shortcut } from "../atoms/Kbd/shortcut";
-import styles from "./menu.module.css";
+import { Kbd } from "../../atoms/Kbd/Kbd";
+import { type Shortcut } from "../../atoms/Kbd/shortcut";
 export {
   ControlledMenu,
   Menu,
@@ -32,8 +31,8 @@ export const MenuItem: React.FC<Props> = ({ shortcut, children, ...props }) => (
             typeof children === "function" ? children(state) : children;
 
           return (
-            <div className={styles.shortcutDivider}>
-              <span className={styles.wide}>{node}</span>
+            <div className="flex w-full flex-row">
+              <span className="flex-1">{node}</span>
               <Kbd
                 shortcut={shortcut}
                 disabled={state.disabled}

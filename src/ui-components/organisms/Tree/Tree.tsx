@@ -1,14 +1,15 @@
 import "react-complex-tree/lib/style.css";
-import "./Tree.module.css";
+import "./Tree.css";
 
+import clsx from "clsx";
 import {
   Tree as ComplexTree,
   type TreeDataProvider as ComplexTreeDataProvider,
   type TreeRenderProps,
 } from "react-complex-tree";
 
-import { type GeppettoImage } from "../../animation/file2/types";
-import { Icon } from "../";
+import { type GeppettoImage } from "../../../animation/file2/types";
+import { Icon } from "../..";
 export type { TreeItem, TreeItemIndex } from "react-complex-tree";
 
 export type TreeData<Type extends string> = {
@@ -16,7 +17,7 @@ export type TreeData<Type extends string> = {
   type: Type;
   icon: string;
   itemTools?: React.ReactNode;
-}
+};
 
 export type TreeDataProvider<Type extends string> = ComplexTreeDataProvider<
   TreeData<Type>
@@ -26,9 +27,6 @@ export type TreeDataProvider<Type extends string> = ComplexTreeDataProvider<
 };
 
 const renderDepthOffset = 16;
-
-const cx = (...classNames: (string | undefined | false)[]) =>
-  classNames.filter((cn) => !!cn).join(" ");
 
 const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
   item,
@@ -44,7 +42,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
   return (
     <li
       {...context.itemContainerWithChildrenProps}
-      className={cx(
+      className={clsx(
         "rct-tree-item-li",
         item.hasChildren && "rct-tree-item-li-hasChildren",
         context.isSelected && "rct-tree-item-li-selected",
@@ -57,7 +55,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
       <div
         {...context.itemContainerWithoutChildrenProps}
         style={{ paddingLeft: `${depth * renderDepthOffset}px` }}
-        className={cx(
+        className={clsx(
           "rct-tree-item-title-container",
           item.hasChildren && "rct-tree-item-title-container-hasChildren",
           context.isSelected && "rct-tree-item-title-container-selected",
@@ -74,7 +72,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
         <InteractiveComponent
           {...context.interactiveElementProps}
           type={type}
-          className={cx(
+          className={clsx(
             "rct-tree-item-button",
             item.hasChildren && "rct-tree-item-button-hasChildren",
             context.isSelected && "rct-tree-item-button-selected",
@@ -95,7 +93,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
 
 type TreeProps = {
   treeId: string;
-}
+};
 
 export const TREE_ROOT = "root";
 export const Tree: React.FC<TreeProps> = ({ treeId }) => (

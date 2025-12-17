@@ -1,6 +1,6 @@
+import { clsx } from "clsx";
 import { type FC, type PropsWithChildren } from "react";
 
-import { className } from "../../className";
 import { type ToolBarSize } from "../../molecules/ToolBar/ToolBar";
 
 type LabelProps = PropsWithChildren<{
@@ -23,8 +23,8 @@ export const Label: FC<LabelProps> = ({
   vertical = false,
 }) => (
   <label
-    className={className({
-      ["font-caption py-1"]: true,
+    className={clsx({
+      ["py-1 font-caption"]: true,
       ["text-text"]: !active,
       ["text-active"]: active,
       ["text-xs"]: size === "small",

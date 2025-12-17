@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React, {
   type CSSProperties,
   type PropsWithChildren,
@@ -12,9 +13,6 @@ import {
   type DraggableData,
   type DraggableEvent,
 } from "react-draggable";
-
-import { className } from "../className";
-import styles from "./ResizePanel.module.css";
 
 const Draggable: React.FC<PropsWithChildren<Partial<DraggableCoreProps>>> = ({
   children,
@@ -104,16 +102,17 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
   }
 
   const resizeBarClasses =
-    borderClass ||
-    className({
-      [styles.resizeBarHorizontal]: horizontal,
-      [styles.resizeBarVertical]: !horizontal,
+    borderClass ??
+    clsx({
+      "z-10 -mx-0.5 flex w-1 cursor-ew-resize content-center items-center justify-center bg-transparent hover:bg-control-focus":
+        horizontal,
+      "z-10 -my-0.5 flex h-1 cursor-ns-resize content-center items-center justify-center bg-transparent hover:bg-control-focus":
+        !horizontal,
     });
 
-  const contentClassName = className({
-    [styles.resizeContent]: true,
-    [styles.resizeContentHorizontal]: horizontal,
-    [styles.resizeContentVertical]: !horizontal,
+  const contentClassName = clsx("flex grow self-stretch", {
+    "flex-row": horizontal,
+    "flex-col": !horizontal,
   });
 
   const clipSize = Math.max(minSize, Math.min(size || 0, maxSize || Infinity));
@@ -137,7 +136,11 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
   const handleRef = useRef<HTMLDivElement>(null);
 
   const handle = (
-    <Draggable key="handle" onDrag={onDrag} nodeRef={handleRef}>
+    <Draggable
+      key="handle"
+      onDrag={onDrag}
+      nodeRef={handleRef as React.RefObject<HTMLElement>}
+    >
       <div ref={handleRef} className={resizeBarClasses} />
     </Draggable>
   );
@@ -153,10 +156,9 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
     content.push(handle);
   }
 
-  let finalContainerClass = className({
-    [styles.container]: true,
-    [styles.containerHorizontal]: horizontal,
-    [styles.containerVertical]: !horizontal,
+  let finalContainerClass = clsx("flex items-stretch", {
+    "flex-row flex-nowrap": horizontal,
+    "flex-col flex-nowrap": !horizontal,
   });
 
   if (containerClass) {

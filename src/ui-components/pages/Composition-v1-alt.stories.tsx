@@ -33,7 +33,7 @@ import {
 import {
   storyTreeItems,
   type ToolsProvider,
-} from "../Tree/storybookTreeDataProvider";
+} from "../organisms/Tree/storybookTreeDataProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta = preview.meta({

@@ -17,7 +17,7 @@ type Props<T extends string> = Omit<
 
 const interactionManager: InteractionManager = {
   mode: "custom",
-  createInteractiveElementProps: (item, treeId, actions, renderFlags) => ({
+  createInteractiveElementProps: (item, _treeId, actions, renderFlags) => ({
     onClick: (e) => {
       actions.focusItem();
       if (e.shiftKey) {
@@ -64,15 +64,17 @@ export function TreeEnvironment<T extends string>({
   children,
   ...props
 }: Props<T>): ReturnType<React.FC<Props<T>>> {
-  return <ComplexControlledTreeEnvironment
-    {...props}
-    getItemTitle={getItemTitle}
-    defaultInteractionMode={interactionManager}
-    keyboardBindings={{
-      primaryAction: ["space"],
-      renameItem: ["f2", "enter"],
-    }}
-  >
-    {children}
-  </ComplexControlledTreeEnvironment>
+  return (
+    <ComplexControlledTreeEnvironment
+      {...props}
+      getItemTitle={getItemTitle}
+      defaultInteractionMode={interactionManager}
+      keyboardBindings={{
+        primaryAction: ["space"],
+        renameItem: ["f2", "enter"],
+      }}
+    >
+      {children}
+    </ComplexControlledTreeEnvironment>
+  );
 }

@@ -95,7 +95,9 @@
 }
 
 @custom-variant track {
-  &::-webkit-slider-runnable-track,
+  &::-webkit-slider-runnable-track {
+    @slot;
+  }
   &::-moz-range-track {
     @slot;
   }
@@ -115,7 +117,7 @@ html,
 body,
 #root,
 #storybook-root {
-  @apply font-caption size-full bg-neutral-400 select-none dark:bg-zinc-800;
+  @apply font-caption size-full bg-workspace select-none;
 }
 
 #root,

@@ -7,7 +7,7 @@ import {
   type TreeItem,
   type TreeItemIndex,
 } from "../../ui-components";
-import { TREE_ROOT } from "../../ui-components/Tree/Tree";
+import { TREE_ROOT } from "../../ui-components/organisms/Tree/Tree";
 
 type ControlType = "control" | "controlFolder";
 export type ControlItem = TreeItem<TreeData<ControlType>>;

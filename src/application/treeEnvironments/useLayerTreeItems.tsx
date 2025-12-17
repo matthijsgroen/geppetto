@@ -10,7 +10,7 @@ import {
   type TreeItem,
   type TreeItemIndex,
 } from "../../ui-components";
-import { TREE_ROOT } from "../../ui-components/Tree/Tree";
+import { TREE_ROOT } from "../../ui-components/organisms/Tree/Tree";
 import { ControlEditMode } from "./mutationControlContext";
 
 export type LayerItem = TreeItem<
@@ -194,15 +194,15 @@ export const useLayerTreeItems = (
   useMemo(() => {
     populateTree(
       file,
-       
+
       fileRef.current,
-       
+
       treeItemsRef,
       actionHandler,
       showMutations,
       toggleVisibility
     );
-     
+
     fileRef.current = file;
   }, [file, toggleVisibility, showMutations, actionHandler]);
   // if (expandRef.current !== expandedItems) {
@@ -210,6 +210,6 @@ export const useLayerTreeItems = (
   //   treeItemsRef.current = { ...treeItemsRef.current };
   //   expandRef.current = expandedItems;
   // }
-   
+
   return treeItemsRef.current;
 };

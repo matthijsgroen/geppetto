@@ -10,6 +10,7 @@ export default definePreview({
         color: /(background|color)$/i,
         date: /Date$/i,
       },
+      disableSaveFromUI: true,
     },
     options: {
       storySort: {
