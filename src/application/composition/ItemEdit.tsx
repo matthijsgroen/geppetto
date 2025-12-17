@@ -1,5 +1,6 @@
 import { produce } from "immer";
 import { useEffect, useState, useTransition } from "react";
+
 import {
   hasRadius,
   iconMapping,
@@ -7,14 +8,14 @@ import {
   updateMutationValue,
 } from "../../animation/file2/mutation";
 import { toggleVisibility } from "../../animation/file2/shapes";
-import { Vec2 } from "../../types";
+import { type Vec2 } from "../../types";
 import {
   Control,
   ControlPanel,
   Icon,
   Kbd,
-  Title,
   Paragraph,
+  Title,
   ToggleInput,
 } from "../../ui-components";
 import { useFile } from "../contexts/FileContext";
@@ -36,12 +37,12 @@ type ItemEditProps = {
   editingControlId?: string;
   editingControlStep?: number;
   onSelectControl?: (controlId: string) => void;
-};
+}
 
 type EditProps = {
   itemId: string;
   onSelectControl?: (controlId: string) => void;
-};
+}
 
 const blankValue: Vec2 = [0, 0];
 
@@ -235,26 +236,14 @@ export const ItemEdit: React.FC<
   const hierarchyItem =
     activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
 
-  if (
-    activeShapeId !== null &&
-    hierarchyItem &&
-    hierarchyItem.type === "layer"
-  ) {
+  if (activeShapeId !== null && hierarchyItem?.type === "layer") {
     return <LayerEdit itemId={activeShapeId} />;
   }
-  if (
-    activeShapeId !== null &&
-    hierarchyItem &&
-    hierarchyItem.type === "layerFolder"
-  ) {
+  if (activeShapeId !== null && hierarchyItem?.type === "layerFolder") {
     return <LayerFolderEdit itemId={activeShapeId} />;
   }
 
-  if (
-    activeShapeId !== null &&
-    hierarchyItem &&
-    hierarchyItem.type === "mutation"
-  ) {
+  if (activeShapeId !== null && hierarchyItem?.type === "mutation") {
     return <MutationEdit itemId={activeShapeId} />;
   }
   return (
@@ -279,8 +268,8 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
   const mutationValue: Vec2 = !activeMutator
     ? blankValue
     : editingControlId !== undefined
-    ? file.controls[editingControlId].steps[editingControlStep][activeMutator]
-    : mutationValues.current[activeMutator];
+      ? file.controls[editingControlId].steps[editingControlStep][activeMutator]
+      : mutationValues.current[activeMutator];
   const [slideValue, setSlideValue] = useState(mutationValue);
 
   useEffect(() => {

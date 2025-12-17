@@ -1,6 +1,7 @@
-import { FC, PropsWithChildren } from "react";
-import { ToolbarContext } from "./ToolBarContext";
 import clsx from "clsx";
+import { type FC, type PropsWithChildren } from "react";
+
+import { ToolbarContext } from "./ToolBarContext";
 
 export type ToolBarSize = "default" | "small";
 
@@ -26,9 +27,9 @@ export const ToolBar: FC<ToolBarProps> = ({
       })}
     >
       <div
-        className={clsx("flex-0 flex items-center", {
-          "flex-row min-w-fit px-1 [&_>_*+*]:ml-1": !vertical,
-          "flex-col min-h-fit py-1.5 [&_>_*+*]:mt-1": vertical,
+        className={clsx("flex flex-0 items-center", {
+          "min-w-fit flex-row px-1 [&_>_*+*]:ml-1": !vertical,
+          "min-h-fit flex-col py-1.5 [&_>_*+*]:mt-1": vertical,
           "h-12": size === "default" && !vertical,
           "w-12": size === "default" && vertical,
           "h-9": size === "small" && !vertical,

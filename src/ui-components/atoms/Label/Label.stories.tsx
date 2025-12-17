@@ -1,4 +1,5 @@
 import preview from "#.storybook/preview";
+
 import { Label as LabelElement } from "./Label";
 
 const meta = preview.meta({

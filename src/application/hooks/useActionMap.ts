@@ -1,5 +1,7 @@
-import React, { useRef } from "react";
-import { isEvent, Shortcut } from "../../ui-components";
+import type React from "react";
+import { useRef } from "react";
+
+import { isEvent, type Shortcut } from "../../ui-components";
 
 export type Action = {
   caption?: string;
@@ -7,7 +9,7 @@ export type Action = {
   tooltip?: string;
   shortcut: Shortcut;
   handler: () => void;
-};
+}
 
 type ActionHandlers<T extends string> = Record<T, Action>;
 
@@ -16,17 +18,16 @@ type ActionMap<ActionHandlers> = {
     event: KeyboardEvent | React.KeyboardEvent<HTMLElement>
   ) => boolean;
   actions: ActionHandlers;
-};
+}
 
 export const useActionMap = <T extends string>(
   producer: () => ActionHandlers<T>
 ): ActionMap<ActionHandlers<T>> => {
-  const ref =
-    useRef<{
-      result: ActionMap<ActionHandlers<T>>;
-      producer: typeof producer;
-    }>();
-  if (!ref.current || ref.current.producer !== producer) {
+  const ref = useRef<{
+    result: ActionMap<ActionHandlers<T>>;
+    producer: typeof producer;
+  }>();
+  if (ref.current?.producer !== producer) {
     const result = producer();
     const actionList = Object.entries<Action>(result);
     const triggerKeyboardAction = (

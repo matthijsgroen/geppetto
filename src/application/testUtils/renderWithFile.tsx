@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
-import { FunctionComponent, ReactElement } from "react";
-import { GeppettoImage } from "../../animation/file2/types";
+import { type FunctionComponent, type ReactElement } from "react";
+
+import { type GeppettoImage } from "../../animation/file2/types";
 import { FileContext, useFile } from "../contexts/FileContext";
 
 const FileObserver: FunctionComponent<{

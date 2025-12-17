@@ -1,16 +1,16 @@
 import {
   findParentId,
   isEmpty,
-  PlacementInfo,
+  type PlacementInfo,
 } from "../../animation/file2/hierarchy";
 import {
   addMutation,
-  AddMutationDetails,
+  type AddMutationDetails,
   iconMapping,
   mutationLabels,
 } from "../../animation/file2/mutation";
 import { addFolder, removeShape } from "../../animation/file2/shapes";
-import { MutationVector } from "../../animation/file2/types";
+import { type MutationVector } from "../../animation/file2/types";
 import {
   EmptyTree,
   Icon,
@@ -27,7 +27,7 @@ import { useUpdateMutationValues } from "../contexts/ImageControlContext";
 import useEvent from "../hooks/useEvent";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
-import { UseState } from "../types";
+import { type UseState } from "../types";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
@@ -163,7 +163,9 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       </ToolBar>
       {isEmpty(file.layerHierarchy) ? (
         <EmptyTree>
-          <Paragraph>Start by adding a layer on the "Layers" screen.</Paragraph>
+          <Paragraph>
+            Start by adding a layer on the &ldquo;Layers&rdquo; screen.
+          </Paragraph>
         </EmptyTree>
       ) : (
         <Tree treeId="composition" />

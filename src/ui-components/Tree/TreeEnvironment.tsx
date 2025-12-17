@@ -1,10 +1,11 @@
 import {
   ControlledTreeEnvironment as ComplexControlledTreeEnvironment,
-  ControlledTreeEnvironmentProps,
-  TreeItem,
-  InteractionManager,
+  type ControlledTreeEnvironmentProps,
+  type InteractionManager,
+  type TreeItem,
 } from "react-complex-tree";
-import { TreeData } from "./Tree";
+
+import { type TreeData } from "./Tree";
 
 const getItemTitle = <T extends string>(item: TreeItem<TreeData<T>>): string =>
   item.data.name;
@@ -59,11 +60,11 @@ const interactionManager: InteractionManager = {
   }),
 };
 
-export const TreeEnvironment = <T extends string>({
+export function TreeEnvironment<T extends string>({
   children,
   ...props
-}: Props<T>): ReturnType<React.FC<Props<T>>> => (
-  <ComplexControlledTreeEnvironment
+}: Props<T>): ReturnType<React.FC<Props<T>>> {
+  return <ComplexControlledTreeEnvironment
     {...props}
     getItemTitle={getItemTitle}
     defaultInteractionMode={interactionManager}
@@ -74,4 +75,4 @@ export const TreeEnvironment = <T extends string>({
   >
     {children}
   </ComplexControlledTreeEnvironment>
-);
+}

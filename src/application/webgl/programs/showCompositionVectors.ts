@@ -1,18 +1,19 @@
-import { TranslationVector } from "geppetto-player";
+import { type TranslationVector } from "geppetto-player";
 import raw from "raw.macro";
+
 import { collectChildIds, visit } from "../../../animation/file2/hierarchy";
 import { isShapeMutationVector } from "../../../animation/file2/mutation";
 import {
-  GeppettoImage,
-  MutationVector,
-  Keyframe,
-  DeformationVector,
+  type DeformationVector,
+  type GeppettoImage,
+  type Keyframe,
+  type MutationVector,
 } from "../../../animation/file2/types";
-import { flatten } from "../lib/vertices";
-import { createProgram, WebGLRenderer } from "../lib/webgl";
-import { createShapeMutationList, MAX_MUTATION_VECTORS } from "./utils";
 import { colorScheme } from "../../theme/darkMode";
-import { ScreenTranslation } from "../../types";
+import { type ScreenTranslation } from "../../types";
+import { flatten } from "../lib/vertices";
+import { createProgram, type WebGLRenderer } from "../lib/webgl";
+import { createShapeMutationList, MAX_MUTATION_VECTORS } from "./utils";
 
 const compositionVertexShader = raw("./showCompositionVectors.vert");
 const compositionFragmentShader = raw("./showCompositionVectors.frag");

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 
-interface BeforeInstallPromptEvent extends Event {
+type BeforeInstallPromptEvent = {
   platforms: string[];
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
   prompt: () => Promise<void>;
-}
+} & Event
 
 let deferredInstallPrompt: BeforeInstallPromptEvent;
 let notifyInstallReady: (() => void)[] = [];
@@ -21,7 +21,7 @@ window.addEventListener("beforeinstallprompt", (event: Event) => {
 
 export const useAppInstall = (): [
   canInstall: boolean,
-  installer: () => void
+  installer: () => void,
 ] => {
   const [canInstall, setCanInstall] = useState<boolean>(
     !!deferredInstallPrompt

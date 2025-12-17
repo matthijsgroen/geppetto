@@ -1,13 +1,14 @@
-import React, {
+import {
   createContext,
-  PropsWithChildren,
-  FC,
-  useRef,
+  type FC,
+  type PropsWithChildren,
+  type RefObject,
   useCallback,
   useContext,
-  MutableRefObject,
+  useRef,
 } from "react";
-import { GeppettoImage } from "../../animation/file2/types";
+
+import { type GeppettoImage } from "../../animation/file2/types";
 import useEvent from "../hooks/useEvent";
 
 type ControlValues = GeppettoImage["controlValues"];
@@ -22,8 +23,8 @@ export type Subscription = (
 ) => Unsubscribe;
 
 const ImageCtrlContext = createContext<{
-  controlValues: MutableRefObject<ControlValues>;
-  mutationValues: MutableRefObject<MutationValues>;
+  controlValues: RefObject<ControlValues>;
+  mutationValues: RefObject<MutationValues>;
   updateControlValues: (
     updater: (current: ControlValues) => ControlValues
   ) => void;
@@ -41,9 +42,7 @@ const ImageCtrlContext = createContext<{
   },
 });
 
-export const ImageControlContext: FC<PropsWithChildren<{}>> = ({
-  children,
-}) => {
+export const ImageControlContext: FC<PropsWithChildren> = ({ children }) => {
   const listenersRef = useRef<
     ((controlValues: ControlValues, mutationValues: MutationValues) => void)[]
   >([]);

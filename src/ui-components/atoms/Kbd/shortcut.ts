@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 const OPTION_KEY = "⎇";
 const CMD_KEY = "⌘";
@@ -30,7 +30,7 @@ export type Shortcut = {
   shift?: boolean;
   alt?: boolean;
   mac?: boolean;
-};
+}
 
 const MAC_PLATFORM = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 

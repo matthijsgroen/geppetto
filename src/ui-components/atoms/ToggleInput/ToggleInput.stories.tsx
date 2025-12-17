@@ -1,6 +1,7 @@
+import preview from "#.storybook/preview";
+
 import { Control } from "../../molecules/Control/Control";
 import { ToggleInput } from "./ToggleInput";
-import preview from "#.storybook/preview";
 
 const meta = preview.meta({
   title: "Atoms/Controls/ToggleInput",
@@ -17,7 +18,7 @@ export const Standalone = meta.story();
 export const InControl = meta.story({
   decorators: [
     (Story) => (
-      <Control label={"Label"} htmlFor={"InputField"}>
+      <Control label="Label" htmlFor="InputField">
         <Story />
       </Control>
     ),

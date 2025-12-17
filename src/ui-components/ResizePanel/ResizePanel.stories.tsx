@@ -1,4 +1,8 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import {
+  type ComponentMeta,
+  type ComponentStory,
+} from "@storybook/react-webpack5";
+
 import { Column } from "../molecules/Column/Column";
 import { Panel } from "../molecules/Panel/Panel";
 import { Row } from "../molecules/Row/Row";

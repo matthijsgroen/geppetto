@@ -1,10 +1,11 @@
-import { ToolBar } from "./ToolBar";
+import preview from "#.storybook/preview";
+
 import { Icon } from "../../atoms/Icon/Icon";
 import { ToolButton } from "../../atoms/ToolButton/ToolButton";
 import { ToolSeparator } from "../../atoms/ToolSeparator/ToolSeparator";
 import { ToolSpacer } from "../../atoms/ToolSpacer/ToolSpacer";
 import { ToolTab } from "../../atoms/ToolTab/ToolTab";
-import preview from "#.storybook/preview";
+import { ToolBar } from "./ToolBar";
 
 const meta = preview.meta({
   title: "Molecules/ToolBar",
@@ -18,9 +19,9 @@ const meta = preview.meta({
     size: "default",
     vertical: false,
     children: [
-      <ToolTab label={"Canvas"} active={true} key={"tab0"} />,
+      <ToolTab label="Canvas" active key="tab0" />,
       <ToolButton icon={<Icon>💡</Icon>} key={0} />,
-      <ToolButton active={true} icon={<Icon>🎓</Icon>} key={1} />,
+      <ToolButton active icon={<Icon>🎓</Icon>} key={1} />,
       <ToolSeparator key={2} />,
       <ToolButton icon={<Icon>🧲</Icon>} key={3} />,
       <ToolButton icon={<Icon>🧵</Icon>} key={4} />,

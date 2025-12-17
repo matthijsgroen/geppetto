@@ -1,20 +1,20 @@
-import {
-  CSSProperties,
-  PropsWithChildren,
+import React, {
+  type CSSProperties,
+  type PropsWithChildren,
   useCallback,
   useEffect,
   useRef,
   useState,
 } from "react";
-import styles from "./ResizePanel.module.css";
-import { className } from "../className";
-import React from "react";
 import {
   DraggableCore,
-  DraggableData,
-  DraggableEvent,
-  DraggableCoreProps,
+  type DraggableCoreProps,
+  type DraggableData,
+  type DraggableEvent,
 } from "react-draggable";
+
+import { className } from "../className";
+import styles from "./ResizePanel.module.css";
 
 const Draggable: React.FC<PropsWithChildren<Partial<DraggableCoreProps>>> = ({
   children,
@@ -121,8 +121,8 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
     size === null
       ? {}
       : horizontal
-      ? { width: clipSize + "px" }
-      : { height: clipSize + "px" };
+        ? { width: clipSize + "px" }
+        : { height: clipSize + "px" };
 
   const content = [
     <div
@@ -138,7 +138,7 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
 
   const handle = (
     <Draggable key="handle" onDrag={onDrag} nodeRef={handleRef}>
-      <div ref={handleRef} className={resizeBarClasses}></div>
+      <div ref={handleRef} className={resizeBarClasses} />
     </Draggable>
   );
 

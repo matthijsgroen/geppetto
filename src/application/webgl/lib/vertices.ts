@@ -1,6 +1,10 @@
 import Delaunator from "delaunator";
-import { Vec2, Vec3, Vec4 } from "../../../types";
-import { Keyframe, MutationVector } from "../../../animation/file1/types";
+
+import {
+  type Keyframe,
+  type MutationVector,
+} from "../../../animation/file1/types";
+import { type Vec2, type Vec3, type Vec4 } from "../../../types";
 
 export const verticesFromPoints = (points: number[][]): number[] =>
   filteredTriangles(points).reduce(
@@ -85,8 +89,8 @@ export const mergeMutationValue = (
   type === "saturation"
     ? vecMul(a, b)
     : type === "colorize"
-    ? a || b || [0, 0]
-    : vecAdd(a, b);
+      ? a || b || [0, 0]
+      : vecAdd(a, b);
 
 export const combineKeyFrames = (
   a: Keyframe,

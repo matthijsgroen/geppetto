@@ -1,13 +1,14 @@
-import { FC } from "react";
-import { Shortcut, shortcutStr } from "./shortcut";
 import { clsx } from "clsx";
+import { type FC } from "react";
+
+import { type Shortcut, shortcutStr } from "./shortcut";
 
 type ShortcutProps = {
   shortcut: Shortcut;
   disabled?: boolean;
   dimmed?: boolean;
   inMenu?: boolean;
-};
+}
 
 /**
  * Kbd is useful for visualizing Keyboard shortcuts.
@@ -22,7 +23,7 @@ export const Kbd: FC<ShortcutProps> = ({
   inMenu = false,
 }) => (
   <kbd
-    className={clsx("text-sm font-system self-center", {
+    className={clsx("self-center font-system text-sm", {
       "px-2": !inMenu,
       "text-text": !dimmed,
       "text-dimmed": dimmed,

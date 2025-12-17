@@ -1,7 +1,7 @@
-import { FC, PropsWithChildren } from "react";
+import { type FC, type PropsWithChildren } from "react";
 
 type RowProps = PropsWithChildren;
 
 export const Row: FC<RowProps> = ({ children }) => (
-  <div className="flex flex-row flex-1 overflow-hidden">{children}</div>
+  <div className="flex flex-1 flex-row overflow-hidden">{children}</div>
 );

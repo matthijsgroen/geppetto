@@ -1,11 +1,12 @@
-import { ItemEdit } from "./ItemEdit";
 import { fireEvent, render, screen } from "@testing-library/react";
+
+import { toggleVisibility } from "../../animation/file2/shapes";
 import {
   fileBuilder,
   getShapeFolderIdByName,
 } from "../../animation/file2/testFileBuilder";
 import { renderWithFile } from "../testUtils/renderWithFile";
-import { toggleVisibility } from "../../animation/file2/shapes";
+import { ItemEdit } from "./ItemEdit";
 
 describe("ItemEdit", () => {
   describe("when nothing is selected", () => {

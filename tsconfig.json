@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "types": ["vite/client", "vite-plugin-glsl/ext"]
+    "types": ["vite/client", "vite-plugin-glsl/ext", "wicg-file-system-access", "vitest/globals"]
   },
   "include": ["src"]
 }

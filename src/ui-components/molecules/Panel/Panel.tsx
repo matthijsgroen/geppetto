@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { FC, PropsWithChildren } from "react";
+import { type FC, type PropsWithChildren } from "react";
 
 type PanelProps = PropsWithChildren<{
   padding?: "sm" | "md";

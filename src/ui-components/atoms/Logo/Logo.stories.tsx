@@ -1,4 +1,5 @@
 import preview from "#.storybook/preview";
+
 import { Logo as LogoElement, LogoIcon as LogoIconElement } from "./Logo";
 
 const meta = preview.meta({

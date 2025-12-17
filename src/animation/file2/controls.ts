@@ -1,17 +1,21 @@
 import { produce } from "immer";
+
 import {
   addInHierarchy,
-  PlacementInfo,
+  type PlacementInfo,
   removeFromHierarchy,
 } from "./hierarchy";
 import { getUniqueName } from "./shapes";
-import { ControlDefinition, GeppettoImage } from "./types";
+import { type ControlDefinition, type GeppettoImage } from "./types";
 
-export type AddControlDetails = { control: ControlDefinition; id: string };
+export type AddControlDetails = {
+  control: ControlDefinition;
+  id: string;
+};
 export const addControl = (
   controlName: string,
   position?: PlacementInfo,
-  dataResult?: AddControlDetails | {}
+  dataResult?: AddControlDetails | Record<string, never>
 ) =>
   produce<GeppettoImage>((draft) => {
     const newName = getUniqueName(controlName, draft.controls);

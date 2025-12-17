@@ -1,8 +1,10 @@
-import { ComponentProps } from "react";
+import { type ComponentProps } from "react";
+
+import preview from "#.storybook/preview";
+
+import { ToggleInput } from "../../atoms/ToggleInput/ToggleInput";
 import { Control } from "../Control/Control";
 import { ControlPanel as ControlPanelComponent } from "./ControlPanel";
-import preview from "#.storybook/preview";
-import { ToggleInput } from "../../atoms/ToggleInput/ToggleInput";
 
 type StoryProps = ComponentProps<typeof ControlPanelComponent> & {
   extraControlCount: number;

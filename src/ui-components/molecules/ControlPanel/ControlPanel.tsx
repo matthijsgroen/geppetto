@@ -1,5 +1,11 @@
-import { FC, PropsWithChildren, useEffect, useRef, useState } from "react";
 import clsx from "clsx";
+import {
+  type FC,
+  type PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 type ControlPanelProps = PropsWithChildren<{ shadow?: boolean }>;
 
@@ -17,7 +23,7 @@ export const ControlPanel: FC<ControlPanelProps> = ({
 
   useEffect(() => {
     if (innerRef.current) {
-      const observer = new ResizeObserver((entries) => {
+      const observer = new ResizeObserver(() => {
         const height = innerRef.current?.getBoundingClientRect().height;
         if (height !== undefined) {
           setHeight(height);
@@ -35,7 +41,7 @@ export const ControlPanel: FC<ControlPanelProps> = ({
   return (
     <form
       className={clsx(
-        "bg-control-default rounded-control overflow-y-hidden hide-scrollbar shrink-0",
+        `hide-scrollbar shrink-0 overflow-y-hidden rounded-control bg-control-default`,
         "transition-[height,width] duration-300 ease-in-out",
         {
           "shadow-md": shadow,

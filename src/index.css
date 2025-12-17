@@ -3,13 +3,13 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --font-system:  system-ui;
+  --font-system: system-ui;
   --text-shadow-xs: 0px 0px 1px;
 
   --radius-control: 0.5rem; /* 8px */
   --radius-control-small: 0.25rem; /* 4px */
   --radius-control-large: 1.5rem; /* 24px */
-  
+
   --shadow-xl: 5px 5px 5px #0003;
   --shadow-md: 2px 2px 2px #0004;
   --shadow-sm: 1px 1px 2px #0003;
@@ -23,7 +23,11 @@
   --color-notification: var(--color-red-600);
 
   --color-control-default: var(--color-white);
-  --color-control-edge: color-mix(in oklch, var(--color-neutral-800), transparent 80%);
+  --color-control-edge: color-mix(
+    in oklch,
+    var(--color-neutral-800),
+    transparent 80%
+  );
   --color-control-focus: var(--color-blue-500);
   --color-control-highlight: var(--color-blue-300);
   --color-control-active: var(--color-sky-600);
@@ -41,14 +45,22 @@
   --color-notification: var(--color-red-400);
 
   --color-control-default: var(--color-zinc-900);
-  --color-control-edge: color-mix(in oklch, var(--color-zinc-100), transparent 70%);
+  --color-control-edge: color-mix(
+    in oklch,
+    var(--color-zinc-100),
+    transparent 70%
+  );
   --color-control-focus: var(--color-green-600);
   --color-control-highlight: var(--color-green-500);
   --color-control-active: var(--color-green-700);
   --color-control-active-dimmed: var(--color-green-700);
 
   --color-text: var(--color-zinc-100);
-  --color-dimmed: color-mix(in oklch, var(--color-neutral-400), transparent 50%);
+  --color-dimmed: color-mix(
+    in oklch,
+    var(--color-neutral-400),
+    transparent 50%
+  );
   --color-active: var(--color-green-500);
 }
 
@@ -83,9 +95,7 @@
 }
 
 @custom-variant track {
-  &::-webkit-slider-runnable-track {
-    @slot;
-  }
+  &::-webkit-slider-runnable-track,
   &::-moz-range-track {
     @slot;
   }
@@ -103,10 +113,12 @@
 
 html,
 body,
-#root, #storybook-root {
-  @apply bg-neutral-400 dark:bg-zinc-800 size-full font-caption select-none;
+#root,
+#storybook-root {
+  @apply font-caption size-full bg-neutral-400 select-none dark:bg-zinc-800;
 }
 
-#root, #storybook-root {
+#root,
+#storybook-root {
   display: flex;
 }

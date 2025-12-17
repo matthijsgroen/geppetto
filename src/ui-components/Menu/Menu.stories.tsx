@@ -1,4 +1,8 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
+import {
+  type ComponentMeta,
+  type ComponentStory,
+} from "@storybook/react-webpack5";
+
 import { Icon } from "../atoms/Icon/Icon";
 import { ToolButton } from "../atoms/ToolButton/ToolButton";
 import { Menu, MenuDivider, MenuHeader, MenuItem, SubMenu } from "./Menu";
@@ -15,7 +19,7 @@ export default {
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 export const Default: ComponentStory<typeof Menu> = () => (
   <Menu
-    portal={true}
+    portal
     menuButton={({ open }) => (
       <ToolButton icon={<Icon>🧵</Icon>} active={open} />
     )}

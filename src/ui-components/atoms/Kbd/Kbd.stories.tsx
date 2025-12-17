@@ -1,7 +1,9 @@
 import React from "react";
+
 import preview from "#.storybook/preview";
+
 import { Kbd as KbdElement } from "./Kbd";
-import { Shortcut } from "./shortcut";
+import { type Shortcut } from "./shortcut";
 
 type StoryProps = {
   interaction: Shortcut["interaction"];
@@ -12,7 +14,7 @@ type StoryProps = {
   shift: boolean;
   alt: boolean;
   mac: boolean;
-};
+}
 
 const StoryTemplate: React.FC<StoryProps> = ({
   interaction = "KeyO",

@@ -1,5 +1,6 @@
-import { Panel as PanelComponent } from "./Panel";
 import preview from "#.storybook/preview";
+
+import { Panel as PanelComponent } from "./Panel";
 
 const meta = preview.meta({
   title: "Molecules/Panel",

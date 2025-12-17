@@ -1,3 +1,5 @@
+import preview from "#.storybook/preview";
+
 import {
   Column,
   Icon,
@@ -25,9 +27,8 @@ import {
 } from "..";
 import {
   storyTreeItems,
-  ToolsProvider,
+  type ToolsProvider,
 } from "../Tree/storybookTreeDataProvider";
-import preview from "#.storybook/preview";
 
 const meta = preview.meta({
   title: "Pages/Layers",
@@ -41,7 +42,7 @@ export const Version2 = meta.story({
     <Row>
       <ToolBar vertical>
         <Menu
-          portal={true}
+          portal
           transition
           menuButton={({ open }) => (
             <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
@@ -70,9 +71,9 @@ export const Version2 = meta.story({
         </Menu>
         <ToolSeparator />
 
-        <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
-        <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} />
-        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} />
+        <ToolTab icon={<Icon>🧬</Icon>} label="Layers" active />
+        <ToolTab icon={<Icon>🤷🏼</Icon>} label="Composition" />
+        <ToolTab icon={<Icon>🏃</Icon>} label="Animation" />
       </ToolBar>
       <ResizePanel
         direction={ResizeDirection.East}
@@ -95,12 +96,12 @@ export const Version2 = meta.story({
               />
               <ToolButton
                 icon={<Icon>📑</Icon>}
-                disabled={true}
+                disabled
                 tooltip="Copy layer"
               />
               <ToolButton
                 icon={<Icon>🗑</Icon>}
-                disabled={true}
+                disabled
                 tooltip="Remove item"
               />
             </ToolBar>
@@ -166,7 +167,7 @@ export const Version2 = meta.story({
                 <ToolButton
                   icon={<Icon>📄</Icon>}
                   label="Load file..."
-                  size={"small"}
+                  size="small"
                   shadow
                 />{" "}
                 <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />

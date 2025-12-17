@@ -1,4 +1,5 @@
-import { FC, PropsWithChildren } from "react";
+import { type FC, type PropsWithChildren } from "react";
+
 import { Label } from "../../atoms/Label/Label";
 
 type ControlProps = PropsWithChildren<{
@@ -7,13 +8,13 @@ type ControlProps = PropsWithChildren<{
 }>;
 
 export const Control: FC<ControlProps> = ({ label, htmlFor, children }) => (
-  <div className="flex mx-2 justify-between h-fit">
+  <div className="mx-2 flex h-fit justify-between">
     {label && (
-      <div className="py-2 overflow-hidden text-ellipsis whitespace-nowrap self-center">
+      <div className="self-center truncate py-2">
         <Label htmlFor={htmlFor}>{label}</Label>
       </div>
     )}
-    <div className="justify-items-end items-center min-h-12 flex p-2 pr-0 whitespace-nowrap">
+    <div className="flex min-h-12 items-center justify-items-end p-2 pr-0 whitespace-nowrap">
       {children}
     </div>
   </div>

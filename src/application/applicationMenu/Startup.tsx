@@ -1,13 +1,14 @@
+import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useContext } from "react";
+
 import { isNewFile } from "../../animation/file2/new";
 import { hasPoints } from "../../animation/file2/shapes";
-import { GeppettoImage } from "../../animation/file2/types";
+import { type GeppettoImage } from "../../animation/file2/types";
 import { Icon, Logo, ToolButton } from "../../ui-components";
 import { Kbd } from "../../ui-components/atoms/Kbd/Kbd";
+import { Paragraph } from "../../ui-components/atoms/Paragraph/Paragraph";
 import { versionInfo } from "../../versionInfo";
 import { ApplicationContext } from "../contexts/ApplicationContext";
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import { Paragraph } from "../../ui-components/atoms/Paragraph/Paragraph";
 
 type StartupScreenProps = {
   texture: HTMLImageElement | null;
@@ -33,14 +34,14 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
         </Paragraph>
         <Paragraph>
           Note: This is an early ALPHA build of Geppetto 2.0
-          <br /> and is not yet ready for production use. (It's not feature
+          <br /> and is not yet ready for production use. (It&apos;s not feature
           complete yet!)
         </Paragraph>
         {isNewFile(file) && (
           <p>
             <ToolButton
               icon={<Icon>📄</Icon>}
-              label={"Load file..."}
+              label="Load file..."
               onClick={() => sendMessage("fileOpen")}
               size="small"
               shadow
@@ -51,7 +52,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
         <p>
           <ToolButton
             icon={<Icon>🌅</Icon>}
-            label={"Load texture..."}
+            label="Load texture..."
             onClick={() => sendMessage("textureOpen")}
             size="small"
             shadow
@@ -64,7 +65,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
         <p>
           <ToolButton
             icon={<Icon>🏡</Icon>}
-            label={"Load demo file"}
+            label="Load demo file"
             onClick={() => sendMessage("demoOpenScenery")}
             size="small"
             shadow
@@ -80,7 +81,12 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
   }
 
   if (screen === "composition" && texture && !hasPoints(file)) {
-    return <p>No layers with a surface. Add a layer in the "Layers" screen.</p>;
+    return (
+      <p>
+        No layers with a surface. Add a layer in the &ldquo;Layers&rdquo;
+        screen.
+      </p>
+    );
   }
   return null;
 };

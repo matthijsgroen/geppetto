@@ -1,10 +1,10 @@
-import { Vec2, Vec4 } from "../../../types";
-import {
-  GeppettoImage,
-  Layer,
-  MutationVector,
-} from "../../../animation/file2/types";
 import { getPreviousOfType, visit } from "../../../animation/file2/hierarchy";
+import {
+  type GeppettoImage,
+  type Layer,
+  type MutationVector,
+} from "../../../animation/file2/types";
+import { type Vec2, type Vec4 } from "../../../types";
 
 export const MAX_MUTATION_VECTORS = 60;
 

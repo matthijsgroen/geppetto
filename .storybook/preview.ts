@@ -1,5 +1,5 @@
-import { definePreview } from "@storybook/react-vite";
 import { withThemeByClassName } from "@storybook/addon-themes";
+import { definePreview } from "@storybook/react-vite";
 import "../src/index.css";
 
 export default definePreview({

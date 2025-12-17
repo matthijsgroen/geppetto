@@ -1,8 +1,12 @@
+import { type Meta, type StoryObj } from "@storybook/react-vite";
+
 import { Icon, ToolButton } from "..";
-import { storyTreeItems, ToolsProvider } from "./storybookTreeDataProvider";
+import {
+  storyTreeItems,
+  type ToolsProvider,
+} from "./storybookTreeDataProvider";
 import { Tree } from "./Tree";
 import { TreeEnvironment } from "./TreeEnvironment";
-import { Meta, StoryObj } from "@storybook/react-vite";
 
 const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {

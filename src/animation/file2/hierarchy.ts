@@ -1,4 +1,4 @@
-import { Hierarchy, RootNode, TreeNode } from "./types";
+import { type Hierarchy, type RootNode, type TreeNode } from "./types";
 
 export type PlacementInfo =
   | { after: string }
@@ -148,7 +148,7 @@ export const collectChildIds = (
 ): string[] => {
   const result: string[] = [];
   const item = findInHierarchy(hierarchy, parentId);
-  if (item && item.children) {
+  if (item?.children) {
     result.push(...item.children);
     for (const childId of item.children) {
       result.push(...collectChildIds(hierarchy, childId));
@@ -161,21 +161,19 @@ const removeChildId = <T extends string>(
   hierarchy: Hierarchy<T>,
   itemId: string
 ): Hierarchy<T> => {
-  const item = findInHierarchy(hierarchy, itemId) as RootNode | TreeNode<T>;
+  const item = findInHierarchy(hierarchy, itemId)!;
   const updatedHierarchy = {
     ...hierarchy,
   };
   if (!isRootNode(item)) {
     const parent = hierarchy[item.parentId];
-    const updatedChildren = (parent.children as string[]).filter(
-      (id) => id !== itemId
-    );
+    const updatedChildren = parent.children!.filter((id) => id !== itemId);
     const updatedParent: RootNode | TreeNode<T> = {
       ...parent,
       children: updatedChildren,
     };
     if (!isRootNode(updatedParent) && updatedChildren.length === 0) {
-      delete updatedParent["children"];
+      delete updatedParent.children;
     }
     updatedHierarchy[item.parentId] = updatedParent;
   }
@@ -283,13 +281,13 @@ export const getPreviousOfType = <T extends string>(
   type: T,
   startId: keyof Hierarchy<T>
 ): keyof Hierarchy<T> | null => {
-  let nodeId = startId;
+  const nodeId = startId;
   let activeParent = hierarchy[nodeId];
   while (activeParent && !isRootNode(activeParent)) {
     activeParent = hierarchy[activeParent.parentId];
     let lastOfType: string | null = null;
 
-    for (const childId of activeParent.children as string[]) {
+    for (const childId of activeParent.children!) {
       if (childId === nodeId) break;
       if (hierarchy[childId].type === type) {
         lastOfType = childId;

@@ -1,3 +1,5 @@
+import preview from "#.storybook/preview";
+
 import {
   Column,
   Control,
@@ -13,25 +15,24 @@ import {
   NumberInput,
   Panel,
   Paragraph,
+  RangeInput,
   ResizeDirection,
   ResizePanel,
   Row,
   SubMenu,
   Title,
+  ToggleInput,
   ToolBar,
   ToolButton,
   ToolSeparator,
   ToolTab,
   Tree,
   TreeEnvironment,
-  ToggleInput,
-  RangeInput,
 } from "..";
 import {
   storyTreeItems,
-  ToolsProvider,
+  type ToolsProvider,
 } from "../Tree/storybookTreeDataProvider";
-import preview from "#.storybook/preview";
 
 const meta = preview.meta({
   title: "Pages/Composition",
@@ -55,7 +56,7 @@ export const Version1 = meta.story({
     <Column>
       <ToolBar>
         <Menu
-          portal={true}
+          portal
           transition
           menuButton={({ open }) => (
             <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
@@ -84,9 +85,9 @@ export const Version1 = meta.story({
         </Menu>
         <ToolSeparator />
 
-        <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} />
-        <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} active />
-        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} />
+        <ToolTab icon={<Icon>🧬</Icon>} label="Layers" />
+        <ToolTab icon={<Icon>🤷🏼</Icon>} label="Composition" active />
+        <ToolTab icon={<Icon>🏃</Icon>} label="Animation" />
       </ToolBar>
 
       <Row>
@@ -109,12 +110,12 @@ export const Version1 = meta.story({
               />
               <ToolButton
                 icon={<Icon>📑</Icon>}
-                disabled={true}
+                disabled
                 tooltip="Copy layer"
               />
               <ToolButton
                 icon={<Icon>🗑</Icon>}
-                disabled={true}
+                disabled
                 tooltip="Remove item"
               />
             </ToolBar>
@@ -145,10 +146,7 @@ export const Version1 = meta.story({
                   <NumberInput value={10} />
                 </Control>
                 <Control>
-                  <ToolButton
-                    label={"Add mutation to control"}
-                    size={"small"}
-                  />
+                  <ToolButton label="Add mutation to control" size="small" />
                 </Control>
               </ControlPanel>
             </Panel>
@@ -167,7 +165,7 @@ export const Version1 = meta.story({
                   />
                   <ToolButton
                     icon={<Icon>🗑</Icon>}
-                    disabled={true}
+                    disabled
                     tooltip="Remove item"
                   />
                 </ToolBar>
@@ -183,9 +181,9 @@ export const Version1 = meta.story({
                     <RangeInput />
                   </Control>
                   <Control label="Steps">
-                    <ToolButton icon={"1"} size={"small"} />
-                    <ToolButton icon={"2"} size={"small"} />
-                    <ToolButton icon={"+"} size={"small"} />
+                    <ToolButton icon="1" size="small" />
+                    <ToolButton icon="2" size="small" />
+                    <ToolButton icon="+" size="small" />
                   </Control>
                 </ControlPanel>
               </Panel>
@@ -201,7 +199,7 @@ export const Version1 = meta.story({
               <ToolButton
                 icon={<Icon>📄</Icon>}
                 label="Load file..."
-                size={"small"}
+                size="small"
                 shadow
               />{" "}
               <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />

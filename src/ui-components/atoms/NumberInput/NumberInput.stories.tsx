@@ -1,6 +1,7 @@
+import preview from "#.storybook/preview";
+
 import { Control } from "../../molecules/Control/Control";
 import { NumberInput } from "./NumberInput";
-import preview from "#.storybook/preview";
 
 const meta = preview.meta({
   title: "Atoms/Controls/NumberInput",
@@ -18,7 +19,7 @@ export const Standalone = meta.story();
 export const InControl = meta.story({
   decorators: [
     (Story) => (
-      <Control label={"Label"} htmlFor={"InputField"}>
+      <Control label="Label" htmlFor="InputField">
         <Story />
       </Control>
     ),
@@ -30,7 +31,7 @@ export const VectorControl = meta.story({
     (Story) => (
       <>
         <Story />
-        <NumberInput key={"y"} value={10} prefix="y:" />
+        <NumberInput key="y" value={10} prefix="y:" />
       </>
     ),
   ],

@@ -125,7 +125,7 @@ describe("updateVectorData", () => {
         const test = mutationState(emptyImage);
         const layer = await addLayer(test.mutator, "First Layer");
         await addVector(test.mutator, layer, "New Mutator");
-        const onRename = jest.fn();
+        const onRename = vi.fn();
 
         const result = updateVectorData(
           test.getState(),
@@ -156,7 +156,7 @@ describe("updateVectorData", () => {
         const test = mutationState(emptyImage);
         const layer = await addLayer(test.mutator, "First Layer");
         await addVector(test.mutator, layer, "New Mutator (213)");
-        const onRename = jest.fn();
+        const onRename = vi.fn();
 
         const result = updateVectorData(
           test.getState(),

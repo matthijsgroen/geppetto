@@ -1,9 +1,11 @@
+import { describe, expect, it } from "vitest";
+
 import { newFile } from "./new";
 import {
   addFolder,
-  AddFolderDetails,
+  type AddFolderDetails,
   addShape,
-  AddShapeDetails,
+  type AddShapeDetails,
   removeShape,
   rename,
   toggleVisibility,
@@ -20,7 +22,7 @@ describe("shapes", () => {
     it("creates a shape as first element", () => {
       const file = newFile();
 
-      const result: AddShapeDetails | {} = {};
+      const result: AddShapeDetails | Record<string, never> = {};
       const image = addShape("New shape", undefined, result)(file);
       expect(image.layerHierarchy["0"]).toEqual({
         type: "layer",
@@ -41,7 +43,7 @@ describe("shapes", () => {
         const file = newFile();
         const firstShape = addShape("New shape")(file);
 
-        const result: AddShapeDetails | {} = {};
+        const result: AddShapeDetails | Record<string, never> = {};
         const image = addShape(
           "New shape",
           {
@@ -71,7 +73,7 @@ describe("shapes", () => {
           .addShape("New shape")
           .build();
 
-        const result: AddShapeDetails | {} = {};
+        const result: AddShapeDetails | Record<string, never> = {};
         addShape(
           "New shape",
           {

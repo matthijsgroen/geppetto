@@ -1,16 +1,18 @@
 import { collectChildIds, visit } from "../../../animation/file2/hierarchy";
-import { GeppettoImage, Keyframe } from "../../../animation/file2/types";
-import { ScreenTranslation } from "../../types";
+import {
+  type GeppettoImage,
+  type Keyframe,
+} from "../../../animation/file2/types";
+import { type ScreenTranslation } from "../../types";
 import { flatten, verticesFromPoints } from "../lib/vertices";
-import { createProgram, WebGLRenderer } from "../lib/webgl";
+import { createProgram, type WebGLRenderer } from "../lib/webgl";
+import compositionFragmentShader from "./showCompositionMap.frag";
+import compositionVertexShader from "./showCompositionMap.vert";
 import {
   createShapeMutationList,
   getAnchor,
   MAX_MUTATION_VECTORS,
 } from "./utils";
-
-import compositionVertexShader from "./showCompositionMap.vert";
-import compositionFragmentShader from "./showCompositionMap.frag";
 
 export const showCompositionMap = (
   trans: ScreenTranslation

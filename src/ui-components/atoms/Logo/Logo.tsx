@@ -1,6 +1,7 @@
-import LogoSvg from "./geppetto.svg?react";
+import { type FC } from "react";
+
 import { Icon } from "../Icon/Icon";
-import { FC } from "react";
+import LogoSvg from "./geppetto.svg?react";
 
 export const LogoIcon: FC = () => (
   <Icon>
@@ -9,7 +10,7 @@ export const LogoIcon: FC = () => (
 );
 
 export const Logo: FC = () => (
-  <div className="bg-control-default rounded-control-large shadow-xl aspect-square h-[min(20vh,200px)] mx-auto">
+  <div className="mx-auto aspect-square h-[min(20vh,200px)] rounded-control-large bg-control-default shadow-xl">
     <LogoSvg />
   </div>
 );

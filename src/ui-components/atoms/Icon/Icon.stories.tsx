@@ -1,4 +1,5 @@
 import preview from "#.storybook/preview";
+
 import { Icon as IconElement } from "./Icon";
 
 const meta = preview.meta({

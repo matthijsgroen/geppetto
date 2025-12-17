@@ -1,19 +1,24 @@
 import "@szhsin/react-menu/dist/index.css";
 import "@szhsin/react-menu/dist/transitions/slide.css";
 import "./menu.css";
-import styles from "./menu.module.css";
-import { MenuItem as ReactMenuItem, MenuItemProps } from "@szhsin/react-menu";
+
+import {
+  MenuItem as ReactMenuItem,
+  type MenuItemProps,
+} from "@szhsin/react-menu";
+
 import { Kbd } from "../atoms/Kbd/Kbd";
-import { Shortcut } from "../atoms/Kbd/shortcut";
+import { type Shortcut } from "../atoms/Kbd/shortcut";
+import styles from "./menu.module.css";
 export {
-  Menu,
   ControlledMenu,
+  Menu,
   MenuButton,
-  MenuRadioGroup,
-  MenuGroup,
-  SubMenu,
   MenuDivider,
+  MenuGroup,
   MenuHeader,
+  MenuRadioGroup,
+  SubMenu,
   useMenuState,
 } from "@szhsin/react-menu";
 

@@ -1,6 +1,8 @@
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-import { TextButton as TextButtonComponent } from "./TextButton";
+
 import preview from "#.storybook/preview";
+
+import { TextButton as TextButtonComponent } from "./TextButton";
 
 const meta = preview.meta({
   title: "Atoms/TextButton",

@@ -1,5 +1,6 @@
-import { FC, PropsWithChildren } from "react";
-import { ToolBarSize } from "../molecules/ToolBar/ToolBar";
+import { type FC, type PropsWithChildren } from "react";
+
+import { type ToolBarSize } from "../molecules/ToolBar/ToolBar";
 import { ToolbarContext } from "../molecules/ToolBar/ToolBarContext";
 import styles from "./ToolGrid.module.css";
 

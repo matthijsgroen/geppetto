@@ -1,12 +1,13 @@
-import React, {
+import {
   forwardRef,
-  PropsWithChildren,
+  type PropsWithChildren,
   useEffect,
   useMemo,
   useRef,
 } from "react";
+
 import { newFile } from "../../animation/file2/new";
-import { GeppettoImage } from "../../animation/file2/types";
+import { type GeppettoImage } from "../../animation/file2/types";
 import {
   useControlValues,
   useControlValueSubscription,
@@ -20,13 +21,13 @@ import { showCompositionMap } from "./programs/showCompositionMap";
 import { showCompositionVectors } from "./programs/showCompositionVectors";
 import WebGLCanvas from "./WebGLCanvas";
 
-export interface CompositionCanvasProps {
+export type CompositionCanvasProps = {
   image: HTMLImageElement | null;
   file: GeppettoImage;
   showWireFrames: boolean;
   activeLayers: string[];
   activeMutation: string | null;
-}
+};
 
 const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
   fileA.layerHierarchy !== fileB.layerHierarchy ||

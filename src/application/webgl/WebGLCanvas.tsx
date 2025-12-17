@@ -1,17 +1,19 @@
-import React, {
-  forwardRef,
-  PropsWithChildren,
+import {
+  type FC,
+  type PropsWithChildren,
+  type RefObject,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { WebGLRenderer, webGLScene } from "./lib/webgl";
 import styled from "styled-components";
-import { mergeRefs } from "../lib/mergeRefs";
+
 import {
-  Subscription,
+  type Subscription,
   useScreenSubscription,
 } from "../contexts/ScreenTranslationContext";
+import { mergeRefs } from "../lib/mergeRefs";
+import { type WebGLRenderer, webGLScene } from "./lib/webgl";
 
 const HEIGHT_PIXEL_FIX = 4;
 
@@ -74,7 +76,7 @@ const startWebGL = async (
       markChanged();
     }, 5);
   };
-  const resizeObserver = new ResizeObserver((entries) => {
+  const resizeObserver = new ResizeObserver(() => {
     onResize();
   });
 
@@ -87,14 +89,12 @@ const startWebGL = async (
   };
 };
 
-type WebGLCanvasProps = {
+type WebGLCanvasProps = PropsWithChildren<{
   renderers: WebGLRenderer[];
-};
+  ref: RefObject<HTMLDivElement>;
+}>;
 
-const WebGLCanvas = forwardRef<
-  HTMLDivElement,
-  PropsWithChildren<WebGLCanvasProps>
->(({ renderers, children }, ref) => {
+const WebGLCanvas: FC<WebGLCanvasProps> = ({ renderers, children, ref }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const subscribe = useScreenSubscription();
@@ -132,7 +132,7 @@ const WebGLCanvas = forwardRef<
       return () => {
         mounted = false;
         // unmount
-        cleanup && cleanup();
+        cleanup?.();
       };
     }
   }, [renderers, mounted, subscribe]);
@@ -143,6 +143,6 @@ const WebGLCanvas = forwardRef<
       <canvas ref={canvasRef} />
     </CanvasContainer>
   );
-});
+};
 
 export default WebGLCanvas;

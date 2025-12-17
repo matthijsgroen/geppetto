@@ -1,5 +1,6 @@
-import { EmptyTree } from "./EmptyTree";
 import preview from "#.storybook/preview";
+
+import { EmptyTree } from "./EmptyTree";
 
 const meta = preview.meta({
   title: "Molecules/EmptyTree",

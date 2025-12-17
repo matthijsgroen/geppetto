@@ -1,5 +1,6 @@
 import { useCallback } from "react";
-import { Vec2 } from "../../types";
+
+import { type Vec2 } from "../../types";
 import { Control, NumberInput } from "../../ui-components";
 
 type VectorControlProps = {
@@ -15,14 +16,18 @@ export const VectorControl: React.FC<VectorControlProps> = ({
 }) => {
   const xChangeHandler = useCallback(
     (val: number) => {
-      onChange && val !== value[0] && onChange([val, value[1]]);
+      if (val !== value[0]) {
+        onChange?.([val, value[1]]);
+      }
     },
     [onChange, value]
   );
 
   const yChangeHandler = useCallback(
     (val: number) => {
-      onChange && val !== value[1] && onChange([value[0], val]);
+      if (val !== value[1]) {
+        onChange?.([value[0], val]);
+      }
     },
     [onChange, value]
   );

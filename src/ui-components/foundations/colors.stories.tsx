@@ -8,7 +8,7 @@ export default meta;
 
 export const Colors = meta.story({
   render: () => (
-    <div className="grid grid-cols-2 gap-4 h-fit text-text m-4">
+    <div className="flex flex-row flex-wrap gap-8 self-start p-8">
       {[
         "bg-control-default",
         "bg-workspace",
@@ -27,16 +27,16 @@ export const Colors = meta.story({
         "bg-dimmed",
         "bg-active",
       ].map((color) => (
-        <>
-          <div key={color} className="flex items-center">
+        <div key={color} className="flex w-60 flex-row items-center gap-2">
+          <div className="flex flex-1 items-center">
             <p>{color.slice(3)}</p>
           </div>
           <div>
-            <div className={`${color}  size-20 rounded-control shadow-md`}>
+            <div className={`${color} size-20 rounded-control shadow-md`}>
               &nbsp;
             </div>
           </div>
-        </>
+        </div>
       ))}
     </div>
   ),

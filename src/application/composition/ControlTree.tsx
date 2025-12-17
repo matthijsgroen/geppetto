@@ -1,5 +1,8 @@
 import { addControl, removeControls } from "../../animation/file2/controls";
-import { findParentId, PlacementInfo } from "../../animation/file2/hierarchy";
+import {
+  findParentId,
+  type PlacementInfo,
+} from "../../animation/file2/hierarchy";
 import {
   Icon,
   Panel,
@@ -12,13 +15,13 @@ import {
 import { useFile } from "../contexts/FileContext";
 import { useToolAction } from "../hooks/useToolAction";
 import { ControlTreeEnvironment } from "../treeEnvironments/ControlTreeEnvironment";
-import { UseState } from "../types";
+import { type UseState } from "../types";
 import { ControlEdit } from "./ControlEdit";
 
 type ControlTreeProps = {
   selectedControlsState: UseState<string[]>;
   onEditControlSteps?: () => void;
-};
+}
 
 export const ControlTree: React.FC<ControlTreeProps> = ({
   selectedControlsState,
@@ -58,15 +61,15 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
         <ToolBar size="small">
           <ToolButton
             icon={<Icon>⚙️</Icon>}
-            tooltip={"Add control"}
-            label={"+"}
+            tooltip="Add control"
+            label="+"
             onClick={addControlAction}
             onKeyDown={addControlAction}
           />
           <ToolSeparator />
           <ToolButton
             icon={<Icon>🗑</Icon>}
-            tooltip={"Remove control"}
+            tooltip="Remove control"
             onClick={removeControlAction}
             onKeyDown={removeControlAction}
             disabled={selectedControls.length !== 1}

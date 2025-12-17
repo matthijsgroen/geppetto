@@ -1,6 +1,7 @@
-import { createProgram, WebGLRenderer } from "../lib/webgl";
 import raw from "raw.macro";
-import { ScreenTranslation } from "../../types";
+
+import { type ScreenTranslation } from "../../types";
+import { createProgram, type WebGLRenderer } from "../lib/webgl";
 const textureVertexShader = raw("./showTexture.vert");
 const textureFragmentShader = raw("./showTexture.frag");
 

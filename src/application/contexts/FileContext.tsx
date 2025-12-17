@@ -1,7 +1,13 @@
-import { createContext, PropsWithChildren, useContext, useState } from "react";
+import {
+  createContext,
+  type PropsWithChildren,
+  useContext,
+  useState,
+} from "react";
+
 import { newFile } from "../../animation/file2/new";
-import { GeppettoImage } from "../../animation/file2/types";
-import { UpdateState, UseState } from "../types";
+import { type GeppettoImage } from "../../animation/file2/types";
+import { type UpdateState, type UseState } from "../types";
 
 export const ImageFileContext = createContext<{
   file: GeppettoImage;

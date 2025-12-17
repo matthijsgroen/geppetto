@@ -1,6 +1,9 @@
 import { getPreviousOfType } from "../../../animation/file2/hierarchy";
-import { GeppettoImage, MutationVector } from "../../../animation/file2/types";
-import { Vec2 } from "../../../types";
+import {
+  type GeppettoImage,
+  type MutationVector,
+} from "../../../animation/file2/types";
+import { type Vec2 } from "../../../types";
 import {
   distance,
   mergeMutationValue,

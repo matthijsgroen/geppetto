@@ -1,7 +1,8 @@
-import { TreeItem, TreeItemIndex } from "react-complex-tree";
-import { NodeType } from "../../animation/file2/types";
-import { TreeData } from "./Tree";
-import React from "react";
+import type React from "react";
+import { type TreeItem, type TreeItemIndex } from "react-complex-tree";
+
+import { type NodeType } from "../../animation/file2/types";
+import { type TreeData } from "./Tree";
 
 export type ToolsProvider = (data: TreeData<NodeType>) => React.ReactNode;
 

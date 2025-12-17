@@ -1,12 +1,13 @@
 import { produce } from "immer";
 import {
-  ChangeEvent,
-  MouseEvent,
-  KeyboardEvent,
+  type ChangeEvent,
+  type KeyboardEvent,
+  type MouseEvent,
   useEffect,
   useState,
   useTransition,
 } from "react";
+
 import {
   insertControlStep,
   removeControlStep,
@@ -32,7 +33,7 @@ import useEvent from "../hooks/useEvent";
 type ControlEditProps = {
   selectedControlIds: string[];
   onEditControlSteps?: () => void;
-};
+}
 
 const EditStepsToggle: React.FC<{
   editControlSteps?: boolean;
@@ -58,9 +59,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   const [, startTransition] = useTransition();
 
   const isNoControl =
-    activeControlId === null ||
-    !hierarchyItem ||
-    hierarchyItem.type !== "control";
+    activeControlId === null || hierarchyItem?.type !== "control";
   const controlValues = useControlValues();
   const updateControlValues = useUpdateControlValues();
 
@@ -96,7 +95,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
       ...current,
       [activeControlId]: 0,
     }));
-    onEditControlSteps && onEditControlSteps();
+    onEditControlSteps?.();
   });
 
   if (isNoControl) {
@@ -111,7 +110,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
       <ControlPanel>
         <Control label="Value">
           <input
-            type={"range"}
+            type="range"
             min={0}
             max={control.steps.length - 1}
             step={0.01}
@@ -136,7 +135,7 @@ type ControlEditStepProps = {
   activeControlStep: number;
   onControlEditDone?: () => void;
   onControlStepSelect?: (stepNr: number) => void;
-};
+}
 
 export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   selectedControlIds,
@@ -169,9 +168,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   });
 
   const isNoControl =
-    activeControlId === null ||
-    !hierarchyItem ||
-    hierarchyItem.type !== "control";
+    activeControlId === null || hierarchyItem?.type !== "control";
   const updateControlValues = useUpdateControlValues();
 
   const handleStepSelect = useEvent((event: MouseEvent<HTMLButtonElement>) => {
@@ -181,7 +178,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
       ...current,
       [activeControlId]: value,
     }));
-    onControlStepSelect && onControlStepSelect(value);
+    onControlStepSelect?.(value);
   });
 
   const handleStepKeyDown = useEvent((e: KeyboardEvent<HTMLButtonElement>) => {
@@ -196,7 +193,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
           ...current,
           [activeControlId]: afterRemoveValue,
         }));
-        onControlStepSelect && onControlStepSelect(afterRemoveValue);
+        onControlStepSelect?.(afterRemoveValue);
       }, 0);
     }
   });
@@ -212,7 +209,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
         ...current,
         [activeControlId]: afterRemoveValue,
       }));
-      onControlStepSelect && onControlStepSelect(afterRemoveValue);
+      onControlStepSelect?.(afterRemoveValue);
     }, 0);
   });
 
@@ -226,7 +223,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
         ...current,
         [activeControlId]: value,
       }));
-      onControlStepSelect && onControlStepSelect(value);
+      onControlStepSelect?.(value);
     }, 0);
   });
 
@@ -237,7 +234,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
       ...current,
       [activeControlId]: file.controlValues[activeControlId],
     }));
-    onControlEditDone && onControlEditDone();
+    onControlEditDone?.();
   });
 
   const handleAddStep = useEvent(() => {
@@ -248,7 +245,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
       ...current,
       [activeControlId]: value,
     }));
-    onControlStepSelect && onControlStepSelect(value);
+    onControlStepSelect?.(value);
   });
 
   if (isNoControl) {
@@ -294,7 +291,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
         {onControlEditDone && (
           <EditStepsToggle
             onEditControlSteps={handleControlEditDone}
-            editControlSteps={true}
+            editControlSteps
           />
         )}
       </ControlPanel>

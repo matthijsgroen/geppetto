@@ -1,7 +1,7 @@
-import { FC, PropsWithChildren } from "react";
+import { type FC, type PropsWithChildren } from "react";
 
 type ColumnProps = PropsWithChildren;
 
 export const Column: FC<ColumnProps> = ({ children }) => (
-  <div className="flex flex-col flex-1 overflow-hidden">{children}</div>
+  <div className="flex flex-1 flex-col overflow-hidden">{children}</div>
 );

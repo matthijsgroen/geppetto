@@ -11,7 +11,7 @@ import {
   SKIP_CHILDREN,
   visit,
 } from "./hierarchy";
-import { Hierarchy } from "./types";
+import { type Hierarchy } from "./types";
 
 describe("addInHierarchy", () => {
   const hierarchy: Hierarchy<"item"> = {
@@ -334,7 +334,7 @@ describe("visit", () => {
   });
 
   it("accepts a starting node", () => {
-    let visitedIds: string[] = [];
+    const visitedIds: string[] = [];
     visit(
       hierarchy,
       (_node, nodeId) => {

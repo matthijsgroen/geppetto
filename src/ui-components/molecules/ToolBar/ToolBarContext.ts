@@ -1,5 +1,6 @@
 import { createContext } from "react";
-import { ToolBarSize } from "./ToolBar";
+
+import { type ToolBarSize } from "./ToolBar";
 
 export const ToolbarContext = createContext<{
   size: ToolBarSize;

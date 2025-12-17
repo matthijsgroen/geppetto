@@ -1,4 +1,5 @@
 import preview from "#.storybook/preview";
+
 import { Paragraph as ParagraphElement } from "./Paragraph";
 
 const meta = preview.meta({

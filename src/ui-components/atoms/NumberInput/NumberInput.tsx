@@ -1,8 +1,8 @@
 import {
-  ChangeEvent,
-  FC,
-  KeyboardEvent,
-  KeyboardEventHandler,
+  type ChangeEvent,
+  type FC,
+  type KeyboardEvent,
+  type KeyboardEventHandler,
   useCallback,
 } from "react";
 
@@ -27,7 +27,7 @@ type NumberInputProps = {
   maxValue?: number;
   htmlId?: string;
   onChange?: (newValue: number) => void;
-};
+}
 
 const stepSizes: Record<StepSize, number> = {
   [StepSize.EXTRA_SMALL]: 0.01,
@@ -75,22 +75,22 @@ export const NumberInput: FC<NumberInputProps> = ({
 }) => {
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      onChange && onChange(e.currentTarget.valueAsNumber);
+      onChange?.(e.currentTarget.valueAsNumber);
     },
     [onChange]
   );
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) =>
-      numberStepControl((stepValue) => onChange && onChange(stepValue))(e),
+      numberStepControl((stepValue) => onChange?.(stepValue))(e),
     [onChange]
   );
 
   return (
-    <label className="inline-block bg-panel p-1 border-t-2 border-b-2 border-panel text-dimmed shadow-sm cursor-text h-fit first:rounded-l-control-small last:rounded-r-control-small hover:focus-within:border-control-focus focus-within:border-control-focus focus-within:text-text first:border-l-2 last:border-r-2 hover:border-control-highlight">
+    <label className="inline-block h-fit cursor-text border-y-2 border-panel bg-panel p-1 text-dimmed shadow-sm first:rounded-l-control-small first:border-l-2 last:rounded-r-control-small last:border-r-2 focus-within:border-control-focus focus-within:text-text hover:border-control-highlight hover:focus-within:border-control-focus">
       {prefix}
       <input
-        className="bg-transparent border-0 text-dimmed w-[4ch] focus:w-[6ch] hide-spinner focus:outline-none focus:text-text"
+        className="hide-spinner w-[4ch] border-0 bg-transparent text-dimmed focus:w-[6ch] focus:text-text focus:outline-none"
         type="number"
         id={htmlId}
         value={value}

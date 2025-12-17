@@ -1,6 +1,7 @@
-import { FC, PropsWithChildren } from "react";
-import { ToolBarSize } from "../../molecules/ToolBar/ToolBar";
 import clsx from "clsx";
+import { type FC, type PropsWithChildren } from "react";
+
+import { type ToolBarSize } from "../../molecules/ToolBar/ToolBar";
 
 type LabelProps = PropsWithChildren<{
   size?: ToolBarSize;
@@ -16,7 +17,7 @@ export const Paragraph: FC<LabelProps> = ({
   selectable = true,
 }) => (
   <p
-    className={clsx("font-caption py-2 text-text", {
+    className={clsx("py-2 text-text font-caption", {
       "text-xs": size === "small",
       "select-text": selectable,
     })}

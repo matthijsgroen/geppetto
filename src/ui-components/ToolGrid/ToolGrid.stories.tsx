@@ -1,7 +1,11 @@
-import { ComponentStory, ComponentMeta } from "@storybook/react-webpack5";
-import { ToolGrid } from "./ToolGrid";
+import {
+  type ComponentMeta,
+  type ComponentStory,
+} from "@storybook/react-webpack5";
+
 import { Icon } from "../atoms/Icon/Icon";
 import { ToolButton } from "../atoms/ToolButton/ToolButton";
+import { ToolGrid } from "./ToolGrid";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {
@@ -13,7 +17,7 @@ export default {
   args: {
     children: [
       <ToolButton icon={<Icon>💡</Icon>} key={0} />,
-      <ToolButton active={true} icon={<Icon>🎓</Icon>} key={1} />,
+      <ToolButton active icon={<Icon>🎓</Icon>} key={1} />,
       <ToolButton icon={<Icon>🧲</Icon>} key={3} />,
       <ToolButton icon={<Icon>🧵</Icon>} key={4} />,
       <ToolButton icon={<Icon>🚧</Icon>} key={6} />,

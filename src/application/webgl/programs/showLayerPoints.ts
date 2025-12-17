@@ -1,9 +1,10 @@
-import { Vec2 } from "../../../types";
-import { Layer } from "../../../animation/file2/types";
-import { createProgram, WebGLRenderer } from "../lib/webgl";
 import raw from "raw.macro";
+
+import { type Layer } from "../../../animation/file2/types";
+import { type Vec2 } from "../../../types";
 import { colorScheme } from "../../theme/darkMode";
-import { ScreenTranslation } from "../../types";
+import { type ScreenTranslation } from "../../types";
+import { createProgram, type WebGLRenderer } from "../lib/webgl";
 
 const layerPointsVertexShader = raw("./showLayerPoints.vert");
 const layerPointsFragmentShader = raw("./showLayerPoints.frag");

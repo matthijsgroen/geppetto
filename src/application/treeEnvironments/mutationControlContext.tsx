@@ -1,9 +1,10 @@
 import {
   createContext,
-  PropsWithChildren,
-  ReactElement,
+  type PropsWithChildren,
+  type ReactElement,
   useContext,
 } from "react";
+
 import { useFile } from "../contexts/FileContext";
 
 const MutControlContext = createContext<{

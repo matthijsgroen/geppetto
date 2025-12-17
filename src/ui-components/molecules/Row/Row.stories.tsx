@@ -1,5 +1,6 @@
-import { Row as RowComponent } from "./Row";
 import preview from "#.storybook/preview";
+
+import { Row as RowComponent } from "./Row";
 
 const meta = preview.meta({
   title: "Molecules/Row",
@@ -13,8 +14,8 @@ export default meta;
 export const Row = meta.story({
   args: {
     children: [
-      <div key="1" className="size-12 bg-blue-400"></div>,
-      <div key="2" className="size-12 bg-red-400"></div>,
+      <div key="1" className="size-12 bg-blue-400" />,
+      <div key="2" className="size-12 bg-red-400" />,
     ],
   },
 });

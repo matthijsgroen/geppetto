@@ -1,16 +1,16 @@
-import { Vec2 } from "../../types";
+import { type Vec2 } from "../../types";
 
 export type NodeType = "layerFolder" | "layer" | "mutation";
 export type TreeNode<Type extends string> = {
   type: Type;
   parentId: string;
   children?: string[];
-};
+}
 
 export type RootNode = {
   type: "root";
   children: string[];
-};
+}
 
 export type Hierarchy<Type extends string> = Record<
   string,
@@ -22,12 +22,12 @@ export type Layer = {
   visible: boolean;
   points: Vec2[];
   translate: Vec2;
-};
+}
 
 export type Folder = {
   name: string;
   collapsed: boolean;
-};
+}
 
 export type LayerFolder = Folder & {
   visible: boolean;
@@ -46,29 +46,29 @@ export type FrameControlAction = {
   controlValue: number;
   start: number;
   duration: number;
-};
+}
 
 export type FrameLayerVisibilityAction = {
   layerId: string;
   visible: boolean;
   start: number;
-};
+}
 
 export type FrameEvent = {
   event: string;
   start: number;
-};
+}
 
 type Animation = {
   name: string;
   looping: boolean;
   actions: FrameAction[];
-};
+}
 
 type BaseVector = {
   name: string;
   origin: Vec2;
-};
+}
 
 export type TranslationVector = BaseVector & {
   type: "translate";
@@ -121,7 +121,7 @@ export type ControlDefinition = {
   name: string;
   type: "slider";
   steps: Keyframe[];
-};
+}
 
 export type GeppettoImage = {
   version: `2.${number}`;
@@ -145,4 +145,4 @@ export type GeppettoImage = {
   animationHierarchy: Hierarchy<"animationFolder" | "animation">;
   animationFolders: Record<string, Folder>;
   animations: Record<string, Animation>;
-};
+}

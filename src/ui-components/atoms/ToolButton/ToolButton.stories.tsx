@@ -1,7 +1,9 @@
+import { expect,fn, waitFor } from "storybook/test";
+
 import preview from "#.storybook/preview";
-import { ToolButton } from "./ToolButton";
+
 import { Icon } from "../Icon/Icon";
-import { fn, waitFor, expect } from "storybook/test";
+import { ToolButton } from "./ToolButton";
 
 const meta = preview.meta({
   title: "Atoms/ToolButton",

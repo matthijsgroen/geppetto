@@ -1,8 +1,9 @@
-import { FC, ReactNode, Ref, use } from "react";
-import { Label } from "../Label/Label";
-import { ToolBarSize } from "../../molecules/ToolBar/ToolBar";
-import { ToolbarContext } from "../../molecules/ToolBar/ToolBarContext";
 import { clsx } from "clsx";
+import { type FC, type ReactNode, type Ref, use } from "react";
+
+import { type ToolBarSize } from "../../molecules/ToolBar/ToolBar";
+import { ToolbarContext } from "../../molecules/ToolBar/ToolBarContext";
+import { Label } from "../Label/Label";
 
 type ToolTabProps = {
   label?: ReactNode;
@@ -15,7 +16,7 @@ type ToolTabProps = {
   ref?: Ref<HTMLButtonElement>;
   onClick?: () => void;
   onKeyDown?: () => void;
-};
+}
 
 export const ToolTab: FC<ToolTabProps> = ({
   icon,
@@ -30,23 +31,23 @@ export const ToolTab: FC<ToolTabProps> = ({
   ref,
 }) => {
   const toolbarProps = use(ToolbarContext);
-  const useSize = size === undefined ? toolbarProps.size : size ?? "default";
+  const useSize = size === undefined ? toolbarProps.size : (size ?? "default");
   const useVertical =
-    vertical === undefined ? toolbarProps.vertical : vertical ?? false;
+    vertical === undefined ? toolbarProps.vertical : (vertical ?? false);
   return (
     <button
       type="button"
       className={clsx(
-        "font-caption inline-flex bg-panel enabled:hover:bg-control-highlight disabled:opacity-50 focus-visible:outline-active bg-no-repeat items-center outline-2 outline-transparent whitespace-nowrap",
+        `inline-flex items-center bg-panel bg-no-repeat whitespace-nowrap outline-2 outline-transparent font-caption focus-visible:outline-active enabled:hover:bg-control-highlight disabled:opacity-50`,
         {
-          "text-text border-transparent": !active,
-          "text-active border-control-active": active,
-          "border-b-3 mt-0.5 gap-2 px-4": !useVertical,
+          "border-transparent text-text": !active,
+          "border-control-active text-active": active,
+          "mt-0.5 gap-2 border-b-3 px-4": !useVertical,
           "h-[calc(3rem-3px)]": !useVertical && useSize === "default",
           "h-[calc(2.25rem-3px)]": !useVertical && useSize === "small",
           "w-[calc(3rem-3px)]": useVertical && useSize === "default",
           "w-[calc(2.25rem-3px)]": useVertical && useSize === "small",
-          "flex-col gap-2 py-4 border-l-3 mr-0.5 h-fit": useVertical,
+          "mr-0.5 h-fit flex-col gap-2 border-l-3 py-4": useVertical,
           "from-control-default via-control-default/50 to-panel/0": active,
           "bg-radial-[farthest-side] bg-position-[0em_1em]":
             active && !useVertical,

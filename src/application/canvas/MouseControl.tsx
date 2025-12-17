@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, PropsWithChildren } from "react";
+import { type PropsWithChildren,useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import { Vec2 } from "../../types";
+
+import { type Vec2 } from "../../types";
 import useEvent from "../hooks/useEvent";
 
 export enum MouseMode {
@@ -28,7 +29,7 @@ const MouseControlContainer = styled.div<{ $mode: MouseMode }>`
       [MouseMode.Normal]: "default",
       [MouseMode.Aim]: "crosshair",
       [MouseMode.Target]: "pointer",
-    }[props.$mode])};
+    })[props.$mode]};
   border: 1px solid ${(props) => props.theme.colors.controlEdge};
 
   &:focus {
@@ -36,7 +37,7 @@ const MouseControlContainer = styled.div<{ $mode: MouseMode }>`
   }
 `;
 
-interface MouseEventsProps {
+type MouseEventsProps = {
   onMouseMove?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseDown?: (event: React.MouseEvent<HTMLElement>) => void;
   onMouseUp?: (event: React.MouseEvent<HTMLElement>) => void;
@@ -79,8 +80,8 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
     isGrabbing && mode === MouseMode.Normal
       ? MouseMode.Panning
       : isGrabbing && mode === MouseMode.Grab
-      ? MouseMode.Grabbing
-      : mode;
+        ? MouseMode.Grabbing
+        : mode;
 
   return (
     <MouseControlContainer
@@ -89,11 +90,11 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
       tabIndex={0}
       onMouseDown={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
         setIsGrabbing(true);
-        onMouseDown && onMouseDown(e);
+        onMouseDown?.(e);
       })}
       onMouseUp={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
         setIsGrabbing(false);
-        onMouseUp && onMouseUp(e);
+        onMouseUp?.(e);
       })}
       onMouseMove={onMouseMove}
       onKeyDown={onKeyDown}

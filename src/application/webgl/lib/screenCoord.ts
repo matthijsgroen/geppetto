@@ -1,5 +1,5 @@
-import { Vec2 } from "../../../types";
-import { ScreenTranslation, Size } from "../../types";
+import { type Vec2 } from "../../../types";
+import { type ScreenTranslation, type Size } from "../../types";
 import { vecAdd, vecScale, vecSub } from "./vertices";
 
 export const imageToPixels = (translation: ScreenTranslation, rect: Size) => {

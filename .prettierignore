@@ -1,0 +1,10 @@
+dist
+build
+node_modules
+storybook-static
+src/old
+coverage
+*.min.js
+*.min.css
+.yarn
+.pnp.*

@@ -1,6 +1,7 @@
 import { produce } from "immer";
-import { ChangeEvent, useCallback } from "react";
-import { Vec2 } from "../../../types";
+import { type ChangeEvent, useCallback } from "react";
+
+import { type Vec2 } from "../../../types";
 import { Control, RangeInput } from "../../../ui-components";
 
 const defaultFormatter = (value: number) => `${value}`;
@@ -14,7 +15,7 @@ type ValueSliderProps = {
   valueFormatter?: (value: number) => string;
   value: Vec2;
   onValueChange: (newValue: Vec2) => void;
-};
+}
 
 export const ValueSlider: React.FC<ValueSliderProps> = ({
   min,

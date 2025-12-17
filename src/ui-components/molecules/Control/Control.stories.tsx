@@ -1,9 +1,10 @@
-import { Control as ControlComponent } from "./Control";
-import { ControlPanel } from "../ControlPanel/ControlPanel";
-import { NumberInput } from "../../atoms/NumberInput/NumberInput";
 import preview from "#.storybook/preview";
-import { ToggleInput } from "../../atoms/ToggleInput/ToggleInput";
+
+import { NumberInput } from "../../atoms/NumberInput/NumberInput";
 import { RangeInput } from "../../atoms/RangeInput/RangeInput";
+import { ToggleInput } from "../../atoms/ToggleInput/ToggleInput";
+import { ControlPanel } from "../ControlPanel/ControlPanel";
+import { Control as ControlComponent } from "./Control";
 
 const meta = preview.meta({
   title: "Molecules/Control",
@@ -33,8 +34,8 @@ export const NumberControl = meta.story({
 export const VectorControl = meta.story({
   args: {
     children: [
-      <NumberInput key={"x"} value={10} prefix="x:" htmlId="InputField" />,
-      <NumberInput key={"y"} value={10} prefix="y:" />,
+      <NumberInput key="x" value={10} prefix="x:" htmlId="InputField" />,
+      <NumberInput key="y" value={10} prefix="y:" />,
     ],
   },
 });
