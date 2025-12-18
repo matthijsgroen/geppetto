@@ -1,23 +1,14 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+name: UI Tests
 
-name: CI
-
-on:
-  push:
-    branches: ["next"]
-  pull_request:
-    branches: ["next"]
+on: [push]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [24.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
+    container:
+      # Make sure to grab the latest version of the Playwright image
+      # https://playwright.dev/docs/docker#pull-the-image
+      image: mcr.microsoft.com/playwright:v1.52.0-noble
     steps:
       - uses: actions/checkout@v4
       - name: Enable Corepack
@@ -40,11 +31,5 @@ jobs:
       - name: yarn install
         run: yarn install
 
-      - name: Check linting rules
-        run: yarn lint
-
-      - name: Run unit tests
-        run: yarn test --coverage
-
-      - name: Report coverage
-        uses: codecov/codecov-action@v3
+      - name: Run tests
+        run: yarn test-storybook
