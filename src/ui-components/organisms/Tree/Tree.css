@@ -49,4 +49,5 @@
 
 .rct-tree-item-title-container {
   padding-right: 0.25rem;
+  gap: 0.25rem;
 }
