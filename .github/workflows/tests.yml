@@ -25,8 +25,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
+
+      - name: Setup Yarn
+        run: corepack enable
+
       - name: Install Dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable-cache
 
       - name: Check linting rules
         run: yarn lint
@@ -47,8 +51,11 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
+      - name: Setup Yarn
+        run: corepack enable
+
       - name: Install Dependencies
-        run: yarn install --immutable
+        run: yarn install --immutable-cache
 
       - name: Run unit tests
         run: yarn test --coverage

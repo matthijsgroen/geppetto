@@ -19,11 +19,14 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - name: Use Node.js 16.x
+      - name: Use Node.js 24.x
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 24.x
           cache: "yarn"
+
+      - name: Setup Yarn
+        run: corepack enable
 
       - name: Install Dependencies
         run: yarn install --prefer-offline --frozen-lockfile --immutable
