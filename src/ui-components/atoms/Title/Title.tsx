@@ -1,9 +1,7 @@
-import { type FC, type PropsWithChildren } from "react";
+import type { FC, PropsWithChildren } from "react";
 
-type TitleProps = PropsWithChildren;
-
-export const Title: FC<TitleProps> = ({ children }) => (
-  <h3 className="m-2 text-sm font-normal text-dimmed uppercase font-caption">
+export const Title: FC<PropsWithChildren> = ({ children }) => (
+  <h1 className="mt-2 text-2xl font-semibold text-text font-caption">
     {children}
-  </h3>
+  </h1>
 );

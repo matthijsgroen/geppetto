@@ -1,6 +1,8 @@
 import { produce } from "immer";
 import { type ChangeEvent, useCallback } from "react";
 
+import { RangeValue } from "#src/ui-components/atoms/RangeValue/RangeValue.js";
+
 import { type Vec2 } from "../../../types";
 import { Control, RangeInput } from "../../../ui-components";
 
@@ -15,7 +17,7 @@ type ValueSliderProps = {
   valueFormatter?: (value: number) => string;
   value: Vec2;
   onValueChange: (newValue: Vec2) => void;
-}
+};
 
 export const ValueSlider: React.FC<ValueSliderProps> = ({
   min,
@@ -47,7 +49,7 @@ export const ValueSlider: React.FC<ValueSliderProps> = ({
         max={max}
         step={step}
       />
-      <p>{valueFormatter(value[vectorIndex])}</p>
+      <RangeValue value={value[vectorIndex]} formatter={valueFormatter} />
     </Control>
   );
 };

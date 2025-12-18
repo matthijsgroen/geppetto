@@ -14,6 +14,7 @@ import {
   MenuItem,
   NumberInput,
   Panel,
+  PanelTitle,
   Paragraph,
   RangeInput,
   ResizeDirection,
@@ -146,7 +147,7 @@ export const Version1Alt = meta.story({
               defaultSize={300}
             >
               <Panel padding="sm">
-                <Title>Controls</Title>
+                <PanelTitle>Controls</PanelTitle>
                 <ToolBar size="small">
                   <ToolButton
                     icon={<Icon>⚙️</Icon>}
@@ -165,7 +166,7 @@ export const Version1Alt = meta.story({
                 >
                   <Tree treeId="controls" />
                 </TreeEnvironment>
-                <Title>Left Arm</Title>
+                <PanelTitle>Left Arm</PanelTitle>
                 <ControlPanel>
                   <Control label="Value">
                     <RangeInput />
@@ -183,7 +184,7 @@ export const Version1Alt = meta.story({
         <Panel center workspace>
           <div>
             <Logo />
-            <h1>Welcome to Geppetto</h1>
+            <Title>Welcome to Geppetto</Title>
             <Paragraph>Some introduction text here...</Paragraph>
             <Paragraph>
               <ToolButton
@@ -203,7 +204,7 @@ export const Version1Alt = meta.story({
         >
           <Column>
             <Panel padding="sm">
-              <Title>Opacity (4)</Title>
+              <PanelTitle>Opacity (4)</PanelTitle>
               <ControlPanel>
                 <Control label="Visible">
                   <ToggleInput checked />

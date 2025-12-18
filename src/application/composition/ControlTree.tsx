@@ -6,7 +6,7 @@ import {
 import {
   Icon,
   Panel,
-  Title,
+  PanelTitle,
   ToolBar,
   ToolButton,
   ToolSeparator,
@@ -21,7 +21,7 @@ import { ControlEdit } from "./ControlEdit";
 type ControlTreeProps = {
   selectedControlsState: UseState<string[]>;
   onEditControlSteps?: () => void;
-}
+};
 
 export const ControlTree: React.FC<ControlTreeProps> = ({
   selectedControlsState,
@@ -57,7 +57,7 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
       treeId="controls"
     >
       <Panel padding="sm">
-        <Title>Controls</Title>
+        <PanelTitle>Controls</PanelTitle>
         <ToolBar size="small">
           <ToolButton
             icon={<Icon>⚙️</Icon>}

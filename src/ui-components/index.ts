@@ -4,6 +4,7 @@ export * from "./atoms/Kbd/shortcut";
 export { Label } from "./atoms/Label/Label";
 export { Logo, LogoIcon } from "./atoms/Logo/Logo";
 export { NumberInput } from "./atoms/NumberInput/NumberInput";
+export { PanelTitle } from "./atoms/PanelTitle/PanelTitle";
 export { Paragraph } from "./atoms/Paragraph/Paragraph";
 export { RangeInput } from "./atoms/RangeInput/RangeInput";
 export { TextButton } from "./atoms/TextButton/TextButton";

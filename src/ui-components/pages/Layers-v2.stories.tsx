@@ -12,6 +12,7 @@ import {
   MenuItem,
   MenuRadioGroup,
   Panel,
+  PanelTitle,
   Paragraph,
   ResizeDirection,
   ResizePanel,
@@ -82,7 +83,7 @@ export const Version2 = meta.story({
       >
         <Column>
           <Panel padding="sm">
-            <Title>Layers</Title>
+            <PanelTitle>Layers</PanelTitle>
             <ToolBar size="small">
               <ToolButton
                 icon={<Icon>📄</Icon>}
@@ -161,7 +162,7 @@ export const Version2 = meta.story({
           <Panel center workspace>
             <div>
               <Logo />
-              <h1>Welcome to Geppetto</h1>
+              <Title>Welcome to Geppetto</Title>
               <Paragraph>Some introduction text here...</Paragraph>
               <Paragraph>
                 <ToolButton

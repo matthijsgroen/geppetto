@@ -14,8 +14,8 @@ import {
   ControlPanel,
   Icon,
   Kbd,
+  PanelTitle,
   Paragraph,
-  Title,
   ToggleInput,
 } from "../../ui-components";
 import { useFile } from "../contexts/FileContext";
@@ -37,12 +37,12 @@ type ItemEditProps = {
   editingControlId?: string;
   editingControlStep?: number;
   onSelectControl?: (controlId: string) => void;
-}
+};
 
 type EditProps = {
   itemId: string;
   onSelectControl?: (controlId: string) => void;
-}
+};
 
 const blankValue: Vec2 = [0, 0];
 
@@ -56,9 +56,9 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
 
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>📁</Icon> {layerFolder.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         <Control label="Visible" htmlFor={`${itemId}_visibility`}>
           <ToggleInput
@@ -95,9 +95,9 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
 
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>📄</Icon> {layer.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         <VectorControl
           label="Offset"
@@ -177,9 +177,9 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
 
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>{iconMapping[mutation.type]}</Icon> {mutation.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         {isShapeMutationVector(mutation) && (
           <VectorControl
@@ -248,7 +248,7 @@ export const ItemEdit: React.FC<
   }
   return (
     <>
-      <Title>No selection</Title>
+      <PanelTitle>No selection</PanelTitle>
     </>
   );
 };

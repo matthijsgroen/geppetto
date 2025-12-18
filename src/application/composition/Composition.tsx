@@ -75,8 +75,8 @@ import { ShapeTree } from "./ShapeTree";
 type CompositionProps = {
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
-  menu?: React.ReactChild;
-}
+  menu?: React.ReactNode;
+};
 
 const TOGGLE_INFO_SHORTCUT: Shortcut = {
   ctrlOrCmd: true,

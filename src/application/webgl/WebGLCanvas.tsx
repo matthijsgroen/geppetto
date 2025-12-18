@@ -6,7 +6,6 @@ import {
   useRef,
   useState,
 } from "react";
-import styled from "styled-components";
 
 import {
   type Subscription,
@@ -16,23 +15,6 @@ import { mergeRefs } from "../lib/mergeRefs";
 import { type WebGLRenderer, webGLScene } from "./lib/webgl";
 
 const HEIGHT_PIXEL_FIX = 4;
-
-const CanvasContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-
-  canvas {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100% !important;
-    height: 100% !important;
-  }
-`;
 
 const startWebGL = async (
   node: HTMLCanvasElement,
@@ -138,10 +120,13 @@ const WebGLCanvas: FC<WebGLCanvasProps> = ({ renderers, children, ref }) => {
   }, [renderers, mounted, subscribe]);
 
   return (
-    <CanvasContainer ref={mergeRefs([ref, containerRef])}>
+    <div
+      ref={mergeRefs([ref, containerRef])}
+      className="relative size-full overflow-hidden"
+    >
       {children}
-      <canvas ref={canvasRef} />
-    </CanvasContainer>
+      <canvas ref={canvasRef} className="absolute inset-0 size-full" />
+    </div>
   );
 };
 

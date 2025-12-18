@@ -1,11 +1,13 @@
 import type { FC, PropsWithChildren } from "react";
 
+import { Title } from "../atoms/Title/Title";
+
 export const FoundationList: FC<PropsWithChildren<{ title: string }>> = ({
   title,
   children,
 }) => (
   <div>
-    <h1 className="font-caption text-3xl font-bold">{title}</h1>
+    <Title>{title}</Title>
     <div className="flex flex-row flex-wrap gap-8 self-start p-8">
       {children}
     </div>
@@ -18,7 +20,7 @@ export const FoundationItem: FC<PropsWithChildren<{ label: string }>> = ({
 }) => (
   <div className="flex w-60 flex-row items-center gap-2">
     <div className="flex flex-1 items-center justify-end">
-      <p className="text-end">{label}</p>
+      <p className="text-end text-text">{label}</p>
     </div>
     <div>{children}</div>
   </div>

@@ -1,9 +1,7 @@
-import raw from "raw.macro";
-
 import { type ScreenTranslation } from "../../types";
 import { createProgram, type WebGLRenderer } from "../lib/webgl";
-const textureVertexShader = raw("./showTexture.vert");
-const textureFragmentShader = raw("./showTexture.frag");
+import textureFragmentShader from "./showTexture.frag";
+import textureVertexShader from "./showTexture.vert";
 
 export const showTexture = (
   trans: ScreenTranslation

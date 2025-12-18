@@ -1,5 +1,6 @@
 import { type TranslationVector } from "geppetto-player";
-import raw from "raw.macro";
+
+import { isInDarkMode } from "#src/application/lib/isInDarkmode.js";
 
 import { collectChildIds, visit } from "../../../animation/file2/hierarchy";
 import { isShapeMutationVector } from "../../../animation/file2/mutation";
@@ -9,14 +10,12 @@ import {
   type Keyframe,
   type MutationVector,
 } from "../../../animation/file2/types";
-import { colorScheme } from "../../theme/darkMode";
 import { type ScreenTranslation } from "../../types";
 import { flatten } from "../lib/vertices";
 import { createProgram, type WebGLRenderer } from "../lib/webgl";
+import compositionFragmentShader from "./showCompositionVectors.frag";
+import compositionVertexShader from "./showCompositionVectors.vert";
 import { createShapeMutationList, MAX_MUTATION_VECTORS } from "./utils";
-
-const compositionVertexShader = raw("./showCompositionVectors.vert");
-const compositionFragmentShader = raw("./showCompositionVectors.frag");
 
 type Color = [number, number, number];
 
@@ -289,6 +288,7 @@ export const showCompositionVectors = (
           if (!img || !shapes) {
             return;
           }
+          const inDarkMode = isInDarkMode();
           const gl = initGl;
           gl.useProgram(shaderProgram);
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
@@ -359,7 +359,7 @@ export const showCompositionVectors = (
               gl.uniform1f(
                 programInfo.uniforms.active,
                 vectorsSelected.length === 1 || vector.id === activeMutation
-                  ? colorScheme.darkMode
+                  ? inDarkMode
                     ? 2.0
                     : 1.0
                   : 0.0

@@ -17,6 +17,7 @@ import {
   ResizePanel,
   Row,
   SubMenu,
+  Title,
   ToolBar,
   ToolButton,
   ToolSeparator,
@@ -157,7 +158,7 @@ export const Version1 = meta.story({
         <Panel center workspace>
           <div>
             <Logo />
-            <h1>Welcome to Geppetto</h1>
+            <Title>Welcome to Geppetto</Title>
             <Paragraph>Some introduction text here...</Paragraph>
             <Paragraph>
               <ToolButton

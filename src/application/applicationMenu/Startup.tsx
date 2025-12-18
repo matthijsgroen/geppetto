@@ -4,9 +4,14 @@ import { useContext } from "react";
 import { isNewFile } from "../../animation/file2/new";
 import { hasPoints } from "../../animation/file2/shapes";
 import { type GeppettoImage } from "../../animation/file2/types";
-import { Icon, Logo, ToolButton } from "../../ui-components";
-import { Kbd } from "../../ui-components/atoms/Kbd/Kbd";
-import { Paragraph } from "../../ui-components/atoms/Paragraph/Paragraph";
+import {
+  Icon,
+  Kbd,
+  Logo,
+  Paragraph,
+  Title,
+  ToolButton,
+} from "../../ui-components";
 import { versionInfo } from "../../versionInfo";
 import { ApplicationContext } from "../contexts/ApplicationContext";
 
@@ -27,7 +32,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
     return (
       <div>
         <Logo />
-        <h1>Welcome to Geppetto</h1>
+        <Title>Welcome to Geppetto</Title>
         <Paragraph>
           Geppetto is a free and open animation tool
           <br /> to create and embed WebGL animations
@@ -38,7 +43,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
           complete yet!)
         </Paragraph>
         {isNewFile(file) && (
-          <p>
+          <Paragraph>
             <ToolButton
               icon={<Icon>📄</Icon>}
               label="Load file..."
@@ -47,9 +52,9 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
               shadow
             />
             <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
-          </p>
+          </Paragraph>
         )}
-        <p>
+        <Paragraph>
           <ToolButton
             icon={<Icon>🌅</Icon>}
             label="Load texture..."
@@ -60,9 +65,9 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
           <Kbd
             shortcut={{ interaction: "KeyO", ctrlOrCmd: true, shift: true }}
           />
-        </p>
-        <p>&mdash; Or &mdash;</p>
-        <p>
+        </Paragraph>
+        <Paragraph>&mdash; Or &mdash;</Paragraph>
+        <Paragraph>
           <ToolButton
             icon={<Icon>🏡</Icon>}
             label="Load demo file"
@@ -70,7 +75,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
             size="small"
             shadow
           />
-        </p>
+        </Paragraph>
         <Paragraph size="small">
           Version: {versionInfo.version} - {versionInfo.commit.slice(0, 6)},
           released{" "}

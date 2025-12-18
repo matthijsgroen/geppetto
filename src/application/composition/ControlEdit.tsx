@@ -8,6 +8,8 @@ import {
   useTransition,
 } from "react";
 
+import { RangeValue } from "#src/ui-components/atoms/RangeValue/RangeValue.js";
+
 import {
   insertControlStep,
   removeControlStep,
@@ -18,7 +20,8 @@ import {
   ControlPanel,
   Icon,
   MenuItem,
-  Title,
+  PanelTitle,
+  RangeInput,
   ToolButton,
   ToolGrid,
   useMenuState,
@@ -29,11 +32,12 @@ import {
   useUpdateControlValues,
 } from "../contexts/ImageControlContext";
 import useEvent from "../hooks/useEvent";
+import { ValueSlider } from "./editors/ValueSlider";
 
 type ControlEditProps = {
   selectedControlIds: string[];
   onEditControlSteps?: () => void;
-}
+};
 
 const EditStepsToggle: React.FC<{
   editControlSteps?: boolean;
@@ -104,20 +108,19 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   const control = file.controls[activeControlId];
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>⚙️</Icon> {control.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         <Control label="Value">
-          <input
-            type="range"
+          <RangeInput
             min={0}
             max={control.steps.length - 1}
             step={0.01}
             value={slideValue}
             onChange={onChange}
           />
-          <p>{slideValue}</p>
+          <RangeValue value={slideValue} />
         </Control>
         {onEditControlSteps && (
           <EditStepsToggle
@@ -135,7 +138,7 @@ type ControlEditStepProps = {
   activeControlStep: number;
   onControlEditDone?: () => void;
   onControlStepSelect?: (stepNr: number) => void;
-}
+};
 
 export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   selectedControlIds,
@@ -254,9 +257,9 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   const control = file.controls[activeControlId];
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>⚙️</Icon> {control.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         <ControlledMenu
           {...menuProps}

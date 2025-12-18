@@ -1,13 +1,11 @@
-import raw from "raw.macro";
+import { isInDarkMode } from "#src/application/lib/isInDarkmode.js";
 
 import { type Layer } from "../../../animation/file2/types";
 import { type Vec2 } from "../../../types";
-import { colorScheme } from "../../theme/darkMode";
 import { type ScreenTranslation } from "../../types";
 import { createProgram, type WebGLRenderer } from "../lib/webgl";
-
-const layerPointsVertexShader = raw("./showLayerPoints.vert");
-const layerPointsFragmentShader = raw("./showLayerPoints.frag");
+import layerPointsFragmentShader from "./showLayerPoints.frag";
+import layerPointsVertexShader from "./showLayerPoints.vert";
 
 export type IDLayer = Layer & { id: string };
 
@@ -128,6 +126,7 @@ export const showLayerPoints = (
           if (!layers || !img || !vertexBuffer || !indexBuffer || !gl) {
             return;
           }
+          const darkMode = isInDarkMode();
           gl.useProgram(shaderProgram);
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -168,10 +167,7 @@ export const showLayerPoints = (
             screenTranslation.panX,
             screenTranslation.panY
           );
-          gl.uniform1f(
-            programInfo.uniforms.darkMode,
-            colorScheme.darkMode ? 1.0 : 0.0
-          );
+          gl.uniform1f(programInfo.uniforms.darkMode, darkMode ? 1.0 : 0.0);
 
           elements.forEach((element) => {
             if (element.id === layerSelected && element.amount > 0) {

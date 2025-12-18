@@ -1,11 +1,12 @@
 import preview from "#.storybook/preview";
 
-import { Title as TitleElement } from "./Title";
+import { Title as TitleComponent } from "./Title";
 
 const meta = preview.meta({
   title: "Atoms/Title",
-  component: TitleElement,
+  component: TitleComponent,
 });
+
 export default meta;
 
 export const Title = meta.story({
