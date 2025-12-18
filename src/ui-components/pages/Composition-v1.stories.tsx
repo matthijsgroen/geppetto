@@ -14,7 +14,6 @@ import {
   MenuItem,
   NumberInput,
   Panel,
-  PanelTitle,
   Paragraph,
   RangeInput,
   ResizeDirection,
@@ -37,6 +36,7 @@ import {
 
 const meta = preview.meta({
   title: "Pages/Composition",
+  tags: ["svg"],
 });
 export default meta;
 
@@ -127,7 +127,7 @@ export const Version1 = meta.story({
               >
                 <Tree treeId="layers" />
               </TreeEnvironment>
-              <PanelTitle>Opacity (4)</PanelTitle>
+              <Title>Opacity (4)</Title>
               <ControlPanel>
                 <Control label="Visible">
                   <ToggleInput checked />
@@ -157,7 +157,7 @@ export const Version1 = meta.story({
               defaultSize={300}
             >
               <Panel padding="sm">
-                <PanelTitle>Controls</PanelTitle>
+                <Title>Controls</Title>
                 <ToolBar size="small">
                   <ToolButton
                     icon={<Icon>⚙️</Icon>}
@@ -176,7 +176,7 @@ export const Version1 = meta.story({
                 >
                   <Tree treeId="controls" />
                 </TreeEnvironment>
-                <PanelTitle>Left Arm</PanelTitle>
+                <Title>Left Arm</Title>
                 <ControlPanel>
                   <Control label="Value">
                     <RangeInput />
@@ -194,7 +194,7 @@ export const Version1 = meta.story({
         <Panel center workspace>
           <div>
             <Logo />
-            <Title>Welcome to Geppetto</Title>
+            <h1>Welcome to Geppetto</h1>
             <Paragraph>Some introduction text here...</Paragraph>
             <Paragraph>
               <ToolButton

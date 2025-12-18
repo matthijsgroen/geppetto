@@ -33,6 +33,7 @@ import {
 
 const meta = preview.meta({
   title: "Pages/Layers",
+  tags: ["svg"],
 });
 export default meta;
 

@@ -37,6 +37,7 @@ import {
 
 const meta = preview.meta({
   title: "Pages/Composition",
+  tags: ["svg"],
 });
 export default meta;
 

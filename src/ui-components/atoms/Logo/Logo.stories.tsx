@@ -5,6 +5,7 @@ import { Logo as LogoElement, LogoIcon as LogoIconElement } from "./Logo";
 const meta = preview.meta({
   title: "Atoms/Logo",
   component: LogoElement,
+  tags: ["svg"],
 });
 export default meta;
 

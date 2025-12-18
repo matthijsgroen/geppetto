@@ -39,6 +39,7 @@ import {
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta = preview.meta({
   title: "Pages/Composition",
+  tags: ["svg"],
 });
 export default meta;
 
