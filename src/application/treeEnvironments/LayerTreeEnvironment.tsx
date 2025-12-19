@@ -1,29 +1,30 @@
+import { produce } from "immer";
 import { useMemo, useState } from "react";
-import { DraggingPosition } from "react-complex-tree";
+import { type DraggingPosition } from "react-complex-tree";
+
+import {
+  addMutationToControl,
+  isMutationUnderControl,
+  removeMutationFromControl,
+} from "../../animation/file2/controls";
 import {
   isRootNode,
   moveInHierarchy,
   visit,
 } from "../../animation/file2/hierarchy";
 import { rename, toggleVisibility } from "../../animation/file2/shapes";
+import { type GeppettoImage, type NodeType } from "../../animation/file2/types";
 import {
-  TreeData,
-  TreeItem,
-  TreeItemIndex,
+  type TreeData,
   TreeEnvironment,
+  type TreeItem,
+  type TreeItemIndex,
 } from "../../ui-components";
-import { UseState } from "../types";
 import { useFile } from "../contexts/FileContext";
 import useEvent from "../hooks/useEvent";
-import produce from "immer";
-import { GeppettoImage, NodeType } from "../../animation/file2/types";
-import { ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
+import { type UseState } from "../types";
 import { MutationControlContext } from "./mutationControlContext";
-import {
-  addMutationToControl,
-  isMutationUnderControl,
-  removeMutationFromControl,
-} from "../../animation/file2/controls";
+import { type ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
 
 type LayerTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
@@ -33,7 +34,7 @@ type LayerTreeEnvironmentProps = {
   editControlId?: string;
   treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
-};
+}
 
 type LayerItem = TreeItem<TreeData<"layer" | "layerFolder" | "mutation">>;
 const onlyOne = (items: unknown[]) => items.length === 1;
@@ -226,11 +227,11 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
           const ids = items.map((e) => `${e}`);
           setSelectedItems(ids);
         })}
-        canRename={true}
+        canRename
         canDrag={onlyOne}
         canDropAt={canDropAt}
-        canDragAndDrop={true}
-        canReorderItems={true}
+        canDragAndDrop
+        canReorderItems
         onRenameItem={useEvent((item: LayerItem, newName: string) => {
           setFile(rename(`${item.index}`, item.data.type, newName));
         })}
@@ -266,8 +267,8 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         onFocusItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
           setFocusedItem(`${item.index}`);
         })}
-        canDropOnItemWithChildren={true}
-        canDropOnItemWithoutChildren={true}
+        canDropOnItemWithChildren
+        canDropOnItemWithoutChildren
         viewState={{
           [treeId]: {
             expandedItems,

@@ -11,7 +11,7 @@ class ResizeObserverMock {
         bottom: 2,
         height: 1,
         width: 1,
-        toJSON: jest.fn(),
+        toJSON: vi.fn(),
       },
       borderBoxSize: [],
       contentBoxSize: [],

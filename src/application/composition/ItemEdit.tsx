@@ -1,5 +1,6 @@
-import produce from "immer";
+import { produce } from "immer";
 import { useEffect, useState, useTransition } from "react";
+
 import {
   hasRadius,
   iconMapping,
@@ -7,9 +8,16 @@ import {
   updateMutationValue,
 } from "../../animation/file2/mutation";
 import { toggleVisibility } from "../../animation/file2/shapes";
-import { Vec2 } from "../../types";
-import { Control, ControlPanel, Icon, Kbd, Title } from "../../ui-components";
-import { Paragraph } from "../../ui-components/Paragraph/Paragraph";
+import { type Vec2 } from "../../types";
+import {
+  Control,
+  ControlPanel,
+  Icon,
+  Kbd,
+  PanelTitle,
+  Paragraph,
+  ToggleInput,
+} from "../../ui-components";
 import { useFile } from "../contexts/FileContext";
 import {
   useMutationValues,
@@ -48,13 +56,12 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
 
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>📁</Icon> {layerFolder.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         <Control label="Visible" htmlFor={`${itemId}_visibility`}>
-          <input
-            type="checkbox"
+          <ToggleInput
             checked={layerFolder.visible}
             onChange={handleClick}
             id={`${itemId}_visibility`}
@@ -88,9 +95,9 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
 
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>📄</Icon> {layer.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         <VectorControl
           label="Offset"
@@ -98,11 +105,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
           onChange={offsetChangeHandler}
         />
         <Control label="Visible">
-          <input
-            type="checkbox"
-            checked={layer.visible}
-            onChange={handleClick}
-          />
+          <ToggleInput checked={layer.visible} onChange={handleClick} />
         </Control>
       </ControlPanel>
       <Paragraph size="small">
@@ -174,9 +177,9 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
 
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>{iconMapping[mutation.type]}</Icon> {mutation.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         {isShapeMutationVector(mutation) && (
           <VectorControl
@@ -233,31 +236,19 @@ export const ItemEdit: React.FC<
   const hierarchyItem =
     activeShapeId !== null ? file.layerHierarchy[activeShapeId] : null;
 
-  if (
-    activeShapeId !== null &&
-    hierarchyItem &&
-    hierarchyItem.type === "layer"
-  ) {
+  if (activeShapeId !== null && hierarchyItem?.type === "layer") {
     return <LayerEdit itemId={activeShapeId} />;
   }
-  if (
-    activeShapeId !== null &&
-    hierarchyItem &&
-    hierarchyItem.type === "layerFolder"
-  ) {
+  if (activeShapeId !== null && hierarchyItem?.type === "layerFolder") {
     return <LayerFolderEdit itemId={activeShapeId} />;
   }
 
-  if (
-    activeShapeId !== null &&
-    hierarchyItem &&
-    hierarchyItem.type === "mutation"
-  ) {
+  if (activeShapeId !== null && hierarchyItem?.type === "mutation") {
     return <MutationEdit itemId={activeShapeId} />;
   }
   return (
     <>
-      <Title>No selection</Title>
+      <PanelTitle>No selection</PanelTitle>
     </>
   );
 };
@@ -277,8 +268,8 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
   const mutationValue: Vec2 = !activeMutator
     ? blankValue
     : editingControlId !== undefined
-    ? file.controls[editingControlId].steps[editingControlStep][activeMutator]
-    : mutationValues.current[activeMutator];
+      ? file.controls[editingControlId].steps[editingControlStep][activeMutator]
+      : mutationValues.current[activeMutator];
   const [slideValue, setSlideValue] = useState(mutationValue);
 
   useEffect(() => {

@@ -1,19 +1,20 @@
-import MouseControl, { MouseMode } from "./MouseControl";
+import { type Vec2 } from "geppetto-player";
 import React, {
-  FC,
-  PropsWithChildren,
+  type FC,
+  type PropsWithChildren,
   useEffect,
   useRef,
   useState,
 } from "react";
+
 import {
   useScreenTranslation,
   useUpdateScreenTranslation,
 } from "../contexts/ScreenTranslationContext";
-import { Vec2 } from "geppetto-player";
 import useEvent from "../hooks/useEvent";
 import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
 import { vecSub } from "../webgl/lib/vertices";
+import MouseControl, { MouseMode } from "./MouseControl";
 
 export type DragState = "start" | "move" | "end";
 
@@ -60,7 +61,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
       }
     };
 
-    const onKeyUp = (event: KeyboardEvent) => {
+    const onKeyUp = (_event: KeyboardEvent) => {
       resetCursor();
     };
 

@@ -1,12 +1,15 @@
-import produce from "immer";
+import { produce } from "immer";
 import {
-  ChangeEvent,
-  MouseEvent,
-  KeyboardEvent,
+  type ChangeEvent,
+  type KeyboardEvent,
+  type MouseEvent,
   useEffect,
   useState,
   useTransition,
 } from "react";
+
+import { RangeValue } from "#src/ui-components/atoms/RangeValue/RangeValue.js";
+
 import {
   insertControlStep,
   removeControlStep,
@@ -17,7 +20,8 @@ import {
   ControlPanel,
   Icon,
   MenuItem,
-  Title,
+  PanelTitle,
+  RangeInput,
   ToolButton,
   ToolGrid,
   useMenuState,
@@ -28,6 +32,7 @@ import {
   useUpdateControlValues,
 } from "../contexts/ImageControlContext";
 import useEvent from "../hooks/useEvent";
+import { ValueSlider } from "./editors/ValueSlider";
 
 type ControlEditProps = {
   selectedControlIds: string[];
@@ -58,9 +63,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   const [, startTransition] = useTransition();
 
   const isNoControl =
-    activeControlId === null ||
-    !hierarchyItem ||
-    hierarchyItem.type !== "control";
+    activeControlId === null || hierarchyItem?.type !== "control";
   const controlValues = useControlValues();
   const updateControlValues = useUpdateControlValues();
 
@@ -96,7 +99,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
       ...current,
       [activeControlId]: 0,
     }));
-    onEditControlSteps && onEditControlSteps();
+    onEditControlSteps?.();
   });
 
   if (isNoControl) {
@@ -105,20 +108,19 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   const control = file.controls[activeControlId];
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>⚙️</Icon> {control.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         <Control label="Value">
-          <input
-            type={"range"}
+          <RangeInput
             min={0}
             max={control.steps.length - 1}
             step={0.01}
             value={slideValue}
             onChange={onChange}
           />
-          <p>{slideValue}</p>
+          <RangeValue value={slideValue} />
         </Control>
         {onEditControlSteps && (
           <EditStepsToggle
@@ -169,9 +171,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   });
 
   const isNoControl =
-    activeControlId === null ||
-    !hierarchyItem ||
-    hierarchyItem.type !== "control";
+    activeControlId === null || hierarchyItem?.type !== "control";
   const updateControlValues = useUpdateControlValues();
 
   const handleStepSelect = useEvent((event: MouseEvent<HTMLButtonElement>) => {
@@ -181,7 +181,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
       ...current,
       [activeControlId]: value,
     }));
-    onControlStepSelect && onControlStepSelect(value);
+    onControlStepSelect?.(value);
   });
 
   const handleStepKeyDown = useEvent((e: KeyboardEvent<HTMLButtonElement>) => {
@@ -196,7 +196,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
           ...current,
           [activeControlId]: afterRemoveValue,
         }));
-        onControlStepSelect && onControlStepSelect(afterRemoveValue);
+        onControlStepSelect?.(afterRemoveValue);
       }, 0);
     }
   });
@@ -212,7 +212,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
         ...current,
         [activeControlId]: afterRemoveValue,
       }));
-      onControlStepSelect && onControlStepSelect(afterRemoveValue);
+      onControlStepSelect?.(afterRemoveValue);
     }, 0);
   });
 
@@ -226,7 +226,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
         ...current,
         [activeControlId]: value,
       }));
-      onControlStepSelect && onControlStepSelect(value);
+      onControlStepSelect?.(value);
     }, 0);
   });
 
@@ -237,7 +237,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
       ...current,
       [activeControlId]: file.controlValues[activeControlId],
     }));
-    onControlEditDone && onControlEditDone();
+    onControlEditDone?.();
   });
 
   const handleAddStep = useEvent(() => {
@@ -248,7 +248,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
       ...current,
       [activeControlId]: value,
     }));
-    onControlStepSelect && onControlStepSelect(value);
+    onControlStepSelect?.(value);
   });
 
   if (isNoControl) {
@@ -257,9 +257,9 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
   const control = file.controls[activeControlId];
   return (
     <>
-      <Title>
+      <PanelTitle>
         <Icon>⚙️</Icon> {control.name}
-      </Title>
+      </PanelTitle>
       <ControlPanel>
         <ControlledMenu
           {...menuProps}
@@ -294,7 +294,7 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
         {onControlEditDone && (
           <EditStepsToggle
             onEditControlSteps={handleControlEditDone}
-            editControlSteps={true}
+            editControlSteps
           />
         )}
       </ControlPanel>

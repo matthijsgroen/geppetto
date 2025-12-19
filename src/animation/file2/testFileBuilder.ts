@@ -1,9 +1,9 @@
+import { type Vec2 } from "../../types";
+import { addControl } from "./controls";
+import { addMutation, updateMutationValue } from "./mutation";
 import { newFile } from "./new";
 import { addFolder, addShape } from "./shapes";
-import { addMutation, updateMutationValue } from "./mutation";
-import { GeppettoImage, MutationVector } from "./types";
-import { Vec2 } from "../../types";
-import { addControl } from "./controls";
+import { type GeppettoImage, type MutationVector } from "./types";
 
 export const fileBuilder = () => {
   let file = newFile();

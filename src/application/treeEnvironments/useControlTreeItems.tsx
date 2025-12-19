@@ -1,8 +1,13 @@
-import { MutableRefObject, useMemo, useRef } from "react";
+import { type MutableRefObject, useMemo, useRef } from "react";
+
 import { newFile } from "../../animation/file2/new";
-import { GeppettoImage } from "../../animation/file2/types";
-import { TreeData, TreeItem, TreeItemIndex } from "../../ui-components";
-import { TREE_ROOT } from "../../ui-components/Tree/Tree";
+import { type GeppettoImage } from "../../animation/file2/types";
+import {
+  type TreeData,
+  type TreeItem,
+  type TreeItemIndex,
+} from "../../ui-components";
+import { TREE_ROOT } from "../../ui-components/organisms/Tree/Tree";
 
 type ControlType = "control" | "controlFolder";
 export type ControlItem = TreeItem<TreeData<ControlType>>;

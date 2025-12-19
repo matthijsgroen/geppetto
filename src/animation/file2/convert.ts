@@ -1,10 +1,15 @@
 import {
-  AnimationFrame,
-  ImageDefinition,
-  MutationVector,
+  type AnimationFrame,
+  type ImageDefinition,
+  type MutationVector,
 } from "../file1/types";
 import { newFile } from "./new";
-import { FrameAction, GeppettoImage, Hierarchy, NodeType } from "./types";
+import {
+  type FrameAction,
+  type GeppettoImage,
+  type Hierarchy,
+  type NodeType,
+} from "./types";
 
 const populateMutations = (
   mutations: MutationVector[],
@@ -132,7 +137,7 @@ const populateControls = (
       ),
     };
   }
-  result["root"] = { type: "root", children: ids };
+  result.root = { type: "root", children: ids };
   return result;
 };
 
@@ -191,7 +196,7 @@ const populateAnimations = (
       actions: convertKeyframes(animation.keyframes, target),
     };
   }
-  result["root"] = { type: "root", children: ids };
+  result.root = { type: "root", children: ids };
   return result;
 };
 
@@ -210,7 +215,7 @@ export const convertFromV1 = (imageDef: ImageDefinition): GeppettoImage => {
     createId,
     result.layerHierarchy
   );
-  result.layerHierarchy["root"] = { type: "root", children: childIds };
+  result.layerHierarchy.root = { type: "root", children: childIds };
 
   id = 0;
   result.controlHierarchy = populateControls(

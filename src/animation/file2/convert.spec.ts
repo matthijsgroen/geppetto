@@ -1,7 +1,7 @@
-import { convertFromV1 } from "./convert";
 import { v1Format } from "../file1/mockdata/file1.1";
+import { type ImageDefinition } from "../file1/types";
+import { convertFromV1 } from "./convert";
 import { v2Format } from "./mockdata/file2.0";
-import { ImageDefinition } from "../file1/types";
 
 describe("from version 1 to 2", () => {
   it("converts a 1.x file format to a 2.x file format", () => {

@@ -1,15 +1,126 @@
-html,
-body,
-#root {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--colors-background-workspace);
-  font: caption;
-  font-size: 14px;
-  user-select: none;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-system: system-ui;
+  --text-shadow-xs: 0px 0px 1px;
+
+  --radius-control: 0.5rem; /* 8px */
+  --radius-control-small: 0.25rem; /* 4px */
+  --radius-control-large: 1.5rem; /* 24px */
+
+  --shadow-xl: 5px 5px 5px #0003;
+  --shadow-md: 2px 2px 2px #0004;
+  --shadow-sm: 1px 1px 2px #0003;
+  --shadow-inset-sm: inset 1px 1px 2px #0003;
 }
 
-#root {
+@theme {
+  --color-workspace: var(--color-neutral-500);
+
+  --color-panel: var(--color-neutral-200);
+  --color-notification: var(--color-red-600);
+
+  --color-control-default: var(--color-white);
+  --color-control-edge: color-mix(
+    in oklch,
+    var(--color-neutral-800),
+    transparent 80%
+  );
+  --color-control-focus: var(--color-blue-500);
+  --color-control-highlight: var(--color-blue-300);
+  --color-control-active: var(--color-sky-600);
+  --color-control-active-dimmed: var(--color-sky-300);
+
+  --color-text: var(--color-zinc-800);
+  --color-dimmed: color-mix(in oklch, var(--color-zinc-800), transparent 50%);
+  --color-active: var(--color-slate-500);
+}
+
+.dark {
+  --color-workspace: var(--color-zinc-800);
+
+  --color-panel: var(--color-neutral-700);
+  --color-notification: var(--color-red-400);
+
+  --color-control-default: var(--color-zinc-900);
+  --color-control-edge: color-mix(
+    in oklch,
+    var(--color-zinc-100),
+    transparent 70%
+  );
+  --color-control-focus: var(--color-green-600);
+  --color-control-highlight: var(--color-green-500);
+  --color-control-active: var(--color-green-700);
+  --color-control-active-dimmed: var(--color-green-700);
+
+  --color-text: var(--color-zinc-100);
+  --color-dimmed: color-mix(
+    in oklch,
+    var(--color-neutral-400),
+    transparent 50%
+  );
+  --color-active: var(--color-green-500);
+}
+
+@utility text-vertical {
+  writing-mode: vertical-lr;
+}
+
+@utility hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@utility hide-spinner {
+  &:not(:focus)::-webkit-outer-spin-button,
+  &:not(:focus)::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  &:not(:focus) {
+    appearance: textfield;
+  }
+}
+
+@utility font-caption {
+  @layer base {
+    font: caption;
+  }
+}
+
+@custom-variant track {
+  &::-webkit-slider-runnable-track {
+    @slot;
+  }
+  &::-moz-range-track {
+    @slot;
+  }
+}
+
+@custom-variant thumb {
+  &::-webkit-slider-thumb {
+    appearance: none;
+    @slot;
+  }
+  &::-moz-range-thumb {
+    @slot;
+  }
+}
+
+html,
+body,
+#root,
+#storybook-root {
+  @apply font-caption size-full bg-workspace select-none;
+}
+
+#root,
+#storybook-root {
   display: flex;
 }

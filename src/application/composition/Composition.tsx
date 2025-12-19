@@ -1,29 +1,33 @@
 import {
-  RefObject,
-  SetStateAction,
+  type RefObject,
+  type SetStateAction,
   useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
+
 import { dragItem } from "../../animation/file2/drag";
 import {
   findParentId,
-  PlacementInfo,
+  type PlacementInfo,
   visit,
 } from "../../animation/file2/hierarchy";
 import {
   addMutation,
-  AddMutationDetails,
+  type AddMutationDetails,
   iconMapping,
   isShapeMutationVector,
   mutationLabels,
-  MutationSettings,
+  type MutationSettings,
 } from "../../animation/file2/mutation";
 import { hasPoints } from "../../animation/file2/shapes";
-import { GeppettoImage, MutationVector } from "../../animation/file2/types";
-import { Vec2 } from "../../types";
+import {
+  type GeppettoImage,
+  type MutationVector,
+} from "../../animation/file2/types";
+import { type Vec2 } from "../../types";
 import {
   Column,
   ControlledMenu,
@@ -33,7 +37,7 @@ import {
   ResizeDirection,
   ResizePanel,
   Row,
-  Shortcut,
+  type Shortcut,
   SubMenu,
   ToolBar,
   ToolSeparator,
@@ -42,11 +46,11 @@ import {
   useMenuState,
 } from "../../ui-components";
 import { ActionToolButton } from "../actions/ActionToolButton";
-import { useFile } from "../contexts/FileContext";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
-import LayerMouseControl, { DragState } from "../canvas/LayerMouseControl";
+import LayerMouseControl, { type DragState } from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
+import { useFile } from "../contexts/FileContext";
 import { useUpdateMutationValues } from "../contexts/ImageControlContext";
 import {
   useScreenTranslation,
@@ -54,7 +58,7 @@ import {
 } from "../contexts/ScreenTranslationContext";
 import { useActionMap } from "../hooks/useActionMap";
 import useEvent from "../hooks/useEvent";
-import { AppSection, Size, UseState } from "../types";
+import { type AppSection, type Size, type UseState } from "../types";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
 import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
@@ -71,7 +75,7 @@ import { ShapeTree } from "./ShapeTree";
 type CompositionProps = {
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
-  menu?: React.ReactChild;
+  menu?: React.ReactNode;
 };
 
 const TOGGLE_INFO_SHORTCUT: Shortcut = {
@@ -420,11 +424,11 @@ export const Composition: React.FC<CompositionProps> = ({
         <ToolSeparator />
         <ToolTab
           icon={<Icon>🧬</Icon>}
-          label={"Layers"}
-          onClick={() => onSectionChange && onSectionChange("layers")}
+          label="Layers"
+          onClick={() => onSectionChange?.("layers")}
         />
-        <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} active />
-        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
+        <ToolTab icon={<Icon>🤷🏼</Icon>} label="Composition" active />
+        <ToolTab icon={<Icon>🏃</Icon>} label="Animation" disabled />
         <ToolSeparator />
         <ActionToolButton
           action={actions.toggleWireFrames}
@@ -444,7 +448,7 @@ export const Composition: React.FC<CompositionProps> = ({
           minSize={150}
         >
           <Column>
-            <Panel padding={5}>
+            <Panel padding="sm">
               <ShapeTree
                 selectedItemsState={[selectedItems, updateSelectedItems]}
                 focusedItemState={[focusedLayer, setFocusedLayer]}
@@ -467,7 +471,7 @@ export const Composition: React.FC<CompositionProps> = ({
               </ResizePanel>
             )}
             {controlEditMode && (
-              <Panel padding={5} fitContent={true}>
+              <Panel padding="sm" fitContent>
                 <ControlEditSteps
                   selectedControlIds={selectedControls}
                   activeControlStep={activeControlStep}
@@ -479,7 +483,7 @@ export const Composition: React.FC<CompositionProps> = ({
           </Column>
         </ResizePanel>
         <Panel workspace center>
-          <StartupScreen file={file} texture={texture} screen={"composition"} />
+          <StartupScreen file={file} texture={texture} screen="composition" />
           {texture && hasPoints(file) && (
             <LayerMouseControl
               mode={MouseMode.Normal}
@@ -551,7 +555,7 @@ export const Composition: React.FC<CompositionProps> = ({
             minSize={150}
           >
             <Column>
-              <Panel padding={5}>
+              <Panel padding="sm">
                 <ItemEdit
                   activeMutator={activeMutator}
                   selectedShapeIds={selectedItems}

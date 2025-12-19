@@ -1,13 +1,14 @@
-import raw from "raw.macro";
-import { Layer } from "../../../animation/file2/types";
-import { ScreenTranslation } from "../../types";
+import { type Layer } from "../../../animation/file2/types";
+import { type ScreenTranslation } from "../../types";
 import { verticesFromPoints } from "../lib/vertices";
-import { createProgram, WebGLRenderer } from "../lib/webgl";
+import { createProgram, type WebGLRenderer } from "../lib/webgl";
+import textureMapFragmentShader from "./showTextureMap.frag";
+import textureMapVertexShader from "./showTextureMap.vert";
 
-const textureMapVertexShader = raw("./showTextureMap.vert");
-const textureMapFragmentShader = raw("./showTextureMap.frag");
-
-type Element = { start: number; amount: number };
+type Element = {
+  start: number;
+  amount: number;
+};
 const STRIDE = 2;
 
 export const showTextureMap = (

@@ -1,4 +1,4 @@
-import { ForwardedRef, MutableRefObject, Ref } from "react";
+import { type ForwardedRef, type MutableRefObject, type Ref } from "react";
 
 export const mergeRefs =
   <T>(refs: (MutableRefObject<T> | ForwardedRef<T>)[]): Ref<T> =>

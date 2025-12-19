@@ -1,6 +1,6 @@
-import { verifyFile } from "./verifyFile";
-import { v1Format } from "./mockdata/file1.1";
 import { v2Format } from "../file2/mockdata/file2.0";
+import { v1Format } from "./mockdata/file1.1";
+import { verifyFile } from "./verifyFile";
 
 describe("verifyFile", () => {
   it("returns true for a valid version 1 file", () => {

@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
+
 import {
-  Icon,
-  ToolButton,
   ControlledMenu,
-  useMenuState,
+  Icon,
   Label,
+  ToolButton,
+  useMenuState,
 } from "../../ui-components";
 import { useAppInstall } from "../hooks/useAppInstall";
 
@@ -24,7 +25,7 @@ export const InstallToolButton: React.FC = () => {
     <>
       <ToolButton
         icon={<Icon>🖥</Icon>}
-        tooltip={"Install Geppetto as desktop application"}
+        tooltip="Install Geppetto as desktop application"
         onClick={installer}
         ref={anchor}
       />
@@ -32,7 +33,7 @@ export const InstallToolButton: React.FC = () => {
         captureFocus={false}
         anchorRef={anchor}
         portal
-        position={"anchor"}
+        position="anchor"
         arrow
         state={state}
         role="tooltip"

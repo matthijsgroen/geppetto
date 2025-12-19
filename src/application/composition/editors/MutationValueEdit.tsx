@@ -1,11 +1,12 @@
-import { Vec2 } from "../../../types";
+import React, { Fragment } from "react";
+
+import { type MutationVectorTypes } from "../../../animation/file1/types";
+import { type Vec2 } from "../../../types";
 import { Control, TextButton } from "../../../ui-components";
 import { useFile } from "../../contexts/FileContext";
 import { VectorControl } from "../../controls/VectorControl";
-import { ValueSlider } from "./ValueSlider";
 import styles from "./MutationValueEdit.module.css";
-import { MutationVectorTypes } from "../../../animation/file1/types";
-import React, { Fragment } from "react";
+import { ValueSlider } from "./ValueSlider";
 
 const percentageFormatter = (value: number) => `${Math.round(value * 100)}%`;
 const lightnessFormatter = (value: number) =>
@@ -16,7 +17,7 @@ type MutationValueEditProps = {
   mutationType: MutationVectorTypes;
   value: Vec2;
   onValueChange: (newValue: Vec2) => void;
-};
+}
 
 export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
   mutationType,
@@ -85,7 +86,7 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
                 value[1] * 100
               }%, 50%)`,
             }}
-          ></div>
+          />
         </Control>
         <ValueSlider
           label="Hue"
@@ -131,17 +132,12 @@ export const MutationControlled: React.FC<{
         <p>
           {affectingControls.map(([id, c], idx, list) =>
             idx === list.length - 1 ? (
-              <TextButton
-                key={id}
-                onClick={() => onSelectControl && onSelectControl(id)}
-              >
+              <TextButton key={id} onClick={() => onSelectControl?.(id)}>
                 {id === editingControlId ? <strong>{c.name}</strong> : c.name}
               </TextButton>
             ) : (
               <Fragment key={id}>
-                <TextButton
-                  onClick={() => onSelectControl && onSelectControl(id)}
-                >
+                <TextButton onClick={() => onSelectControl?.(id)}>
                   {id === editingControlId ? <strong>{c.name}</strong> : c.name}
                 </TextButton>
                 {", "}

@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/unsupported-syntax */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useLayoutEffect, useRef } from "react";
 
 type AnyFunction = (...args: any[]) => any;

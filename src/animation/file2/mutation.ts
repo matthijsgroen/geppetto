@@ -1,14 +1,15 @@
-import { Vec2 } from "geppetto-player";
-import produce from "immer";
+import { type Vec2 } from "geppetto-player";
+import { produce } from "immer";
+
 import { defaultValueForVector } from "../../application/webgl/lib/vertices";
-import { addInHierarchy, PlacementInfo } from "./hierarchy";
+import { addInHierarchy, type PlacementInfo } from "./hierarchy";
 import { getUniqueName } from "./shapes";
 import {
-  DeformationVector,
-  GeppettoImage,
-  MutationVector,
-  ShapeMutationVector,
-  TranslationVector,
+  type DeformationVector,
+  type GeppettoImage,
+  type MutationVector,
+  type ShapeMutationVector,
+  type TranslationVector,
 } from "./types";
 
 export const iconMapping: Record<MutationVector["type"], string> = {
@@ -48,7 +49,10 @@ export const isShapeMutationVector = (
   vector.type === "stretch" ||
   vector.type === "translate";
 
-export type AddMutationDetails<T> = { mutation: Mutation<T>; id: string };
+export type AddMutationDetails<T> = {
+  mutation: Mutation<T>;
+  id: string;
+};
 export type MutationSettings<MutationType> = Omit<
   Extract<MutationVector, { type: MutationType }>,
   "name" | "type" | "origin"
@@ -60,7 +64,7 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
   mutationType: MutationType,
   setupProperties: MutationSettings<MutationType>,
   placement: PlacementInfo,
-  dataResult?: AddMutationDetails<MutationType> | {}
+  dataResult?: AddMutationDetails<MutationType> | Record<string, never>
 ): GeppettoImage => {
   const newName = getUniqueName(name, file.mutations);
 

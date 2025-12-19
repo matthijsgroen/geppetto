@@ -1,36 +1,20 @@
-import React, {
-  forwardRef,
-  PropsWithChildren,
+import {
+  type FC,
+  type PropsWithChildren,
+  type RefObject,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { WebGLRenderer, webGLScene } from "./lib/webgl";
-import styled from "styled-components";
-import { mergeRefs } from "../lib/mergeRefs";
+
 import {
-  Subscription,
+  type Subscription,
   useScreenSubscription,
 } from "../contexts/ScreenTranslationContext";
+import { mergeRefs } from "../lib/mergeRefs";
+import { type WebGLRenderer, webGLScene } from "./lib/webgl";
 
 const HEIGHT_PIXEL_FIX = 4;
-
-const CanvasContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-
-  canvas {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100% !important;
-    height: 100% !important;
-  }
-`;
 
 const startWebGL = async (
   node: HTMLCanvasElement,
@@ -74,7 +58,7 @@ const startWebGL = async (
       markChanged();
     }, 5);
   };
-  const resizeObserver = new ResizeObserver((entries) => {
+  const resizeObserver = new ResizeObserver(() => {
     onResize();
   });
 
@@ -87,14 +71,12 @@ const startWebGL = async (
   };
 };
 
-type WebGLCanvasProps = {
+type WebGLCanvasProps = PropsWithChildren<{
   renderers: WebGLRenderer[];
-};
+  ref: RefObject<HTMLDivElement>;
+}>;
 
-const WebGLCanvas = forwardRef<
-  HTMLDivElement,
-  PropsWithChildren<WebGLCanvasProps>
->(({ renderers, children }, ref) => {
+const WebGLCanvas: FC<WebGLCanvasProps> = ({ renderers, children, ref }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const subscribe = useScreenSubscription();
@@ -132,17 +114,20 @@ const WebGLCanvas = forwardRef<
       return () => {
         mounted = false;
         // unmount
-        cleanup && cleanup();
+        cleanup?.();
       };
     }
   }, [renderers, mounted, subscribe]);
 
   return (
-    <CanvasContainer ref={mergeRefs([ref, containerRef])}>
+    <div
+      ref={mergeRefs([ref, containerRef])}
+      className="relative size-full overflow-hidden"
+    >
       {children}
-      <canvas ref={canvasRef} />
-    </CanvasContainer>
+      <canvas ref={canvasRef} className="absolute inset-0 size-full" />
+    </div>
   );
-});
+};
 
 export default WebGLCanvas;

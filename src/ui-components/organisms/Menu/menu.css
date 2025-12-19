@@ -1,0 +1,19 @@
+.szh-menu {
+  border-color: var(--color-control-edge);
+  background-color: var(--color-panel);
+  color: var(--color-text);
+}
+
+.szh-menu__arrow {
+  border-left-color: var(--color-control-edge);
+  border-top-color: var(--color-control-edge);
+  background-color: var(--color-panel);
+}
+
+.szh-menu__item--hover {
+  background-color: var(--color-control-highlight);
+}
+
+.szh-menu__header {
+  color: var(--color-dimmed);
+}

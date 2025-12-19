@@ -1,4 +1,10 @@
-import { createContext, PropsWithChildren, useCallback, useRef } from "react";
+import {
+  createContext,
+  type FC,
+  type PropsWithChildren,
+  useCallback,
+  useRef,
+} from "react";
 
 type SystemMessage = "fileOpen" | "textureOpen" | "demoOpenScenery";
 
@@ -14,7 +20,7 @@ export const ApplicationContext = createContext<{
   },
 });
 
-export const AppContext: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+export const AppContext: FC<PropsWithChildren> = ({ children }) => {
   const listenersRef = useRef<((message: SystemMessage) => void)[]>([]);
   const sendMessage = useCallback((message: SystemMessage) => {
     for (const listener of listenersRef.current) {

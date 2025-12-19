@@ -25,7 +25,9 @@ const run = async () => {
     versionInfo
   )} as const;`;
 
-  const formattedContents = prettier.format(contents, { parser: "typescript" });
+  const formattedContents = await prettier.format(contents, {
+    parser: "typescript",
+  });
 
   await writeFile(INFO_PATH, formattedContents, "utf-8");
 

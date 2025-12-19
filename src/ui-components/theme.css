@@ -47,7 +47,7 @@
     --colors-background-panel: #e7eaed;
     --colors-background-notification: red;
 
-    --colors-control-default: #fff;
+    --colors-control-default: #fff; /* white */
     --colors-control-edge: #33333334;
     --colors-control-highlight: #cce;
     --colors-control-active-dimmed: #bbec;

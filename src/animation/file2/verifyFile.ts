@@ -1,5 +1,5 @@
 import { newFile } from "./new";
-import { GeppettoImage } from "./types";
+import { type GeppettoImage } from "./types";
 
 export const verifyFile = (file: unknown): file is GeppettoImage => {
   if (typeof file !== "object") return false;

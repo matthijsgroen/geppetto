@@ -1,5 +1,8 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Layer } from "../../animation/file2/types";
+
+import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
+import { type Layer } from "../../animation/file2/types";
+import { type Vec2 } from "../../types";
 import {
   Column,
   Icon,
@@ -11,38 +14,36 @@ import {
   ResizeDirection,
   ResizePanel,
   Row,
+  type Shortcut,
   ToolBar,
   ToolButton,
   ToolSeparator,
   ToolSpacer,
   ToolTab,
-  Shortcut,
 } from "../../ui-components";
-import { AppSection, UseState } from "../types";
+import { ActionToolButton } from "../actions/ActionToolButton";
+import { InstallToolButton } from "../applicationMenu/InstallToolButton";
+import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
-import TextureMapCanvas, { GridSettings } from "../webgl/TextureMapCanvas";
-import { ShapeTree } from "./ShapeTree";
+import { useFile } from "../contexts/FileContext";
+import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
+import { useActionMap } from "../hooks/useActionMap";
+import { useEvent } from "../hooks/useEvent";
+import { type AppSection, type UseState } from "../types";
 import {
   getInitialScale,
   maxZoomFactor,
   mouseToTextureCoordinate,
 } from "../webgl/lib/canvas";
-import { InstallToolButton } from "../applicationMenu/InstallToolButton";
-import { IDLayer } from "../webgl/programs/showLayerPoints";
-import { Vec2 } from "../../types";
-import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
-import { useActionMap } from "../hooks/useActionMap";
-import { ActionToolButton } from "../actions/ActionToolButton";
-import { StartupScreen } from "../applicationMenu/Startup";
-import { useFile } from "../contexts/FileContext";
-import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
-import { useEvent } from "../hooks/useEvent";
+import { type IDLayer } from "../webgl/programs/showLayerPoints";
+import TextureMapCanvas, { type GridSettings } from "../webgl/TextureMapCanvas";
+import { ShapeTree } from "./ShapeTree";
 
 type LayersProps = {
   onSectionChange?: (newSection: AppSection) => void;
   textureState: UseState<HTMLImageElement | null>;
-  menu?: React.ReactChild;
+  menu?: React.ReactNode;
 };
 
 const snapToGrid = (gridSize: number, value: number) =>
@@ -136,8 +137,8 @@ export const Layers: React.FC<LayersProps> = ({
           const gridCoord = alignOnGrid(gridSettings, coord);
           setFile((image) => addPoint(image, activeLayer, gridCoord));
           setActiveCoord(gridCoord);
-        } else {
-          closePoint && setActiveCoord(closePoint);
+        } else if (closePoint) {
+          setActiveCoord(closePoint);
         }
       }
     }
@@ -236,13 +237,13 @@ export const Layers: React.FC<LayersProps> = ({
       <ToolBar>
         {menu}
         <ToolSeparator />
-        <ToolTab icon={<Icon>🧬</Icon>} label={"Layers"} active />
+        <ToolTab icon={<Icon>🧬</Icon>} label="Layers" active />
         <ToolTab
           icon={<Icon>🤷🏼</Icon>}
-          label={"Composition"}
-          onClick={() => onSectionChange && onSectionChange("composition")}
+          label="Composition"
+          onClick={() => onSectionChange?.("composition")}
         />
-        <ToolTab icon={<Icon>🏃</Icon>} label={"Animation"} disabled />
+        <ToolTab icon={<Icon>🏃</Icon>} label="Animation" disabled />
         <ToolSeparator />
         <ToolButton
           active={mouseMode === MouseMode.Normal}
@@ -335,7 +336,7 @@ export const Layers: React.FC<LayersProps> = ({
         </ResizePanel>
         <Panel workspace center>
           {texture === null ? (
-            <StartupScreen file={file} texture={texture} screen={"layers"} />
+            <StartupScreen file={file} texture={texture} screen="layers" />
           ) : (
             <LayerMouseControl
               mode={mouseMode}

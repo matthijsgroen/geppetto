@@ -1,12 +1,18 @@
-import produce from "immer";
-import { Vec2 } from "../../types";
+import { produce } from "immer";
+
+import { type Vec2 } from "../../types";
 import {
   addInHierarchy,
-  PlacementInfo,
   collectChildIds,
   isRootNode,
+  type PlacementInfo,
 } from "./hierarchy";
-import { GeppettoImage, Layer, LayerFolder, NodeType } from "./types";
+import {
+  type GeppettoImage,
+  type Layer,
+  type LayerFolder,
+  type NodeType,
+} from "./types";
 
 export const getUniqueName = (
   name: string,
@@ -23,12 +29,15 @@ export const getUniqueName = (
   return `${name} (${counter})`;
 };
 
-export type AddShapeDetails = { shape: Layer; id: string };
+export type AddShapeDetails = {
+  shape: Layer;
+  id: string;
+};
 
 export const addShape = (
   shapeName: string,
   position?: PlacementInfo,
-  dataResult?: AddShapeDetails | {}
+  dataResult?: AddShapeDetails | Record<string, never>
 ) =>
   produce<GeppettoImage>((draft) => {
     const newName = getUniqueName(shapeName, draft.layers);
@@ -52,12 +61,15 @@ export const addShape = (
     draft.layers[newId] = layer;
   });
 
-export type AddFolderDetails = { folder: LayerFolder; id: string };
+export type AddFolderDetails = {
+  folder: LayerFolder;
+  id: string;
+};
 
 export const addFolder = (
   folderName: string,
   position?: PlacementInfo,
-  dataResult?: AddFolderDetails | {}
+  dataResult?: AddFolderDetails | Record<string, never>
 ) =>
   produce<GeppettoImage>((draft) => {
     const newName = getUniqueName(folderName, draft.layerFolders);
@@ -163,7 +175,7 @@ export const removeShape = (shapeId: string) =>
       }
       if (!isRootNode(item)) {
         const parent = draft.layerHierarchy[item.parentId];
-        if (parent && parent.children) {
+        if (parent?.children) {
           const selfIndex = parent.children.indexOf(shapeId);
           if (selfIndex > -1) {
             parent.children.splice(selfIndex, 1);

@@ -23,18 +23,19 @@ export const compileShader = (
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
     if (process.env.NODE_ENV === "development") {
       source.split("\n").forEach((line, index) => {
+        // eslint-disable-next-line no-console
         console.log(index + 1, line);
       });
     }
-    throw new Error(gl.getShaderInfoLog(shader) as string);
+    throw new Error(gl.getShaderInfoLog(shader)!);
   }
   return shader;
 };
 
-interface ProgramAPI {
+type ProgramAPI = {
   getUnit(): { unit: number; index: number };
   getSize(): [number, number];
-}
+};
 
 type Attribute = {
   name: string;
@@ -45,7 +46,7 @@ type Attribute = {
   location: number;
 };
 
-export type AttributeTable = { [key: string]: Attribute };
+export type AttributeTable = Record<string, Attribute>;
 
 export type RenderAPI = {
   onChange(listener: () => void): void;
@@ -67,7 +68,7 @@ export const webGLScene = async (
     depth: true,
     antialias: true,
     powerPreference: "low-power",
-  }) as WebGLRenderingContext;
+  })!;
 
   if (!gl) {
     throw new Error("No WebGL Support");
@@ -108,7 +109,7 @@ export const webGLScene = async (
     } else {
       gl.clearColor(0.66, 0.66, 0.66, 1.0);
     }
-    onChange && onChange();
+    onChange?.();
   };
 
   const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -118,7 +119,7 @@ export const webGLScene = async (
 
   renders.forEach((r) => {
     r.onChange(() => {
-      onChange && onChange();
+      onChange?.();
     });
   });
 

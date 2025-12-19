@@ -1,4 +1,4 @@
-import { GeppettoImage } from "./types";
+import { type GeppettoImage } from "./types";
 
 export const newFile = (): GeppettoImage => ({
   version: "2.0",

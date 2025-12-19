@@ -1,18 +1,18 @@
 import {
-  AnimationFrame,
-  ImageDefinition,
-  Keyframe,
-  MutationVector,
-} from "./types";
-import {
-  FrameAction,
-  FrameControlAction,
-  FrameEvent,
-  GeppettoImage,
-  Hierarchy,
+  type FrameAction,
+  type FrameControlAction,
+  type FrameEvent,
+  type GeppettoImage,
+  type Hierarchy,
 } from "../file2/types";
-import { newFile } from "./new";
 import { updateVersionNumber } from "../updateVersionNumber";
+import { newFile } from "./new";
+import {
+  type AnimationFrame,
+  type ImageDefinition,
+  type Keyframe,
+  type MutationVector,
+} from "./types";
 
 const convertMutations = (
   items: Hierarchy<string>,

@@ -1,13 +1,15 @@
-import produce from "immer";
+import { produce } from "immer";
+import { describe, expect, it } from "vitest";
+
 import {
   addControl,
-  AddControlDetails,
-  insertControlStep,
+  type AddControlDetails,
   addMutationToControl,
+  insertControlStep,
   isMutationUnderControl,
+  removeControls,
   removeControlStep,
   removeMutationFromControl,
-  removeControls,
 } from "./controls";
 import { newFile } from "./new";
 import {
@@ -20,7 +22,7 @@ describe("addControl", () => {
   it("adds a control to the provided file", () => {
     const file = newFile();
 
-    const result: AddControlDetails | {} = {};
+    const result: AddControlDetails | Record<string, never> = {};
     const image = addControl("New control", undefined, result)(file);
     expect(image.controlHierarchy["0"]).toEqual({
       type: "control",

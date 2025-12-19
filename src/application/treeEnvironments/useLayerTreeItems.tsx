@@ -1,15 +1,16 @@
-import { MutableRefObject, useMemo, useRef } from "react";
+import { type RefObject, useMemo, useRef } from "react";
+
 import { iconMapping } from "../../animation/file2/mutation";
 import { newFile } from "../../animation/file2/new";
-import { GeppettoImage, NodeType } from "../../animation/file2/types";
+import { type GeppettoImage, type NodeType } from "../../animation/file2/types";
 import {
   Icon,
   ToolButton,
-  TreeData,
-  TreeItem,
-  TreeItemIndex,
+  type TreeData,
+  type TreeItem,
+  type TreeItemIndex,
 } from "../../ui-components";
-import { TREE_ROOT } from "../../ui-components/Tree/Tree";
+import { TREE_ROOT } from "../../ui-components/organisms/Tree/Tree";
 import { ControlEditMode } from "./mutationControlContext";
 
 export type LayerItem = TreeItem<
@@ -21,7 +22,7 @@ export type ActionButton = "visibility" | "controlMutation";
 const populateTree = (
   newFile: GeppettoImage,
   previousFile: GeppettoImage,
-  result: MutableRefObject<Record<TreeItemIndex, LayerItem>>,
+  result: RefObject<Record<TreeItemIndex, LayerItem>>,
   actionHandler: (nodeId: string, button: ActionButton) => void,
   showMutations: boolean,
   toggleVisibility: boolean
@@ -193,12 +194,15 @@ export const useLayerTreeItems = (
   useMemo(() => {
     populateTree(
       file,
+
       fileRef.current,
+
       treeItemsRef,
       actionHandler,
       showMutations,
       toggleVisibility
     );
+
     fileRef.current = file;
   }, [file, toggleVisibility, showMutations, actionHandler]);
   // if (expandRef.current !== expandedItems) {
@@ -206,5 +210,6 @@ export const useLayerTreeItems = (
   //   treeItemsRef.current = { ...treeItemsRef.current };
   //   expandRef.current = expandedItems;
   // }
+
   return treeItemsRef.current;
 };

@@ -1,4 +1,4 @@
-import { ImageDefinition } from "./types";
+import { type ImageDefinition } from "./types";
 
 export const newFile = (): ImageDefinition => ({
   animations: [],

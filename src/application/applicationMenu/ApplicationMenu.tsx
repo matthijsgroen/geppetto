@@ -1,31 +1,31 @@
-import React, { useCallback, useRef, useEffect, useContext } from "react";
-import {
-  Menu,
-  ToolButton,
-  SubMenu,
-  Shortcut,
-  MenuDivider,
-  MenuItem,
-  LogoIcon,
-} from "../../ui-components";
-import { UseState } from "../types";
-import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
-import { verifyFile as verifyVersion2 } from "../../animation/file2/verifyFile";
-import { convertFromV1 } from "../../animation/file2/convert";
-import { GeppettoImage } from "../../animation/file2/types";
-import { useActionMap } from "../hooks/useActionMap";
-import { ActionMenuItem } from "../actions/ActionMenuItem";
-import { useAppUpdate } from "../hooks/useAppUpdate";
-import { ApplicationContext } from "../contexts/ApplicationContext";
-import { useAppInstall } from "../hooks/useAppInstall";
-import { useFile } from "../contexts/FileContext";
+import React, { useCallback, useContext,useEffect, useRef } from "react";
 
+import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
+import { convertFromV1 } from "../../animation/file2/convert";
+import { type GeppettoImage } from "../../animation/file2/types";
+import { verifyFile as verifyVersion2 } from "../../animation/file2/verifyFile";
 import sceneryDemoImg from "../../demos/scenery.json";
 import sceneryDemoImage from "../../demos/scenery.png";
+import {
+  LogoIcon,
+  Menu,
+  MenuDivider,
+  MenuItem,
+  type Shortcut,
+  SubMenu,
+  ToolButton,
+} from "../../ui-components";
+import { ActionMenuItem } from "../actions/ActionMenuItem";
+import { ApplicationContext } from "../contexts/ApplicationContext";
+import { useFile } from "../contexts/FileContext";
 import {
   useUpdateControlValues,
   useUpdateMutationValues,
 } from "../contexts/ImageControlContext";
+import { useActionMap } from "../hooks/useActionMap";
+import { useAppInstall } from "../hooks/useAppInstall";
+import { useAppUpdate } from "../hooks/useAppUpdate";
+import { type UseState } from "../types";
 
 const sceneryDemo: GeppettoImage = sceneryDemoImg as unknown as GeppettoImage;
 
@@ -124,7 +124,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 setFile(image);
                 controlUpdate(() => image.controlValues);
                 mutationUpdate(() => image.defaultFrame);
-              } catch (e) {
+              } catch (_ignore) {
                 // user abort
               }
             } else {
@@ -285,14 +285,14 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
 
   return (
     <Menu
-      portal={true}
+      portal
       transition
       menuButton={({ open }) => (
         <ToolButton
           icon={<LogoIcon />}
           active={open}
           notificationBadge={hasAppUpdate}
-          tooltip={"Application menu"}
+          tooltip="Application menu"
         />
       )}
     >

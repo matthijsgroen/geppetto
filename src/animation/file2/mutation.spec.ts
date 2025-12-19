@@ -1,6 +1,6 @@
 import {
   addMutation,
-  AddMutationDetails,
+  type AddMutationDetails,
   hasRadius,
   isShapeMutationVector,
   updateMutationValue,
@@ -11,7 +11,7 @@ import {
   getShapeFolderIdByName,
   getShapeIdByName,
 } from "./testFileBuilder";
-import { MutationVector } from "./types";
+import { type MutationVector } from "./types";
 
 describe("addMutation", () => {
   describe("default add behavior", () => {

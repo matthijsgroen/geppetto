@@ -2,6 +2,7 @@
   "name": "geppetto",
   "productName": "Geppetto",
   "version": "2.0.0-alpha.0",
+  "type": "module",
   "description": "Geppetto is a free and open animation tool to embed webGL animations in a web site.",
   "author": "Matthijs Groen <matthijs.groen@gmail.com> (https://github.com/matthijsgroen)",
   "contributors": [
@@ -10,52 +11,35 @@
   "private": true,
   "homepage": "./",
   "dependencies": {
-    "@szhsin/react-menu": "^3.0.0",
-    "date-fns": "^2.28.0",
-    "delaunator": "^5.0.0",
+    "@szhsin/react-menu": "^4.5.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "delaunator": "^5.0.1",
     "geppetto-player": "1.3.3",
-    "immer": "^9.0.12",
-    "react": "^18.0.0",
+    "immer": "^11.0.1",
+    "react": "^19.2.1",
     "react-complex-tree": "1.1.8",
-    "react-dom": "^18.0.0",
+    "react-dom": "^19.2.1",
     "react-draggable": "^4.4.5",
-    "react-scripts": "5.0.1",
-    "sass": "^1.51.0",
-    "styled-components": "^5.3.3",
-    "typescript": "^4.6.3",
-    "web-vitals": "^0.2.4",
-    "workbox-background-sync": "^5.1.4",
-    "workbox-broadcast-update": "^5.1.4",
-    "workbox-cacheable-response": "^5.1.4",
-    "workbox-core": "^5.1.4",
-    "workbox-expiration": "^5.1.4",
-    "workbox-google-analytics": "^5.1.4",
-    "workbox-navigation-preload": "^5.1.4",
-    "workbox-precaching": "^5.1.4",
-    "workbox-range-requests": "^5.1.4",
-    "workbox-routing": "^5.1.4",
-    "workbox-strategies": "^5.1.4",
-    "workbox-streams": "^5.1.4"
+    "typescript": "^5.9.3",
+    "web-vitals": "^5.1.0"
   },
   "scripts": {
-    "start": "craco start",
     "prebuild": "bin/writeVersion.js",
-    "build": "craco build",
-    "lint": "eslint src/**/*.ts{,x}",
-    "test": "react-scripts test",
-    "storybook": "start-storybook -p 6006 -s public",
-    "test-storybook": "test-storybook",
-    "build-storybook": "build-storybook -s public",
-    "test:coverage": "react-scripts test --coverage --watchAll=false",
-    "test-storybook:coverage": "test-storybook --coverage",
-    "coverage-report": "cp coverage/storybook/coverage-storybook.json coverage/coverage-storybook.json && nyc report --reporter=lcovonly --reporter=html -t coverage --report-dir coverage/complete",
-    "test-storybook:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"yarn build-storybook --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && yarn test-storybook --maxWorkers=2 --coverage\""
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest --project=unit",
+    "test:ui": "vitest --ui --project=unit",
+    "test:run": "vitest run --project=unit",
+    "test:coverage": "vitest run --coverage --project=unit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "test-storybook": "vitest --project=storybook"
   },
   "browserslist": {
     "production": [
@@ -70,70 +54,52 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.13.0",
-    "@babel/plugin-proposal-optional-chaining": "^7.13.12",
-    "@craco/craco": "^6.4.3",
-    "@storybook/addon-actions": "^6.5.9",
-    "@storybook/addon-coverage": "^0.0.2",
-    "@storybook/addon-essentials": "^6.5.9",
-    "@storybook/addon-interactions": "^6.5.9",
-    "@storybook/addon-links": "^6.5.9",
-    "@storybook/builder-webpack5": "^6.5.9",
-    "@storybook/jest": "^0.0.10",
-    "@storybook/manager-webpack5": "^6.5.9",
-    "@storybook/node-logger": "^6.5.9",
-    "@storybook/preset-create-react-app": "^4.1.2",
-    "@storybook/react": "^6.5.9",
-    "@storybook/test-runner": "^0.3.0",
-    "@storybook/testing-library": "^0.0.13",
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.3.0",
-    "@testing-library/user-event": "^12.8.3",
-    "@types/jest": "^26.0.24",
-    "@types/node": "^12.20.47",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "@types/styled-components": "^5.1.7",
-    "@types/wicg-file-system-access": "^2020.9.5",
-    "@typescript-eslint/eslint-plugin": "^5.18.0",
-    "@typescript-eslint/parser": "^5.18.0",
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.2",
+    "@storybook/addon-docs": "^10.1.6",
+    "@storybook/addon-themes": "^10.1.5",
+    "@storybook/addon-vitest": "^10.1.5",
+    "@storybook/react-vite": "^10.1.5",
+    "@tailwindcss/vite": "^4.1.17",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jsdom": "^27",
+    "@types/node": "^24.9",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@types/wicg-file-system-access": "^2023.10.7",
+    "@typescript-eslint/eslint-plugin": "^8.50.0",
+    "@typescript-eslint/parser": "^8.50.0",
+    "@vitest/browser-playwright": "4.0.16",
+    "@vitest/coverage-v8": "4.0.16",
+    "@vitest/ui": "^4.0.16",
     "concurrently": "^7.2.2",
-    "raw.macro": "^0.4.2",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "jsdom": "^27.3.0",
+    "playwright": "^1.57.0",
+    "prettier": "^3.7.4",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "sass-embedded": "^1.96.0",
+    "storybook": "^10.1.5",
+    "typescript-eslint": "^8.50.0",
+    "vite": "^7.2.7",
+    "vite-plugin-glsl": "^1.5.5",
+    "vite-plugin-svgr": "^4.5.0",
+    "vitest": "^4.0.16",
     "wait-on": "^6.0.1"
   },
-  "jest": {
-    "transformIgnorePatterns": [
-      "/node_modules/(?!delaunator|robust-predicates)"
-    ],
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/.*.stories.tsx$",
-      "<rootDir>/src/old/.*",
-      "<rootDir>/.*/.*Canvas.tsx$",
-      "<rootDir>/src/application/webgl/lib/webgl.ts$",
-      "<rootDir>/src/application/webgl/programs/.*",
-      "<rootDir>/src/reportWebVitals.ts",
-      "<rootDir>/src/service-worker.ts",
-      "<rootDir>/src/serviceWorkerRegistration.ts"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "statements": 16,
-        "branches": 8,
-        "lines": 16,
-        "functions": 11
-      },
-      "./src/animation/": {
-        "statements": 92,
-        "branches": 83,
-        "lines": 93,
-        "functions": 84
-      }
-    },
-    "moduleNameMapper": {
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
-    }
+  "imports": {
+    "#*": [
+      "./*",
+      "./*.ts",
+      "./*.tsx"
+    ]
   },
-  "eslintIgnore": [
-    "/src/old/**"
-  ]
+  "packageManager": "yarn@4.12.0"
 }

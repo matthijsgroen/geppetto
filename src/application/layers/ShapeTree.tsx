@@ -1,8 +1,9 @@
 import { useState } from "react";
+
 import {
   findParentId,
   isEmpty,
-  PlacementInfo,
+  type PlacementInfo,
 } from "../../animation/file2/hierarchy";
 import { addFolder, addShape, removeShape } from "../../animation/file2/shapes";
 import {
@@ -18,11 +19,11 @@ import {
 import { useFile } from "../contexts/FileContext";
 import { useToolAction } from "../hooks/useToolAction";
 import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
-import { UseState } from "../types";
+import { type UseState } from "../types";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
-};
+}
 
 export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
   const [file, setFile] = useFile();
@@ -82,7 +83,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
       focusedItemState={focusedItemState}
       treeId="layers"
     >
-      <Panel padding={5}>
+      <Panel padding="sm">
         <ToolBar size="small">
           <ToolButton
             icon={<Icon>📄</Icon>}

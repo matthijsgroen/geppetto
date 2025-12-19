@@ -1,19 +1,20 @@
 import React, { useEffect, useMemo } from "react";
-import { Vec2 } from "../../types";
-import { IDLayer, showLayerPoints } from "./programs/showLayerPoints";
-import { showTexture } from "./programs/showTexture";
+
+import { type Vec2 } from "../../types";
+import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
 import { showGrid } from "./programs/showGrid";
+import { type IDLayer, showLayerPoints } from "./programs/showLayerPoints";
+import { showTexture } from "./programs/showTexture";
 import { showTextureMap } from "./programs/showTextureMap";
 import WebGLCanvas from "./WebGLCanvas";
-import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
 
 export type GridSettings = {
   size: number;
   enabled: boolean;
   magnetic: boolean;
-};
+}
 
-export interface TextureMapCanvasProps {
+export type TextureMapCanvasProps = {
   image: HTMLImageElement | null;
   layers: IDLayer[];
   grid: GridSettings;

@@ -1,12 +1,13 @@
-import React, {
+import {
   createContext,
-  PropsWithChildren,
-  FC,
-  useRef,
+  type FC,
+  type PropsWithChildren,
   useCallback,
   useContext,
+  useRef,
 } from "react";
-import { ScreenTranslation } from "../types";
+
+import { type ScreenTranslation } from "../types";
 
 type MutableScreenTranslation = {
   zoom: number;
@@ -31,7 +32,7 @@ const ScreenTransContext = createContext<{
   },
 });
 
-export const ScreenTranslationContext: FC<PropsWithChildren<{}>> = ({
+export const ScreenTranslationContext: FC<PropsWithChildren> = ({
   children,
 }) => {
   const listenersRef = useRef<((trans: ScreenTranslation) => void)[]>([]);
