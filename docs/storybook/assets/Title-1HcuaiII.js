@@ -1,0 +1,1 @@
+import{j as e}from"./iframe-CY0xYQ0n.js";const o=({children:t})=>e.jsx("h1",{className:"mt-2 text-2xl font-semibold text-text font-caption",children:t});o.__docgenInfo={description:"",methods:[],displayName:"Title"};export{o as T};

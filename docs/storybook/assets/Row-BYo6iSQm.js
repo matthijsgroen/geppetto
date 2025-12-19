@@ -1,0 +1,1 @@
+import{j as e}from"./iframe-CY0xYQ0n.js";const s=({children:o})=>e.jsx("div",{className:"flex flex-1 flex-row overflow-hidden",children:o});s.__docgenInfo={description:"",methods:[],displayName:"Row"};export{s as R};

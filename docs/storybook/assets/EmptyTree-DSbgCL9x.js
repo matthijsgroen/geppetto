@@ -1,0 +1,1 @@
+import{j as t}from"./iframe-CY0xYQ0n.js";const o=({children:e})=>t.jsx("div",{className:"flex flex-1 flex-col items-center justify-center rounded-control bg-control-default p-4 text-center text-text font-caption",children:e});o.__docgenInfo={description:"",methods:[],displayName:"EmptyTree"};export{o as E};
