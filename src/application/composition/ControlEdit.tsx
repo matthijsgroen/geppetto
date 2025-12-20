@@ -46,6 +46,7 @@ const EditStepsToggle: React.FC<{
   <Control label="Control steps">
     <ToolButton
       label={editControlSteps ? "Done" : "Edit"}
+      standAlone
       onClick={onEditControlSteps}
     />
   </Control>

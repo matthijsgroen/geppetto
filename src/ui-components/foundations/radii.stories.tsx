@@ -18,9 +18,7 @@ export const Radii = meta.story({
         "rounded-full",
       ].map((radius) => (
         <FoundationItem key={radius} label={radius}>
-          <div className={`${radius} bg-control-default size-20 shadow-md`}>
-            &nbsp;
-          </div>
+          <div className={`${radius} bg-panel size-20 shadow-md`}>&nbsp;</div>
         </FoundationItem>
       ))}
     </FoundationList>

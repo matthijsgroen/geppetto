@@ -22,7 +22,7 @@ const Draggable: React.FC<PropsWithChildren<Partial<DraggableCoreProps>>> = ({
 };
 
 /**
- * Implementation based on: https://github.com/bjgrosse/react-resize-panel/blob/master/src/ResizePanel.js
+ * Implementation based on: https://github.com/bjgrosse/react-resize-toolbar/blob/master/src/ResizePanel.js
  *
  * The existing implementation did not have types, and was using deprecated functions
  * of React. Re-implemented it to have types, a functional component, and not using deprecated code

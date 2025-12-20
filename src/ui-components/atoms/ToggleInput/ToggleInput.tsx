@@ -7,8 +7,9 @@ export const ToggleInput: FC<ToggleInputProps> = (props) => (
   <input
     type="checkbox"
     className={clsx(
-      `bg-workspace shadow-inset-sm checked:bg-control-active hover:checked:bg-control-highlight relative inline-block h-6 w-12 appearance-none rounded-full outline-0 transition-colors`,
-      `after:border-panel after:bg-panel hover:after:border-control-highlight focus:after:border-control-active after:m-0.5 after:inline-block after:size-5 after:rounded-full after:border-2 after:shadow-md after:transition-[margin-left] after:content-['']`,
+      `relative inline-block h-6 w-12 appearance-none rounded-full bg-workspace shadow-inset-sm outline-0 transition-colors checked:bg-control-active hover:checked:bg-control-highlight`,
+      `after:m-0.5 after:inline-block after:size-5 after:rounded-full after:border-2 after:border-control-interaction after:bg-control-interaction after:shadow-md after:transition-[margin-left] after:content-['']`,
+      `focus-within:after:border-control-focus`,
       "checked:after:ml-6"
     )}
     {...props}

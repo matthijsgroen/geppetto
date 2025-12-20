@@ -12,13 +12,13 @@ export const Colors = meta.story({
   render: () => (
     <FoundationList title="Colors">
       {[
-        "bg-control-default",
         "bg-workspace",
 
-        "bg-panel",
+        "bg-toolbar",
         "bg-notification",
 
-        "bg-control-default",
+        "bg-panel",
+        "bg-control-interaction",
         "bg-control-edge",
         "bg-control-focus",
         "bg-control-highlight",
@@ -30,7 +30,7 @@ export const Colors = meta.story({
         "bg-active",
       ].map((color) => (
         <FoundationItem key={color} label={color.slice(3)}>
-          <div className={`${color} rounded-control size-20 shadow-md`}>
+          <div className={`${color} size-20 rounded-control shadow-md`}>
             &nbsp;
           </div>
         </FoundationItem>

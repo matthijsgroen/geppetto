@@ -2,9 +2,9 @@
   color: var(--color-text);
   font: caption;
 
-  background-color: var(--color-control-default);
+  background-color: var(--color-panel);
 
-  --rct-color-tree-bg: var(--color-control-default);
+  --rct-color-tree-bg: var(--color-panel);
   --rct-color-tree-focus-outline: var(--color-control-focus);
 
   --rct-color-focustree-item-selected-bg: var(--color-control-active);

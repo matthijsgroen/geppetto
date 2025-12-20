@@ -27,7 +27,7 @@ type NumberInputProps = {
   maxValue?: number;
   htmlId?: string;
   onChange?: (newValue: number) => void;
-}
+};
 
 const stepSizes: Record<StepSize, number> = {
   [StepSize.EXTRA_SMALL]: 0.01,
@@ -87,7 +87,7 @@ export const NumberInput: FC<NumberInputProps> = ({
   );
 
   return (
-    <label className="inline-block h-fit cursor-text border-y-2 border-panel bg-panel p-1 text-dimmed shadow-sm first:rounded-l-control-small first:border-l-2 last:rounded-r-control-small last:border-r-2 focus-within:border-control-focus focus-within:text-text hover:border-control-highlight hover:focus-within:border-control-focus">
+    <label className="border-toolbar bg-toolbar inline-block h-fit cursor-text border-y-2 p-1 text-dimmed shadow-sm first:rounded-l-control-small first:border-l-2 last:rounded-r-control-small last:border-r-2 focus-within:border-control-focus focus-within:text-text hover:border-control-highlight hover:focus-within:border-control-focus">
       {prefix}
       <input
         className="hide-spinner w-[4ch] border-0 bg-transparent text-dimmed focus:w-[6ch] focus:text-text focus:outline-none"

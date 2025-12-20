@@ -16,7 +16,7 @@ type ToolTabProps = {
   ref?: Ref<HTMLButtonElement>;
   onClick?: () => void;
   onKeyDown?: () => void;
-}
+};
 
 export const ToolTab: FC<ToolTabProps> = ({
   icon,
@@ -38,7 +38,7 @@ export const ToolTab: FC<ToolTabProps> = ({
     <button
       type="button"
       className={clsx(
-        `inline-flex items-center bg-panel bg-no-repeat whitespace-nowrap outline-2 outline-transparent font-caption focus-visible:outline-active enabled:hover:bg-control-highlight disabled:opacity-50`,
+        `inline-flex items-center bg-toolbar bg-no-repeat whitespace-nowrap outline-2 outline-transparent font-caption focus-visible:outline-active enabled:hover:bg-control-highlight disabled:opacity-50`,
         {
           "border-transparent text-text": !active,
           "border-control-active text-active": active,
@@ -48,7 +48,7 @@ export const ToolTab: FC<ToolTabProps> = ({
           "w-[calc(3rem-3px)]": useVertical && useSize === "default",
           "w-[calc(2.25rem-3px)]": useVertical && useSize === "small",
           "mr-0.5 h-fit flex-col gap-2 border-l-3 py-4": useVertical,
-          "from-control-default via-control-default/50 to-panel/0": active,
+          "from-panel via-panel/50 to-toolbar/0": active,
           "bg-radial-[farthest-side] bg-position-[0em_1em]":
             active && !useVertical,
           "bg-radial-[closest-side] bg-position-[-1em_0em]":

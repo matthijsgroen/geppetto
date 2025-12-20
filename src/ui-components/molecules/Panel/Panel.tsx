@@ -24,7 +24,7 @@ export const Panel: FC<PanelProps> = ({
       "p-1": padding === "sm",
       "p-2": padding === "md",
       "bg-workspace": workspace,
-      "bg-panel": !workspace,
+      "bg-toolbar": !workspace,
       border: true,
       "border-transparent": !workspace,
       "border-control-edge": workspace,

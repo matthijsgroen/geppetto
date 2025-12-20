@@ -1,4 +1,4 @@
-import { isInDarkMode } from "#src/application/lib/isInDarkmode.js";
+import { isInDarkMode } from "#src/application/lib/darkMode.js";
 
 import { type Layer } from "../../../animation/file2/types";
 import { type Vec2 } from "../../../types";

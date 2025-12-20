@@ -107,7 +107,8 @@ export const webGLScene = async (
     if (darkMode) {
       gl.clearColor(0.1875, 0.1875, 0.1875, 1.0);
     } else {
-      gl.clearColor(0.66, 0.66, 0.66, 1.0);
+      // Emerald 500
+      gl.clearColor(0 / 256, 188 / 256, 125 / 256, 1.0);
     }
     onChange?.();
   };

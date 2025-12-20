@@ -30,57 +30,71 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
 
   if (texture === null) {
     return (
-      <div>
-        <Logo />
-        <Title>Welcome to Geppetto</Title>
-        <Paragraph>
-          Geppetto is a free and open animation tool
-          <br /> to create and embed WebGL animations
-        </Paragraph>
-        <Paragraph>
-          Note: This is an early ALPHA build of Geppetto 2.0
-          <br /> and is not yet ready for production use. (It&apos;s not feature
-          complete yet!)
-        </Paragraph>
-        {isNewFile(file) && (
+      <div className="m-4 grid grid-cols-[min-content_1fr] gap-x-4">
+        <div className="flex justify-self-end pb-4">
+          <Logo />
+        </div>
+        <div className="max-w-80">
+          <Title>Welcome to Geppetto</Title>
           <Paragraph>
-            <ToolButton
-              icon={<Icon>📄</Icon>}
-              label="Load file..."
-              onClick={() => sendMessage("fileOpen")}
-              size="small"
-              shadow
-            />
-            <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
+            Geppetto is a free and open animation tool
+            <br /> to create and embed WebGL animations
           </Paragraph>
+          <Paragraph size="small">
+            Note: This is an early ALPHA build of Geppetto 2.0
+            <br /> and is not yet ready for production use. (It&apos;s not
+            feature complete yet!)
+          </Paragraph>
+        </div>
+        {isNewFile(file) && (
+          <>
+            <Paragraph align="right">
+              <ToolButton
+                icon={<Icon>📄</Icon>}
+                label="Load file..."
+                onClick={() => sendMessage("fileOpen")}
+                size="small"
+                standAlone
+              />
+              <br />
+              <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
+            </Paragraph>
+            <Paragraph>Load a Geppetto file from disk</Paragraph>
+          </>
         )}
-        <Paragraph>
+        <Paragraph align="right">
           <ToolButton
             icon={<Icon>🌅</Icon>}
             label="Load texture..."
             onClick={() => sendMessage("textureOpen")}
             size="small"
-            shadow
+            standAlone
           />
+          <br />
           <Kbd
             shortcut={{ interaction: "KeyO", ctrlOrCmd: true, shift: true }}
           />
         </Paragraph>
-        <Paragraph>&mdash; Or &mdash;</Paragraph>
-        <Paragraph>
+        <Paragraph>Load a texture from disk</Paragraph>
+        <Paragraph align="right">&mdash; Or &mdash;</Paragraph>
+        <div></div>
+        <Paragraph align="right">
           <ToolButton
             icon={<Icon>🏡</Icon>}
             label="Load demo file"
             onClick={() => sendMessage("demoOpenScenery")}
             size="small"
-            shadow
+            standAlone
           />
         </Paragraph>
-        <Paragraph size="small">
-          Version: {versionInfo.version} - {versionInfo.commit.slice(0, 6)},
-          released{" "}
-          {formatDistanceToNow(versionInfo.timestamp, { addSuffix: true })}
-        </Paragraph>
+        <Paragraph>Load a demo file to explore the app</Paragraph>
+        <div className="col-span-2 pt-4">
+          <Paragraph size="small">
+            Version: {versionInfo.version} - {versionInfo.commit.slice(0, 6)},
+            released{" "}
+            {formatDistanceToNow(versionInfo.timestamp, { addSuffix: true })}
+          </Paragraph>
+        </div>
       </div>
     );
   }

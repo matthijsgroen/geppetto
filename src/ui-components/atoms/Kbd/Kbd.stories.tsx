@@ -14,7 +14,7 @@ type StoryProps = {
   shift: boolean;
   alt: boolean;
   mac: boolean;
-}
+};
 
 const StoryTemplate: React.FC<StoryProps> = ({
   interaction = "KeyO",
@@ -27,7 +27,7 @@ const StoryTemplate: React.FC<StoryProps> = ({
   const shortcut: Shortcut = { interaction, ctrlOrCmd, shift, alt, mac };
   return (
     <div>
-      <p style={{ background: "var(--colors-control-default)", margin: 0 }}>
+      <p style={{ background: "var(--colors-panel)", margin: 0 }}>
         <KbdElement shortcut={shortcut} {...props} />
       </p>
     </div>

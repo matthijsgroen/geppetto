@@ -23,7 +23,7 @@ import { type UseState } from "../types";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
-}
+};
 
 export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
   const [file, setFile] = useFile();
@@ -119,7 +119,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
               icon={<Icon>📄</Icon>}
               label="+"
               tooltip="Add layer"
-              shadow
+              standAlone
               onClick={addShapeAction}
               onKeyDown={addShapeAction}
               disabled={selectedItems.length > 1}

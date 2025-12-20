@@ -17,7 +17,7 @@ export const ToolBar: FC<ToolBarProps> = ({
 }) => (
   <ToolbarContext.Provider value={{ size, vertical }}>
     <div
-      className={clsx("hide-scrollbar shrink-0 bg-panel", {
+      className={clsx("hide-scrollbar shrink-0 bg-toolbar", {
         "overflow-x-scroll overflow-y-visible": !vertical,
         "overflow-x-visible overflow-y-scroll": vertical,
         "h-12": size === "default" && !vertical,

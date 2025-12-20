@@ -166,7 +166,7 @@ export const Version1 = meta.story({
                 icon={<Icon>📄</Icon>}
                 label="Load file..."
                 size="small"
-                shadow
+                standAlone
               />{" "}
               <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
             </Paragraph>
