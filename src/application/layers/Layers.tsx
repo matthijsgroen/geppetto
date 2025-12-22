@@ -35,9 +35,9 @@ import {
   getInitialScale,
   maxZoomFactor,
   mouseToTextureCoordinate,
-} from "../webgl/lib/canvas";
-import { type IDLayer } from "../webgl/programs/showLayerPoints";
-import TextureMapCanvas, { type GridSettings } from "../webgl/TextureMapCanvas";
+} from "../../infrastructure/webgl/lib/canvas";
+import { type IDLayer } from "../../infrastructure/webgl/programs/showLayerPoints";
+import TextureMapCanvas, { type GridSettings } from "../../infrastructure/webgl/TextureMapCanvas";
 import { ShapeTree } from "./ShapeTree";
 
 type LayersProps = {

@@ -12,9 +12,9 @@ import {
   useControlValues,
   useControlValueSubscription,
   useMutationValues,
-} from "../state/ImageControlContext";
-import { useScreenTranslation } from "../state/ScreenTranslationContext";
-import useEvent from "../state/hooks/useEvent";
+} from "../../application/state/ImageControlContext";
+import { useScreenTranslation } from "../../application/state/ScreenTranslationContext";
+import useEvent from "../../application/state/hooks/useEvent";
 import { calculateVectorValues } from "./lib/vectorPositions";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";

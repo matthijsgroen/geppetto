@@ -59,13 +59,13 @@ import {
 import { useActionMap } from "../state/hooks/useActionMap";
 import useEvent from "../state/hooks/useEvent";
 import { type AppSection, type Size, type UseState } from "../../dtos/application.dto";
-import CompositionCanvas from "../webgl/CompositionCanvas";
-import { maxZoomFactor } from "../webgl/lib/canvas";
-import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
+import CompositionCanvas from "../../infrastructure/webgl/CompositionCanvas";
+import { maxZoomFactor } from "../../infrastructure/webgl/lib/canvas";
+import { imageToPixels, pixelsToImage } from "../../infrastructure/webgl/lib/screenCoord";
 import {
   calculateVectorValues,
   vectorPositions,
-} from "../webgl/lib/vectorPositions";
+} from "../../infrastructure/webgl/lib/vectorPositions";
 import { ControlEditSteps } from "./ControlEdit";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";

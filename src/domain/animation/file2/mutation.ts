@@ -1,7 +1,7 @@
 import { type Vec2 } from "geppetto-player";
 import { produce } from "immer";
 
-import { defaultValueForVector } from "../../../application/webgl/lib/vertices";
+import { defaultValueForVector } from "../../../infrastructure/webgl/lib/vertices";
 import { addInHierarchy, type PlacementInfo } from "./hierarchy";
 import { getUniqueName } from "./shapes";
 import {

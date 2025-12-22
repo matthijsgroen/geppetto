@@ -10,8 +10,8 @@ import {
 import {
   type Subscription,
   useScreenSubscription,
-} from "../state/ScreenTranslationContext";
-import { mergeRefs } from "../lib/mergeRefs";
+} from "../../application/state/ScreenTranslationContext";
+import { mergeRefs } from "../../application/lib/mergeRefs";
 import { type WebGLRenderer, webGLScene } from "./lib/webgl";
 
 const HEIGHT_PIXEL_FIX = 4;

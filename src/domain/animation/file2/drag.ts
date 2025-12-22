@@ -1,6 +1,6 @@
 import { produce } from "immer";
 
-import { vecAdd } from "../../../application/webgl/lib/vertices";
+import { vecAdd } from "../../../infrastructure/webgl/lib/vertices";
 import { type Vec2 } from "../../../shared/types/global";
 import { collectChildIds } from "./hierarchy";
 import { type GeppettoImage } from "../../../dtos/animation-file2.dto";

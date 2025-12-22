@@ -12,8 +12,8 @@ import {
   useUpdateScreenTranslation,
 } from "../state/ScreenTranslationContext";
 import useEvent from "../state/hooks/useEvent";
-import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
-import { vecSub } from "../webgl/lib/vertices";
+import { imageToPixels, pixelsToImage } from "../../infrastructure/webgl/lib/screenCoord";
+import { vecSub } from "../../infrastructure/webgl/lib/vertices";
 import MouseControl, { MouseMode } from "./MouseControl";
 
 export type DragState = "start" | "move" | "end";
