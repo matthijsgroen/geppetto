@@ -1,6 +1,6 @@
 import { type TranslationVector } from "geppetto-player";
 
-import { isInDarkMode } from "#src/application/lib/darkMode.js";
+import { isInDarkMode } from "#src/shared/utils/darkMode.js";
 
 import { collectChildIds, visit } from "../../../domain/animation/file2/hierarchy";
 import { isShapeMutationVector } from "../../../domain/animation/file2/mutation";

@@ -6,7 +6,7 @@ import App from "./application/App";
 import {
   updateDarkModeClass,
   watchSystemColorSchemeChanges,
-} from "./application/lib/darkMode";
+} from "./shared/utils/darkMode";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

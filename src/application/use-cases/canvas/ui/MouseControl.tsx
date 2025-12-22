@@ -2,8 +2,8 @@ import clsx from "clsx";
 import type { ComponentProps, FC } from "react";
 import { type PropsWithChildren, useEffect, useRef, useState } from "react";
 
-import { type Vec2 } from "../../shared/types/global";
-import useEvent from "../state/hooks/useEvent";
+import { type Vec2 } from "../../../../shared/types/global";
+import useEvent from "../../../state/hooks/useEvent";
 
 export enum MouseMode {
   Normal,

@@ -1,4 +1,4 @@
-import { isInDarkMode } from "#src/application/lib/darkMode.js";
+import { isInDarkMode } from "#src/shared/utils/darkMode.js";
 
 import { type Layer } from "../../../dtos/animation-file2.dto";
 import { type Vec2 } from "../../../shared/types/global";

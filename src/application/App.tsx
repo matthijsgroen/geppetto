@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
-import { Composition } from "./composition/Composition";
+import { ApplicationMenu } from "./use-cases/application-menu/ui/ApplicationMenu";
+import { Composition } from "./use-cases/composition/ui/Composition";
 import { AppContext } from "./state/ApplicationContext";
 import { FileContext } from "./state/FileContext";
 import { ImageControlContext } from "./state/ImageControlContext";
 import { ScreenTranslationContext } from "./state/ScreenTranslationContext";
-import { Layers } from "./layers/Layers";
+import { Layers } from "./use-cases/layers/ui/Layers";
 import { type AppSection } from "../dtos/application.dto";
 
 const updateWindowTitle = (

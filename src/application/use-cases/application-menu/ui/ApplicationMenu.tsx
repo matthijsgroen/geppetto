@@ -1,11 +1,11 @@
 import React, { useCallback, useContext,useEffect, useRef } from "react";
 
-import { verifyFile as verifyVersion1 } from "../../domain/animation/file1/verifyFile";
-import { convertFromV1 } from "../../domain/animation/file2/convert";
-import { type GeppettoImage } from "../../dtos/animation-file2.dto";
-import { verifyFile as verifyVersion2 } from "../../domain/animation/file2/verifyFile";
-import sceneryDemoImg from "../../demos/scenery.json";
-import sceneryDemoImage from "../../demos/scenery.png";
+import sceneryDemoImg from "../../../../demos/scenery.json";
+import { verifyFile as verifyVersion1 } from "../../../../domain/animation/file1/verifyFile";
+import { convertFromV1 } from "../../../../domain/animation/file2/convert";
+import { verifyFile as verifyVersion2 } from "../../../../domain/animation/file2/verifyFile";
+import { type GeppettoImage } from "../../../../dtos/animation-file2.dto";
+import { type UseState } from "../../../../dtos/application.dto";
 import {
   LogoIcon,
   Menu,
@@ -14,18 +14,18 @@ import {
   type Shortcut,
   SubMenu,
   ToolButton,
-} from "../../ui/components";
-import { ActionMenuItem } from "../services/actions/ActionMenuItem";
-import { ApplicationContext } from "../state/ApplicationContext";
-import { useFile } from "../state/FileContext";
+} from "../../../../ui/components";
+import { ActionMenuItem } from "../../../services/actions/ActionMenuItem";
+import { ApplicationContext } from "../../../state/ApplicationContext";
+import { useFile } from "../../../state/FileContext";
+import { useActionMap } from "../../../state/hooks/useActionMap";
+import { useAppInstall } from "../../../state/hooks/useAppInstall";
+import { useAppUpdate } from "../../../state/hooks/useAppUpdate";
 import {
   useUpdateControlValues,
   useUpdateMutationValues,
-} from "../state/ImageControlContext";
-import { useActionMap } from "../state/hooks/useActionMap";
-import { useAppInstall } from "../state/hooks/useAppInstall";
-import { useAppUpdate } from "../state/hooks/useAppUpdate";
-import { type UseState } from "../../dtos/application.dto";
+} from "../../../state/ImageControlContext";
+import sceneryDemoImage from "../../demos/scenery.png";
 
 const sceneryDemo: GeppettoImage = sceneryDemoImg as unknown as GeppettoImage;
 

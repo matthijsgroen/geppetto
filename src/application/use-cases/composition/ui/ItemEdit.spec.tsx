@@ -1,11 +1,11 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
-import { toggleVisibility } from "../../domain/animation/file2/shapes";
+import { toggleVisibility } from "../../../../domain/animation/file2/shapes";
 import {
   fileBuilder,
   getShapeFolderIdByName,
-} from "../../domain/animation/file2/testFileBuilder";
-import { renderWithFile } from "../testUtils/renderWithFile";
+} from "../../../../domain/animation/file2/testFileBuilder";
+import { renderWithFile } from "../../../../shared/test/renderWithFile";
 import { ItemEdit } from "./ItemEdit";
 
 describe("ItemEdit", () => {

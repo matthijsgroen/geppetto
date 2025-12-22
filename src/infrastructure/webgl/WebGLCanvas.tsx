@@ -11,7 +11,7 @@ import {
   type Subscription,
   useScreenSubscription,
 } from "../../application/state/ScreenTranslationContext";
-import { mergeRefs } from "../../application/lib/mergeRefs";
+import { mergeRefs } from "../../shared/utils/mergeRefs";
 import { type WebGLRenderer, webGLScene } from "./lib/webgl";
 
 const HEIGHT_PIXEL_FIX = 4;

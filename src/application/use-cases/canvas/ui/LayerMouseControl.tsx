@@ -7,13 +7,13 @@ import React, {
   useState,
 } from "react";
 
+import { imageToPixels, pixelsToImage } from "../../../../infrastructure/webgl/lib/screenCoord";
+import { vecSub } from "../../../../infrastructure/webgl/lib/vertices";
+import useEvent from "../../../state/hooks/useEvent";
 import {
   useScreenTranslation,
   useUpdateScreenTranslation,
-} from "../state/ScreenTranslationContext";
-import useEvent from "../state/hooks/useEvent";
-import { imageToPixels, pixelsToImage } from "../../infrastructure/webgl/lib/screenCoord";
-import { vecSub } from "../../infrastructure/webgl/lib/vertices";
+} from "../../../state/ScreenTranslationContext";
 import MouseControl, { MouseMode } from "./MouseControl";
 
 export type DragState = "start" | "move" | "end";

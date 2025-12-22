@@ -1,6 +1,6 @@
 import { type ChangeEvent, useCallback } from "react";
 
-import { Control, ToggleInput } from "../../ui/components";
+import { Control, ToggleInput } from "../../../../ui/components";
 
 type BooleanControlProps = {
   label?: string;
