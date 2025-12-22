@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 
 import { ApplicationMenu } from "./applicationMenu/ApplicationMenu";
 import { Composition } from "./composition/Composition";
-import { AppContext } from "./contexts/ApplicationContext";
-import { FileContext } from "./contexts/FileContext";
-import { ImageControlContext } from "./contexts/ImageControlContext";
-import { ScreenTranslationContext } from "./contexts/ScreenTranslationContext";
+import { AppContext } from "./state/ApplicationContext";
+import { FileContext } from "./state/FileContext";
+import { ImageControlContext } from "./state/ImageControlContext";
+import { ScreenTranslationContext } from "./state/ScreenTranslationContext";
 import { Layers } from "./layers/Layers";
-import { type AppSection } from "./types";
+import { type AppSection } from "../dtos/application.dto";
 
 const updateWindowTitle = (
   animFile: string | null,

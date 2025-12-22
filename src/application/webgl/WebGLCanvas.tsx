@@ -10,7 +10,7 @@ import {
 import {
   type Subscription,
   useScreenSubscription,
-} from "../contexts/ScreenTranslationContext";
+} from "../state/ScreenTranslationContext";
 import { mergeRefs } from "../lib/mergeRefs";
 import { type WebGLRenderer, webGLScene } from "./lib/webgl";
 

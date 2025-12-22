@@ -1,8 +1,8 @@
-import { addControl, removeControls } from "../../animation/file2/controls";
+import { addControl, removeControls } from "../../domain/animation/file2/controls";
 import {
   findParentId,
   type PlacementInfo,
-} from "../../animation/file2/hierarchy";
+} from "../../domain/animation/file2/hierarchy";
 import {
   Icon,
   Panel,
@@ -12,10 +12,10 @@ import {
   ToolSeparator,
   Tree,
 } from "../../ui/components";
-import { useFile } from "../contexts/FileContext";
-import { useToolAction } from "../hooks/useToolAction";
-import { ControlTreeEnvironment } from "../treeEnvironments/ControlTreeEnvironment";
-import { type UseState } from "../types";
+import { useFile } from "../state/FileContext";
+import { useToolAction } from "../state/hooks/useToolAction";
+import { ControlTreeEnvironment } from "../services/treeEnvironments/ControlTreeEnvironment";
+import { type UseState } from "../../dtos/application.dto";
 import { ControlEdit } from "./ControlEdit";
 
 type ControlTreeProps = {

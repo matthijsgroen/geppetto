@@ -7,7 +7,7 @@ import {
   ToolButton,
   useMenuState,
 } from "../../ui/components";
-import { useAppInstall } from "../hooks/useAppInstall";
+import { useAppInstall } from "../state/hooks/useAppInstall";
 
 export const InstallToolButton: React.FC = () => {
   const anchor = useRef(null);

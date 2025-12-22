@@ -13,7 +13,7 @@ import { RangeValue } from "#src/ui/components/atoms/RangeValue/RangeValue.js";
 import {
   insertControlStep,
   removeControlStep,
-} from "../../animation/file2/controls";
+} from "../../domain/animation/file2/controls";
 import {
   Control,
   ControlledMenu,
@@ -26,12 +26,12 @@ import {
   ToolGrid,
   useMenuState,
 } from "../../ui/components";
-import { useFile } from "../contexts/FileContext";
+import { useFile } from "../state/FileContext";
 import {
   useControlValues,
   useUpdateControlValues,
-} from "../contexts/ImageControlContext";
-import useEvent from "../hooks/useEvent";
+} from "../state/ImageControlContext";
+import useEvent from "../state/hooks/useEvent";
 import { ValueSlider } from "./editors/ValueSlider";
 
 type ControlEditProps = {

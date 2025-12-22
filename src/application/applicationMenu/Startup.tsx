@@ -1,9 +1,9 @@
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useContext } from "react";
 
-import { isNewFile } from "../../animation/file2/new";
-import { hasPoints } from "../../animation/file2/shapes";
-import { type GeppettoImage } from "../../animation/file2/types";
+import { isNewFile } from "../../domain/animation/file2/new";
+import { hasPoints } from "../../domain/animation/file2/shapes";
+import { type GeppettoImage } from "../../dtos/animation-file2.dto";
 import {
   Icon,
   Kbd,
@@ -13,7 +13,7 @@ import {
   ToolButton,
 } from "../../ui/components";
 import { versionInfo } from "../../versionInfo";
-import { ApplicationContext } from "../contexts/ApplicationContext";
+import { ApplicationContext } from "../state/ApplicationContext";
 
 type StartupScreenProps = {
   texture: HTMLImageElement | null;

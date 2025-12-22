@@ -1,4 +1,4 @@
-import { type Vec2 } from "../../../types";
+import { type Vec2 } from "../../../shared/types/global";
 
 const FOCUS_BORDER = 2;
 export const mouseToTextureCoordinate = (

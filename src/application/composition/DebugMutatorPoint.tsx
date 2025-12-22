@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { type Vec2 } from "../../types";
+import { type Vec2 } from "../../shared/types/global";
 
 const Point = styled.div`
   position: absolute;

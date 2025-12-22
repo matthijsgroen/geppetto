@@ -4,8 +4,8 @@ import {
   findParentId,
   isEmpty,
   type PlacementInfo,
-} from "../../animation/file2/hierarchy";
-import { addFolder, addShape, removeShape } from "../../animation/file2/shapes";
+} from "../../domain/animation/file2/hierarchy";
+import { addFolder, addShape, removeShape } from "../../domain/animation/file2/shapes";
 import {
   EmptyTree,
   Icon,
@@ -15,11 +15,11 @@ import {
   ToolButton,
   ToolSeparator,
   Tree,
-} from "../../ui-components";
-import { useFile } from "../contexts/FileContext";
-import { useToolAction } from "../hooks/useToolAction";
-import { LayerTreeEnvironment } from "../treeEnvironments/LayerTreeEnvironment";
-import { type UseState } from "../types";
+} from "../../ui/components";
+import { useFile } from "../state/FileContext";
+import { useToolAction } from "../state/hooks/useToolAction";
+import { LayerTreeEnvironment } from "../services/treeEnvironments/LayerTreeEnvironment";
+import { type UseState } from "../../dtos/application.dto";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;

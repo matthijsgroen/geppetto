@@ -1,9 +1,9 @@
 import React, { useCallback, useContext,useEffect, useRef } from "react";
 
-import { verifyFile as verifyVersion1 } from "../../animation/file1/verifyFile";
-import { convertFromV1 } from "../../animation/file2/convert";
-import { type GeppettoImage } from "../../animation/file2/types";
-import { verifyFile as verifyVersion2 } from "../../animation/file2/verifyFile";
+import { verifyFile as verifyVersion1 } from "../../domain/animation/file1/verifyFile";
+import { convertFromV1 } from "../../domain/animation/file2/convert";
+import { type GeppettoImage } from "../../dtos/animation-file2.dto";
+import { verifyFile as verifyVersion2 } from "../../domain/animation/file2/verifyFile";
 import sceneryDemoImg from "../../demos/scenery.json";
 import sceneryDemoImage from "../../demos/scenery.png";
 import {
@@ -15,17 +15,17 @@ import {
   SubMenu,
   ToolButton,
 } from "../../ui/components";
-import { ActionMenuItem } from "../actions/ActionMenuItem";
-import { ApplicationContext } from "../contexts/ApplicationContext";
-import { useFile } from "../contexts/FileContext";
+import { ActionMenuItem } from "../services/actions/ActionMenuItem";
+import { ApplicationContext } from "../state/ApplicationContext";
+import { useFile } from "../state/FileContext";
 import {
   useUpdateControlValues,
   useUpdateMutationValues,
-} from "../contexts/ImageControlContext";
-import { useActionMap } from "../hooks/useActionMap";
-import { useAppInstall } from "../hooks/useAppInstall";
-import { useAppUpdate } from "../hooks/useAppUpdate";
-import { type UseState } from "../types";
+} from "../state/ImageControlContext";
+import { useActionMap } from "../state/hooks/useActionMap";
+import { useAppInstall } from "../state/hooks/useAppInstall";
+import { useAppUpdate } from "../state/hooks/useAppUpdate";
+import { type UseState } from "../../dtos/application.dto";
 
 const sceneryDemo: GeppettoImage = sceneryDemoImg as unknown as GeppettoImage;
 

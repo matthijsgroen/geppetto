@@ -1,9 +1,9 @@
 import React, { Fragment } from "react";
 
-import { type MutationVectorTypes } from "../../../animation/file1/types";
-import { type Vec2 } from "../../../types";
+import { type MutationVectorTypes } from "../../../dtos/animation-file1.dto";
+import { type Vec2 } from "../../../shared/types/global";
 import { Control, TextButton } from "../../../ui/components";
-import { useFile } from "../../contexts/FileContext";
+import { useFile } from "../../state/FileContext";
 import { VectorControl } from "../../controls/VectorControl";
 import styles from "./MutationValueEdit.module.css";
 import { ValueSlider } from "./ValueSlider";

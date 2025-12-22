@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
-import { type Layer } from "../../animation/file2/types";
+import { addPoint, deletePoint, movePoint } from "../../domain/animation/file2/shapes";
+import { type Layer } from "../../dtos/animation-file2.dto";
 import {
   Column,
   Icon,
@@ -20,17 +20,17 @@ import {
   ToolSpacer,
   ToolTab,
 } from "../../ui/components";
-import { type Vec2 } from "../../types";
-import { ActionToolButton } from "../actions/ActionToolButton";
+import { type Vec2 } from "../../shared/types/global";
+import { ActionToolButton } from "../services/actions/ActionToolButton";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
-import { useFile } from "../contexts/FileContext";
-import { useScreenTranslation } from "../contexts/ScreenTranslationContext";
-import { useActionMap } from "../hooks/useActionMap";
-import { useEvent } from "../hooks/useEvent";
-import { type AppSection, type UseState } from "../types";
+import { useFile } from "../state/FileContext";
+import { useScreenTranslation } from "../state/ScreenTranslationContext";
+import { useActionMap } from "../state/hooks/useActionMap";
+import { useEvent } from "../state/hooks/useEvent";
+import { type AppSection, type UseState } from "../../dtos/application.dto";
 import {
   getInitialScale,
   maxZoomFactor,

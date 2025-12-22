@@ -1,9 +1,9 @@
-import { collectChildIds, visit } from "../../../animation/file2/hierarchy";
+import { collectChildIds, visit } from "../../../domain/animation/file2/hierarchy";
 import {
   type GeppettoImage,
   type Keyframe,
-} from "../../../animation/file2/types";
-import { type ScreenTranslation } from "../../types";
+} from "../../../dtos/animation-file2.dto";
+import { type ScreenTranslation } from "../../../dtos/application.dto";
 import { flatten, verticesFromPoints } from "../lib/vertices";
 import { createProgram, type WebGLRenderer } from "../lib/webgl";
 import compositionFragmentShader from "./showCompositionMap.frag";

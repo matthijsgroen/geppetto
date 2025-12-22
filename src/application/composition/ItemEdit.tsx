@@ -6,9 +6,9 @@ import {
   iconMapping,
   isShapeMutationVector,
   updateMutationValue,
-} from "../../animation/file2/mutation";
-import { toggleVisibility } from "../../animation/file2/shapes";
-import { type Vec2 } from "../../types";
+} from "../../domain/animation/file2/mutation";
+import { toggleVisibility } from "../../domain/animation/file2/shapes";
+import { type Vec2 } from "../../shared/types/global";
 import {
   Control,
   ControlPanel,
@@ -18,15 +18,15 @@ import {
   Paragraph,
   ToggleInput,
 } from "../../ui/components";
-import { useFile } from "../contexts/FileContext";
+import { useFile } from "../state/FileContext";
 import {
   useMutationValues,
   useUpdateMutationValues,
-} from "../contexts/ImageControlContext";
+} from "../state/ImageControlContext";
 import { BooleanControl } from "../controls/CheckControl";
 import { NumberControl } from "../controls/NumberControl";
 import { VectorControl } from "../controls/VectorControl";
-import useEvent from "../hooks/useEvent";
+import useEvent from "../state/hooks/useEvent";
 import {
   MutationControlled,
   MutationValueEdit,

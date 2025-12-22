@@ -10,8 +10,8 @@ import React, {
 import {
   useScreenTranslation,
   useUpdateScreenTranslation,
-} from "../contexts/ScreenTranslationContext";
-import useEvent from "../hooks/useEvent";
+} from "../state/ScreenTranslationContext";
+import useEvent from "../state/hooks/useEvent";
 import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
 import { vecSub } from "../webgl/lib/vertices";
 import MouseControl, { MouseMode } from "./MouseControl";

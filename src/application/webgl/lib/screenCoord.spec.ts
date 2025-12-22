@@ -1,5 +1,5 @@
-import { type Vec2 } from "../../../types";
-import { type ScreenTranslation, type Size } from "../../types";
+import { type Vec2 } from "../../../shared/types/global";
+import { type ScreenTranslation, type Size } from "../../../dtos/application.dto";
 import { imageToPixels, pixelsToImage } from "./screenCoord";
 
 const containerSize: Size = {

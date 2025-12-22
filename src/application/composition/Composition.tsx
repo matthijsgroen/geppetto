@@ -8,12 +8,12 @@ import {
   useState,
 } from "react";
 
-import { dragItem } from "../../animation/file2/drag";
+import { dragItem } from "../../domain/animation/file2/drag";
 import {
   findParentId,
   type PlacementInfo,
   visit,
-} from "../../animation/file2/hierarchy";
+} from "../../domain/animation/file2/hierarchy";
 import {
   addMutation,
   type AddMutationDetails,
@@ -21,13 +21,13 @@ import {
   isShapeMutationVector,
   mutationLabels,
   type MutationSettings,
-} from "../../animation/file2/mutation";
-import { hasPoints } from "../../animation/file2/shapes";
+} from "../../domain/animation/file2/mutation";
+import { hasPoints } from "../../domain/animation/file2/shapes";
 import {
   type GeppettoImage,
   type MutationVector,
-} from "../../animation/file2/types";
-import { type Vec2 } from "../../types";
+} from "../../dtos/animation-file2.dto";
+import { type Vec2 } from "../../shared/types/global";
 import {
   Column,
   ControlledMenu,
@@ -45,20 +45,20 @@ import {
   ToolTab,
   useMenuState,
 } from "../../ui/components";
-import { ActionToolButton } from "../actions/ActionToolButton";
+import { ActionToolButton } from "../services/actions/ActionToolButton";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
 import LayerMouseControl, { type DragState } from "../canvas/LayerMouseControl";
 import { MouseMode } from "../canvas/MouseControl";
-import { useFile } from "../contexts/FileContext";
-import { useUpdateMutationValues } from "../contexts/ImageControlContext";
+import { useFile } from "../state/FileContext";
+import { useUpdateMutationValues } from "../state/ImageControlContext";
 import {
   useScreenTranslation,
   useUpdateScreenTranslation,
-} from "../contexts/ScreenTranslationContext";
-import { useActionMap } from "../hooks/useActionMap";
-import useEvent from "../hooks/useEvent";
-import { type AppSection, type Size, type UseState } from "../types";
+} from "../state/ScreenTranslationContext";
+import { useActionMap } from "../state/hooks/useActionMap";
+import useEvent from "../state/hooks/useEvent";
+import { type AppSection, type Size, type UseState } from "../../dtos/application.dto";
 import CompositionCanvas from "../webgl/CompositionCanvas";
 import { maxZoomFactor } from "../webgl/lib/canvas";
 import { imageToPixels, pixelsToImage } from "../webgl/lib/screenCoord";
