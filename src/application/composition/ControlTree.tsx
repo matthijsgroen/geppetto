@@ -11,7 +11,7 @@ import {
   ToolButton,
   ToolSeparator,
   Tree,
-} from "../../ui-components";
+} from "../../ui/components";
 import { useFile } from "../contexts/FileContext";
 import { useToolAction } from "../hooks/useToolAction";
 import { ControlTreeEnvironment } from "../treeEnvironments/ControlTreeEnvironment";

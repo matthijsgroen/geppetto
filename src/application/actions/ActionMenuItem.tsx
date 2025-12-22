@@ -1,6 +1,6 @@
 import { type ComponentProps } from "react";
 
-import { MenuItem } from "../../ui-components";
+import { MenuItem } from "../../ui/components";
 import { type Action } from "../hooks/useActionMap";
 
 type Props = {

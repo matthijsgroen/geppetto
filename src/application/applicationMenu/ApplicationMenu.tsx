@@ -14,7 +14,7 @@ import {
   type Shortcut,
   SubMenu,
   ToolButton,
-} from "../../ui-components";
+} from "../../ui/components";
 import { ActionMenuItem } from "../actions/ActionMenuItem";
 import { ApplicationContext } from "../contexts/ApplicationContext";
 import { useFile } from "../contexts/FileContext";

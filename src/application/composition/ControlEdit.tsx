@@ -8,7 +8,7 @@ import {
   useTransition,
 } from "react";
 
-import { RangeValue } from "#src/ui-components/atoms/RangeValue/RangeValue.js";
+import { RangeValue } from "#src/ui/components/atoms/RangeValue/RangeValue.js";
 
 import {
   insertControlStep,
@@ -25,7 +25,7 @@ import {
   ToolButton,
   ToolGrid,
   useMenuState,
-} from "../../ui-components";
+} from "../../ui/components";
 import { useFile } from "../contexts/FileContext";
 import {
   useControlValues,

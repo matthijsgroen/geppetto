@@ -2,7 +2,6 @@ import React, { useCallback, useMemo, useState } from "react";
 
 import { addPoint, deletePoint, movePoint } from "../../animation/file2/shapes";
 import { type Layer } from "../../animation/file2/types";
-import { type Vec2 } from "../../types";
 import {
   Column,
   Icon,
@@ -20,7 +19,8 @@ import {
   ToolSeparator,
   ToolSpacer,
   ToolTab,
-} from "../../ui-components";
+} from "../../ui/components";
+import { type Vec2 } from "../../types";
 import { ActionToolButton } from "../actions/ActionToolButton";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";

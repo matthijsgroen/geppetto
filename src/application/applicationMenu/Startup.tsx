@@ -11,7 +11,7 @@ import {
   Paragraph,
   Title,
   ToolButton,
-} from "../../ui-components";
+} from "../../ui/components";
 import { versionInfo } from "../../versionInfo";
 import { ApplicationContext } from "../contexts/ApplicationContext";
 

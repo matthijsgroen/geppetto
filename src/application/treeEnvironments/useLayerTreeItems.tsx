@@ -9,8 +9,8 @@ import {
   type TreeData,
   type TreeItem,
   type TreeItemIndex,
-} from "../../ui-components";
-import { TREE_ROOT } from "../../ui-components/organisms/Tree/Tree";
+} from "../../ui/components";
+import { TREE_ROOT } from "../../ui/components/organisms/Tree/Tree";
 import { ControlEditMode } from "./mutationControlContext";
 
 export type LayerItem = TreeItem<

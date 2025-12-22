@@ -21,7 +21,7 @@ import {
   ToolButton,
   ToolSeparator,
   Tree,
-} from "../../ui-components";
+} from "../../ui/components";
 import { useFile } from "../contexts/FileContext";
 import { useUpdateMutationValues } from "../contexts/ImageControlContext";
 import useEvent from "../hooks/useEvent";

@@ -1,10 +1,10 @@
 import { produce } from "immer";
 import { type ChangeEvent, useCallback } from "react";
 
-import { RangeValue } from "#src/ui-components/atoms/RangeValue/RangeValue.js";
+import { RangeValue } from "#src/ui/components/atoms/RangeValue/RangeValue.js";
 
 import { type Vec2 } from "../../../types";
-import { Control, RangeInput } from "../../../ui-components";
+import { Control, RangeInput } from "../../../ui/components";
 
 const defaultFormatter = (value: number) => `${value}`;
 

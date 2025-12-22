@@ -6,7 +6,7 @@ import {
   Label,
   ToolButton,
   useMenuState,
-} from "../../ui-components";
+} from "../../ui/components";
 import { useAppInstall } from "../hooks/useAppInstall";
 
 export const InstallToolButton: React.FC = () => {

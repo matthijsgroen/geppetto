@@ -17,7 +17,7 @@ import {
   PanelTitle,
   Paragraph,
   ToggleInput,
-} from "../../ui-components";
+} from "../../ui/components";
 import { useFile } from "../contexts/FileContext";
 import {
   useMutationValues,

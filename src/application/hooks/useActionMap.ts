@@ -1,7 +1,7 @@
 import type React from "react";
 import { useRef } from "react";
 
-import { isEvent, type Shortcut } from "../../ui-components";
+import { isEvent, type Shortcut } from "../../ui/components";
 
 export type Action = {
   caption?: string;

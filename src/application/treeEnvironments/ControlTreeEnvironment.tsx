@@ -7,7 +7,7 @@ import {
   TreeEnvironment,
   type TreeItem,
   type TreeItemIndex,
-} from "../../ui-components";
+} from "../../ui/components";
 import { useFile } from "../contexts/FileContext";
 import useEvent from "../hooks/useEvent";
 import { type UseState } from "../types";

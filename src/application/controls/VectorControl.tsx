@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 
 import { type Vec2 } from "../../types";
-import { Control, NumberInput } from "../../ui-components";
+import { Control, NumberInput } from "../../ui/components";
 
 type VectorControlProps = {
   label?: string;

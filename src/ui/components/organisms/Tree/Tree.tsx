@@ -8,7 +8,7 @@ import {
   type TreeRenderProps,
 } from "react-complex-tree";
 
-import { type GeppettoImage } from "../../../animation/file2/types";
+import { type GeppettoImage } from "../../../../animation/file2/types";
 import { Icon } from "../..";
 export type { TreeItem, TreeItemIndex } from "react-complex-tree";
 

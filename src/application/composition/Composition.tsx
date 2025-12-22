@@ -44,7 +44,7 @@ import {
   ToolSpacer,
   ToolTab,
   useMenuState,
-} from "../../ui-components";
+} from "../../ui/components";
 import { ActionToolButton } from "../actions/ActionToolButton";
 import { InstallToolButton } from "../applicationMenu/InstallToolButton";
 import { StartupScreen } from "../applicationMenu/Startup";
