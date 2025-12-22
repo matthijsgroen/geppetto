@@ -102,7 +102,7 @@ const calculateScale = (element: Size, texture: Size) => {
 };
 
 const useScaleUpdater = (
-  containerRef: RefObject<HTMLDivElement>,
+  containerRef: RefObject<HTMLDivElement | null>,
   texture: HTMLImageElement | null
 ) => {
   const updater = useUpdateScreenTranslation();

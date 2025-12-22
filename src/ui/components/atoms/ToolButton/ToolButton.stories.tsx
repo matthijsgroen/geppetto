@@ -21,7 +21,7 @@ const meta = preview.meta({
     disabled: false,
     active: false,
     notificationBadge: false,
-    shadow: false,
+    standAlone: false,
     onClick: fn(),
   },
 });

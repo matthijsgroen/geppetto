@@ -13,11 +13,6 @@ jobs:
   lint:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [24.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
       - uses: actions/checkout@v4
       - name: Enable Corepack
@@ -25,7 +20,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
@@ -45,6 +40,12 @@ jobs:
 
       - name: Run unit tests
         run: yarn test --coverage
+
+      - name: Check types
+        run: yarn types:check
+
+      - name: Check formatting
+        run: yarn format:check
 
       - name: Report coverage
         uses: codecov/codecov-action@v3
