@@ -5,7 +5,7 @@ import {
   useContext,
 } from "react";
 
-import { useFile } from "../../state/FileContext";
+import { useFile } from "@/application/state/FileContext";
 
 const MutControlContext = createContext<{
   editControlId: string | undefined;

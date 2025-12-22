@@ -1,4 +1,5 @@
-import { type ScreenTranslation } from "../../../dtos/application.dto";
+import { type ScreenTranslation } from "@/dtos/application.dto";
+
 import { createProgram, type WebGLRenderer } from "../lib/webgl";
 import textureFragmentShader from "./showTexture.frag";
 import textureVertexShader from "./showTexture.vert";

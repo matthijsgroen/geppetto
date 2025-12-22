@@ -1,7 +1,8 @@
 import {
   fileBuilder,
   getMutationIdByName,
-} from "../../../domain/animation/file2/testFileBuilder";
+} from "@/domain/animation/file2/testFileBuilder";
+
 import { vectorPositions } from "./vectorPositions";
 
 const fileWithFolderLayers = () =>

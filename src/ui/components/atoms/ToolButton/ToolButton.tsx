@@ -8,9 +8,9 @@ import {
   use,
 } from "react";
 
-import { type ToolBarSize } from "../../molecules/ToolBar/ToolBar";
-import { ToolbarContext } from "../../molecules/ToolBar/ToolBarContext";
-import { Label } from "../Label/Label";
+import { Label } from "@/ui/components/atoms/Label/Label";
+import { type ToolBarSize } from "@/ui/components/molecules/ToolBar/ToolBar";
+import { ToolbarContext } from "@/ui/components/molecules/ToolBar/ToolBarContext";
 
 type ToolButtonProps = {
   active?: boolean;
@@ -18,7 +18,7 @@ type ToolButtonProps = {
   icon?: ReactNode;
   label?: string;
   notificationBadge?: boolean;
-  standAlone: boolean;
+  standAlone?: boolean;
   size?: ToolBarSize;
   tooltip?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;

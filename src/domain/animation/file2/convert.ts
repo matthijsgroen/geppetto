@@ -2,14 +2,15 @@ import {
   type AnimationFrame,
   type ImageDefinition,
   type MutationVector,
-} from "../../../dtos/animation-file1.dto";
-import { newFile } from "./new";
+} from "@/dtos/animation-file1.dto";
 import {
   type FrameAction,
   type GeppettoImage,
   type Hierarchy,
   type NodeType,
-} from "../../../dtos/animation-file2.dto";
+} from "@/dtos/animation-file2.dto";
+
+import { newFile } from "./new";
 
 const populateMutations = (
   mutations: MutationVector[],

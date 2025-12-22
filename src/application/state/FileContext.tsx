@@ -5,9 +5,9 @@ import {
   useState,
 } from "react";
 
-import { newFile } from "../../domain/animation/file2/new";
-import { type GeppettoImage } from "../../dtos/animation-file2.dto";
-import { type UpdateState, type UseState } from "../../dtos/application.dto";
+import { newFile } from "@/domain/animation/file2/new";
+import { type GeppettoImage } from "@/dtos/animation-file2.dto";
+import { type UpdateState, type UseState } from "@/dtos/application.dto";
 
 export const ImageFileContext = createContext<{
   file: GeppettoImage;

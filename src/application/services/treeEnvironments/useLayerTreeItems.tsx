@@ -1,16 +1,17 @@
 import { type RefObject, useMemo, useRef } from "react";
 
-import { iconMapping } from "../../../domain/animation/file2/mutation";
-import { newFile } from "../../../domain/animation/file2/new";
-import { type GeppettoImage, type NodeType } from "../../../dtos/animation-file2.dto";
+import { iconMapping } from "@/domain/animation/file2/mutation";
+import { newFile } from "@/domain/animation/file2/new";
+import { type GeppettoImage, type NodeType } from "@/dtos/animation-file2.dto";
 import {
   Icon,
   ToolButton,
   type TreeData,
   type TreeItem,
   type TreeItemIndex,
-} from "../../../ui/components";
-import { TREE_ROOT } from "../../../ui/components/organisms/Tree/Tree";
+} from "@/ui/components";
+import { TREE_ROOT } from "@/ui/components/organisms/Tree/Tree";
+
 import { ControlEditMode } from "./mutationControlContext";
 
 export type LayerItem = TreeItem<

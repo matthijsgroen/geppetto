@@ -1,14 +1,23 @@
 import { produce } from "immer";
 import { useEffect, useState, useTransition } from "react";
 
+import { useFile } from "@/application/state/FileContext";
+import useEvent from "@/application/state/hooks/useEvent";
+import {
+  useMutationValues,
+  useUpdateMutationValues,
+} from "@/application/state/ImageControlContext";
+import { BooleanControl } from "@/application/use-cases/controls/ui/CheckControl";
+import { NumberControl } from "@/application/use-cases/controls/ui/NumberControl";
+import { VectorControl } from "@/application/use-cases/controls/ui/VectorControl";
 import {
   hasRadius,
   iconMapping,
   isShapeMutationVector,
   updateMutationValue,
-} from "../../../../domain/animation/file2/mutation";
-import { toggleVisibility } from "../../../../domain/animation/file2/shapes";
-import { type Vec2 } from "../../../../shared/types/global";
+} from "@/domain/animation/file2/mutation";
+import { toggleVisibility } from "@/domain/animation/file2/shapes";
+import { type Vec2 } from "@/shared/types/global";
 import {
   Control,
   ControlPanel,
@@ -17,16 +26,8 @@ import {
   PanelTitle,
   Paragraph,
   ToggleInput,
-} from "../../../../ui/components";
-import { useFile } from "../../../state/FileContext";
-import {
-  useMutationValues,
-  useUpdateMutationValues,
-} from "../../../state/ImageControlContext";
-import { BooleanControl } from "../../controls/ui/CheckControl";
-import { NumberControl } from "../../controls/ui/NumberControl";
-import { VectorControl } from "../../controls/ui/VectorControl";
-import useEvent from "../../../state/hooks/useEvent";
+} from "@/ui/components";
+
 import {
   MutationControlled,
   MutationValueEdit,

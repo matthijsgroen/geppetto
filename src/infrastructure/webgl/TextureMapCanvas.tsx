@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo } from "react";
 
-import { type Vec2 } from "../../shared/types/global";
-import { useScreenTranslation } from "../../application/state/ScreenTranslationContext";
+import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
+import { type Vec2 } from "@/shared/types/global";
+
 import { showGrid } from "./programs/showGrid";
 import { type IDLayer, showLayerPoints } from "./programs/showLayerPoints";
 import { showTexture } from "./programs/showTexture";

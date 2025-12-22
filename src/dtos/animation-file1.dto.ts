@@ -1,4 +1,4 @@
-import { type Vec2 } from "../shared/types/global";
+import { type Vec2 } from "@/shared/types/global";
 
 export type TranslationVector = {
   name: string;

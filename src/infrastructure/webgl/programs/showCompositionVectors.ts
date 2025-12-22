@@ -1,16 +1,16 @@
 import { type TranslationVector } from "geppetto-player";
 
-import { isInDarkMode } from "#src/shared/utils/darkMode.js";
-
-import { collectChildIds, visit } from "../../../domain/animation/file2/hierarchy";
-import { isShapeMutationVector } from "../../../domain/animation/file2/mutation";
+import { collectChildIds, visit } from "@/domain/animation/file2/hierarchy";
+import { isShapeMutationVector } from "@/domain/animation/file2/mutation";
 import {
   type DeformationVector,
   type GeppettoImage,
   type Keyframe,
   type MutationVector,
-} from "../../../dtos/animation-file2.dto";
-import { type ScreenTranslation } from "../../../dtos/application.dto";
+} from "@/dtos/animation-file2.dto";
+import { type ScreenTranslation } from "@/dtos/application.dto";
+import { isInDarkMode } from "@/shared/utils/darkMode";
+
 import { flatten } from "../lib/vertices";
 import { createProgram, type WebGLRenderer } from "../lib/webgl";
 import compositionFragmentShader from "./showCompositionVectors.frag";

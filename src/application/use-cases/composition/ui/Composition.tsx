@@ -8,12 +8,25 @@ import {
   useState,
 } from "react";
 
-import { dragItem } from "../../../../domain/animation/file2/drag";
+import { ActionToolButton } from "@/application/services/actions/ActionToolButton";
+import { useFile } from "@/application/state/FileContext";
+import { useActionMap } from "@/application/state/hooks/useActionMap";
+import useEvent from "@/application/state/hooks/useEvent";
+import { useUpdateMutationValues } from "@/application/state/ImageControlContext";
+import {
+  useScreenTranslation,
+  useUpdateScreenTranslation,
+} from "@/application/state/ScreenTranslationContext";
+import { InstallToolButton } from "@/application/use-cases/application-menu/ui/InstallToolButton";
+import { StartupScreen } from "@/application/use-cases/application-menu/ui/Startup";
+import LayerMouseControl, { type DragState } from "@/application/use-cases/canvas/ui/LayerMouseControl";
+import { MouseMode } from "@/application/use-cases/canvas/ui/MouseControl";
+import { dragItem } from "@/domain/animation/file2/drag";
 import {
   findParentId,
   type PlacementInfo,
   visit,
-} from "../../../../domain/animation/file2/hierarchy";
+} from "@/domain/animation/file2/hierarchy";
 import {
   addMutation,
   type AddMutationDetails,
@@ -21,21 +34,21 @@ import {
   isShapeMutationVector,
   mutationLabels,
   type MutationSettings,
-} from "../../../../domain/animation/file2/mutation";
-import { hasPoints } from "../../../../domain/animation/file2/shapes";
+} from "@/domain/animation/file2/mutation";
+import { hasPoints } from "@/domain/animation/file2/shapes";
 import {
   type GeppettoImage,
   type MutationVector,
-} from "../../../../dtos/animation-file2.dto";
-import { type AppSection, type Size, type UseState } from "../../../../dtos/application.dto";
-import CompositionCanvas from "../../../../infrastructure/webgl/CompositionCanvas";
-import { maxZoomFactor } from "../../../../infrastructure/webgl/lib/canvas";
-import { imageToPixels, pixelsToImage } from "../../../../infrastructure/webgl/lib/screenCoord";
+} from "@/dtos/animation-file2.dto";
+import { type AppSection, type Size, type UseState } from "@/dtos/application.dto";
+import CompositionCanvas from "@/infrastructure/webgl/CompositionCanvas";
+import { maxZoomFactor } from "@/infrastructure/webgl/lib/canvas";
+import { imageToPixels, pixelsToImage } from "@/infrastructure/webgl/lib/screenCoord";
 import {
   calculateVectorValues,
   vectorPositions,
-} from "../../../../infrastructure/webgl/lib/vectorPositions";
-import { type Vec2 } from "../../../../shared/types/global";
+} from "@/infrastructure/webgl/lib/vectorPositions";
+import { type Vec2 } from "@/shared/types/global";
 import {
   Column,
   ControlledMenu,
@@ -52,20 +65,8 @@ import {
   ToolSpacer,
   ToolTab,
   useMenuState,
-} from "../../../../ui/components";
-import { ActionToolButton } from "../../../services/actions/ActionToolButton";
-import { useFile } from "../../../state/FileContext";
-import { useActionMap } from "../../../state/hooks/useActionMap";
-import useEvent from "../../../state/hooks/useEvent";
-import { useUpdateMutationValues } from "../../../state/ImageControlContext";
-import {
-  useScreenTranslation,
-  useUpdateScreenTranslation,
-} from "../../../state/ScreenTranslationContext";
-import { InstallToolButton } from "../../application-menu/ui/InstallToolButton";
-import { StartupScreen } from "../../application-menu/ui/Startup";
-import LayerMouseControl, { type DragState } from "../../canvas/ui/LayerMouseControl";
-import { MouseMode } from "../../canvas/ui/MouseControl";
+} from "@/ui/components";
+
 import { ControlEditSteps } from "./ControlEdit";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";

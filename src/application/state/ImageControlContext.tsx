@@ -8,7 +8,8 @@ import {
   useRef,
 } from "react";
 
-import { type GeppettoImage } from "../../dtos/animation-file2.dto";
+import { type GeppettoImage } from "@/dtos/animation-file2.dto";
+
 import useEvent from "./hooks/useEvent";
 
 type ControlValues = GeppettoImage["controlValues"];

@@ -8,12 +8,16 @@ import {
   useTransition,
 } from "react";
 
-import { RangeValue } from "#src/ui/components/atoms/RangeValue/RangeValue.js";
-
+import { useFile } from "@/application/state/FileContext";
+import useEvent from "@/application/state/hooks/useEvent";
+import {
+  useControlValues,
+  useUpdateControlValues,
+} from "@/application/state/ImageControlContext";
 import {
   insertControlStep,
   removeControlStep,
-} from "../../../../domain/animation/file2/controls";
+} from "@/domain/animation/file2/controls";
 import {
   Control,
   ControlledMenu,
@@ -22,17 +26,10 @@ import {
   MenuItem,
   PanelTitle,
   RangeInput,
+  RangeValue,
   ToolButton,
   ToolGrid,
-  useMenuState,
-} from "../../../../ui/components";
-import { useFile } from "../../../state/FileContext";
-import {
-  useControlValues,
-  useUpdateControlValues,
-} from "../../../state/ImageControlContext";
-import useEvent from "../../../state/hooks/useEvent";
-import { ValueSlider } from "./editors/ValueSlider";
+  useMenuState} from "@/ui/components";
 
 type ControlEditProps = {
   selectedControlIds: string[];

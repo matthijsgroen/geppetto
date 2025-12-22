@@ -1,9 +1,10 @@
-import { type Vec2 } from "../../../shared/types/global";
+import { type GeppettoImage, type MutationVector } from "@/dtos/animation-file2.dto";
+import { type Vec2 } from "@/shared/types/global";
+
 import { addControl } from "./controls";
 import { addMutation, updateMutationValue } from "./mutation";
 import { newFile } from "./new";
 import { addFolder, addShape } from "./shapes";
-import { type GeppettoImage, type MutationVector } from "../../../dtos/animation-file2.dto";
 
 export const fileBuilder = () => {
   let file = newFile();

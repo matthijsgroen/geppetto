@@ -1,12 +1,13 @@
 import { produce } from "immer";
 
+import { type ControlDefinition, type GeppettoImage } from "@/dtos/animation-file2.dto";
+
 import {
   addInHierarchy,
   type PlacementInfo,
   removeFromHierarchy,
 } from "./hierarchy";
 import { getUniqueName } from "./shapes";
-import { type ControlDefinition, type GeppettoImage } from "../../../dtos/animation-file2.dto";
 
 export type AddControlDetails = {
   control: ControlDefinition;

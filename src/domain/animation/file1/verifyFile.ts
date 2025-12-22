@@ -1,5 +1,6 @@
+import { type ImageDefinition } from "@/dtos/animation-file1.dto";
+
 import { newFile } from "./new";
-import { type ImageDefinition } from "../../../dtos/animation-file1.dto";
 
 export const verifyFile = (file: unknown): file is ImageDefinition => {
   if (typeof file !== "object") return false;

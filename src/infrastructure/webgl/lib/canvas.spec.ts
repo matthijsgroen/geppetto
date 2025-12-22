@@ -1,4 +1,5 @@
-import { type Vec2 } from "../../../shared/types/global";
+import { type Vec2 } from "@/shared/types/global";
+
 import { getTextureCoordinate } from "./canvas";
 
 describe("getTextureCoordinate", () => {

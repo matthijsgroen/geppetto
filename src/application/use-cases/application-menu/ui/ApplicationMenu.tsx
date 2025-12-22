@@ -1,11 +1,22 @@
 import React, { useCallback, useContext,useEffect, useRef } from "react";
 
-import sceneryDemoImg from "../../../../demos/scenery.json";
-import { verifyFile as verifyVersion1 } from "../../../../domain/animation/file1/verifyFile";
-import { convertFromV1 } from "../../../../domain/animation/file2/convert";
-import { verifyFile as verifyVersion2 } from "../../../../domain/animation/file2/verifyFile";
-import { type GeppettoImage } from "../../../../dtos/animation-file2.dto";
-import { type UseState } from "../../../../dtos/application.dto";
+import { ActionMenuItem } from "@/application/services/actions/ActionMenuItem";
+import { ApplicationContext } from "@/application/state/ApplicationContext";
+import { useFile } from "@/application/state/FileContext";
+import { useActionMap } from "@/application/state/hooks/useActionMap";
+import { useAppInstall } from "@/application/state/hooks/useAppInstall";
+import { useAppUpdate } from "@/application/state/hooks/useAppUpdate";
+import {
+  useUpdateControlValues,
+  useUpdateMutationValues,
+} from "@/application/state/ImageControlContext";
+import sceneryDemoImg from "@/demos/scenery.json";
+import sceneryDemoImage from "@/demos/scenery.png";
+import { verifyFile as verifyVersion1 } from "@/domain/animation/file1/verifyFile";
+import { convertFromV1 } from "@/domain/animation/file2/convert";
+import { verifyFile as verifyVersion2 } from "@/domain/animation/file2/verifyFile";
+import { type GeppettoImage } from "@/dtos/animation-file2.dto";
+import { type UseState } from "@/dtos/application.dto";
 import {
   LogoIcon,
   Menu,
@@ -14,18 +25,7 @@ import {
   type Shortcut,
   SubMenu,
   ToolButton,
-} from "../../../../ui/components";
-import { ActionMenuItem } from "../../../services/actions/ActionMenuItem";
-import { ApplicationContext } from "../../../state/ApplicationContext";
-import { useFile } from "../../../state/FileContext";
-import { useActionMap } from "../../../state/hooks/useActionMap";
-import { useAppInstall } from "../../../state/hooks/useAppInstall";
-import { useAppUpdate } from "../../../state/hooks/useAppUpdate";
-import {
-  useUpdateControlValues,
-  useUpdateMutationValues,
-} from "../../../state/ImageControlContext";
-import sceneryDemoImage from "../../demos/scenery.png";
+} from "@/ui/components";
 
 const sceneryDemo: GeppettoImage = sceneryDemoImg as unknown as GeppettoImage;
 

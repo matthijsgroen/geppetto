@@ -1,16 +1,25 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { addPoint, deletePoint, movePoint } from "../../../../domain/animation/file2/shapes";
-import { type Layer } from "../../../../dtos/animation-file2.dto";
-import { type AppSection, type UseState } from "../../../../dtos/application.dto";
+import { ActionToolButton } from "@/application/services/actions/ActionToolButton";
+import { useFile } from "@/application/state/FileContext";
+import { useActionMap } from "@/application/state/hooks/useActionMap";
+import { useEvent } from "@/application/state/hooks/useEvent";
+import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
+import { InstallToolButton } from "@/application/use-cases/application-menu/ui/InstallToolButton";
+import { StartupScreen } from "@/application/use-cases/application-menu/ui/Startup";
+import LayerMouseControl from "@/application/use-cases/canvas/ui/LayerMouseControl";
+import { MouseMode } from "@/application/use-cases/canvas/ui/MouseControl";
+import { addPoint, deletePoint, movePoint } from "@/domain/animation/file2/shapes";
+import { type Layer } from "@/dtos/animation-file2.dto";
+import { type AppSection, type UseState } from "@/dtos/application.dto";
 import {
   getInitialScale,
   maxZoomFactor,
   mouseToTextureCoordinate,
-} from "../../../../infrastructure/webgl/lib/canvas";
-import { type IDLayer } from "../../../../infrastructure/webgl/programs/showLayerPoints";
-import TextureMapCanvas, { type GridSettings } from "../../../../infrastructure/webgl/TextureMapCanvas";
-import { type Vec2 } from "../../../../shared/types/global";
+} from "@/infrastructure/webgl/lib/canvas";
+import { type IDLayer } from "@/infrastructure/webgl/programs/showLayerPoints";
+import TextureMapCanvas, { type GridSettings } from "@/infrastructure/webgl/TextureMapCanvas";
+import { type Vec2 } from "@/shared/types/global";
 import {
   Column,
   Icon,
@@ -28,16 +37,8 @@ import {
   ToolSeparator,
   ToolSpacer,
   ToolTab,
-} from "../../../../ui/components";
-import { ActionToolButton } from "../../../services/actions/ActionToolButton";
-import { useFile } from "../../../state/FileContext";
-import { useActionMap } from "../../../state/hooks/useActionMap";
-import { useEvent } from "../../../state/hooks/useEvent";
-import { useScreenTranslation } from "../../../state/ScreenTranslationContext";
-import { InstallToolButton } from "../../application-menu/ui/InstallToolButton";
-import { StartupScreen } from "../../application-menu/ui/Startup";
-import LayerMouseControl from "../../canvas/ui/LayerMouseControl";
-import { MouseMode } from "../../canvas/ui/MouseControl";
+} from "@/ui/components";
+
 import { ShapeTree } from "./ShapeTree";
 
 type LayersProps = {

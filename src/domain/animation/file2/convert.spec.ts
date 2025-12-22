@@ -1,5 +1,6 @@
+import { type ImageDefinition } from "@/dtos/animation-file1.dto";
+
 import { v1Format } from "../file1/mockdata/file1.1";
-import { type ImageDefinition } from "../../../dtos/animation-file1.dto";
 import { convertFromV1 } from "./convert";
 import { v2Format } from "./mockdata/file2.0";
 

@@ -1,16 +1,22 @@
+import { LayerTreeEnvironment } from "@/application/services/treeEnvironments/LayerTreeEnvironment";
+import { useFile } from "@/application/state/FileContext";
+import useEvent from "@/application/state/hooks/useEvent";
+import { useToolAction } from "@/application/state/hooks/useToolAction";
+import { useUpdateMutationValues } from "@/application/state/ImageControlContext";
 import {
   findParentId,
   isEmpty,
   type PlacementInfo,
-} from "../../../../domain/animation/file2/hierarchy";
+} from "@/domain/animation/file2/hierarchy";
 import {
   addMutation,
   type AddMutationDetails,
   iconMapping,
   mutationLabels,
-} from "../../../../domain/animation/file2/mutation";
-import { addFolder, removeShape } from "../../../../domain/animation/file2/shapes";
-import { type MutationVector } from "../../../../dtos/animation-file2.dto";
+} from "@/domain/animation/file2/mutation";
+import { addFolder, removeShape } from "@/domain/animation/file2/shapes";
+import { type MutationVector } from "@/dtos/animation-file2.dto";
+import { type UseState } from "@/dtos/application.dto";
 import {
   EmptyTree,
   Icon,
@@ -21,13 +27,7 @@ import {
   ToolButton,
   ToolSeparator,
   Tree,
-} from "../../../../ui/components";
-import { useFile } from "../../../state/FileContext";
-import { useUpdateMutationValues } from "../../../state/ImageControlContext";
-import useEvent from "../../../state/hooks/useEvent";
-import { useToolAction } from "../../../state/hooks/useToolAction";
-import { LayerTreeEnvironment } from "../../../services/treeEnvironments/LayerTreeEnvironment";
-import { type UseState } from "../../../../dtos/application.dto";
+} from "@/ui/components";
 
 type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;

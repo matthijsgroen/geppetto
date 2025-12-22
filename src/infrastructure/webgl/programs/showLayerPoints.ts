@@ -1,8 +1,8 @@
-import { isInDarkMode } from "#src/shared/utils/darkMode.js";
+import { type Layer } from "@/dtos/animation-file2.dto";
+import { type ScreenTranslation } from "@/dtos/application.dto";
+import { type Vec2 } from "@/shared/types/global";
+import { isInDarkMode } from "@/shared/utils/darkMode";
 
-import { type Layer } from "../../../dtos/animation-file2.dto";
-import { type Vec2 } from "../../../shared/types/global";
-import { type ScreenTranslation } from "../../../dtos/application.dto";
 import { createProgram, type WebGLRenderer } from "../lib/webgl";
 import layerPointsFragmentShader from "./showLayerPoints.frag";
 import layerPointsVertexShader from "./showLayerPoints.vert";

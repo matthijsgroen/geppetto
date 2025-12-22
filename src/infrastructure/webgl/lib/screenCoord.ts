@@ -1,5 +1,6 @@
-import { type Vec2 } from "../../../shared/types/global";
-import { type ScreenTranslation, type Size } from "../../../dtos/application.dto";
+import { type ScreenTranslation, type Size } from "@/dtos/application.dto";
+import { type Vec2 } from "@/shared/types/global";
+
 import { vecAdd, vecScale, vecSub } from "./vertices";
 
 export const imageToPixels = (translation: ScreenTranslation, rect: Size) => {

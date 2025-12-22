@@ -1,4 +1,4 @@
-import { Control, NumberInput } from "../../../../ui/components";
+import { Control, NumberInput } from "@/ui/components";
 
 type NumberControlProps = {
   label?: string;

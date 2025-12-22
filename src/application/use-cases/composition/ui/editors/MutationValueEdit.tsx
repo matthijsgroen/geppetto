@@ -1,10 +1,11 @@
 import React, { Fragment } from "react";
 
-import { type MutationVectorTypes } from "../../../../../dtos/animation-file1.dto";
-import { type Vec2 } from "../../../../../shared/types/global";
-import { Control, TextButton } from "../../../../../ui/components";
-import { useFile } from "../../../../state/FileContext";
-import { VectorControl } from "../../../controls/ui/VectorControl";
+import { useFile } from "@/application/state/FileContext";
+import { VectorControl } from "@/application/use-cases/controls/ui/VectorControl";
+import { type MutationVectorTypes } from "@/dtos/animation-file1.dto";
+import { type Vec2 } from "@/shared/types/global";
+import { Control, TextButton } from "@/ui/components";
+
 import styles from "./MutationValueEdit.module.css";
 import { ValueSlider } from "./ValueSlider";
 

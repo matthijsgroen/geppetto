@@ -1,16 +1,17 @@
 import { useCallback, useState } from "react";
 import { type DraggingPosition } from "react-complex-tree";
 
-import { isRootNode, moveInHierarchy } from "../../../domain/animation/file2/hierarchy";
+import { useFile } from "@/application/state/FileContext";
+import useEvent from "@/application/state/hooks/useEvent";
+import { isRootNode, moveInHierarchy } from "@/domain/animation/file2/hierarchy";
+import { type UseState } from "@/dtos/application.dto";
 import {
   type TreeData,
   TreeEnvironment,
   type TreeItem,
   type TreeItemIndex,
-} from "../../../ui/components";
-import { useFile } from "../../state/FileContext";
-import useEvent from "../../state/hooks/useEvent";
-import { type UseState } from "../../../dtos/application.dto";
+} from "@/ui/components";
+
 import { useControlTreeItems } from "./useControlTreeItems";
 
 type ControlTreeEnvironmentProps = {

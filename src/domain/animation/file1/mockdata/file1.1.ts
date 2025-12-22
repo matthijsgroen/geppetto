@@ -1,4 +1,4 @@
-import { type ImageDefinition } from "../../../../dtos/animation-file1.dto";
+import { type ImageDefinition } from "@/dtos/animation-file1.dto";
 
 export const v1Format: ImageDefinition = {
   version: "1.1",

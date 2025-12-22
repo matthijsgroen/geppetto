@@ -1,3 +1,5 @@
+import { type MutationVector } from "@/dtos/animation-file2.dto";
+
 import {
   addMutation,
   type AddMutationDetails,
@@ -11,7 +13,6 @@ import {
   getShapeFolderIdByName,
   getShapeIdByName,
 } from "./testFileBuilder";
-import { type MutationVector } from "../../../dtos/animation-file2.dto";
 
 describe("addMutation", () => {
   describe("default add behavior", () => {

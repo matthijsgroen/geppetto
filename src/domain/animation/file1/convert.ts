@@ -3,14 +3,15 @@ import {
   type ImageDefinition,
   type Keyframe,
   type MutationVector,
-} from "../../../dtos/animation-file1.dto";
+} from "@/dtos/animation-file1.dto";
 import {
   type FrameAction,
   type FrameControlAction,
   type FrameEvent,
   type GeppettoImage,
   type Hierarchy,
-} from "../../../dtos/animation-file2.dto";
+} from "@/dtos/animation-file2.dto";
+
 import { updateVersionNumber } from "../../versioning/updateVersionNumber";
 import { newFile } from "./new";
 

@@ -1,18 +1,19 @@
 import { produce } from "immer";
 
-import { type Vec2 } from "../../../shared/types/global";
+import {
+  type GeppettoImage,
+  type Layer,
+  type LayerFolder,
+  type NodeType,
+} from "@/dtos/animation-file2.dto";
+import { type Vec2 } from "@/shared/types/global";
+
 import {
   addInHierarchy,
   collectChildIds,
   isRootNode,
   type PlacementInfo,
 } from "./hierarchy";
-import {
-  type GeppettoImage,
-  type Layer,
-  type LayerFolder,
-  type NodeType,
-} from "../../../dtos/animation-file2.dto";
 
 export const getUniqueName = (
   name: string,

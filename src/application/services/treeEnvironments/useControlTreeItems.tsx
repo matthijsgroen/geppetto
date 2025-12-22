@@ -1,13 +1,13 @@
-import { type MutableRefObject, useMemo, useRef } from "react";
+import { type RefObject, useMemo, useRef } from "react";
 
-import { newFile } from "../../../domain/animation/file2/new";
-import { type GeppettoImage } from "../../../dtos/animation-file2.dto";
+import { newFile } from "@/domain/animation/file2/new";
+import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import {
   type TreeData,
   type TreeItem,
   type TreeItemIndex,
-} from "../../../ui/components";
-import { TREE_ROOT } from "../../../ui/components/organisms/Tree/Tree";
+} from "@/ui/components";
+import { TREE_ROOT } from "@/ui/components/organisms/Tree/Tree";
 
 type ControlType = "control" | "controlFolder";
 export type ControlItem = TreeItem<TreeData<ControlType>>;
@@ -15,7 +15,7 @@ export type ControlItem = TreeItem<TreeData<ControlType>>;
 const populateTree = (
   newFile: GeppettoImage,
   previousFile: GeppettoImage,
-  result: MutableRefObject<Record<TreeItemIndex, ControlItem>>
+  result: RefObject<Record<TreeItemIndex, ControlItem>>
 ) => {
   const hierarchy = newFile.controlHierarchy;
 

@@ -6,15 +6,16 @@ import {
   useRef,
 } from "react";
 
-import { newFile } from "../../domain/animation/file2/new";
-import { type GeppettoImage } from "../../dtos/animation-file2.dto";
+import useEvent from "@/application/state/hooks/useEvent";
 import {
   useControlValues,
   useControlValueSubscription,
   useMutationValues,
-} from "../../application/state/ImageControlContext";
-import { useScreenTranslation } from "../../application/state/ScreenTranslationContext";
-import useEvent from "../../application/state/hooks/useEvent";
+} from "@/application/state/ImageControlContext";
+import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
+import { newFile } from "@/domain/animation/file2/new";
+import { type GeppettoImage } from "@/dtos/animation-file2.dto";
+
 import { calculateVectorValues } from "./lib/vectorPositions";
 import { showComposition } from "./programs/showComposition";
 import { showCompositionMap } from "./programs/showCompositionMap";

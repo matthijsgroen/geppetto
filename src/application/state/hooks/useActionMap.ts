@@ -1,7 +1,7 @@
 import type React from "react";
 import { useRef } from "react";
 
-import { isEvent, type Shortcut } from "../../../ui/components";
+import { isEvent, type Shortcut } from "@/ui/components";
 
 export type Action = {
   caption?: string;
@@ -26,7 +26,7 @@ export const useActionMap = <T extends string>(
   const ref = useRef<{
     result: ActionMap<ActionHandlers<T>>;
     producer: typeof producer;
-  }>();
+  }>(null);
   if (ref.current?.producer !== producer) {
     const result = producer();
     const actionList = Object.entries<Action>(result);

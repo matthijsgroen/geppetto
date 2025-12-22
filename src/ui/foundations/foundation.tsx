@@ -1,6 +1,6 @@
 import type { FC, PropsWithChildren } from "react";
 
-import { Title } from "../components/atoms/Title/Title";
+import { Title } from "@/ui/components/atoms/Title/Title";
 
 export const FoundationList: FC<PropsWithChildren<{ title: string }>> = ({
   title,

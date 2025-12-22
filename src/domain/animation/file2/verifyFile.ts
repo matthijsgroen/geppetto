@@ -1,5 +1,6 @@
+import { type GeppettoImage } from "@/dtos/animation-file2.dto";
+
 import { newFile } from "./new";
-import { type GeppettoImage } from "../../../dtos/animation-file2.dto";
 
 export const verifyFile = (file: unknown): file is GeppettoImage => {
   if (typeof file !== "object") return false;

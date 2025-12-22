@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 
+import { useAppInstall } from "@/application/state/hooks/useAppInstall";
 import {
   ControlledMenu,
   Icon,
   Label,
   ToolButton,
   useMenuState,
-} from "../../../../ui/components";
-import { useAppInstall } from "../../../state/hooks/useAppInstall";
+} from "@/ui/components";
 
 export const InstallToolButton: React.FC = () => {
   const anchor = useRef(null);

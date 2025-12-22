@@ -7,6 +7,7 @@ export { NumberInput } from "./atoms/NumberInput/NumberInput";
 export { PanelTitle } from "./atoms/PanelTitle/PanelTitle";
 export { Paragraph } from "./atoms/Paragraph/Paragraph";
 export { RangeInput } from "./atoms/RangeInput/RangeInput";
+export { RangeValue } from "./atoms/RangeValue/RangeValue";
 export { TextButton } from "./atoms/TextButton/TextButton";
 export { Title } from "./atoms/Title/Title";
 export { ToggleInput } from "./atoms/ToggleInput/ToggleInput";

@@ -1,3 +1,5 @@
+import { type Hierarchy } from "@/dtos/animation-file2.dto";
+
 import {
   ABORT_TRAVERSE,
   addInHierarchy,
@@ -11,7 +13,6 @@ import {
   SKIP_CHILDREN,
   visit,
 } from "./hierarchy";
-import { type Hierarchy } from "../../../dtos/animation-file2.dto";
 
 describe("addInHierarchy", () => {
   const hierarchy: Hierarchy<"item"> = {

@@ -2,27 +2,28 @@ import { produce } from "immer";
 import { useMemo, useState } from "react";
 import { type DraggingPosition } from "react-complex-tree";
 
+import { useFile } from "@/application/state/FileContext";
+import useEvent from "@/application/state/hooks/useEvent";
 import {
   addMutationToControl,
   isMutationUnderControl,
   removeMutationFromControl,
-} from "../../../domain/animation/file2/controls";
+} from "@/domain/animation/file2/controls";
 import {
   isRootNode,
   moveInHierarchy,
   visit,
-} from "../../../domain/animation/file2/hierarchy";
-import { rename, toggleVisibility } from "../../../domain/animation/file2/shapes";
-import { type GeppettoImage, type NodeType } from "../../../dtos/animation-file2.dto";
+} from "@/domain/animation/file2/hierarchy";
+import { rename, toggleVisibility } from "@/domain/animation/file2/shapes";
+import { type GeppettoImage, type NodeType } from "@/dtos/animation-file2.dto";
+import { type UseState } from "@/dtos/application.dto";
 import {
   type TreeData,
   TreeEnvironment,
   type TreeItem,
   type TreeItemIndex,
-} from "../../../ui/components";
-import { useFile } from "../../state/FileContext";
-import useEvent from "../../state/hooks/useEvent";
-import { type UseState } from "../../../dtos/application.dto";
+} from "@/ui/components";
+
 import { MutationControlContext } from "./mutationControlContext";
 import { type ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
 

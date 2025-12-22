@@ -7,7 +7,7 @@ import {
   useRef,
 } from "react";
 
-import { type ScreenTranslation } from "../../dtos/application.dto";
+import { type ScreenTranslation } from "@/dtos/application.dto";
 
 type MutableScreenTranslation = {
   zoom: number;

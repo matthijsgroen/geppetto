@@ -1,8 +1,8 @@
 import { render } from "@testing-library/react";
 import { type FunctionComponent, type ReactElement } from "react";
 
-import { type GeppettoImage } from "../../dtos/animation-file2.dto";
-import { FileContext, useFile } from "../../application/state/FileContext";
+import { FileContext, useFile } from "@/application/state/FileContext";
+import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 
 const FileObserver: FunctionComponent<{
   onFileChange: (file: GeppettoImage) => void;
