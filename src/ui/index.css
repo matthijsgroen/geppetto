@@ -39,7 +39,7 @@
 }
 
 .dark {
-  --color-workspace: var(--color-emerald-950);
+  --color-workspace: var(--color-emerald-900);
   --color-toolbar: var(--color-zinc-800);
   --color-notification: var(--color-red-400);
   --color-panel: var(--color-zinc-900);

@@ -14,14 +14,14 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: ["./src/setupTests.ts"],
+    setupFiles: ["./src/shared/test/setupTests.ts"],
     exclude: ["node_modules/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
       exclude: [
         "node_modules/",
-        "src/setupTests.ts",
+        "src/shared/test/setupTests.ts",
         "**/*.d.ts",
         "**/*.config.*",
         "**/mockData",
@@ -34,7 +34,7 @@ export default defineConfig({
           name: "unit",
           globals: true,
           environment: "jsdom",
-          setupFiles: ["./src/setupTests.ts"],
+          setupFiles: ["./src/shared/test/setupTests.ts"],
           include: ["src/**/*.{test,spec}.{js,ts,jsx,tsx}"],
           exclude: ["node_modules/**", "**/*.stories.*"],
         },

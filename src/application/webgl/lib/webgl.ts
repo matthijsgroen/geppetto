@@ -105,7 +105,7 @@ export const webGLScene = async (
     matches: darkMode,
   }: MediaQueryListEvent | MediaQueryList) => {
     if (darkMode) {
-      gl.clearColor(0.1875, 0.1875, 0.1875, 1.0);
+      gl.clearColor(0 / 256, 79 / 256, 59 / 256, 1.0);
     } else {
       // Emerald 500
       gl.clearColor(0 / 256, 188 / 256, 125 / 256, 1.0);
