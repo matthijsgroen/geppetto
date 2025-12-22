@@ -1,4 +1,7 @@
-import { type GeppettoImage, type MutationVector } from "@/dtos/animation-file2.dto";
+import {
+  type GeppettoImage,
+  type MutationVector,
+} from "@/dtos/animation-file2.dto";
 import { type Vec2 } from "@/shared/types/global";
 
 import { addControl } from "./controls";

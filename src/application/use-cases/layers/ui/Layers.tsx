@@ -9,7 +9,11 @@ import { InstallToolButton } from "@/application/use-cases/application-menu/ui/I
 import { StartupScreen } from "@/application/use-cases/application-menu/ui/Startup";
 import LayerMouseControl from "@/application/use-cases/canvas/ui/LayerMouseControl";
 import { MouseMode } from "@/application/use-cases/canvas/ui/MouseControl";
-import { addPoint, deletePoint, movePoint } from "@/domain/animation/file2/shapes";
+import {
+  addPoint,
+  deletePoint,
+  movePoint,
+} from "@/domain/animation/file2/shapes";
 import { type Layer } from "@/dtos/animation-file2.dto";
 import { type AppSection, type UseState } from "@/dtos/application.dto";
 import {
@@ -18,7 +22,9 @@ import {
   mouseToTextureCoordinate,
 } from "@/infrastructure/webgl/lib/canvas";
 import { type IDLayer } from "@/infrastructure/webgl/programs/showLayerPoints";
-import TextureMapCanvas, { type GridSettings } from "@/infrastructure/webgl/TextureMapCanvas";
+import TextureMapCanvas, {
+  type GridSettings,
+} from "@/infrastructure/webgl/TextureMapCanvas";
 import { type Vec2 } from "@/shared/types/global";
 import {
   Column,

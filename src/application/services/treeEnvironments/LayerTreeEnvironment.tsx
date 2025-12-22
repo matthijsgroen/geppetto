@@ -35,7 +35,7 @@ type LayerTreeEnvironmentProps = {
   editControlId?: string;
   treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
-}
+};
 
 type LayerItem = TreeItem<TreeData<"layer" | "layerFolder" | "mutation">>;
 const onlyOne = (items: unknown[]) => items.length === 1;

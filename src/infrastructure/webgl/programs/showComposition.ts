@@ -1,8 +1,5 @@
 import { visit } from "@/domain/animation/file2/hierarchy";
-import {
-  type GeppettoImage,
-  type Keyframe,
-} from "@/dtos/animation-file2.dto";
+import { type GeppettoImage, type Keyframe } from "@/dtos/animation-file2.dto";
 import { type ScreenTranslation } from "@/dtos/application.dto";
 
 import { filteredTriangles, flatten } from "../lib/vertices";

@@ -13,7 +13,7 @@ export type GridSettings = {
   size: number;
   enabled: boolean;
   magnetic: boolean;
-}
+};
 
 export type TextureMapCanvasProps = {
   image: HTMLImageElement | null;
@@ -22,7 +22,7 @@ export type TextureMapCanvasProps = {
   activeCoord?: Vec2 | null;
   activeLayer?: string;
   onMouseMove?(coordinates: [number, number] | null): void;
-}
+};
 
 const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
   image,

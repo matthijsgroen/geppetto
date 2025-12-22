@@ -29,7 +29,8 @@ import {
   RangeValue,
   ToolButton,
   ToolGrid,
-  useMenuState} from "@/ui/components";
+  useMenuState,
+} from "@/ui/components";
 
 type ControlEditProps = {
   selectedControlIds: string[];

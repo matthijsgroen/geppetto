@@ -14,7 +14,7 @@ export const Elevation = meta.story({
       {["shadow-sm", "shadow-md", "shadow-xl", "shadow-inset-sm"].map(
         (elevation) => (
           <FoundationItem key={elevation} label={elevation}>
-            <div className={`bg-toolbar size-20 rounded-control ${elevation}`}>
+            <div className={`size-20 rounded-control bg-toolbar ${elevation}`}>
               &nbsp;
             </div>
           </FoundationItem>

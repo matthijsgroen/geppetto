@@ -8,7 +8,11 @@ import {
   isEmpty,
   type PlacementInfo,
 } from "@/domain/animation/file2/hierarchy";
-import { addFolder, addShape, removeShape } from "@/domain/animation/file2/shapes";
+import {
+  addFolder,
+  addShape,
+  removeShape,
+} from "@/domain/animation/file2/shapes";
 import { type UseState } from "@/dtos/application.dto";
 import {
   EmptyTree,

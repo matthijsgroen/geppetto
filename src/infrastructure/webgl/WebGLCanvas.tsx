@@ -74,7 +74,7 @@ const startWebGL = async (
 
 type WebGLCanvasProps = PropsWithChildren<{
   renderers: WebGLRenderer[];
-  ref: RefObject<HTMLDivElement>;
+  ref?: RefObject<HTMLDivElement | null>;
 }>;
 
 const WebGLCanvas: FC<WebGLCanvasProps> = ({ renderers, children, ref }) => {

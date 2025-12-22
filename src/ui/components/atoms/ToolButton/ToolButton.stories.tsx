@@ -1,4 +1,4 @@
-import { expect,fn, waitFor } from "storybook/test";
+import { expect, fn, waitFor } from "storybook/test";
 
 import preview from "#.storybook/preview";
 

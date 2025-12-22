@@ -6,7 +6,7 @@ type NumberControlProps = {
   minValue?: number;
   maxValue?: number;
   onChange?: (newValue: number) => void;
-}
+};
 
 export const NumberControl: React.FC<NumberControlProps> = ({
   label,

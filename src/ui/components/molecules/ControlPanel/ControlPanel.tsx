@@ -41,7 +41,7 @@ export const ControlPanel: FC<ControlPanelProps> = ({
   return (
     <form
       className={clsx(
-        `bg-panel hide-scrollbar shrink-0 overflow-y-hidden rounded-control`,
+        `hide-scrollbar shrink-0 overflow-y-hidden rounded-control bg-panel`,
         "transition-[height,width] duration-300 ease-in-out",
         {
           "shadow-md": shadow,

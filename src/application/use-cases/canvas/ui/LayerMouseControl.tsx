@@ -12,7 +12,10 @@ import {
   useScreenTranslation,
   useUpdateScreenTranslation,
 } from "@/application/state/ScreenTranslationContext";
-import { imageToPixels, pixelsToImage } from "@/infrastructure/webgl/lib/screenCoord";
+import {
+  imageToPixels,
+  pixelsToImage,
+} from "@/infrastructure/webgl/lib/screenCoord";
 import { vecSub } from "@/infrastructure/webgl/lib/vertices";
 
 import MouseControl, { MouseMode } from "./MouseControl";

@@ -5,14 +5,7 @@ import { ApplicationContext } from "@/application/state/ApplicationContext";
 import { isNewFile } from "@/domain/animation/file2/new";
 import { hasPoints } from "@/domain/animation/file2/shapes";
 import { type GeppettoImage } from "@/dtos/animation-file2.dto";
-import {
-  Icon,
-  Kbd,
-  Logo,
-  Paragraph,
-  Title,
-  ToolButton,
-} from "@/ui/components";
+import { Icon, Kbd, Logo, Paragraph, Title, ToolButton } from "@/ui/components";
 import { versionInfo } from "@/versionInfo";
 
 type StartupScreenProps = {

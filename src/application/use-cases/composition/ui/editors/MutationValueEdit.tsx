@@ -18,7 +18,7 @@ type MutationValueEditProps = {
   mutationType: MutationVectorTypes;
   value: Vec2;
   onValueChange: (newValue: Vec2) => void;
-}
+};
 
 export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
   mutationType,

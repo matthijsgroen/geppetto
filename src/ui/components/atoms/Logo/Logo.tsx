@@ -10,7 +10,7 @@ export const LogoIcon: FC = () => (
 );
 
 export const Logo: FC = () => (
-  <div className="bg-panel mx-auto aspect-square h-[min(20vh,200px)] rounded-control-large shadow-xl">
+  <div className="mx-auto aspect-square h-[min(20vh,200px)] rounded-control-large bg-panel shadow-xl">
     <LogoSvg />
   </div>
 );

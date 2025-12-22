@@ -1,7 +1,7 @@
 import { type ComponentProps } from "react";
 
 import { type Action } from "@/application/state/hooks/useActionMap";
-import { Icon, shortcutStr,ToolButton } from "@/ui/components";
+import { Icon, shortcutStr, ToolButton } from "@/ui/components";
 
 type Props = { action: Action } & Omit<
   ComponentProps<typeof ToolButton>,

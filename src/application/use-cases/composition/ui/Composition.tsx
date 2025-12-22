@@ -19,7 +19,9 @@ import {
 } from "@/application/state/ScreenTranslationContext";
 import { InstallToolButton } from "@/application/use-cases/application-menu/ui/InstallToolButton";
 import { StartupScreen } from "@/application/use-cases/application-menu/ui/Startup";
-import LayerMouseControl, { type DragState } from "@/application/use-cases/canvas/ui/LayerMouseControl";
+import LayerMouseControl, {
+  type DragState,
+} from "@/application/use-cases/canvas/ui/LayerMouseControl";
 import { MouseMode } from "@/application/use-cases/canvas/ui/MouseControl";
 import { dragItem } from "@/domain/animation/file2/drag";
 import {
@@ -40,10 +42,17 @@ import {
   type GeppettoImage,
   type MutationVector,
 } from "@/dtos/animation-file2.dto";
-import { type AppSection, type Size, type UseState } from "@/dtos/application.dto";
+import {
+  type AppSection,
+  type Size,
+  type UseState,
+} from "@/dtos/application.dto";
 import CompositionCanvas from "@/infrastructure/webgl/CompositionCanvas";
 import { maxZoomFactor } from "@/infrastructure/webgl/lib/canvas";
-import { imageToPixels, pixelsToImage } from "@/infrastructure/webgl/lib/screenCoord";
+import {
+  imageToPixels,
+  pixelsToImage,
+} from "@/infrastructure/webgl/lib/screenCoord";
 import {
   calculateVectorValues,
   vectorPositions,

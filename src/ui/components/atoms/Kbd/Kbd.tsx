@@ -8,7 +8,7 @@ type ShortcutProps = {
   disabled?: boolean;
   dimmed?: boolean;
   inMenu?: boolean;
-}
+};
 
 /**
  * Kbd is useful for visualizing Keyboard shortcuts.

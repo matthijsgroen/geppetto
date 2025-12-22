@@ -6,7 +6,7 @@ type BooleanControlProps = {
   label?: string;
   value?: boolean;
   onChange?: (newValue: boolean) => void;
-}
+};
 
 export const BooleanControl: React.FC<BooleanControlProps> = ({
   label,

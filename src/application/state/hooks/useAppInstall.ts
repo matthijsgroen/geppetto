@@ -4,7 +4,7 @@ type BeforeInstallPromptEvent = {
   platforms: string[];
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
   prompt: () => Promise<void>;
-} & Event
+} & Event;
 
 let deferredInstallPrompt: BeforeInstallPromptEvent;
 let notifyInstallReady: (() => void)[] = [];

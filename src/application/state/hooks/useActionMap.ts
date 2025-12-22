@@ -9,7 +9,7 @@ export type Action = {
   tooltip?: string;
   shortcut: Shortcut;
   handler: () => void;
-}
+};
 
 type ActionHandlers<T extends string> = Record<T, Action>;
 
@@ -18,7 +18,7 @@ type ActionMap<ActionHandlers> = {
     event: KeyboardEvent | React.KeyboardEvent<HTMLElement>
   ) => boolean;
   actions: ActionHandlers;
-}
+};
 
 export const useActionMap = <T extends string>(
   producer: () => ActionHandlers<T>

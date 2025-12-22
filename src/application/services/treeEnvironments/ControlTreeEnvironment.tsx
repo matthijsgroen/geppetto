@@ -3,7 +3,10 @@ import { type DraggingPosition } from "react-complex-tree";
 
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
-import { isRootNode, moveInHierarchy } from "@/domain/animation/file2/hierarchy";
+import {
+  isRootNode,
+  moveInHierarchy,
+} from "@/domain/animation/file2/hierarchy";
 import { type UseState } from "@/dtos/application.dto";
 import {
   type TreeData,
@@ -18,7 +21,7 @@ type ControlTreeEnvironmentProps = {
   selectedItemsState: UseState<string[]>;
   treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
-}
+};
 
 type ControlItem = TreeItem<TreeData<"control" | "controlFolder">>;
 const yes = () => true;

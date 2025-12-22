@@ -30,7 +30,7 @@ export type Shortcut = {
   shift?: boolean;
   alt?: boolean;
   mac?: boolean;
-}
+};
 
 const MAC_PLATFORM = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 

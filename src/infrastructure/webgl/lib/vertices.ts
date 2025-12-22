@@ -1,9 +1,6 @@
 import Delaunator from "delaunator";
 
-import {
-  type Keyframe,
-  type MutationVector,
-} from "@/dtos/animation-file1.dto";
+import { type Keyframe, type MutationVector } from "@/dtos/animation-file1.dto";
 import { type Vec2, type Vec3, type Vec4 } from "@/shared/types/global";
 
 export const verticesFromPoints = (points: number[][]): number[] =>
