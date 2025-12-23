@@ -1,10 +1,10 @@
 import clsx from "clsx";
+import type { RefObject } from "react";
 import {
   type FC,
   type KeyboardEventHandler,
   type MouseEventHandler,
   type ReactNode,
-  type Ref,
   use,
 } from "react";
 
@@ -24,7 +24,7 @@ type ToolButtonProps = {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
   onContextMenu?: MouseEventHandler<HTMLButtonElement>;
-  ref?: Ref<HTMLButtonElement>;
+  ref?: RefObject<HTMLButtonElement | null>;
 };
 
 export const ToolButton: FC<ToolButtonProps> = ({

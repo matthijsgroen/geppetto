@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import type { RefObject } from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useAppInstall } from "@/application/state/hooks/useAppInstall";
 import {
@@ -10,7 +11,7 @@ import {
 } from "@/ui/components";
 
 export const InstallToolButton: React.FC = () => {
-  const anchor = useRef(null);
+  const anchor = useRef<HTMLButtonElement>(null);
   const [{ state }, toggleMenu] = useMenuState();
   const [canInstall, installer] = useAppInstall();
   useEffect(() => {
@@ -31,7 +32,7 @@ export const InstallToolButton: React.FC = () => {
       />
       <ControlledMenu
         captureFocus={false}
-        anchorRef={anchor}
+        anchorRef={anchor as RefObject<HTMLElement>}
         portal
         position="anchor"
         arrow

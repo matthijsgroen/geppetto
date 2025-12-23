@@ -120,11 +120,10 @@ const WebGLCanvas: FC<WebGLCanvasProps> = ({ renderers, children, ref }) => {
     }
   }, [renderers, mounted, subscribe]);
 
+  const mergedRef = mergeRefs(ref ? [containerRef, ref] : [containerRef]);
+
   return (
-    <div
-      ref={mergeRefs([ref, containerRef])}
-      className="relative size-full overflow-hidden"
-    >
+    <div ref={mergedRef} className="relative size-full overflow-hidden">
       {children}
       <canvas ref={canvasRef} className="absolute inset-0 size-full" />
     </div>
