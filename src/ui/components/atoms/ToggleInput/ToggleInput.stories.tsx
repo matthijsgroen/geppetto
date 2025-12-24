@@ -1,6 +1,7 @@
-import preview from "#.storybook/preview";
+import preview from "@sb/preview";
 
-import { Control } from "../../molecules/Control/Control";
+import { Control } from "@/ui/components/molecules/Control/Control";
+
 import { ToggleInput } from "./ToggleInput";
 
 const meta = preview.meta({

@@ -7,8 +7,8 @@ import {
   type MenuItemProps,
 } from "@szhsin/react-menu";
 
-import { Kbd } from "../../atoms/Kbd/Kbd";
-import { type Shortcut } from "../../atoms/Kbd/shortcut";
+import { Kbd } from "@/ui/components/atoms/Kbd/Kbd";
+import { type Shortcut } from "@/ui/components/atoms/Kbd/shortcut";
 export {
   ControlledMenu,
   Menu,

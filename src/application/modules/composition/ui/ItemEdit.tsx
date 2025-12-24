@@ -1,15 +1,15 @@
 import { produce } from "immer";
 import { useEffect, useState, useTransition } from "react";
 
+import { BooleanControl } from "@/application/modules/controls/ui/CheckControl.js";
+import { NumberControl } from "@/application/modules/controls/ui/NumberControl.js";
+import { VectorControl } from "@/application/modules/controls/ui/VectorControl.js";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   useMutationValues,
   useUpdateMutationValues,
 } from "@/application/state/ImageControlContext";
-import { BooleanControl } from "@/application/use-cases/controls/ui/CheckControl";
-import { NumberControl } from "@/application/use-cases/controls/ui/NumberControl";
-import { VectorControl } from "@/application/use-cases/controls/ui/VectorControl";
 import {
   hasRadius,
   iconMapping,

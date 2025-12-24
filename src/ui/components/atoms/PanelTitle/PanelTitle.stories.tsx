@@ -1,4 +1,4 @@
-import preview from "#.storybook/preview";
+import preview from "@sb/preview";
 
 import { PanelTitle as TitleElement } from "./PanelTitle";
 

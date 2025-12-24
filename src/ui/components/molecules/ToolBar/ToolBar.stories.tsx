@@ -1,10 +1,11 @@
-import preview from "#.storybook/preview";
+import preview from "@sb/preview";
 
-import { Icon } from "../../atoms/Icon/Icon";
-import { ToolButton } from "../../atoms/ToolButton/ToolButton";
-import { ToolSeparator } from "../../atoms/ToolSeparator/ToolSeparator";
-import { ToolSpacer } from "../../atoms/ToolSpacer/ToolSpacer";
-import { ToolTab } from "../../atoms/ToolTab/ToolTab";
+import { Icon } from "@/ui/components/atoms/Icon/Icon";
+import { ToolButton } from "@/ui/components/atoms/ToolButton/ToolButton";
+import { ToolSeparator } from "@/ui/components/atoms/ToolSeparator/ToolSeparator";
+import { ToolSpacer } from "@/ui/components/atoms/ToolSpacer/ToolSpacer";
+import { ToolTab } from "@/ui/components/atoms/ToolTab/ToolTab";
+
 import { ToolBar } from "./ToolBar";
 
 const meta = preview.meta({

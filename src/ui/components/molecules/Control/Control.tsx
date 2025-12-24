@@ -1,6 +1,6 @@
 import { type FC, type PropsWithChildren } from "react";
 
-import { Label } from "../../atoms/Label/Label";
+import { Label } from "@/ui/components/atoms/Label/Label";
 
 type ControlProps = PropsWithChildren<{
   htmlFor?: string;

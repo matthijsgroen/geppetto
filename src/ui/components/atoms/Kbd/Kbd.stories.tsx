@@ -1,6 +1,5 @@
+import preview from "@sb/preview";
 import React from "react";
-
-import preview from "#.storybook/preview";
 
 import { Kbd as KbdElement } from "./Kbd";
 import { type Shortcut } from "./shortcut";

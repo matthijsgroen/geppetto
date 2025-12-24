@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { type FC, use } from "react";
 
-import { ToolbarContext } from "../../molecules/ToolBar/ToolBarContext";
+import { ToolbarContext } from "@/ui/components/molecules/ToolBar/ToolBarContext";
 
 /**
  * Creates a small dividing line between toolbar elements

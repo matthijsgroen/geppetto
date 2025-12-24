@@ -1,14 +1,17 @@
 import React, { useCallback, useMemo, useState } from "react";
 
+import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton.js";
+import { StartupScreen } from "@/application/modules/application-menu/ui/Startup.js";
+import LayerMouseControl from "@/application/modules/canvas/ui/LayerMouseControl.js";
+import { MouseMode } from "@/application/modules/canvas/ui/MouseControl.js";
+import TextureMapCanvas, {
+  type GridSettings,
+} from "@/application/modules/layers/ui/TextureMapCanvas.js";
 import { ActionToolButton } from "@/application/services/actions/ActionToolButton";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useEvent } from "@/application/state/hooks/useEvent";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
-import { InstallToolButton } from "@/application/use-cases/application-menu/ui/InstallToolButton";
-import { StartupScreen } from "@/application/use-cases/application-menu/ui/Startup";
-import LayerMouseControl from "@/application/use-cases/canvas/ui/LayerMouseControl";
-import { MouseMode } from "@/application/use-cases/canvas/ui/MouseControl";
 import {
   addPoint,
   deletePoint,
@@ -22,9 +25,6 @@ import {
   mouseToTextureCoordinate,
 } from "@/infrastructure/webgl/lib/canvas";
 import { type IDLayer } from "@/infrastructure/webgl/programs/showLayerPoints";
-import TextureMapCanvas, {
-  type GridSettings,
-} from "@/infrastructure/webgl/TextureMapCanvas";
 import { type Vec2 } from "@/shared/types/global";
 import {
   Column,

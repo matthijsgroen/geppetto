@@ -1,4 +1,4 @@
-import preview from "#.storybook/preview";
+import preview from "@sb/preview";
 
 import { Paragraph as ParagraphElement } from "./Paragraph";
 

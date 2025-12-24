@@ -1,6 +1,7 @@
-import preview from "#.storybook/preview";
+import preview from "@sb/preview";
 
-import { Icon, ToolButton } from "../..";
+import { Icon, ToolButton } from "@/ui/components";
+
 import {
   storyTreeItems,
   type ToolsProvider,

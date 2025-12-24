@@ -1,3 +1,4 @@
+import { updateVersionNumber } from "@/domain/versioning/updateVersionNumber";
 import {
   type AnimationFrame,
   type ImageDefinition,
@@ -12,7 +13,6 @@ import {
   type Hierarchy,
 } from "@/dtos/animation-file2.dto";
 
-import { updateVersionNumber } from "../../versioning/updateVersionNumber";
 import { newFile } from "./new";
 
 const convertMutations = (

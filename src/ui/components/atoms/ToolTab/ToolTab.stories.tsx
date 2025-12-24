@@ -1,6 +1,5 @@
+import preview from "@sb/preview";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-
-import preview from "#.storybook/preview";
 
 import { Icon } from "../Icon/Icon";
 import { ToolTab as ToolTabComponent } from "./ToolTab";

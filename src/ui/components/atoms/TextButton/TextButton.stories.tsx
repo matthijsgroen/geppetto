@@ -1,6 +1,5 @@
+import preview from "@sb/preview";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-
-import preview from "#.storybook/preview";
 
 import { TextButton as TextButtonComponent } from "./TextButton";
 

@@ -1,6 +1,5 @@
+import preview from "@sb/preview";
 import { expect, fn, waitFor } from "storybook/test";
-
-import preview from "#.storybook/preview";
 
 import { Icon } from "../Icon/Icon";
 import { ToolButton } from "./ToolButton";

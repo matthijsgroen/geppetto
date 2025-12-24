@@ -103,8 +103,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
 
   const expandedItems = useMemo(
     () => expandedFolders.concat(expandedLayers).concat(focusedExpansions),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [expandedFolders.join(), expandedLayers.join(), focusedExpansions.join()]
+    [expandedFolders, expandedLayers, focusedExpansions]
   );
 
   const items = useLayerTreeItems(

@@ -1,6 +1,7 @@
-import preview from "#.storybook/preview";
+import preview from "@sb/preview";
 
-import { ToolBar } from "../../molecules/ToolBar/ToolBar";
+import { ToolBar } from "@/ui/components/molecules/ToolBar/ToolBar";
+
 import { Icon } from "../Icon/Icon";
 import { ToolButton } from "../ToolButton/ToolButton";
 import { ToolSpacer as ToolSpacerComponent } from "./ToolSpacer";

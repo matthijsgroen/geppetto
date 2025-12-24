@@ -1,7 +1,8 @@
-import preview from "#.storybook/preview";
+import preview from "@sb/preview";
 
-import { Icon } from "../../atoms/Icon/Icon";
-import { ToolButton } from "../../atoms/ToolButton/ToolButton";
+import { Icon } from "@/ui/components/atoms/Icon/Icon";
+import { ToolButton } from "@/ui/components/atoms/ToolButton/ToolButton";
+
 import { Menu, MenuDivider, MenuHeader, MenuItem, SubMenu } from "./Menu";
 
 const meta = preview.meta({

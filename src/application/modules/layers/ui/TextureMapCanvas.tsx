@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo } from "react";
 
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
+import { showGrid } from "@/infrastructure/webgl/programs/showGrid.js";
+import {
+  type IDLayer,
+  showLayerPoints,
+} from "@/infrastructure/webgl/programs/showLayerPoints";
+import { showTexture } from "@/infrastructure/webgl/programs/showTexture";
+import { showTextureMap } from "@/infrastructure/webgl/programs/showTextureMap";
+import WebGLCanvas from "@/infrastructure/webgl/WebGLCanvas";
 import { type Vec2 } from "@/shared/types/global";
-
-import { showGrid } from "./programs/showGrid";
-import { type IDLayer, showLayerPoints } from "./programs/showLayerPoints";
-import { showTexture } from "./programs/showTexture";
-import { showTextureMap } from "./programs/showTextureMap";
-import WebGLCanvas from "./WebGLCanvas";
 
 export type GridSettings = {
   size: number;

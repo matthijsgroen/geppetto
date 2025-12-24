@@ -1,7 +1,7 @@
 import React, { Fragment } from "react";
 
+import { VectorControl } from "@/application/modules/controls/ui/VectorControl.js";
 import { useFile } from "@/application/state/FileContext";
-import { VectorControl } from "@/application/use-cases/controls/ui/VectorControl";
 import { type MutationVectorTypes } from "@/dtos/animation-file1.dto";
 import { type Vec2 } from "@/shared/types/global";
 import { Control, TextButton } from "@/ui/components";
