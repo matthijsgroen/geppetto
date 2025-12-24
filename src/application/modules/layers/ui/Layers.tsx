@@ -24,7 +24,6 @@ import {
   maxZoomFactor,
   mouseToTextureCoordinate,
 } from "@/infrastructure/webgl/lib/canvas";
-import { type IDLayer } from "@/infrastructure/webgl/programs/showLayerPoints";
 import { type Vec2 } from "@/shared/types/global";
 import {
   Column,
@@ -45,6 +44,7 @@ import {
   ToolTab,
 } from "@/ui/components";
 
+import { type IDLayer } from "../programs/showLayerPoints";
 import { ShapeTree } from "./ShapeTree";
 
 type LayersProps = {

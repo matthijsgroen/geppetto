@@ -1,10 +1,9 @@
 import { clsx } from "clsx";
 import { type FC, type ReactNode, type Ref, use } from "react";
 
+import { Label } from "@/ui/components/atoms/Label/Label";
 import { type ToolBarSize } from "@/ui/components/molecules/ToolBar/ToolBar";
 import { ToolbarContext } from "@/ui/components/molecules/ToolBar/ToolBarContext";
-
-import { Label } from "../Label/Label";
 
 type ToolTabProps = {
   label?: ReactNode;

@@ -1,7 +1,7 @@
 import { type FC, type PropsWithChildren } from "react";
 
-import { type ToolBarSize } from "../ToolBar/ToolBar";
-import { ToolbarContext } from "../ToolBar/ToolBarContext";
+import { type ToolBarSize } from "@/ui/components/molecules/ToolBar/ToolBar";
+import { ToolbarContext } from "@/ui/components/molecules/ToolBar/ToolBarContext";
 
 type ToolBarProps = PropsWithChildren<{
   size?: ToolBarSize;

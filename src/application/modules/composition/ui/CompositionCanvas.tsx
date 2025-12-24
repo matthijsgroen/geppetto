@@ -16,12 +16,12 @@ import {
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { newFile } from "@/domain/animation/file2/new";
 import { type GeppettoImage } from "@/dtos/animation-file2.dto";
+import { calculateVectorValues } from "@/infrastructure/webgl/lib/vectorPositions";
+import WebGLCanvas from "@/infrastructure/webgl/WebGLCanvas";
 
-import { calculateVectorValues } from "./lib/vectorPositions";
-import { showComposition } from "./programs/showComposition";
-import { showCompositionMap } from "./programs/showCompositionMap";
-import { showCompositionVectors } from "./programs/showCompositionVectors";
-import WebGLCanvas from "./WebGLCanvas";
+import { showComposition } from "../programs/showComposition";
+import { showCompositionMap } from "../programs/showCompositionMap";
+import { showCompositionVectors } from "../programs/showCompositionVectors";
 
 export type CompositionCanvasProps = {
   image: HTMLImageElement | null;

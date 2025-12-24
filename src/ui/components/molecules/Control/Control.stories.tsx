@@ -3,8 +3,8 @@ import preview from "@sb/preview";
 import { NumberInput } from "@/ui/components/atoms/NumberInput/NumberInput";
 import { RangeInput } from "@/ui/components/atoms/RangeInput/RangeInput";
 import { ToggleInput } from "@/ui/components/atoms/ToggleInput/ToggleInput";
+import { ControlPanel } from "@/ui/components/molecules/ControlPanel/ControlPanel";
 
-import { ControlPanel } from "../ControlPanel/ControlPanel";
 import { Control as ControlComponent } from "./Control";
 
 const meta = preview.meta({

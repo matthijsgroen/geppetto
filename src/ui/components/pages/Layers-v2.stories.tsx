@@ -1,6 +1,11 @@
 import preview from "@sb/preview";
 
 import {
+  storyTreeItems,
+  type ToolsProvider,
+} from "@/ui/components/organisms/Tree/storybookTreeDataProvider";
+
+import {
   Column,
   Icon,
   Kbd,
@@ -26,10 +31,6 @@ import {
   Tree,
   TreeEnvironment,
 } from "..";
-import {
-  storyTreeItems,
-  type ToolsProvider,
-} from "../organisms/Tree/storybookTreeDataProvider";
 
 const meta = preview.meta({
   title: "Pages/Layers",

@@ -1,7 +1,8 @@
 import preview from "@sb/preview";
 import { expect, fn, waitFor } from "storybook/test";
 
-import { Icon } from "../Icon/Icon";
+import { Icon } from "@/ui/components/atoms/Icon/Icon";
+
 import { ToolButton } from "./ToolButton";
 
 const meta = preview.meta({

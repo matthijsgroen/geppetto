@@ -2,8 +2,8 @@ import preview from "@sb/preview";
 import { type ComponentProps } from "react";
 
 import { ToggleInput } from "@/ui/components/atoms/ToggleInput/ToggleInput";
+import { Control } from "@/ui/components/molecules/Control/Control";
 
-import { Control } from "../Control/Control";
 import { ControlPanel as ControlPanelComponent } from "./ControlPanel";
 
 type StoryProps = ComponentProps<typeof ControlPanelComponent> & {

@@ -1,6 +1,7 @@
 import { type FC } from "react";
 
-import { Icon } from "../Icon/Icon";
+import { Icon } from "@/ui/components/atoms/Icon/Icon";
+
 import LogoSvg from "./geppetto.svg?react";
 
 export const LogoIcon: FC = () => (

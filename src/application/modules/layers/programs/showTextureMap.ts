@@ -1,64 +1,52 @@
 import { type Layer } from "@/dtos/animation-file2.dto";
 import { type ScreenTranslation } from "@/dtos/application.dto";
-import { type Vec2 } from "@/shared/types/global";
-import { isInDarkMode } from "@/shared/utils/darkMode";
+import { verticesFromPoints } from "@/infrastructure/webgl/lib/vertices";
+import {
+  createProgram,
+  type WebGLRenderer,
+} from "@/infrastructure/webgl/lib/webgl";
 
-import { createProgram, type WebGLRenderer } from "../lib/webgl";
-import layerPointsFragmentShader from "./showLayerPoints.frag";
-import layerPointsVertexShader from "./showLayerPoints.vert";
+import textureMapFragmentShader from "./showTextureMap.frag";
+import textureMapVertexShader from "./showTextureMap.vert";
 
-export type IDLayer = Layer & { id: string };
+type Element = {
+  start: number;
+  amount: number;
+};
+const STRIDE = 2;
 
-export const showLayerPoints = (
+export const showTextureMap = (
   trans: ScreenTranslation
 ): {
   setImage(image: HTMLImageElement): void;
-  setLayers(layers: IDLayer[]): void;
-  setLayerSelected(layer: undefined | string): void;
-  setActiveCoord(coord: null | Vec2): void;
+  setLayers(layers: Layer[]): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 3;
+  let shapes: Layer[] | null = null;
 
-  let layers: IDLayer[] | null = null;
   let img: HTMLImageElement | null = null;
   let vertexBuffer: WebGLBuffer | null = null;
   let indexBuffer: WebGLBuffer | null = null;
   let gl: WebGLRenderingContext | null = null;
   const screenTranslation = trans;
-  let layerSelected: string | undefined = undefined;
-  let coordSelected: Vec2 | null = null;
 
-  let elements: { start: number; amount: number; id: string }[] = [];
+  let elements: Element[] = [];
 
   const populateShapes = () => {
-    if (!layers || !gl || !indexBuffer || !vertexBuffer) return;
+    if (!shapes || !gl || !indexBuffer || !vertexBuffer) return;
     elements = [];
 
-    const vertices = layers.reduce<number[]>((coordList, shape) => {
-      const list = shape.points.reduce<number[]>(
-        (result, point) =>
-          result
-            .concat(point)
-            .concat(
-              coordSelected &&
-                point[0] === coordSelected[0] &&
-                point[1] === coordSelected[1]
-                ? 1.0
-                : 0.0
-            ),
-        []
-      );
+    const vertices = shapes.reduce((coordList, shape) => {
+      const list = verticesFromPoints(shape.points);
       elements.push({
-        start: coordList.length / stride,
-        amount: list.length / stride,
-        id: shape.id,
+        start: coordList.length / STRIDE,
+        amount: list.length / 2,
       });
 
       return coordList.concat(list);
-    }, []);
+    }, [] as number[]);
 
-    const indices = Array(vertices.length / stride)
+    const indices = Array(vertices.length / STRIDE)
       .fill(0)
       .map((_, i) => i);
 
@@ -74,24 +62,16 @@ export const showLayerPoints = (
     );
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
+
   let onChange: () => void = () => {};
 
   return {
-    setImage(image) {
+    setImage(image: HTMLImageElement) {
       img = image;
       onChange();
     },
-    setLayers(s) {
-      layers = s;
-      populateShapes();
-      onChange();
-    },
-    setLayerSelected(layer) {
-      layerSelected = layer;
-      onChange();
-    },
-    setActiveCoord(coord) {
-      coordSelected = coord;
+    setLayers(s: Layer[]) {
+      shapes = s;
       populateShapes();
       onChange();
     },
@@ -103,43 +83,32 @@ export const showLayerPoints = (
 
       const [shaderProgram, programCleanup] = createProgram(
         gl,
-        layerPointsVertexShader,
-        layerPointsFragmentShader
+        textureMapVertexShader,
+        textureMapFragmentShader
       );
-
-      const programInfo = {
-        uniforms: {
-          viewport: gl.getUniformLocation(shaderProgram, "viewport"),
-          scale: gl.getUniformLocation(shaderProgram, "scale"),
-          darkMode: gl.getUniformLocation(shaderProgram, "darkMode"),
-        },
-        attributes: {
-          coordinates: gl.getAttribLocation(shaderProgram, "coordinates"),
-        },
-      };
 
       return {
         onChange(listener) {
           onChange = listener;
         },
         render() {
-          if (!layers || !img || !vertexBuffer || !indexBuffer || !gl) {
+          if (!shapes || !img || !vertexBuffer || !indexBuffer || !gl) {
             return;
           }
-          const darkMode = isInDarkMode();
           gl.useProgram(shaderProgram);
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
           gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
+          const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
-            programInfo.attributes.coordinates,
-            3,
+            coord,
+            2,
             gl.FLOAT,
             false,
-            Float32Array.BYTES_PER_ELEMENT * stride,
+            Float32Array.BYTES_PER_ELEMENT * STRIDE,
             /* offset */ 0
           );
-          gl.enableVertexAttribArray(programInfo.attributes.coordinates);
+          gl.enableVertexAttribArray(coord);
           const [canvasWidth, canvasHeight] = getSize();
           const landscape = img.width / canvasWidth > img.height / canvasHeight;
 
@@ -153,7 +122,7 @@ export const showLayerPoints = (
           ];
 
           gl.uniform4f(
-            programInfo.uniforms.viewport,
+            gl.getUniformLocation(shaderProgram, "viewport"),
             canvasWidth,
             canvasHeight,
             x,
@@ -161,17 +130,18 @@ export const showLayerPoints = (
           );
 
           gl.uniform4f(
-            programInfo.uniforms.scale,
+            gl.getUniformLocation(shaderProgram, "scale"),
             scale,
             screenTranslation.zoom,
             screenTranslation.panX,
             screenTranslation.panY
           );
-          gl.uniform1f(programInfo.uniforms.darkMode, darkMode ? 1.0 : 0.0);
 
           elements.forEach((element) => {
-            if (element.id === layerSelected && element.amount > 0) {
-              initGl.drawArrays(initGl.POINTS, element.start, element.amount);
+            if (element.amount > 0) {
+              for (let i = 0; i < element.amount; i += 3) {
+                initGl.drawArrays(initGl.LINE_LOOP, element.start + i, 3);
+              }
             }
           });
         },

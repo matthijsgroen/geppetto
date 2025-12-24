@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { VectorControl } from "@/application/modules/controls/ui/VectorControl.js";
+import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl.js";
 import { useFile } from "@/application/state/FileContext";
 import { type MutationVectorTypes } from "@/dtos/animation-file1.dto";
 import { type Vec2 } from "@/shared/types/global";

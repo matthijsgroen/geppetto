@@ -9,13 +9,19 @@ import {
   type MutationVector,
 } from "@/dtos/animation-file2.dto";
 import { type ScreenTranslation } from "@/dtos/application.dto";
+import { flatten } from "@/infrastructure/webgl/lib/vertices";
+import {
+  createProgram,
+  type WebGLRenderer,
+} from "@/infrastructure/webgl/lib/webgl";
+import {
+  createShapeMutationList,
+  MAX_MUTATION_VECTORS,
+} from "@/infrastructure/webgl/programs/utils";
 import { isInDarkMode } from "@/shared/utils/darkMode";
 
-import { flatten } from "../lib/vertices";
-import { createProgram, type WebGLRenderer } from "../lib/webgl";
 import compositionFragmentShader from "./showCompositionVectors.frag";
 import compositionVertexShader from "./showCompositionVectors.vert";
-import { createShapeMutationList, MAX_MUTATION_VECTORS } from "./utils";
 
 type Color = [number, number, number];
 

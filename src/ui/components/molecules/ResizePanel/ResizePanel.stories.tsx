@@ -1,8 +1,9 @@
 import preview from "@sb/preview";
 
-import { Column } from "../Column/Column";
-import { Panel } from "../Panel/Panel";
-import { Row } from "../Row/Row";
+import { Column } from "@/ui/components/molecules/Column/Column";
+import { Panel } from "@/ui/components/molecules/Panel/Panel";
+import { Row } from "@/ui/components/molecules/Row/Row";
+
 import { ResizeDirection, ResizePanel } from "./ResizePanel";
 
 const direction = {

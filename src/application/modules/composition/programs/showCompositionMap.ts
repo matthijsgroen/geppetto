@@ -1,37 +1,43 @@
-import { visit } from "@/domain/animation/file2/hierarchy";
+import { collectChildIds, visit } from "@/domain/animation/file2/hierarchy";
 import { type GeppettoImage, type Keyframe } from "@/dtos/animation-file2.dto";
 import { type ScreenTranslation } from "@/dtos/application.dto";
-
-import { filteredTriangles, flatten } from "../lib/vertices";
-import { createProgram, type WebGLRenderer } from "../lib/webgl";
-import compositionFragmentShader from "./showComposition.frag";
-import compositionVertexShader from "./showComposition.vert";
+import {
+  flatten,
+  verticesFromPoints,
+} from "@/infrastructure/webgl/lib/vertices";
+import {
+  createProgram,
+  type WebGLRenderer,
+} from "@/infrastructure/webgl/lib/webgl";
 import {
   createShapeMutationList,
   getAnchor,
   MAX_MUTATION_VECTORS,
-} from "./utils";
+} from "@/infrastructure/webgl/programs/utils";
 
-export const showComposition = (
+import compositionFragmentShader from "./showCompositionMap.frag";
+import compositionVertexShader from "./showCompositionMap.vert";
+
+export const showCompositionMap = (
   trans: ScreenTranslation
 ): {
   setImage(image: HTMLImageElement): void;
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
+  setLayerSelected(layers: string[]): void;
   renderer: WebGLRenderer;
 } => {
-  const stride = 4;
+  const stride = 2;
 
   let shapes: GeppettoImage | null = null;
 
   let gl: WebGLRenderingContext | null = null;
-  let vertexBuffer: WebGLBuffer | null = null;
-  let indexBuffer: WebGLBuffer | null = null;
-  let img: HTMLImageElement | null = null;
-  let texture: WebGLTexture | null = null;
   let program: WebGLProgram | null = null;
-
+  let vertexBuffer: WebGLBuffer | null = null;
+  let img: HTMLImageElement | null = null;
+  let layersSelected: string[] = [];
   let vectorValues: Keyframe = {};
+
   let elements: {
     id: string;
     start: number;
@@ -45,32 +51,16 @@ export const showComposition = (
   let scale = 1.0;
   const screenTranslation = trans;
 
-  const setImageTexture = (): void => {
-    if (img === null || texture === null || gl === null || program === null) {
-      return;
-    }
-
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-
-    gl.uniform2f(
-      gl.getUniformLocation(program, "uTextureDimensions"),
-      img.width,
-      img.height
-    );
-  };
-
   const populateShapes = () => {
-    if (!shapes || !gl || !indexBuffer || !vertexBuffer || !program) return;
+    if (!shapes || !gl || !vertexBuffer || !program) return;
     const vertices: number[] = [];
-    const indices: number[] = [];
     elements = [];
+    mutMapping = {};
 
     gl.useProgram(program);
 
     const image = shapes;
     let index = 0;
-
     visit(image.layerHierarchy, (node, nodeId) => {
       if (node.type === "layerFolder") {
         const folder = image.layerFolders[nodeId];
@@ -83,30 +73,28 @@ export const showComposition = (
       }
       const shape = image.layers[nodeId];
       if (!shape.visible) return "SKIP";
+      if (node.type !== "layer") {
+        return;
+      }
       const anchor = getAnchor(shape);
-      const shapeIndices = filteredTriangles(shape.points);
-      const start = indices.length;
-
       const itemOffset = [...shape.translate, index * 0.1];
       index++;
+      const points = shape.points.map(([x, y]) => [
+        x - anchor[0],
+        y - anchor[1],
+      ]);
+      const list = verticesFromPoints(points);
 
       elements.push({
         id: nodeId,
-        start,
-        amount: shapeIndices.length,
+        start: vertices.length / stride,
+        amount: list.length / 2,
         mutator: 0,
         x: itemOffset[0],
         y: itemOffset[1],
-        z: -0.5 + itemOffset[2] * 0.001,
+        z: itemOffset[2] * 0.001,
       });
-      const offset = vertices.length / stride;
-      for (const [x, y] of shape.points) {
-        vertices.push(x - anchor[0], y - anchor[1], x, y);
-      }
-
-      for (const index of shapeIndices) {
-        indices.push(index + offset);
-      }
+      vertices.push(...list);
     });
 
     const { parentList, vectorSettings, mutatorMapping, shapeMutatorMapping } =
@@ -129,14 +117,6 @@ export const showComposition = (
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-    gl.bufferData(
-      gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array(indices),
-      gl.STATIC_DRAW
-    );
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
   };
 
   const populateVectorValues = () => {
@@ -145,12 +125,12 @@ export const showComposition = (
 
     const uMutationValues = gl.getUniformLocation(program, "uMutationValues");
     const mutationValues = new Float32Array(MAX_MUTATION_VECTORS * 2).fill(0);
-    Object.entries(vectorValues).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(vectorValues)) {
       const index = mutMapping[key];
-      if (index === -1 || index === undefined) return;
+      if (index === -1) continue;
       mutationValues[index * 2] = value[0];
       mutationValues[index * 2 + 1] = value[1];
-    });
+    }
     gl.uniform2fv(uMutationValues, mutationValues);
   };
 
@@ -161,12 +141,11 @@ export const showComposition = (
   let onChange: () => void = () => {};
 
   return {
-    setImage(image: HTMLImageElement) {
+    setImage(image) {
       img = image;
-      setImageTexture();
       onChange();
     },
-    setShapes(s: GeppettoImage) {
+    setShapes(s) {
       shapes = s;
       populateShapes();
       onChange();
@@ -176,19 +155,40 @@ export const showComposition = (
       populateVectorValues();
       onChange();
     },
-    renderer(initGl: WebGLRenderingContext, { getUnit, getSize }) {
+    setLayerSelected(layers) {
+      if (layers.length === 0 || shapes === null) {
+        layersSelected = [];
+        onChange();
+        return;
+      }
+      layersSelected = [];
+      for (const layerId of layers) {
+        const treeNode = shapes.layerHierarchy[layerId];
+        if (treeNode.type === "mutation") {
+          layersSelected.push(treeNode.parentId);
+
+          const parentNode = shapes.layerHierarchy[treeNode.parentId];
+          if (parentNode.type === "layerFolder") {
+            layersSelected.push(
+              ...collectChildIds(shapes.layerHierarchy, treeNode.parentId)
+            );
+          }
+
+          continue;
+        }
+        layersSelected.push(layerId);
+        if (treeNode.type === "layerFolder") {
+          layersSelected.push(
+            ...collectChildIds(shapes.layerHierarchy, layerId)
+          );
+        }
+      }
+      onChange();
+    },
+    renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
 
-      const unit = getUnit();
-      texture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-
       vertexBuffer = gl.createBuffer();
-      indexBuffer = gl.createBuffer();
 
       const [shaderProgram, programCleanup] = createProgram(
         gl,
@@ -196,25 +196,8 @@ export const showComposition = (
         compositionFragmentShader
       );
       program = shaderProgram;
-
-      gl.useProgram(shaderProgram);
-      gl.uniform1i(
-        gl.getUniformLocation(shaderProgram, "uSampler"),
-        unit.index
-      );
-      setImageTexture();
       populateShapes();
       populateVectorValues();
-      const translateLocation = gl.getUniformLocation(
-        shaderProgram,
-        "translate"
-      );
-      const mutationLocation = gl.getUniformLocation(shaderProgram, "mutation");
-
-      const uBasePosition = gl.getUniformLocation(
-        shaderProgram,
-        "basePosition"
-      );
 
       return {
         onChange(listener) {
@@ -226,7 +209,6 @@ export const showComposition = (
           }
           gl.useProgram(shaderProgram);
           gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-          gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
 
           const coord = gl.getAttribLocation(shaderProgram, "coordinates");
           gl.vertexAttribPointer(
@@ -238,16 +220,6 @@ export const showComposition = (
             /* offset */ 0
           );
           gl.enableVertexAttribArray(coord);
-          const texCoord = gl.getAttribLocation(shaderProgram, "aTextureCoord");
-          gl.vertexAttribPointer(
-            texCoord,
-            2,
-            gl.FLOAT,
-            false,
-            Float32Array.BYTES_PER_ELEMENT * stride,
-            /* offset */ 2 * Float32Array.BYTES_PER_ELEMENT
-          );
-          gl.enableVertexAttribArray(texCoord);
 
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
@@ -264,11 +236,6 @@ export const showComposition = (
               canvasHeight
             );
 
-            gl.uniform2f(
-              gl.getUniformLocation(shaderProgram, "uTextureDimensions"),
-              img.width,
-              img.height
-            );
             basePosition = [
               canvasWidth / 2 / scale,
               canvasHeight / 2 / scale,
@@ -286,36 +253,35 @@ export const showComposition = (
             screenTranslation.panY
           );
 
-          gl.activeTexture(unit.unit);
-          gl.bindTexture(gl.TEXTURE_2D, texture);
-
+          const translate = gl.getUniformLocation(shaderProgram, "translate");
+          const uBasePosition = gl.getUniformLocation(
+            shaderProgram,
+            "basePosition"
+          );
           gl.uniform3f(
             uBasePosition,
             basePosition[0],
             basePosition[1],
             basePosition[2]
           );
+          const mutation = gl.getUniformLocation(shaderProgram, "mutation");
 
           for (const element of elements) {
-            if (element.amount === 0) {
-              return;
-            }
-            gl.uniform3f(translateLocation, element.x, element.y, element.z);
-            gl.uniform1f(mutationLocation, element.mutator);
+            if (layersSelected.includes(element.id) && element.amount > 0) {
+              gl.uniform3f(translate, element.x, element.y, element.z);
+              gl.uniform1f(mutation, element.mutator);
 
-            gl.drawElements(
-              gl.TRIANGLES,
-              element.amount,
-              gl.UNSIGNED_SHORT,
-              element.start * 2
-            );
+              for (let i = 0; i < element.amount; i += 3) {
+                gl.drawArrays(initGl.LINE_LOOP, element.start + i, 3);
+              }
+            }
           }
         },
         cleanup() {
-          const gl = initGl;
-          gl.deleteTexture(texture);
-          gl.deleteBuffer(vertexBuffer);
-          gl.deleteBuffer(indexBuffer);
+          if (gl) {
+            gl.deleteBuffer(vertexBuffer);
+            gl = null;
+          }
           programCleanup();
         },
       };

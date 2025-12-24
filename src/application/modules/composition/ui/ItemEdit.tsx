@@ -1,9 +1,9 @@
 import { produce } from "immer";
 import { useEffect, useState, useTransition } from "react";
 
-import { BooleanControl } from "@/application/modules/controls/ui/CheckControl.js";
-import { NumberControl } from "@/application/modules/controls/ui/NumberControl.js";
-import { VectorControl } from "@/application/modules/controls/ui/VectorControl.js";
+import { BooleanControl } from "@/application/modules/composition/ui/controls/CheckControl.js";
+import { NumberControl } from "@/application/modules/composition/ui/controls/NumberControl.js";
+import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl.js";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {

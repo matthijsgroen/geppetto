@@ -47,7 +47,6 @@ import {
   type Size,
   type UseState,
 } from "@/dtos/application.dto";
-import CompositionCanvas from "@/infrastructure/webgl/CompositionCanvas";
 import { maxZoomFactor } from "@/infrastructure/webgl/lib/canvas";
 import {
   imageToPixels,
@@ -76,6 +75,7 @@ import {
   useMenuState,
 } from "@/ui/components";
 
+import CompositionCanvas from "./CompositionCanvas";
 import { ControlEditSteps } from "./ControlEdit";
 import { ControlTree } from "./ControlTree";
 import { Inlay } from "./Inlay";

@@ -1,6 +1,11 @@
 import preview from "@sb/preview";
 
 import {
+  storyTreeItems,
+  type ToolsProvider,
+} from "@/ui/components/organisms/Tree/storybookTreeDataProvider";
+
+import {
   Column,
   Control,
   ControlPanel,
@@ -31,10 +36,6 @@ import {
   Tree,
   TreeEnvironment,
 } from "..";
-import {
-  storyTreeItems,
-  type ToolsProvider,
-} from "../organisms/Tree/storybookTreeDataProvider";
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta = preview.meta({

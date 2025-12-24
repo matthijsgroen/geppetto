@@ -1,7 +1,8 @@
 import preview from "@sb/preview";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 
-import { Icon } from "../Icon/Icon";
+import { Icon } from "@/ui/components/atoms/Icon/Icon";
+
 import { ToolTab as ToolTabComponent } from "./ToolTab";
 
 const meta = preview.meta({
