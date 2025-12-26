@@ -2,16 +2,16 @@ import React, { useCallback, useMemo, useState } from "react";
 
 import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton.js";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup.js";
-import LayerMouseControl from "@/application/modules/canvas/ui/LayerMouseControl.js";
-import { MouseMode } from "@/application/modules/canvas/ui/MouseControl.js";
 import TextureMapCanvas, {
   type GridSettings,
 } from "@/application/modules/layers/ui/TextureMapCanvas.js";
-import { ActionToolButton } from "@/application/services/actions/ActionToolButton";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useEvent } from "@/application/state/hooks/useEvent";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
+import { ActionToolButton } from "@/application/ui/ActionToolButton";
+import LayerMouseControl from "@/application/ui/LayerMouseControl.js";
+import { MouseMode } from "@/application/ui/MouseControl.js";
 import {
   addPoint,
   deletePoint,

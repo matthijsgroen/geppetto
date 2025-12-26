@@ -24,7 +24,7 @@ import {
   type TreeItemIndex,
 } from "@/ui/components";
 
-import { MutationControlContext } from "./mutationControlContext";
+import { MutationControlContext } from "../../composition/ui/mutationControlContext";
 import { type ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
 
 type LayerTreeEnvironmentProps = {

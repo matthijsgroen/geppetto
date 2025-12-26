@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useRef } from "react";
 
-import { ActionMenuItem } from "@/application/services/actions/ActionMenuItem";
 import { ApplicationContext } from "@/application/state/ApplicationContext";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
@@ -10,13 +9,13 @@ import {
   useUpdateControlValues,
   useUpdateMutationValues,
 } from "@/application/state/ImageControlContext";
+import { ActionMenuItem } from "@/application/ui/ActionMenuItem";
 import sceneryDemoImg from "@/demos/scenery.json";
 import sceneryDemoImage from "@/demos/scenery.png";
-import { verifyFile as verifyVersion1 } from "@/domain/animation/file1/verifyFile";
-import { convertFromV1 } from "@/domain/animation/file2/convert";
 import { verifyFile as verifyVersion2 } from "@/domain/animation/file2/verifyFile";
 import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import { type UseState } from "@/dtos/application.dto";
+import { loadGeppettoFile, saveGeppettoFile } from "@/dtos/geppetto-file";
 import {
   LogoIcon,
   Menu,
@@ -33,27 +32,6 @@ type ApplicationMenuProps = {
   fileNameState: UseState<string | null>;
   textureFileNameState: UseState<string | null>;
   textureFileState: UseState<HTMLImageElement | null>;
-};
-
-const loadGeppettoImage = async (
-  file: FileSystemFileHandle
-): Promise<[filename: string, image: GeppettoImage]> => {
-  const fileData = await file.getFile();
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-
-    reader.addEventListener("load", () => {
-      const image = JSON.parse(reader.result as string);
-      if (verifyVersion1(image)) {
-        const version2 = convertFromV1(image);
-        resolve([file.name, version2]);
-      }
-      if (verifyVersion2(image)) {
-        resolve([file.name, image]);
-      }
-    });
-    reader.readAsText(fileData, "utf8");
-  });
 };
 
 const loadTextureImage = async (
@@ -119,7 +97,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                   ],
                 });
                 fileRef.current = fileHandle;
-                const [filename, image] = await loadGeppettoImage(fileHandle);
+                const [filename, image] = await loadGeppettoFile(fileHandle);
                 fileNameState[1](filename);
                 setFile(image);
                 controlUpdate(() => image.controlValues);
@@ -150,9 +128,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                 });
                 fileRef.current = fileHandle;
                 fileNameState[1](fileHandle.name);
-                const writable = await fileHandle.createWritable();
-                await writable.write(JSON.stringify(file));
-                writable.close();
+                await saveGeppettoFile(fileHandle, file);
               } catch (e) {
                 // user abort
               }
@@ -185,9 +161,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
             }
             if (fileRef.current) {
               try {
-                const writable = await fileRef.current.createWritable();
-                await writable.write(JSON.stringify(file));
-                writable.close();
+                await saveGeppettoFile(fileRef.current, file);
               } catch (e) {
                 // user abort
               }

@@ -2,6 +2,7 @@ import { type ImageDefinition } from "@/dtos/animation-file1.dto";
 
 import { newFile } from "./new";
 
+// TODO: Move to dto, use Zod to validate
 export const verifyFile = (file: unknown): file is ImageDefinition => {
   if (typeof file !== "object") return false;
   if (!file) return false;

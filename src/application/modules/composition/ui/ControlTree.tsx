@@ -1,4 +1,4 @@
-import { ControlTreeEnvironment } from "@/application/services/treeEnvironments/ControlTreeEnvironment";
+import { ControlTreeEnvironment } from "@/application/modules/composition/ui/ControlTreeEnvironment";
 import { useFile } from "@/application/state/FileContext";
 import { useToolAction } from "@/application/state/hooks/useToolAction";
 import { addControl, removeControls } from "@/domain/animation/file2/controls";

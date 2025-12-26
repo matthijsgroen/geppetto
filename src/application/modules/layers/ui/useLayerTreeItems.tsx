@@ -12,7 +12,7 @@ import {
 } from "@/ui/components";
 import { TREE_ROOT } from "@/ui/components/organisms/Tree/Tree";
 
-import { ControlEditMode } from "./mutationControlContext";
+import { ControlEditMode } from "../../composition/ui/mutationControlContext";
 
 export type LayerItem = TreeItem<
   TreeData<"layer" | "layerFolder" | "mutation">
