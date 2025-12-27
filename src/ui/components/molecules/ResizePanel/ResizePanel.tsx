@@ -141,7 +141,17 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
       onDrag={onDrag}
       nodeRef={handleRef as React.RefObject<HTMLElement>}
     >
-      <div ref={handleRef} className={resizeBarClasses} />
+      <div
+        ref={handleRef}
+        className={resizeBarClasses}
+        role="separator"
+        aria-orientation={
+          direction === ResizeDirection.East ||
+          direction === ResizeDirection.West
+            ? "vertical"
+            : "horizontal"
+        }
+      />
     </Draggable>
   );
 

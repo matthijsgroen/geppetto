@@ -463,6 +463,7 @@ export const Composition: React.FC<CompositionProps> = ({
                 selectedItemsState={[selectedItems, updateSelectedItems]}
                 focusedItemState={[focusedLayer, setFocusedLayer]}
                 editControlId={editingControl}
+                onSectionChange={onSectionChange}
               />
             </Panel>
             {!controlEditMode && (

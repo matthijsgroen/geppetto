@@ -16,6 +16,7 @@ import {
 } from "@/domain/animation/file2/mutation";
 import { addFolder, removeShape } from "@/domain/animation/file2/shapes";
 import { type MutationVector } from "@/dtos/animation-file2.dto";
+import type { AppSection } from "@/dtos/application.dto";
 import { type UseState } from "@/dtos/application.dto";
 import {
   EmptyTree,
@@ -33,12 +34,14 @@ type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
   focusedItemState: UseState<string | undefined>;
   editControlId?: string;
+  onSectionChange?: (newSection: AppSection) => void;
 };
 
 export const ShapeTree: React.FC<ShapeTreeProps> = ({
   selectedItemsState,
   focusedItemState,
   editControlId,
+  onSectionChange,
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
@@ -164,7 +167,16 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       {isEmpty(file.layerHierarchy) ? (
         <EmptyTree>
           <Paragraph>
-            Start by adding a layer on the &ldquo;Layers&rdquo; screen.
+            Start by adding a layer on the{" "}
+            <ToolButton
+              size="small"
+              icon={<Icon>🧬</Icon>}
+              label="Layers screen"
+              tooltip="Go to layers screen"
+              standAlone
+              onClick={() => onSectionChange && onSectionChange("layers")}
+            />
+            .
           </Paragraph>
         </EmptyTree>
       ) : (
