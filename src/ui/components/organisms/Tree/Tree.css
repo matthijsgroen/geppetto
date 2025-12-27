@@ -1,0 +1,53 @@
+.rct-tree-root {
+  color: var(--color-text);
+  font: caption;
+
+  background-color: var(--color-panel);
+
+  --rct-color-tree-bg: var(--color-panel);
+  --rct-color-tree-focus-outline: var(--color-control-focus);
+
+  --rct-color-focustree-item-selected-bg: var(--color-control-active);
+  --rct-color-focustree-item-selected-text: var(--color-text);
+  --rct-color-focustree-item-focused-border: var(--color-control-focus);
+  --rct-color-focustree-item-draggingover-bg: var(--color-control-active);
+  --rct-color-focustree-item-draggingover-color: var(--color-active);
+
+  --rct-color-nonfocustree-item-selected-bg: var(
+    --colors-control-active-dimmed
+  );
+  --rct-color-nonfocustree-item-selected-text: var(--color-text);
+  --rct-color-nonfocustree-item-focused-border: transparent;
+
+  --rct-color-search-highlight-bg: #a2aed2;
+  --rct-color-drag-between-line-bg: var(--color-control-focus);
+  --rct-color-arrow: var(--color-text);
+
+  --rct-item-height: 2rem;
+
+  --rct-color-renaming-input-submitbutton-bg: inherit;
+  --rct-color-renaming-input-submitbutton-bg-hover: #0366d6;
+  --rct-color-renaming-input-submitbutton-bg-active: #095fc1;
+
+  --rct-color-renaming-input-submitbutton-text: inherit;
+  --rct-color-renaming-input-submitbutton-text-hover: #ffffff;
+  --rct-color-renaming-input-submitbutton-text-active: #ffffff;
+
+  border-radius: var(--radius-control);
+
+  flex-grow: 1;
+  overflow: scroll;
+}
+
+.rct-tree-item-button {
+  font: caption;
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rct-tree-item-title-container {
+  padding-right: 0.25rem;
+  gap: 0.25rem;
+}

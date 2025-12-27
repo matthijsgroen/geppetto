@@ -25,7 +25,7 @@
     "web-vitals": "^5.1.0"
   },
   "scripts": {
-    "prebuild": "bin/writeVersion.js",
+    "set-version": "bin/writeVersion.js",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
@@ -37,6 +37,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "types:check": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test-storybook": "vitest --project=storybook"
@@ -78,6 +79,7 @@
     "concurrently": "^7.2.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-no-relative-import-paths": "^1.6.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-simple-import-sort": "^12.1.1",
@@ -93,13 +95,6 @@
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.0.16",
     "wait-on": "^6.0.1"
-  },
-  "imports": {
-    "#*": [
-      "./*",
-      "./*.ts",
-      "./*.tsx"
-    ]
   },
   "packageManager": "yarn@4.12.0"
 }

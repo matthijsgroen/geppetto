@@ -3,6 +3,7 @@ import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
+import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
 import prettierConfig from "eslint-config-prettier";
 
 export default [
@@ -26,6 +27,7 @@ export default [
       react,
       "react-hooks": reactHooks,
       "simple-import-sort": simpleImportSort,
+      "no-relative-import-paths": noRelativeImportPaths,
     },
     settings: {
       react: {
@@ -37,6 +39,18 @@ export default [
       // Import sorting
       "simple-import-sort/imports": "warn",
       "simple-import-sort/exports": "warn",
+
+      // Import paths - enforce @/ alias (auto-fixable!)
+      // Allow relative imports within same module (up to 3 levels: ./programs/ or ../programs/)
+      "no-relative-import-paths/no-relative-import-paths": [
+        "warn",
+        {
+          allowSameFolder: true,
+          rootDir: "src",
+          prefix: "@",
+          allowedDepth: 3,
+        },
+      ],
 
       // React
       ...react.configs.recommended.rules,

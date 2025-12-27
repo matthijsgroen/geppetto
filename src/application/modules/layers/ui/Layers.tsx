@@ -1,0 +1,368 @@
+import React, { useCallback, useMemo, useState } from "react";
+
+import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton.js";
+import { StartupScreen } from "@/application/modules/application-menu/ui/Startup.js";
+import TextureMapCanvas, {
+  type GridSettings,
+} from "@/application/modules/layers/ui/TextureMapCanvas.js";
+import { useFile } from "@/application/state/FileContext";
+import { useActionMap } from "@/application/state/hooks/useActionMap";
+import { useEvent } from "@/application/state/hooks/useEvent";
+import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
+import { ActionToolButton } from "@/application/ui/ActionToolButton";
+import LayerMouseControl from "@/application/ui/LayerMouseControl.js";
+import { MouseMode } from "@/application/ui/MouseControl.js";
+import {
+  addPoint,
+  deletePoint,
+  movePoint,
+} from "@/domain/animation/file2/shapes";
+import { type Layer } from "@/dtos/animation-file2.dto";
+import { type AppSection, type UseState } from "@/dtos/application.dto";
+import {
+  getInitialScale,
+  maxZoomFactor,
+  mouseToTextureCoordinate,
+} from "@/infrastructure/webgl/lib/canvas";
+import { type Vec2 } from "@/shared/types/global";
+import {
+  Column,
+  Icon,
+  Menu,
+  MenuHeader,
+  MenuItem,
+  MenuRadioGroup,
+  Panel,
+  ResizeDirection,
+  ResizePanel,
+  Row,
+  type Shortcut,
+  ToolBar,
+  ToolButton,
+  ToolSeparator,
+  ToolSpacer,
+  ToolTab,
+} from "@/ui/components";
+
+import { type IDLayer } from "../programs/showLayerPoints";
+import { ShapeTree } from "./ShapeTree";
+
+type LayersProps = {
+  onSectionChange?: (newSection: AppSection) => void;
+  textureState: UseState<HTMLImageElement | null>;
+  menu?: React.ReactNode;
+};
+
+const snapToGrid = (gridSize: number, value: number) =>
+  Math.round(value / gridSize) * gridSize;
+
+const snapToGridDown = (gridSize: number, value: number) =>
+  Math.floor(value / gridSize) * gridSize;
+
+const snapToGridUp = (gridSize: number, value: number) =>
+  Math.ceil(value / gridSize) * gridSize;
+
+const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
+  gridSettings.magnetic
+    ? [
+        snapToGrid(gridSettings.size, coord[0]),
+        snapToGrid(gridSettings.size, coord[1]),
+      ]
+    : coord;
+
+const DELETE_POINT: Shortcut = { interaction: "DelOrBackspace" };
+
+export const Layers: React.FC<LayersProps> = ({
+  textureState,
+  onSectionChange,
+  menu,
+}) => {
+  const translation = useScreenTranslation();
+
+  const [mouseMode, setMouseMode] = useState(MouseMode.Normal);
+  const [gridSettings, setGridSettings] = useState<GridSettings>({
+    enabled: false,
+    magnetic: false,
+    size: 32,
+  });
+
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
+  const texture = textureState[0];
+  const [file, setFile] = useFile();
+
+  const layers = file.layers;
+  const maxZoom = maxZoomFactor(texture);
+  const idLayers: IDLayer[] = useMemo(
+    () => Object.entries(layers).map(([id, layer]) => ({ id, ...layer })),
+    [layers]
+  );
+
+  const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
+  if (!activeLayer && activeCoord) {
+    setActiveCoord(null);
+  }
+
+  const getClosestPoint = useEvent(
+    (element: HTMLElement, coord: Vec2, shape: Layer): Vec2 | undefined => {
+      if (!texture) return undefined;
+      const canvasPos = element.getBoundingClientRect();
+      const initialScale = getInitialScale(
+        [canvasPos.width, canvasPos.height],
+        [texture.width, texture.height]
+      );
+      const factor = initialScale * translation.zoom;
+      const closePoint = shape.points.find((p) => {
+        const dx = p[0] - coord[0];
+        const dy = p[1] - coord[1];
+
+        return dx > -factor && dx < factor && dy > -factor && dy < factor;
+      });
+      return closePoint;
+    }
+  );
+
+  const mouseClick = useEvent((event: React.MouseEvent<HTMLElement>) => {
+    if (
+      (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
+      texture &&
+      activeLayer
+    ) {
+      const { zoom, panX, panY } = translation;
+      const coord = mouseToTextureCoordinate(
+        texture,
+        zoom,
+        [panX, panY],
+        event
+      );
+
+      const shape = file.layers[activeLayer];
+      if (shape) {
+        const closePoint = getClosestPoint(event.currentTarget, coord, shape);
+
+        if (!closePoint && mouseMode === MouseMode.Aim) {
+          const gridCoord = alignOnGrid(gridSettings, coord);
+          setFile((image) => addPoint(image, activeLayer, gridCoord));
+          setActiveCoord(gridCoord);
+        } else if (closePoint) {
+          setActiveCoord(closePoint);
+        }
+      }
+    }
+  });
+
+  const hoverCursor = useEvent(
+    (event: React.MouseEvent<HTMLElement>): MouseMode => {
+      if (
+        (mouseMode === MouseMode.Aim || mouseMode === MouseMode.Normal) &&
+        texture &&
+        activeLayer
+      ) {
+        const { zoom, panX, panY } = translation;
+        const coord = mouseToTextureCoordinate(
+          texture,
+          zoom,
+          [panX, panY],
+          event
+        );
+        const shape = file.layers[activeLayer];
+        if (shape) {
+          const closePoint = getClosestPoint(event.currentTarget, coord, shape);
+          if (closePoint) {
+            return MouseMode.Target;
+          }
+        }
+      }
+      return mouseMode;
+    }
+  );
+
+  const { actions, triggerKeyboardAction } = useActionMap(
+    useCallback(
+      () => ({
+        deleteActivePoint: {
+          icon: "🗑",
+          tooltip: "Remove selected point",
+          shortcut: DELETE_POINT,
+          handler: () => {
+            if (!activeCoord || !activeLayer) return;
+            setFile((image) => deletePoint(image, activeLayer, activeCoord));
+            setActiveCoord(null);
+          },
+        },
+      }),
+      [activeCoord, setFile, setActiveCoord, activeLayer]
+    )
+  );
+
+  const keyboardControl = useEvent((e: React.KeyboardEvent<HTMLElement>) => {
+    if (triggerKeyboardAction(e)) {
+      e.preventDefault();
+    }
+    if (activeLayer && activeCoord) {
+      const newValue: Vec2 = [activeCoord[0], activeCoord[1]];
+      if (e.shiftKey) {
+        if (e.code === "ArrowLeft" || e.code === "ArrowUp") {
+          const index = e.code === "ArrowLeft" ? 0 : 1;
+          newValue[index] = snapToGridDown(gridSettings.size, newValue[index]);
+          if (newValue[index] === activeCoord[index]) {
+            newValue[index] -= gridSettings.size;
+          }
+        }
+        if (e.code === "ArrowRight" || e.code === "ArrowDown") {
+          const index = e.code === "ArrowRight" ? 0 : 1;
+          newValue[index] = snapToGridUp(gridSettings.size, newValue[index]);
+          if (newValue[index] === activeCoord[index]) {
+            newValue[index] += gridSettings.size;
+          }
+        }
+      } else {
+        if (e.code === "ArrowLeft") {
+          newValue[0] -= 1;
+        }
+        if (e.code === "ArrowRight") {
+          newValue[0] += 1;
+        }
+        if (e.code === "ArrowDown") {
+          newValue[1] += 1;
+        }
+        if (e.code === "ArrowUp") {
+          newValue[1] -= 1;
+        }
+      }
+      if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
+        setFile((image) =>
+          movePoint(image, activeLayer, activeCoord, newValue)
+        );
+        setActiveCoord(newValue);
+      }
+    }
+  });
+
+  return (
+    <Column>
+      <ToolBar>
+        {menu}
+        <ToolSeparator />
+        <ToolTab icon={<Icon>🧬</Icon>} label="Layers" active />
+        <ToolTab
+          icon={<Icon>🤷🏼</Icon>}
+          label="Composition"
+          onClick={() => onSectionChange?.("composition")}
+        />
+        <ToolTab icon={<Icon>🏃</Icon>} label="Animation" disabled />
+        <ToolSeparator />
+        <ToolButton
+          active={mouseMode === MouseMode.Normal}
+          icon={<Icon>🔧</Icon>}
+          tooltip="Adjust point mode"
+          disabled={activeLayer === undefined}
+          onClick={useCallback(() => {
+            setMouseMode(MouseMode.Normal);
+          }, [setMouseMode])}
+        />
+        <ToolButton
+          active={mouseMode === MouseMode.Aim}
+          icon={<Icon>✏️</Icon>}
+          tooltip="Add point mode"
+          disabled={activeLayer === undefined}
+          onClick={useCallback(() => {
+            setMouseMode(MouseMode.Aim);
+          }, [setMouseMode])}
+        />
+        <ToolSeparator />
+        <ActionToolButton
+          disabled={activeCoord === null}
+          action={actions.deleteActivePoint}
+        />
+        <ToolSeparator />
+        <ToolButton
+          icon={<Icon>📏</Icon>}
+          tooltip="Toggle grid visibility"
+          active={gridSettings.enabled}
+          onClick={useCallback(() => {
+            setGridSettings((settings) => ({
+              ...settings,
+              enabled: !settings.enabled,
+            }));
+          }, [])}
+        />
+        <Menu
+          portal
+          menuButton={({ open }) => (
+            <ToolButton active={open} label={`${gridSettings.size}`} />
+          )}
+          direction="bottom"
+          align="center"
+          arrow
+          transition
+        >
+          <MenuHeader>Grid size</MenuHeader>
+          <MenuRadioGroup value={gridSettings.size}>
+            {[8, 16, 32, 64, 128].map((size) => (
+              <MenuItem
+                type="radio"
+                value={size}
+                key={`grid${size}`}
+                onClick={() => {
+                  setGridSettings((settings) => ({
+                    ...settings,
+                    size,
+                    enabled: true,
+                  }));
+                }}
+              >
+                {size}
+              </MenuItem>
+            ))}
+          </MenuRadioGroup>
+        </Menu>
+        <ToolButton
+          icon={<Icon>🧲</Icon>}
+          tooltip="Toggle magnetic grid"
+          active={gridSettings.magnetic}
+          onClick={useCallback(() => {
+            setGridSettings((settings) => ({
+              ...settings,
+              magnetic: !settings.magnetic,
+            }));
+          }, [])}
+        />
+        <ToolSpacer />
+        <InstallToolButton />
+      </ToolBar>
+      <Row>
+        <ResizePanel
+          direction={ResizeDirection.East}
+          defaultSize={250}
+          minSize={150}
+        >
+          <Column>
+            <ShapeTree selectedItemsState={[selectedItems, setSelectedItems]} />
+          </Column>
+        </ResizePanel>
+        <Panel workspace center>
+          {texture === null ? (
+            <StartupScreen file={file} texture={texture} screen="layers" />
+          ) : (
+            <LayerMouseControl
+              mode={mouseMode}
+              maxZoomFactor={maxZoom}
+              onClick={mouseClick}
+              onKeyDown={keyboardControl}
+              hoverCursor={hoverCursor}
+            >
+              <TextureMapCanvas
+                image={texture}
+                layers={idLayers}
+                grid={gridSettings}
+                activeLayer={activeLayer}
+                activeCoord={activeCoord}
+              />
+            </LayerMouseControl>
+          )}
+        </Panel>
+      </Row>
+    </Column>
+  );
+};

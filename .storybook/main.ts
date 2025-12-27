@@ -5,7 +5,7 @@ export default defineMain({
   addons: [
     "@storybook/addon-themes",
     "@storybook/addon-docs",
-    "@storybook/addon-vitest"
+    "@storybook/addon-vitest",
   ],
   framework: "@storybook/react-vite",
 });

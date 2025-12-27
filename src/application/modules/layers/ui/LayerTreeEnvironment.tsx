@@ -1,0 +1,284 @@
+import { produce } from "immer";
+import { useMemo, useState } from "react";
+import { type DraggingPosition } from "react-complex-tree";
+
+import { useFile } from "@/application/state/FileContext";
+import useEvent from "@/application/state/hooks/useEvent";
+import {
+  addMutationToControl,
+  isMutationUnderControl,
+  removeMutationFromControl,
+} from "@/domain/animation/file2/controls";
+import {
+  isRootNode,
+  moveInHierarchy,
+  visit,
+} from "@/domain/animation/file2/hierarchy";
+import { rename, toggleVisibility } from "@/domain/animation/file2/shapes";
+import { type GeppettoImage, type NodeType } from "@/dtos/animation-file2.dto";
+import { type UseState } from "@/dtos/application.dto";
+import {
+  type TreeData,
+  TreeEnvironment,
+  type TreeItem,
+  type TreeItemIndex,
+} from "@/ui/components";
+
+import { MutationControlContext } from "../../composition/ui/mutationControlContext";
+import { type ActionButton, useLayerTreeItems } from "./useLayerTreeItems";
+
+type LayerTreeEnvironmentProps = {
+  selectedItemsState: UseState<string[]>;
+  focusedItemState: UseState<string | undefined>;
+  showMutations?: boolean;
+  showVisibilityToggle?: boolean;
+  editControlId?: string;
+  treeId: string;
+  children: React.ReactElement | React.ReactElement[] | null;
+};
+
+type LayerItem = TreeItem<TreeData<"layer" | "layerFolder" | "mutation">>;
+const onlyOne = (items: unknown[]) => items.length === 1;
+
+const openThroughFocusItem = (
+  file: GeppettoImage,
+  focusItem: string | undefined
+): string[] => {
+  if (!focusItem) return [];
+  const result: string[] = [];
+
+  let currentItem = file.layerHierarchy[focusItem];
+  if (!currentItem) return [];
+  while (!isRootNode(currentItem)) {
+    result.push(currentItem.parentId);
+    currentItem = file.layerHierarchy[currentItem.parentId];
+  }
+
+  return result;
+};
+
+export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
+  children,
+  selectedItemsState,
+  focusedItemState,
+  treeId,
+  editControlId,
+  showMutations = false,
+  showVisibilityToggle = false,
+}) => {
+  const [file, setFile] = useFile();
+  const [selectedItems, setSelectedItems] = selectedItemsState;
+  const [focusedItem, setFocusedItem] = focusedItemState;
+
+  const actionButtonPress = useEvent(
+    (itemId: string, buttonId: ActionButton) => {
+      if (buttonId === "visibility") {
+        setFile(toggleVisibility(itemId));
+      }
+      if (buttonId === "controlMutation" && editControlId) {
+        if (isMutationUnderControl(file, editControlId, itemId)) {
+          setFile(removeMutationFromControl(editControlId, itemId));
+        } else {
+          setFile(addMutationToControl(editControlId, itemId));
+        }
+      }
+    }
+  );
+
+  const expandedFolders = useMemo(() => {
+    const expanded: string[] = [];
+    visit(file.layerHierarchy, (node, nodeId) => {
+      if (node.type === "layerFolder") {
+        const folderInfo = file.layerFolders[nodeId];
+        if (!folderInfo.collapsed) {
+          expanded.push(nodeId);
+        }
+      }
+    });
+
+    return expanded;
+  }, [file.layerFolders, file.layerHierarchy]);
+  const [expandedLayers, setExpandedLayers] = useState<string[]>([]);
+  const focusedExpansions = openThroughFocusItem(file, focusedItem);
+
+  const expandedItems = useMemo(
+    () => expandedFolders.concat(expandedLayers).concat(focusedExpansions),
+    [expandedFolders, expandedLayers, focusedExpansions]
+  );
+
+  const items = useLayerTreeItems(
+    file,
+    actionButtonPress,
+    showMutations,
+    showVisibilityToggle
+    // expandedItems
+  );
+
+  const canDropAt = useEvent((items: LayerItem[], target: DraggingPosition) => {
+    // target cannot be a layer (only for mutations)
+    if (target.targetType === "item") {
+      const targetItem = file.layerHierarchy[target.targetItem];
+      if (targetItem.type === "layer" && items.length === 1) {
+        const itemId = `${items[0].index}`;
+        if (file.mutations[itemId]) {
+          return true;
+        }
+      }
+      return targetItem.type === "layerFolder" || targetItem.type === "root";
+    }
+    if (target.targetType === "between-items") {
+      const parent = file.layerHierarchy[`${target.parentItem}`];
+      if (!parent.children) {
+        return false;
+      }
+      const childIds = showMutations
+        ? parent.children
+        : parent.children.filter(
+            (id) => file.layerHierarchy[id].type !== "mutation"
+          );
+      const mutationCount = showMutations
+        ? parent.children.filter(
+            (id) => file.layerHierarchy[id].type === "mutation"
+          ).length
+        : 0;
+
+      const targetId =
+        target.linePosition === "bottom"
+          ? childIds[target.childIndex - 1]
+          : childIds[target.childIndex];
+      const aligned = childIds[target.childIndex];
+
+      if (
+        items.every((item) => item.index === targetId || item.index === aligned)
+      ) {
+        return false;
+      }
+
+      if (
+        items.every(
+          (item) =>
+            !file.mutations[item.index] && target.childIndex < mutationCount
+        )
+      ) {
+        return false;
+      }
+    }
+    return true;
+  });
+
+  const onDrop = useEvent((items: LayerItem[], target: DraggingPosition) => {
+    items.reverse();
+    if (target.targetType === "item") {
+      const targetId = `${target.targetItem}`;
+      setFile((fileData) => {
+        const result = { ...fileData };
+        for (const item of items) {
+          result.layerHierarchy = moveInHierarchy(
+            result.layerHierarchy,
+            `${item.index}`,
+            { parent: targetId }
+          );
+        }
+        return result;
+      });
+    } else {
+      // Between items
+      const parent = file.layerHierarchy[`${target.parentItem}`];
+      if (!parent.children) {
+        return;
+      }
+      const childIds = showMutations
+        ? parent.children
+        : parent.children.filter(
+            (id) => file.layerHierarchy[id].type !== "mutation"
+          );
+      const targetId =
+        target.linePosition === "bottom"
+          ? childIds[target.childIndex - 1]
+          : childIds[target.childIndex];
+
+      if (targetId === undefined) return;
+
+      setFile((fileData) => {
+        let hasChanges = false;
+        const result = { ...fileData };
+        for (const item of items) {
+          if (item.index === targetId) continue;
+          hasChanges = true;
+          result.layerHierarchy = moveInHierarchy(
+            result.layerHierarchy,
+            `${item.index}`,
+            target.linePosition === "bottom"
+              ? { after: targetId }
+              : { before: targetId }
+          );
+        }
+
+        return hasChanges ? result : fileData;
+      });
+    }
+  });
+
+  return (
+    <MutationControlContext editControlId={editControlId}>
+      <TreeEnvironment
+        items={items}
+        onSelectItems={useEvent((items: TreeItemIndex[]) => {
+          const ids = items.map((e) => `${e}`);
+          setSelectedItems(ids);
+        })}
+        canRename
+        canDrag={onlyOne}
+        canDropAt={canDropAt}
+        canDragAndDrop
+        canReorderItems
+        onRenameItem={useEvent((item: LayerItem, newName: string) => {
+          setFile(rename(`${item.index}`, item.data.type, newName));
+        })}
+        onDrop={onDrop}
+        onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+          const treeNode = file.layerHierarchy[item.index];
+          if (treeNode.type === "layerFolder") {
+            setFile(
+              produce((draft) => {
+                draft.layerFolders[item.index].collapsed = false;
+              })
+            );
+          }
+          if (treeNode.type === "layer") {
+            setExpandedLayers((layers) => layers.concat(`${item.index}`));
+          }
+        })}
+        onCollapseItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+          const treeNode = file.layerHierarchy[item.index];
+          if (treeNode.type === "layerFolder") {
+            setFile(
+              produce((draft) => {
+                draft.layerFolders[item.index].collapsed = true;
+              })
+            );
+          }
+          if (treeNode.type === "layer") {
+            setExpandedLayers((layers) =>
+              layers.filter((layer) => layer !== item.index)
+            );
+          }
+        })}
+        onFocusItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+          setFocusedItem(`${item.index}`);
+        })}
+        canDropOnItemWithChildren
+        canDropOnItemWithoutChildren
+        viewState={{
+          [treeId]: {
+            expandedItems,
+            selectedItems,
+            focusedItem,
+          },
+        }}
+      >
+        {children}
+      </TreeEnvironment>
+    </MutationControlContext>
+  );
+};

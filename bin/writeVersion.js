@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
-const { version } = require("../package.json");
-const { writeFile } = require("fs/promises");
-const util = require("util");
-const prettier = require("prettier");
-const exec = util.promisify(require("child_process").exec);
+import packageDefinition from "../package.json" with { type: "json" };
+import { writeFile } from "fs/promises";
+import util from "util";
+import prettier from "prettier";
+import { exec as execCallback } from "child_process";
+
+const exec = util.promisify(execCallback);
 
 const INFO_PATH = "./src/versionInfo.ts";
 
@@ -17,7 +19,7 @@ const run = async () => {
   const commit = await currentCommit();
 
   const versionInfo = {
-    version,
+    version: packageDefinition.version,
     timestamp: new Date().getTime(),
     commit,
   };

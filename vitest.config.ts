@@ -11,17 +11,23 @@ const dirname =
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(dirname, "./src"),
+      "@sb": path.resolve(dirname, "./.storybook"),
+    },
+  },
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: ["./src/setupTests.ts"],
+    setupFiles: ["./src/shared/test/setupTests.ts"],
     exclude: ["node_modules/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
       exclude: [
         "node_modules/",
-        "src/setupTests.ts",
+        "src/shared/test/setupTests.ts",
         "**/*.d.ts",
         "**/*.config.*",
         "**/mockData",
@@ -30,17 +36,27 @@ export default defineConfig({
     },
     projects: [
       {
+        resolve: {
+          alias: {
+            "@": path.resolve(dirname, "./src"),
+          },
+        },
         test: {
           name: "unit",
           globals: true,
           environment: "jsdom",
-          setupFiles: ["./src/setupTests.ts"],
+          setupFiles: ["./src/shared/test/setupTests.ts"],
           include: ["src/**/*.{test,spec}.{js,ts,jsx,tsx}"],
           exclude: ["node_modules/**", "**/*.stories.*"],
         },
       },
       {
         extends: true,
+        resolve: {
+          alias: {
+            "@": path.resolve(dirname, "./src"),
+          },
+        },
         plugins: [
           // The plugin will run tests for the stories defined in your Storybook config
           // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
