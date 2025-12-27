@@ -1,4 +1,4 @@
-import { LayerTreeEnvironment } from "@/application/modules/layers/ui/LayerTreeEnvironment.js";
+import { LayerTreeEnvironment } from "@/application/modules/layers/ui/LayerTreeEnvironment";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import { useToolAction } from "@/application/state/hooks/useToolAction";

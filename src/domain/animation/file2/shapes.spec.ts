@@ -1,11 +1,17 @@
 import { describe, expect, it } from "vitest";
 
+import type { GeppettoImage } from "@/dtos/animation-file2.dto";
+import type { Vec2 } from "@/shared/types/global";
+
 import { newFile } from "./new";
 import {
   addFolder,
   type AddFolderDetails,
+  addPoint,
   addShape,
   type AddShapeDetails,
+  deletePoint,
+  movePoint,
   removeShape,
   rename,
   toggleVisibility,
@@ -238,6 +244,71 @@ describe("shapes", () => {
         expect(updatedFile.layerFolders[folderId].visible).toBe(true);
       });
     });
+  });
+});
+
+describe("addPoint", () => {
+  const fileBuild = fileBuilder();
+
+  it("adds a point to a layer", () => {
+    const file = fileBuild.addShape("My Layer").build();
+    const layerId = getShapeIdByName(file, "My Layer");
+
+    const result = addPoint(file, layerId, [50, 10]);
+    expect(result.layers[layerId].points).toEqual([[50, 10]]);
+  });
+});
+
+const addPoints = (
+  file: GeppettoImage,
+  layerId: string,
+  points: Vec2[]
+): GeppettoImage =>
+  points.reduce<GeppettoImage>(
+    (image, current) => addPoint(image, layerId, current),
+    file
+  );
+
+describe("deletePoint", () => {
+  const fileBuild = fileBuilder();
+
+  it("adds a point to a layer", () => {
+    const file = fileBuild.addShape("My Layer").build();
+    const layerId = getShapeIdByName(file, "My Layer");
+    const startFile = addPoints(file, layerId, [
+      [50, 10],
+      [40, 10],
+      [30, 10],
+    ]);
+
+    const result = deletePoint(startFile, layerId, [40, 10]);
+
+    expect(result.layers[layerId].points).toEqual([
+      [50, 10],
+      [30, 10],
+    ]);
+  });
+});
+
+describe("movePoint", () => {
+  const fileBuild = fileBuilder();
+
+  it("updates location of a point", () => {
+    const file = fileBuild.addShape("My Layer").build();
+    const layerId = getShapeIdByName(file, "My Layer");
+    const startFile = addPoints(file, layerId, [
+      [50, 10],
+      [40, 10],
+      [30, 10],
+    ]);
+
+    const result = movePoint(startFile, layerId, [40, 10], [45, 6]);
+
+    expect(result.layers[layerId].points).toEqual([
+      [50, 10],
+      [45, 6],
+      [30, 10],
+    ]);
   });
 });
 

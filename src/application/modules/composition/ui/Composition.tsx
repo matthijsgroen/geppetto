@@ -8,8 +8,8 @@ import {
   useState,
 } from "react";
 
-import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton.js";
-import { StartupScreen } from "@/application/modules/application-menu/ui/Startup.js";
+import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
+import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import useEvent from "@/application/state/hooks/useEvent";
@@ -21,8 +21,8 @@ import {
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import LayerMouseControl, {
   type DragState,
-} from "@/application/ui/LayerMouseControl.js";
-import { MouseMode } from "@/application/ui/MouseControl.js";
+} from "@/application/ui/LayerMouseControl";
+import { MouseMode } from "@/application/ui/MouseControl";
 import { dragItem } from "@/domain/animation/file2/drag";
 import {
   findParentId,

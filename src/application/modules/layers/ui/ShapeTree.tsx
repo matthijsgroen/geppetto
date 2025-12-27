@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { LayerTreeEnvironment } from "@/application/modules/layers/ui/LayerTreeEnvironment.js";
+import { LayerTreeEnvironment } from "@/application/modules/layers/ui/LayerTreeEnvironment";
 import { useFile } from "@/application/state/FileContext";
 import { useToolAction } from "@/application/state/hooks/useToolAction";
 import {

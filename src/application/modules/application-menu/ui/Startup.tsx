@@ -50,7 +50,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
                 standAlone
               />
               <br />
-              <Kbd shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
+              <Kbd dimmed shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
             </Paragraph>
             <Paragraph>Load a Geppetto file from disk</Paragraph>
           </>
@@ -65,6 +65,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
           />
           <br />
           <Kbd
+            dimmed
             shortcut={{ interaction: "KeyO", ctrlOrCmd: true, shift: true }}
           />
         </Paragraph>

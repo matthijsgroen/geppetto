@@ -1,9 +1,11 @@
 import { produce } from "immer";
 import { useEffect, useState, useTransition } from "react";
 
-import { BooleanControl } from "@/application/modules/composition/ui/controls/CheckControl.js";
-import { NumberControl } from "@/application/modules/composition/ui/controls/NumberControl.js";
-import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl.js";
+import {
+  NumberControl,
+  ToggleControl,
+  VectorControl,
+} from "@/application/modules/composition/ui/controls";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
@@ -191,7 +193,7 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
         )}
         {hasRadius(mutation) && (
           <>
-            <BooleanControl
+            <ToggleControl
               label="Use radius"
               value={mutation.radius !== -1}
               onChange={toggleRadius}

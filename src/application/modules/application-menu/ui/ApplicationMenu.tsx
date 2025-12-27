@@ -264,6 +264,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       menuButton={({ open }) => (
         <ToolButton
           icon={<LogoIcon />}
+          label="Geppetto"
           active={open}
           notificationBadge={hasAppUpdate}
           tooltip="Application menu"
