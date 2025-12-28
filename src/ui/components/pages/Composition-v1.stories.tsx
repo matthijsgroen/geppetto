@@ -26,7 +26,6 @@ import {
   ResizePanel,
   Row,
   SubMenu,
-  Title,
   ToggleInput,
   ToolBar,
   ToolButton,
