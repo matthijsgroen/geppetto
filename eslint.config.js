@@ -55,15 +55,14 @@ export default [
       // React
       ...react.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
+      "react/jsx-sort-props": "error",
       "react/react-in-jsx-scope": "off",
       "react/jsx-uses-react": "off", // Not needed with new JSX transform
       "react/prop-types": "off",
 
       // TODO TO FIX LATER
-      "react-hooks/set-state-in-effect": "off",
-      "react-hooks/refs": "off",
-      "react-hooks/immutability": "off",
-      "react/display-name": "off",
+      "react-hooks/set-state-in-effect": "warn",
+      "react-hooks/refs": "warn",
 
       // TypeScript
       "@typescript-eslint/no-unused-vars": "off", // Turned off in favor of unused-imports
