@@ -40,7 +40,6 @@ type ResizePanelProps = PropsWithChildren<{
   minSize?: number;
   defaultSize?: number;
   maxSize?: number;
-  style?: CSSProperties;
   borderClass?: string;
   containerClass?: string;
 }>;
@@ -51,7 +50,6 @@ const isHorizontal = (direction: ResizeDirection) =>
 export const ResizePanel: React.FC<ResizePanelProps> = ({
   children,
   direction,
-  style,
   borderClass,
   containerClass,
   defaultSize,
@@ -65,18 +63,6 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
   const wrapperRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const horizontal = isHorizontal(direction);
-
-  useEffect(() => {
-    const content = contentRef.current;
-    if (!content) {
-      return;
-    }
-    const actualContent = (
-      content.children[0] as HTMLElement
-    ).getBoundingClientRect();
-    const initialSize = horizontal ? actualContent.width : actualContent.height;
-    setSize(initialSize);
-  }, [horizontal]);
 
   const onDrag = useCallback(
     (_e: DraggableEvent, data: DraggableData) => {
@@ -95,7 +81,7 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
     [direction, horizontal]
   );
 
-  const containerStyle = { ...style };
+  const containerStyle: CSSProperties = {};
   if (size !== 0) {
     containerStyle.flexGrow = 0;
     containerStyle[horizontal ? "width" : "height"] = "auto";
@@ -103,19 +89,20 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
 
   const resizeBarClasses =
     borderClass ??
-    clsx({
-      "z-10 -mx-0.5 flex w-1 cursor-ew-resize content-center items-center justify-center bg-transparent hover:bg-control-focus":
-        horizontal,
-      "z-10 -my-0.5 flex h-1 cursor-ns-resize content-center items-center justify-center bg-transparent hover:bg-control-focus":
-        !horizontal,
-    });
+    clsx(
+      "z-10 flex content-center items-center justify-center bg-transparent hover:bg-control-focus",
+      {
+        "-mx-0.5 w-1 cursor-ew-resize": horizontal,
+        "-my-0.5 h-1 cursor-ns-resize": !horizontal,
+      }
+    );
 
   const contentClassName = clsx("flex grow self-stretch", {
     "flex-row": horizontal,
     "flex-col": !horizontal,
   });
 
-  const clipSize = Math.max(minSize, Math.min(size || 0, maxSize || Infinity));
+  const clipSize = Math.max(minSize, Math.min(size ?? 0, maxSize ?? Infinity));
   const contentStyle =
     size === null
       ? {}
@@ -128,6 +115,7 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
       className={contentClassName}
       key="content"
       ref={contentRef}
+      role="region"
       style={contentStyle}
     >
       {React.Children.only(children)}

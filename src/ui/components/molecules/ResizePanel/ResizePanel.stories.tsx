@@ -94,7 +94,7 @@ export const Default = meta.story({
     const resizeHandle = canvas.getByRole("separator");
     expect(resizeHandle).toHaveAttribute("aria-orientation", "vertical");
 
-    const panel = resizeHandle.parentElement;
+    const panel = canvas.getByRole("region");
     if (panel) {
       const style = window.getComputedStyle(panel);
       expect(style).toHaveProperty("width", "125px");
