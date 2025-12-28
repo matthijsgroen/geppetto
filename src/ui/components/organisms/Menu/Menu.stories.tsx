@@ -17,10 +17,10 @@ export default meta;
 export const Default = meta.story({
   render: () => (
     <Menu
-      portal
       menuButton={({ open }) => (
-        <ToolButton icon={<Icon>🧵</Icon>} active={open} />
+        <ToolButton active={open} icon={<Icon>🧵</Icon>} />
       )}
+      portal
       transition
     >
       <MenuItem>New File</MenuItem>

@@ -14,8 +14,8 @@ export default meta;
 export const Column = meta.story({
   args: {
     children: [
-      <div key="1" className="size-12 bg-blue-400" />,
-      <div key="2" className="size-12 bg-red-400" />,
+      <div className="size-12 bg-blue-400" key="1" />,
+      <div className="size-12 bg-red-400" key="2" />,
     ],
   },
 });

@@ -259,17 +259,17 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
 
   return (
     <Menu
-      portal
-      transition
       menuButton={({ open }) => (
         <ToolButton
+          active={open}
           icon={<LogoIcon />}
           label="Geppetto"
-          active={open}
           notificationBadge={hasAppUpdate}
           tooltip="Application menu"
         />
       )}
+      portal
+      transition
     >
       {hasAppUpdate && (
         <MenuItem onClick={updater}>↻ Restart for app update...</MenuItem>

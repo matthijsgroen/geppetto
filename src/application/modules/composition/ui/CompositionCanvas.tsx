@@ -136,7 +136,7 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
   }, [activeMutation, vectorMap]);
 
   return (
-    <WebGLCanvas renderers={renderers} ref={ref}>
+    <WebGLCanvas ref={ref} renderers={renderers}>
       {children}
     </WebGLCanvas>
   );

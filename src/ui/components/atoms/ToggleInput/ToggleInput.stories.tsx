@@ -19,7 +19,7 @@ export const Standalone = meta.story();
 export const InControl = meta.story({
   decorators: [
     (Story) => (
-      <Control label="Label" htmlFor="InputField">
+      <Control htmlFor="InputField" label="Label">
         <Story />
       </Control>
     ),

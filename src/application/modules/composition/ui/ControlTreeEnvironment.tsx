@@ -112,18 +112,12 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
   const items = useControlTreeItems(file);
   return (
     <TreeEnvironment
-      items={items}
-      onSelectItems={useCallback(
-        (items: TreeItemIndex[]) => {
-          const ids = items.map((e) => `${e}`);
-          setSelectedItems(ids);
-        },
-        [setSelectedItems]
-      )}
-      canRename
       canDrag={yes}
-      canDropAt={canDropAt}
       canDragAndDrop
+      canDropAt={canDropAt}
+      canDropOnItemWithChildren
+      canDropOnItemWithoutChildren
+      canRename
       canReorderItems
       //   onRenameItem={useCallback(
       // (item: ControlItem, newName: string) => {
@@ -134,12 +128,18 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
       // },
       // [setFile, treeData]
       //   )}
+      items={items}
       onDrop={onDrop}
       onFocusItem={useEvent((item: ControlItem) => {
         setFocusedItem(`${item.index}`);
       })}
-      canDropOnItemWithChildren
-      canDropOnItemWithoutChildren
+      onSelectItems={useCallback(
+        (items: TreeItemIndex[]) => {
+          const ids = items.map((e) => `${e}`);
+          setSelectedItems(ids);
+        },
+        [setSelectedItems]
+      )}
       viewState={{
         [treeId]: {
           expandedItems: [], // TODO: expand when folders get supported

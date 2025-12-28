@@ -12,7 +12,7 @@ import { ItemEdit } from "./ItemEdit";
 describe("ItemEdit", () => {
   describe("when nothing is selected", () => {
     it("mentions that there is no selection", () => {
-      render(<ItemEdit selectedShapeIds={[]} activeMutator={null} />);
+      render(<ItemEdit activeMutator={null} selectedShapeIds={[]} />);
 
       expect(screen.getByRole("heading").textContent).toEqual("No selection");
     });
@@ -25,7 +25,7 @@ describe("ItemEdit", () => {
 
       renderWithFile(
         file,
-        <ItemEdit selectedShapeIds={[folderId]} activeMutator={null} />
+        <ItemEdit activeMutator={null} selectedShapeIds={[folderId]} />
       );
 
       expect(screen.getByRole("heading").textContent).toEqual("📁 My Folder");
@@ -38,7 +38,7 @@ describe("ItemEdit", () => {
 
       renderWithFile(
         fileWithFolderVisibility,
-        <ItemEdit selectedShapeIds={[folderId]} activeMutator={null} />
+        <ItemEdit activeMutator={null} selectedShapeIds={[folderId]} />
       );
 
       const visibilityCheckbox = screen.getByLabelText("Visible");
@@ -51,7 +51,7 @@ describe("ItemEdit", () => {
 
       renderWithFile(
         file,
-        <ItemEdit selectedShapeIds={[folderId]} activeMutator={null} />
+        <ItemEdit activeMutator={null} selectedShapeIds={[folderId]} />
       );
 
       const visibilityCheckbox = screen.getByLabelText("Visible");
@@ -64,7 +64,7 @@ describe("ItemEdit", () => {
 
       const { getFile } = renderWithFile(
         file,
-        <ItemEdit selectedShapeIds={[folderId]} activeMutator={null} />
+        <ItemEdit activeMutator={null} selectedShapeIds={[folderId]} />
       );
 
       const visibilityCheckbox = screen.getByLabelText("Visible");

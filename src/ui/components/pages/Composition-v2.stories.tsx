@@ -46,7 +46,7 @@ const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {
     return (
       <>
-        <ToolButton icon={<Icon>👁</Icon>} active />
+        <ToolButton active icon={<Icon>👁</Icon>} />
       </>
     );
   }
@@ -59,11 +59,11 @@ export const Version2 = meta.story({
     <Row>
       <ToolBar vertical>
         <Menu
+          menuButton={({ open }) => (
+            <ToolButton active={open} icon={<LogoIcon />} notificationBadge />
+          )}
           portal
           transition
-          menuButton={({ open }) => (
-            <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
-          )}
         >
           <MenuItem>↻ Restart for app update...</MenuItem>
           <MenuItem>⇣ Install application locally</MenuItem>
@@ -89,14 +89,14 @@ export const Version2 = meta.story({
 
         <ToolSeparator />
         <ToolTab icon={<Icon>🧬</Icon>} label="Layers" />
-        <ToolTab icon={<Icon>🤷🏼</Icon>} label="Composition" active />
+        <ToolTab active icon={<Icon>🤷🏼</Icon>} label="Composition" />
         <ToolTab icon={<Icon>🏃</Icon>} label="Animation" />
       </ToolBar>
 
       <ResizePanel
+        defaultSize={250}
         direction={ResizeDirection.East}
         minSize={100}
-        defaultSize={250}
       >
         <Column>
           <Panel padding="sm">
@@ -113,13 +113,13 @@ export const Version2 = meta.story({
                 tooltip="Add folder"
               />
               <ToolButton
-                icon={<Icon>📑</Icon>}
                 disabled
+                icon={<Icon>📑</Icon>}
                 tooltip="Copy layer"
               />
               <ToolButton
-                icon={<Icon>🗑</Icon>}
                 disabled
+                icon={<Icon>🗑</Icon>}
                 tooltip="Remove item"
               />
             </ToolBar>
@@ -135,12 +135,12 @@ export const Version2 = meta.story({
                 <ToggleInput />
               </Control>
               <Control label="Origin">
-                <NumberInput value={10} prefix="x:" />
-                <NumberInput value={20} prefix="y:" />
+                <NumberInput prefix="x:" value={10} />
+                <NumberInput prefix="y:" value={20} />
               </Control>
               <Control label="Value">
-                <NumberInput value={10} prefix="x:" />
-                <NumberInput value={20} prefix="y:" />
+                <NumberInput prefix="x:" value={10} />
+                <NumberInput prefix="y:" value={20} />
               </Control>
               <Control label="Use Radius">
                 <ToggleInput checked />
@@ -154,9 +154,9 @@ export const Version2 = meta.story({
             </ControlPanel>
           </Panel>
           <ResizePanel
+            defaultSize={300}
             direction={ResizeDirection.North}
             minSize={200}
-            defaultSize={300}
           >
             <Panel padding="sm">
               <PanelTitle>Controls</PanelTitle>
@@ -167,8 +167,8 @@ export const Version2 = meta.story({
                   tooltip="Add control"
                 />
                 <ToolButton
-                  icon={<Icon>🗑</Icon>}
                   disabled
+                  icon={<Icon>🗑</Icon>}
                   tooltip="Remove item"
                 />
               </ToolBar>

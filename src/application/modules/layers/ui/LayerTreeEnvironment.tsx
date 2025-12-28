@@ -222,33 +222,14 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   return (
     <MutationControlContext editControlId={editControlId}>
       <TreeEnvironment
-        items={items}
-        onSelectItems={useEvent((items: TreeItemIndex[]) => {
-          const ids = items.map((e) => `${e}`);
-          setSelectedItems(ids);
-        })}
-        canRename
         canDrag={onlyOne}
-        canDropAt={canDropAt}
         canDragAndDrop
+        canDropAt={canDropAt}
+        canDropOnItemWithChildren
+        canDropOnItemWithoutChildren
+        canRename
         canReorderItems
-        onRenameItem={useEvent((item: LayerItem, newName: string) => {
-          setFile(rename(`${item.index}`, item.data.type, newName));
-        })}
-        onDrop={onDrop}
-        onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
-          const treeNode = file.layerHierarchy[item.index];
-          if (treeNode.type === "layerFolder") {
-            setFile(
-              produce((draft) => {
-                draft.layerFolders[item.index].collapsed = false;
-              })
-            );
-          }
-          if (treeNode.type === "layer") {
-            setExpandedLayers((layers) => layers.concat(`${item.index}`));
-          }
-        })}
+        items={items}
         onCollapseItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
           const treeNode = file.layerHierarchy[item.index];
           if (treeNode.type === "layerFolder") {
@@ -264,11 +245,30 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
             );
           }
         })}
+        onDrop={onDrop}
+        onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
+          const treeNode = file.layerHierarchy[item.index];
+          if (treeNode.type === "layerFolder") {
+            setFile(
+              produce((draft) => {
+                draft.layerFolders[item.index].collapsed = false;
+              })
+            );
+          }
+          if (treeNode.type === "layer") {
+            setExpandedLayers((layers) => layers.concat(`${item.index}`));
+          }
+        })}
         onFocusItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
           setFocusedItem(`${item.index}`);
         })}
-        canDropOnItemWithChildren
-        canDropOnItemWithoutChildren
+        onRenameItem={useEvent((item: LayerItem, newName: string) => {
+          setFile(rename(`${item.index}`, item.data.type, newName));
+        })}
+        onSelectItems={useEvent((items: TreeItemIndex[]) => {
+          const ids = items.map((e) => `${e}`);
+          setSelectedItems(ids);
+        })}
         viewState={{
           [treeId]: {
             expandedItems,

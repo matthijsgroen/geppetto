@@ -67,8 +67,8 @@ export function TreeEnvironment<T extends string>({
   return (
     <ComplexControlledTreeEnvironment
       {...props}
-      getItemTitle={getItemTitle}
       defaultInteractionMode={interactionManager}
+      getItemTitle={getItemTitle}
       keyboardBindings={{
         primaryAction: ["space"],
         renameItem: ["f2", "enter"],

@@ -54,7 +54,6 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
     >
       <div
         {...context.itemContainerWithoutChildrenProps}
-        style={{ paddingLeft: `${depth * renderDepthOffset}px` }}
         className={clsx(
           "rct-tree-item-title-container",
           item.hasChildren && "rct-tree-item-title-container-hasChildren",
@@ -66,12 +65,12 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
           context.isSearchMatching &&
             "rct-tree-item-title-container-search-match"
         )}
+        style={{ paddingLeft: `${depth * renderDepthOffset}px` }}
       >
         {arrow}
         <Icon>{item.data.icon}</Icon>
         <InteractiveComponent
           {...context.interactiveElementProps}
-          type={type}
           className={clsx(
             "rct-tree-item-button",
             item.hasChildren && "rct-tree-item-button-hasChildren",
@@ -81,6 +80,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
             context.isDraggingOver && "rct-tree-item-button-dragging-over",
             context.isSearchMatching && "rct-tree-item-button-search-match"
           )}
+          type={type}
         >
           {title}
         </InteractiveComponent>
@@ -98,9 +98,9 @@ type TreeProps = {
 export const TREE_ROOT = "root";
 export const Tree: React.FC<TreeProps> = ({ treeId }) => (
   <ComplexTree
-    treeId={treeId}
-    rootItem={TREE_ROOT}
-    treeLabel="Tree Example"
     renderItem={renderItem}
+    rootItem={TREE_ROOT}
+    treeId={treeId}
+    treeLabel="Tree Example"
   />
 );

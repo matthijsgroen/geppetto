@@ -125,9 +125,9 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
 
   const content = [
     <div
+      className={contentClassName}
       key="content"
       ref={contentRef}
-      className={contentClassName}
       style={contentStyle}
     >
       {React.Children.only(children)}
@@ -138,19 +138,19 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
   const handle = (
     <Draggable
       key="handle"
-      onDrag={onDrag}
       nodeRef={handleRef as React.RefObject<HTMLElement>}
+      onDrag={onDrag}
     >
       <div
-        ref={handleRef}
-        className={resizeBarClasses}
-        role="separator"
         aria-orientation={
           direction === ResizeDirection.East ||
           direction === ResizeDirection.West
             ? "vertical"
             : "horizontal"
         }
+        className={resizeBarClasses}
+        ref={handleRef}
+        role="separator"
       />
     </Draggable>
   );
@@ -177,9 +177,9 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
 
   return (
     <div
+      className={finalContainerClass}
       ref={wrapperRef}
       style={containerStyle}
-      className={finalContainerClass}
     >
       {content}
     </div>

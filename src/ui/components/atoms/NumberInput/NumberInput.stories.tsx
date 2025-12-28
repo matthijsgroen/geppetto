@@ -20,7 +20,7 @@ export const Standalone = meta.story();
 export const InControl = meta.story({
   decorators: [
     (Story) => (
-      <Control label="Label" htmlFor="InputField">
+      <Control htmlFor="InputField" label="Label">
         <Story />
       </Control>
     ),
@@ -32,7 +32,7 @@ export const VectorControl = meta.story({
     (Story) => (
       <>
         <Story />
-        <NumberInput key="y" value={10} prefix="y:" />
+        <NumberInput key="y" prefix="y:" value={10} />
       </>
     ),
   ],

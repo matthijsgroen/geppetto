@@ -62,24 +62,24 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
         <ToolBar size="small">
           <ToolButton
             icon={<Icon>⚙️</Icon>}
-            tooltip="Add control"
             label="+"
             onClick={addControlAction}
             onKeyDown={addControlAction}
+            tooltip="Add control"
           />
           <ToolSeparator />
           <ToolButton
+            disabled={selectedControls.length !== 1}
             icon={<Icon>🗑</Icon>}
-            tooltip="Remove control"
             onClick={removeControlAction}
             onKeyDown={removeControlAction}
-            disabled={selectedControls.length !== 1}
+            tooltip="Remove control"
           />
         </ToolBar>
         <Tree treeId="controls" />
         <ControlEdit
-          selectedControlIds={selectedControls}
           onEditControlSteps={onEditControlSteps}
+          selectedControlIds={selectedControls}
         />
       </Panel>
     </ControlTreeEnvironment>

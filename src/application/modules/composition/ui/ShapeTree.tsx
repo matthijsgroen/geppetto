@@ -116,40 +116,40 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
 
   return (
     <LayerTreeEnvironment
-      selectedItemsState={selectedItemsState}
+      editControlId={editControlId}
       focusedItemState={focusedItemState}
+      selectedItemsState={selectedItemsState}
       showMutations
       showVisibilityToggle
       treeId="composition"
-      editControlId={editControlId}
     >
       <ToolBar size="small">
         <ToolButton
+          disabled={selectedItems.length > 1}
           icon={<Icon>📁</Icon>}
           label="+"
-          tooltip="Add folder"
           onClick={addFolderAction}
           onKeyDown={addFolderAction}
-          disabled={selectedItems.length > 1}
+          tooltip="Add folder"
         />
         <Menu
-          portal
+          align="center"
+          arrow
+          direction="bottom"
           menuButton={({ open }) => (
             <ToolButton
+              active={open}
+              disabled={selectedItems.length !== 1}
               icon={<Icon>⚪️</Icon>}
               label="+"
               tooltip="Add mutation"
-              disabled={selectedItems.length !== 1}
-              active={open}
             />
           )}
-          direction="bottom"
-          align="center"
-          arrow
+          portal
           transition
         >
           {Object.keys(mutationLabels).map((key) => (
-            <MenuItem key={key} value={key} onClick={addMutationHandler}>
+            <MenuItem key={key} onClick={addMutationHandler} value={key}>
               {iconMapping[key as MutationVector["type"]]}{" "}
               {mutationLabels[key as MutationVector["type"]]}
             </MenuItem>
@@ -157,8 +157,8 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
         </Menu>
         <ToolSeparator />
         <ToolButton
-          icon={<Icon>🗑</Icon>}
           disabled={!(activeMutation || selectedEmptyFolder)}
+          icon={<Icon>🗑</Icon>}
           onClick={removeItemAction}
           onKeyDown={removeItemAction}
           tooltip="Remove item"
@@ -169,12 +169,12 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
           <Paragraph>
             Start by adding a layer on the{" "}
             <ToolButton
-              size="small"
               icon={<Icon>🧬</Icon>}
               label="Layers screen"
-              tooltip="Go to layers screen"
-              standAlone
               onClick={() => onSectionChange && onSectionChange("layers")}
+              size="small"
+              standAlone
+              tooltip="Go to layers screen"
             />
             .
           </Paragraph>

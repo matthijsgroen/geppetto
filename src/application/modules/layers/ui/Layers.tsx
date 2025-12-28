@@ -1,17 +1,17 @@
 import React, { useCallback, useMemo, useState } from "react";
 
-import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton.js";
-import { StartupScreen } from "@/application/modules/application-menu/ui/Startup.js";
+import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
+import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import TextureMapCanvas, {
   type GridSettings,
-} from "@/application/modules/layers/ui/TextureMapCanvas.js";
+} from "@/application/modules/layers/ui/TextureMapCanvas";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useEvent } from "@/application/state/hooks/useEvent";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
-import LayerMouseControl from "@/application/ui/LayerMouseControl.js";
-import { MouseMode } from "@/application/ui/MouseControl.js";
+import LayerMouseControl from "@/application/ui/LayerMouseControl";
+import { MouseMode } from "@/application/ui/MouseControl";
 import {
   addPoint,
   deletePoint,
@@ -244,65 +244,63 @@ export const Layers: React.FC<LayersProps> = ({
       <ToolBar>
         {menu}
         <ToolSeparator />
-        <ToolTab icon={<Icon>🧬</Icon>} label="Layers" active />
+        <ToolTab active icon={<Icon>🧬</Icon>} label="Layers" />
         <ToolTab
           icon={<Icon>🤷🏼</Icon>}
           label="Composition"
           onClick={() => onSectionChange?.("composition")}
         />
-        <ToolTab icon={<Icon>🏃</Icon>} label="Animation" disabled />
+        <ToolTab disabled icon={<Icon>🏃</Icon>} label="Animation" />
         <ToolSeparator />
         <ToolButton
           active={mouseMode === MouseMode.Normal}
-          icon={<Icon>🔧</Icon>}
-          tooltip="Adjust point mode"
           disabled={activeLayer === undefined}
+          icon={<Icon>🔧</Icon>}
           onClick={useCallback(() => {
             setMouseMode(MouseMode.Normal);
           }, [setMouseMode])}
+          tooltip="Adjust point mode"
         />
         <ToolButton
           active={mouseMode === MouseMode.Aim}
-          icon={<Icon>✏️</Icon>}
-          tooltip="Add point mode"
           disabled={activeLayer === undefined}
+          icon={<Icon>✏️</Icon>}
           onClick={useCallback(() => {
             setMouseMode(MouseMode.Aim);
           }, [setMouseMode])}
+          tooltip="Add point mode"
         />
         <ToolSeparator />
         <ActionToolButton
-          disabled={activeCoord === null}
           action={actions.deleteActivePoint}
+          disabled={activeCoord === null}
         />
         <ToolSeparator />
         <ToolButton
-          icon={<Icon>📏</Icon>}
-          tooltip="Toggle grid visibility"
           active={gridSettings.enabled}
+          icon={<Icon>📏</Icon>}
           onClick={useCallback(() => {
             setGridSettings((settings) => ({
               ...settings,
               enabled: !settings.enabled,
             }));
           }, [])}
+          tooltip="Toggle grid visibility"
         />
         <Menu
-          portal
+          align="center"
+          arrow
+          direction="bottom"
           menuButton={({ open }) => (
             <ToolButton active={open} label={`${gridSettings.size}`} />
           )}
-          direction="bottom"
-          align="center"
-          arrow
+          portal
           transition
         >
           <MenuHeader>Grid size</MenuHeader>
           <MenuRadioGroup value={gridSettings.size}>
             {[8, 16, 32, 64, 128].map((size) => (
               <MenuItem
-                type="radio"
-                value={size}
                 key={`grid${size}`}
                 onClick={() => {
                   setGridSettings((settings) => ({
@@ -311,6 +309,8 @@ export const Layers: React.FC<LayersProps> = ({
                     enabled: true,
                   }));
                 }}
+                type="radio"
+                value={size}
               >
                 {size}
               </MenuItem>
@@ -318,46 +318,46 @@ export const Layers: React.FC<LayersProps> = ({
           </MenuRadioGroup>
         </Menu>
         <ToolButton
-          icon={<Icon>🧲</Icon>}
-          tooltip="Toggle magnetic grid"
           active={gridSettings.magnetic}
+          icon={<Icon>🧲</Icon>}
           onClick={useCallback(() => {
             setGridSettings((settings) => ({
               ...settings,
               magnetic: !settings.magnetic,
             }));
           }, [])}
+          tooltip="Toggle magnetic grid"
         />
         <ToolSpacer />
         <InstallToolButton />
       </ToolBar>
       <Row>
         <ResizePanel
-          direction={ResizeDirection.East}
           defaultSize={250}
+          direction={ResizeDirection.East}
           minSize={150}
         >
           <Column>
             <ShapeTree selectedItemsState={[selectedItems, setSelectedItems]} />
           </Column>
         </ResizePanel>
-        <Panel workspace center>
+        <Panel center workspace>
           {texture === null ? (
-            <StartupScreen file={file} texture={texture} screen="layers" />
+            <StartupScreen file={file} screen="layers" texture={texture} />
           ) : (
             <LayerMouseControl
-              mode={mouseMode}
+              hoverCursor={hoverCursor}
               maxZoomFactor={maxZoom}
+              mode={mouseMode}
               onClick={mouseClick}
               onKeyDown={keyboardControl}
-              hoverCursor={hoverCursor}
             >
               <TextureMapCanvas
+                activeCoord={activeCoord}
+                activeLayer={activeLayer}
+                grid={gridSettings}
                 image={texture}
                 layers={idLayers}
-                grid={gridSettings}
-                activeLayer={activeLayer}
-                activeCoord={activeCoord}
               />
             </LayerMouseControl>
           )}

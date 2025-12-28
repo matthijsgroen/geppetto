@@ -89,21 +89,21 @@ const MouseControl: React.FC<MouseControlProps & MouseEventsProps> = ({
 
   return (
     <MouseControlContainer
-      ref={ref}
       mode={mouseMode}
-      tabIndex={0}
+      onContextMenu={onContextMenu}
+      onKeyDown={onKeyDown}
+      onKeyUp={onKeyUp}
       onMouseDown={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
         setIsGrabbing(true);
         onMouseDown?.(e);
       })}
+      onMouseMove={onMouseMove}
       onMouseUp={useEvent((e: React.MouseEvent<HTMLDivElement>) => {
         setIsGrabbing(false);
         onMouseUp?.(e);
       })}
-      onMouseMove={onMouseMove}
-      onKeyDown={onKeyDown}
-      onKeyUp={onKeyUp}
-      onContextMenu={onContextMenu}
+      ref={ref}
+      tabIndex={0}
     >
       {children}
     </MouseControlContainer>

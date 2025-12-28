@@ -53,8 +53,8 @@ const App: React.FC = () => {
             {appSection === "layers" && (
               <Layers
                 menu={applicationMenu}
-                textureState={textureFileState}
                 onSectionChange={setAppSection}
+                textureState={textureFileState}
               />
             )}
           </ScreenTranslationContext>
@@ -62,8 +62,8 @@ const App: React.FC = () => {
             {appSection === "composition" && (
               <Composition
                 menu={applicationMenu}
-                textureState={textureFileState}
                 onSectionChange={setAppSection}
+                textureState={textureFileState}
               />
             )}
           </ScreenTranslationContext>

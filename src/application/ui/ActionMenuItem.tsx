@@ -8,7 +8,7 @@ type Props = {
 } & Omit<ComponentProps<typeof MenuItem>, "shortcut" | "children" | "onClick">;
 
 export const ActionMenuItem: React.FC<Props> = ({ action, ...props }) => (
-  <MenuItem {...props} shortcut={action.shortcut} onClick={action.handler}>
+  <MenuItem {...props} onClick={action.handler} shortcut={action.shortcut}>
     {action.caption}
   </MenuItem>
 );

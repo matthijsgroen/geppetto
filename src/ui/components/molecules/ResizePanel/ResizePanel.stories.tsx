@@ -43,7 +43,7 @@ export const Default = meta.story({
               <p>Resizable panel</p>
             </Panel>
           </ResizePanel>
-          <Panel workspace center>
+          <Panel center workspace>
             <p>Other content</p>
           </Panel>
         </Row>
@@ -52,7 +52,7 @@ export const Default = meta.story({
     if (args.direction === ResizeDirection.North) {
       return (
         <Column>
-          <Panel workspace center>
+          <Panel center workspace>
             <p>Other content</p>
           </Panel>
           <ResizePanel {...args}>
@@ -71,7 +71,7 @@ export const Default = meta.story({
               <p>Resizable panel</p>
             </Panel>
           </ResizePanel>
-          <Panel workspace center>
+          <Panel center workspace>
             <p>Other content</p>
           </Panel>
         </Column>
@@ -79,7 +79,7 @@ export const Default = meta.story({
     }
     return (
       <Row>
-        <Panel workspace center>
+        <Panel center workspace>
           <p>Other content</p>
         </Panel>
         <ResizePanel {...args}>

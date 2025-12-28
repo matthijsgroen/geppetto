@@ -83,33 +83,33 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
 
   return (
     <LayerTreeEnvironment
-      selectedItemsState={selectedItemsState}
       focusedItemState={focusedItemState}
+      selectedItemsState={selectedItemsState}
       treeId="layers"
     >
       <Panel padding="sm">
         <ToolBar size="small">
           <ToolButton
+            disabled={selectedItems.length > 1}
             icon={<Icon>📄</Icon>}
             label="+"
-            tooltip="Add layer"
             onClick={addShapeAction}
             onKeyDown={addShapeAction}
-            disabled={selectedItems.length > 1}
+            tooltip="Add layer"
           />
           <ToolButton
+            disabled={selectedItems.length > 1}
             icon={<Icon>📁</Icon>}
             label="+"
-            tooltip="Add folder"
             onClick={addFolderAction}
             onKeyDown={addFolderAction}
-            disabled={selectedItems.length > 1}
+            tooltip="Add folder"
           />
           <ToolSeparator />
-          <ToolButton icon={<Icon>📑</Icon>} disabled tooltip="Copy layer" />
+          <ToolButton disabled icon={<Icon>📑</Icon>} tooltip="Copy layer" />
           <ToolButton
-            icon={<Icon>🗑</Icon>}
             disabled={!(selectedLayer || selectedEmptyFolder)}
+            icon={<Icon>🗑</Icon>}
             onClick={removeItemAction}
             onKeyDown={removeItemAction}
             tooltip="Remove item"
@@ -120,13 +120,13 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({ selectedItemsState }) => {
           <EmptyTree>
             <Paragraph>Add a layer to start</Paragraph>
             <ToolButton
+              disabled={selectedItems.length > 1}
               icon={<Icon>📄</Icon>}
               label="+"
-              tooltip="Add layer"
-              standAlone
               onClick={addShapeAction}
               onKeyDown={addShapeAction}
-              disabled={selectedItems.length > 1}
+              standAlone
+              tooltip="Add layer"
             />
           </EmptyTree>
         ) : (

@@ -19,6 +19,7 @@ import {
   MenuItem,
   NumberInput,
   Panel,
+  PanelTitle,
   Paragraph,
   RangeInput,
   ResizeDirection,
@@ -45,7 +46,7 @@ const toolsProvider: ToolsProvider = (data) => {
   if (data.type === "layer" || data.type === "layerFolder") {
     return (
       <>
-        <ToolButton icon={<Icon>👁</Icon>} active />
+        <ToolButton active icon={<Icon>👁</Icon>} />
       </>
     );
   }
@@ -58,11 +59,16 @@ export const Version1 = meta.story({
     <Column>
       <ToolBar>
         <Menu
+          menuButton={({ open }) => (
+            <ToolButton
+              active={open}
+              icon={<LogoIcon />}
+              label="Geppetto"
+              notificationBadge
+            />
+          )}
           portal
           transition
-          menuButton={({ open }) => (
-            <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
-          )}
         >
           <MenuItem>↻ Restart for app update...</MenuItem>
           <MenuItem>⇣ Install application locally</MenuItem>
@@ -88,15 +94,15 @@ export const Version1 = meta.story({
         <ToolSeparator />
 
         <ToolTab icon={<Icon>🧬</Icon>} label="Layers" />
-        <ToolTab icon={<Icon>🤷🏼</Icon>} label="Composition" active />
+        <ToolTab active icon={<Icon>🤷🏼</Icon>} label="Composition" />
         <ToolTab icon={<Icon>🏃</Icon>} label="Animation" />
       </ToolBar>
 
       <Row>
         <ResizePanel
+          defaultSize={250}
           direction={ResizeDirection.East}
           minSize={100}
-          defaultSize={250}
         >
           <Column>
             <ToolBar size="small">
@@ -111,13 +117,13 @@ export const Version1 = meta.story({
                 tooltip="Add folder"
               />
               <ToolButton
-                icon={<Icon>📑</Icon>}
                 disabled
+                icon={<Icon>📑</Icon>}
                 tooltip="Copy layer"
               />
               <ToolButton
-                icon={<Icon>🗑</Icon>}
                 disabled
+                icon={<Icon>🗑</Icon>}
                 tooltip="Remove item"
               />
             </ToolBar>
@@ -128,18 +134,18 @@ export const Version1 = meta.story({
               >
                 <Tree treeId="layers" />
               </TreeEnvironment>
-              <Title>Opacity (4)</Title>
+              <PanelTitle>Opacity (4)</PanelTitle>
               <ControlPanel>
                 <Control label="Visible">
                   <ToggleInput checked />
                 </Control>
                 <Control label="Origin">
-                  <NumberInput value={10} prefix="x:" />
-                  <NumberInput value={20} prefix="y:" />
+                  <NumberInput prefix="x:" value={10} />
+                  <NumberInput prefix="y:" value={20} />
                 </Control>
                 <Control label="Value">
-                  <NumberInput value={10} prefix="x:" />
-                  <NumberInput value={20} prefix="y:" />
+                  <NumberInput prefix="x:" value={10} />
+                  <NumberInput prefix="y:" value={20} />
                 </Control>
                 <Control label="Use Radius">
                   <ToggleInput checked />
@@ -153,12 +159,12 @@ export const Version1 = meta.story({
               </ControlPanel>
             </Panel>
             <ResizePanel
+              defaultSize={300}
               direction={ResizeDirection.North}
               minSize={200}
-              defaultSize={300}
             >
               <Panel padding="sm">
-                <Title>Controls</Title>
+                <PanelTitle>Controls</PanelTitle>
                 <ToolBar size="small">
                   <ToolButton
                     icon={<Icon>⚙️</Icon>}
@@ -166,8 +172,8 @@ export const Version1 = meta.story({
                     tooltip="Add control"
                   />
                   <ToolButton
-                    icon={<Icon>🗑</Icon>}
                     disabled
+                    icon={<Icon>🗑</Icon>}
                     tooltip="Remove item"
                   />
                 </ToolBar>
@@ -177,7 +183,7 @@ export const Version1 = meta.story({
                 >
                   <Tree treeId="controls" />
                 </TreeEnvironment>
-                <Title>Left Arm</Title>
+                <PanelTitle>Left Arm</PanelTitle>
                 <ControlPanel>
                   <Control label="Value">
                     <RangeInput />
