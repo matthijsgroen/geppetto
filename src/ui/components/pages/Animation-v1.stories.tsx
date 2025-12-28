@@ -35,6 +35,7 @@ const meta = preview.meta({
   argTypes: {
     children: { control: false },
   },
+  tags: ["svg"],
 });
 export default meta;
 
