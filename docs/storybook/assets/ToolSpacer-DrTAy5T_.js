@@ -1,1 +1,0 @@
-import{j as o}from"./iframe-jl7oPzfV.js";const s=()=>o.jsx("span",{className:"flex flex-1"});s.__docgenInfo={description:"Pushes controls to the right, allowing tools on the right side of the toolbar",methods:[],displayName:"ToolSpacer"};export{s as T};

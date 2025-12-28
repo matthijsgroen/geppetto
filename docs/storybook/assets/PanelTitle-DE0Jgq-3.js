@@ -1,0 +1,1 @@
+import{j as t}from"./iframe-BB5eUGr5.js";const o=({children:e})=>t.jsx("h3",{className:"m-2 text-sm font-normal text-dimmed uppercase font-caption",children:e});o.__docgenInfo={description:"",methods:[],displayName:"PanelTitle"};export{o as P};
