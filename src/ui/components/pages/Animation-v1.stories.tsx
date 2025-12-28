@@ -39,27 +39,6 @@ const meta = preview.meta({
 });
 export default meta;
 
-const toolsProvider: ToolsProvider = (data) => {
-  if (data.type === "layer" || data.type === "layerFolder") {
-    return (
-      <>
-        <ToolButton active icon={<Icon>▶️</Icon>} size="small" />
-      </>
-    );
-  }
-  if (data.type === "mutation") {
-    return (
-      <>
-        <ToolButton
-          active={data.name === "Mutation"}
-          icon={<Icon>📍</Icon>}
-          size="small"
-        />
-      </>
-    );
-  }
-};
-
 const noToolsProvider: ToolsProvider = () => null;
 
 export const Version1 = meta.story({
