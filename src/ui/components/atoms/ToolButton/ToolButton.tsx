@@ -49,7 +49,7 @@ export const ToolButton: FC<ToolButtonProps> = ({
       aria-label={tooltip}
       {...props}
       className={clsx(
-        `align-center relative mx-1 inline-flex flex-row items-center gap-1 border-0 whitespace-nowrap outline-2 outline-transparent`,
+        `align-center relative inline-flex flex-row items-center gap-1 border-0 whitespace-nowrap outline-2 outline-transparent`,
         `focus:outline-control-focus hover:enabled:bg-control-highlight disabled:opacity-50`,
         {
           "bg-toolbar text-text": !active && !standAlone,
