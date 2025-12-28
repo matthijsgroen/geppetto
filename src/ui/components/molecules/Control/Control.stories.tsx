@@ -28,22 +28,22 @@ export default meta;
 
 export const NumberControl = meta.story({
   args: {
-    children: <NumberInput value={10} prefix="x:" htmlId="InputField" />,
+    children: <NumberInput htmlId="InputField" prefix="x:" value={10} />,
   },
 });
 
 export const VectorControl = meta.story({
   args: {
     children: [
-      <NumberInput key="x" value={10} prefix="x:" htmlId="InputField" />,
-      <NumberInput key="y" value={10} prefix="y:" />,
+      <NumberInput htmlId="InputField" key="x" prefix="x:" value={10} />,
+      <NumberInput key="y" prefix="y:" value={10} />,
     ],
   },
 });
 
 export const SliderControl = meta.story({
   args: {
-    children: <RangeInput value={10} id="InputField" />,
+    children: <RangeInput id="InputField" value={10} />,
   },
 });
 

@@ -50,8 +50,8 @@ export const ControlPanel: FC<ControlPanelProps> = ({
       style={height !== null ? { height } : {}}
     >
       <div
-        ref={innerRef}
         className="[&>_*+*]:border-t [&>_*+*]:border-control-edge"
+        ref={innerRef}
       >
         {children}
       </div>

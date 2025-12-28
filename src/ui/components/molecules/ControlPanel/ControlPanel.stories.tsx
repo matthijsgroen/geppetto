@@ -26,7 +26,7 @@ const meta = preview.meta({
       <ControlPanelComponent {...args}>
         {children}
         {Array.from({ length: extraControlCount ?? 0 }).map((_, index) => (
-          <Control label={`Extra Field ${index + 1}`} key={index}>
+          <Control key={index} label={`Extra Field ${index + 1}`}>
             <ToggleInput />
           </Control>
         ))}
@@ -39,10 +39,10 @@ export default meta;
 export const ControlPanel = meta.story({
   args: {
     children: [
-      <Control label="Hello" key="field1">
+      <Control key="field1" label="Hello">
         <ToggleInput />
       </Control>,
-      <Control label="Hello with a really really long name" key="field2">
+      <Control key="field2" label="Hello with a really really long name">
         <ToggleInput />
       </Control>,
     ],

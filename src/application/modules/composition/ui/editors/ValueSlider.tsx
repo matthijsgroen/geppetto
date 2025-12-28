@@ -41,13 +41,13 @@ export const ValueSlider: React.FC<ValueSliderProps> = ({
   return (
     <Control label={label}>
       <RangeInput
-        value={value[vectorIndex]}
-        onChange={sliderChangeHandler}
-        min={min}
         max={max}
+        min={min}
+        onChange={sliderChangeHandler}
         step={step}
+        value={value[vectorIndex]}
       />
-      <RangeValue value={value[vectorIndex]} formatter={valueFormatter} />
+      <RangeValue formatter={valueFormatter} value={value[vectorIndex]} />
     </Control>
   );
 };

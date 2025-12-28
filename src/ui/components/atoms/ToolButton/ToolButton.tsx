@@ -48,19 +48,15 @@ export const ToolButton: FC<ToolButtonProps> = ({
     <button
       aria-label={tooltip}
       {...props}
-      title={tooltip}
-      type="button"
-      onClick={onClick}
-      onKeyDown={onKeyDown}
-      onContextMenu={onContextMenu}
       className={clsx(
-        `align-center relative inline-block border-0 whitespace-nowrap outline-2 outline-transparent`,
+        `align-center relative inline-flex flex-row items-center gap-1 border-0 whitespace-nowrap outline-2 outline-transparent`,
         `focus:outline-control-focus hover:enabled:bg-control-highlight disabled:opacity-50`,
         {
           "bg-toolbar text-text": !active && !standAlone,
           "bg-control-interaction text-text": !active && standAlone,
           "bg-control-active text-active": active,
-          "h-6 min-w-6 rounded-control-small px-1 text-xs": useSize === "small",
+          "h-6 min-w-6 justify-center rounded-control-small px-1 text-xs":
+            useSize === "small",
           "inline-block h-8 min-w-8 rounded-control px-2":
             useSize === "default",
           "before:absolute before:block before:size-2.5 before:rounded-full before:bg-notification before:text-transparent before:content-['.']":
@@ -73,9 +69,14 @@ export const ToolButton: FC<ToolButtonProps> = ({
         }
       )}
       disabled={disabled}
+      onClick={onClick}
+      onContextMenu={onContextMenu}
+      onKeyDown={onKeyDown}
       ref={ref}
+      title={tooltip}
+      type="button"
     >
-      {icon}{" "}
+      {icon}
       {label && (
         <Label active={active} size={useSize}>
           {label}

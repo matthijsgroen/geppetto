@@ -17,10 +17,10 @@ export const NumberControl: React.FC<NumberControlProps> = ({
 }) => (
   <Control label={label}>
     <NumberInput
-      value={value}
-      minValue={minValue}
       maxValue={maxValue}
+      minValue={minValue}
       onChange={onChange}
+      value={value}
     />
   </Control>
 );

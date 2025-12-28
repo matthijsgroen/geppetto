@@ -2,13 +2,13 @@ import { type ChangeEvent, useCallback } from "react";
 
 import { Control, ToggleInput } from "@/ui/components";
 
-type BooleanControlProps = {
+type ToggleControlProps = {
   label?: string;
   value?: boolean;
   onChange?: (newValue: boolean) => void;
 };
 
-export const BooleanControl: React.FC<BooleanControlProps> = ({
+export const ToggleControl: React.FC<ToggleControlProps> = ({
   label,
   value = false,
   onChange,

@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
 
-import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl.js";
+import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl";
 import { useFile } from "@/application/state/FileContext";
 import { type MutationVectorTypes } from "@/dtos/animation-file1.dto";
 import { type Vec2 } from "@/shared/types/global";
@@ -29,11 +29,11 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
     return (
       <ValueSlider
         label="Opacity"
-        value={value}
-        onValueChange={onValueChange}
-        min={0}
         max={1}
+        min={0}
+        onValueChange={onValueChange}
         step={0.01}
+        value={value}
         valueFormatter={percentageFormatter}
       />
     );
@@ -42,11 +42,11 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
     return (
       <ValueSlider
         label="Saturation"
-        value={value}
-        onValueChange={onValueChange}
-        min={0}
         max={1}
+        min={0}
+        onValueChange={onValueChange}
         step={0.01}
+        value={value}
         valueFormatter={percentageFormatter}
       />
     );
@@ -55,11 +55,11 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
     return (
       <ValueSlider
         label="Lightness"
-        value={value}
-        onValueChange={onValueChange}
-        min={0}
         max={2}
+        min={0}
+        onValueChange={onValueChange}
         step={0.01}
+        value={value}
         valueFormatter={lightnessFormatter}
       />
     );
@@ -68,11 +68,11 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
     return (
       <ValueSlider
         label="Rotation"
-        value={value}
-        onValueChange={onValueChange}
-        min={-360}
         max={360}
+        min={-360}
+        onValueChange={onValueChange}
         step={0}
+        value={value}
       />
     );
   }
@@ -91,27 +91,27 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
         </Control>
         <ValueSlider
           label="Hue"
-          value={value}
-          onValueChange={onValueChange}
-          valueFormatter={hueFormatter}
-          min={0}
           max={1}
+          min={0}
+          onValueChange={onValueChange}
           step={0.01}
+          value={value}
+          valueFormatter={hueFormatter}
         />
         <ValueSlider
           label="Saturation"
-          value={value}
-          onValueChange={onValueChange}
-          vectorIndex={1}
-          valueFormatter={percentageFormatter}
-          min={0}
           max={1}
+          min={0}
+          onValueChange={onValueChange}
           step={0.01}
+          value={value}
+          valueFormatter={percentageFormatter}
+          vectorIndex={1}
         />
       </>
     );
   }
-  return <VectorControl label="Value" value={value} onChange={onValueChange} />;
+  return <VectorControl label="Value" onChange={onValueChange} value={value} />;
 };
 
 export const MutationControlled: React.FC<{

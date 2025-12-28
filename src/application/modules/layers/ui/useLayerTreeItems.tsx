@@ -97,12 +97,12 @@ const populateTree = (
       if (toggleVisibility) {
         data.itemTools = (
           <ToolButton
-            size="small"
-            icon={<Icon>👁</Icon>}
             active={layerData.visible}
+            icon={<Icon>👁</Icon>}
             onClick={() => {
               actionHandler(`${nodeId}`, "visibility");
             }}
+            size="small"
           />
         );
       }
@@ -125,12 +125,12 @@ const populateTree = (
       if (toggleVisibility) {
         data.itemTools = (
           <ToolButton
-            size="small"
-            icon={<Icon>👁</Icon>}
             active={layerFolderData.visible}
+            icon={<Icon>👁</Icon>}
             onClick={() => {
               actionHandler(`${nodeId}`, "visibility");
             }}
+            size="small"
           />
         );
       }
@@ -154,12 +154,12 @@ const populateTree = (
         <ControlEditMode
           render={(ids) => (
             <ToolButton
-              size="small"
-              icon={<Icon>📍</Icon>}
               active={ids.includes(nodeId)}
+              icon={<Icon>📍</Icon>}
               onClick={() => {
                 actionHandler(`${nodeId}`, "controlMutation");
               }}
+              size="small"
             />
           )}
         />

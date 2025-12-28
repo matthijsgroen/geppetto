@@ -91,13 +91,13 @@ export const NumberInput: FC<NumberInputProps> = ({
       {prefix}
       <input
         className="hide-spinner w-[4ch] border-0 bg-transparent text-dimmed focus:w-[6ch] focus:text-text focus:outline-none"
-        type="number"
         id={htmlId}
-        value={value}
+        max={maxValue}
+        min={minValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
-        min={minValue}
-        max={maxValue}
+        type="number"
+        value={value}
       />
       {postfix}
     </label>

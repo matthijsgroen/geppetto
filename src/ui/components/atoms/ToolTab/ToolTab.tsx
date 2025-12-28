@@ -36,9 +36,8 @@ export const ToolTab: FC<ToolTabProps> = ({
     vertical === undefined ? toolbarProps.vertical : (vertical ?? false);
   return (
     <button
-      type="button"
       className={clsx(
-        `inline-flex items-center bg-toolbar bg-no-repeat whitespace-nowrap outline-2 outline-transparent font-caption focus-visible:outline-active enabled:hover:bg-control-highlight disabled:opacity-50`,
+        `inline-flex items-center bg-toolbar bg-no-repeat whitespace-nowrap outline-2 outline-transparent font-caption focus-visible:outline-control-focus enabled:hover:bg-control-highlight disabled:opacity-50`,
         {
           "border-transparent text-text": !active,
           "border-control-active text-active": active,
@@ -55,11 +54,12 @@ export const ToolTab: FC<ToolTabProps> = ({
             active && useVertical,
         }
       )}
+      disabled={disabled}
       onClick={onClick}
       onKeyDown={onKeydown}
-      disabled={disabled}
-      title={tooltip}
       ref={ref}
+      title={tooltip}
+      type="button"
     >
       {icon}
       {label && (

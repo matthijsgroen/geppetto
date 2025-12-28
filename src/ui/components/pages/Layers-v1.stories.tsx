@@ -44,11 +44,16 @@ export const Version1 = meta.story({
     <Column>
       <ToolBar>
         <Menu
+          menuButton={({ open }) => (
+            <ToolButton
+              active={open}
+              icon={<LogoIcon />}
+              label="Geppetto"
+              notificationBadge
+            />
+          )}
           portal
           transition
-          menuButton={({ open }) => (
-            <ToolButton icon={<LogoIcon />} active={open} notificationBadge />
-          )}
         >
           <MenuItem>↻ Restart for app update...</MenuItem>
           <MenuItem>⇣ Install application locally</MenuItem>
@@ -73,7 +78,7 @@ export const Version1 = meta.story({
         </Menu>
         <ToolSeparator />
 
-        <ToolTab icon={<Icon>🧬</Icon>} label="Layers" active />
+        <ToolTab active icon={<Icon>🧬</Icon>} label="Layers" />
         <ToolTab icon={<Icon>🤷🏼</Icon>} label="Composition" />
         <ToolTab icon={<Icon>🏃</Icon>} label="Animation" />
         <ToolSeparator />
@@ -83,18 +88,18 @@ export const Version1 = meta.story({
         <ToolButton icon={<Icon>✏️</Icon>} tooltip="Add point mode" />
         <ToolSeparator />
         <ToolButton
-          icon={<Icon>🗑</Icon>}
           disabled
+          icon={<Icon>🗑</Icon>}
           tooltip="Remove selected point"
         />
         <ToolSeparator />
         <ToolButton icon={<Icon>📏</Icon>} tooltip="Toggle grid visibility" />
         <Menu
-          portal
-          menuButton={({ open }) => <ToolButton active={open} label="32" />}
-          direction="bottom"
           align="center"
           arrow
+          direction="bottom"
+          menuButton={({ open }) => <ToolButton active={open} label="32" />}
+          portal
           transition
         >
           <MenuRadioGroup value={32}>
@@ -120,9 +125,9 @@ export const Version1 = meta.story({
 
       <Row>
         <ResizePanel
+          defaultSize={250}
           direction={ResizeDirection.East}
           minSize={100}
-          defaultSize={250}
         >
           <Column>
             <ToolBar size="small">
@@ -137,13 +142,13 @@ export const Version1 = meta.story({
                 tooltip="Add folder"
               />
               <ToolButton
-                icon={<Icon>📑</Icon>}
                 disabled
+                icon={<Icon>📑</Icon>}
                 tooltip="Copy layer"
               />
               <ToolButton
-                icon={<Icon>🗑</Icon>}
                 disabled
+                icon={<Icon>🗑</Icon>}
                 tooltip="Remove item"
               />
             </ToolBar>

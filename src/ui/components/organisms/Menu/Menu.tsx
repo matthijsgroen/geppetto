@@ -34,10 +34,10 @@ export const MenuItem: React.FC<Props> = ({ shortcut, children, ...props }) => (
             <div className="flex w-full flex-row">
               <span className="flex-1">{node}</span>
               <Kbd
-                shortcut={shortcut}
+                dimmed
                 disabled={state.disabled}
                 inMenu
-                dimmed
+                shortcut={shortcut}
               />
             </div>
           );

@@ -1,4 +1,4 @@
-import { LayerTreeEnvironment } from "@/application/modules/layers/ui/LayerTreeEnvironment.js";
+import { LayerTreeEnvironment } from "@/application/modules/layers/ui/LayerTreeEnvironment";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import { useToolAction } from "@/application/state/hooks/useToolAction";
@@ -16,6 +16,7 @@ import {
 } from "@/domain/animation/file2/mutation";
 import { addFolder, removeShape } from "@/domain/animation/file2/shapes";
 import { type MutationVector } from "@/dtos/animation-file2.dto";
+import type { AppSection } from "@/dtos/application.dto";
 import { type UseState } from "@/dtos/application.dto";
 import {
   EmptyTree,
@@ -33,12 +34,14 @@ type ShapeTreeProps = {
   selectedItemsState: UseState<string[]>;
   focusedItemState: UseState<string | undefined>;
   editControlId?: string;
+  onSectionChange?: (newSection: AppSection) => void;
 };
 
 export const ShapeTree: React.FC<ShapeTreeProps> = ({
   selectedItemsState,
   focusedItemState,
   editControlId,
+  onSectionChange,
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems, setSelectedItems] = selectedItemsState;
@@ -113,40 +116,40 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
 
   return (
     <LayerTreeEnvironment
-      selectedItemsState={selectedItemsState}
+      editControlId={editControlId}
       focusedItemState={focusedItemState}
+      selectedItemsState={selectedItemsState}
       showMutations
       showVisibilityToggle
       treeId="composition"
-      editControlId={editControlId}
     >
       <ToolBar size="small">
         <ToolButton
+          disabled={selectedItems.length > 1}
           icon={<Icon>📁</Icon>}
           label="+"
-          tooltip="Add folder"
           onClick={addFolderAction}
           onKeyDown={addFolderAction}
-          disabled={selectedItems.length > 1}
+          tooltip="Add folder"
         />
         <Menu
-          portal
+          align="center"
+          arrow
+          direction="bottom"
           menuButton={({ open }) => (
             <ToolButton
+              active={open}
+              disabled={selectedItems.length !== 1}
               icon={<Icon>⚪️</Icon>}
               label="+"
               tooltip="Add mutation"
-              disabled={selectedItems.length !== 1}
-              active={open}
             />
           )}
-          direction="bottom"
-          align="center"
-          arrow
+          portal
           transition
         >
           {Object.keys(mutationLabels).map((key) => (
-            <MenuItem key={key} value={key} onClick={addMutationHandler}>
+            <MenuItem key={key} onClick={addMutationHandler} value={key}>
               {iconMapping[key as MutationVector["type"]]}{" "}
               {mutationLabels[key as MutationVector["type"]]}
             </MenuItem>
@@ -154,8 +157,8 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
         </Menu>
         <ToolSeparator />
         <ToolButton
-          icon={<Icon>🗑</Icon>}
           disabled={!(activeMutation || selectedEmptyFolder)}
+          icon={<Icon>🗑</Icon>}
           onClick={removeItemAction}
           onKeyDown={removeItemAction}
           tooltip="Remove item"
@@ -164,7 +167,16 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
       {isEmpty(file.layerHierarchy) ? (
         <EmptyTree>
           <Paragraph>
-            Start by adding a layer on the &ldquo;Layers&rdquo; screen.
+            Start by adding a layer on the{" "}
+            <ToolButton
+              icon={<Icon>🧬</Icon>}
+              label="Layers screen"
+              onClick={() => onSectionChange && onSectionChange("layers")}
+              size="small"
+              standAlone
+              tooltip="Go to layers screen"
+            />
+            .
           </Paragraph>
         </EmptyTree>
       ) : (

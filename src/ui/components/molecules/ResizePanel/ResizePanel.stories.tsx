@@ -1,5 +1,7 @@
 import preview from "@sb/preview";
+import { expect } from "storybook/test";
 
+import drag from "@/shared/test/dragTestHelper";
 import { Column } from "@/ui/components/molecules/Column/Column";
 import { Panel } from "@/ui/components/molecules/Panel/Panel";
 import { Row } from "@/ui/components/molecules/Row/Row";
@@ -27,6 +29,7 @@ const meta = preview.meta({
     direction: direction.East,
     minSize: 40,
     maxSize: 400,
+    defaultSize: 125,
   },
 });
 
@@ -40,7 +43,7 @@ export const Default = meta.story({
               <p>Resizable panel</p>
             </Panel>
           </ResizePanel>
-          <Panel workspace center>
+          <Panel center workspace>
             <p>Other content</p>
           </Panel>
         </Row>
@@ -49,7 +52,7 @@ export const Default = meta.story({
     if (args.direction === ResizeDirection.North) {
       return (
         <Column>
-          <Panel workspace center>
+          <Panel center workspace>
             <p>Other content</p>
           </Panel>
           <ResizePanel {...args}>
@@ -68,7 +71,7 @@ export const Default = meta.story({
               <p>Resizable panel</p>
             </Panel>
           </ResizePanel>
-          <Panel workspace center>
+          <Panel center workspace>
             <p>Other content</p>
           </Panel>
         </Column>
@@ -76,7 +79,7 @@ export const Default = meta.story({
     }
     return (
       <Row>
-        <Panel workspace center>
+        <Panel center workspace>
           <p>Other content</p>
         </Panel>
         <ResizePanel {...args}>
@@ -86,5 +89,23 @@ export const Default = meta.story({
         </ResizePanel>
       </Row>
     );
+  },
+  play: async ({ canvas }) => {
+    const resizeHandle = canvas.getByRole("separator");
+    expect(resizeHandle).toHaveAttribute("aria-orientation", "vertical");
+
+    const panel = canvas.getByRole("region");
+    if (panel) {
+      const style = window.getComputedStyle(panel);
+      expect(style).toHaveProperty("width", "125px");
+
+      await drag(resizeHandle, { delta: { x: 100, y: 0 }, steps: 1 });
+      const resizedStyle = window.getComputedStyle(panel);
+      expect(resizedStyle).toHaveProperty("width", "225px");
+
+      await drag(resizeHandle, { delta: { x: -100, y: 0 }, steps: 1 });
+      const resizedBackStyle = window.getComputedStyle(panel);
+      expect(resizedBackStyle).toHaveProperty("width", "125px");
+    }
   },
 });

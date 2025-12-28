@@ -44,8 +44,8 @@ const EditStepsToggle: React.FC<{
   <Control label="Control steps">
     <ToolButton
       label={editControlSteps ? "Done" : "Edit"}
-      standAlone
       onClick={onEditControlSteps}
+      standAlone
     />
   </Control>
 );
@@ -113,18 +113,18 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
       <ControlPanel>
         <Control label="Value">
           <RangeInput
-            min={0}
             max={control.steps.length - 1}
+            min={0}
+            onChange={onChange}
             step={0.01}
             value={slideValue}
-            onChange={onChange}
           />
           <RangeValue value={slideValue} />
         </Control>
         {onEditControlSteps && (
           <EditStepsToggle
-            onEditControlSteps={handleEditControlSteps}
             editControlSteps={false}
+            onEditControlSteps={handleEditControlSteps}
           />
         )}
       </ControlPanel>
@@ -266,8 +266,8 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
           onClose={() => toggleMenu(false)}
         >
           <MenuItem
-            shortcut={{ interaction: "DelOrBackspace" }}
             onClick={handleDeleteStepContext}
+            shortcut={{ interaction: "DelOrBackspace" }}
           >
             Delete step
           </MenuItem>
@@ -278,13 +278,13 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
           <ToolGrid size="small">
             {control.steps.map((_step, index) => (
               <ToolButton
-                label={`${index + 1}`}
-                data-value={index}
                 active={index === activeControlStep}
+                data-value={index}
                 key={index}
+                label={`${index + 1}`}
                 onClick={handleStepSelect}
-                onKeyDown={handleStepKeyDown}
                 onContextMenu={handleContextMenu}
+                onKeyDown={handleStepKeyDown}
               />
             ))}
             <ToolButton label="+" onClick={handleAddStep} />
@@ -292,8 +292,8 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
         </Control>
         {onControlEditDone && (
           <EditStepsToggle
-            onEditControlSteps={handleControlEditDone}
             editControlSteps
+            onEditControlSteps={handleControlEditDone}
           />
         )}
       </ControlPanel>

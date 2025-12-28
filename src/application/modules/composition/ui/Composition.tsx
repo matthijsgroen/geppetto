@@ -8,8 +8,8 @@ import {
   useState,
 } from "react";
 
-import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton.js";
-import { StartupScreen } from "@/application/modules/application-menu/ui/Startup.js";
+import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
+import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import useEvent from "@/application/state/hooks/useEvent";
@@ -21,8 +21,8 @@ import {
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import LayerMouseControl, {
   type DragState,
-} from "@/application/ui/LayerMouseControl.js";
-import { MouseMode } from "@/application/ui/MouseControl.js";
+} from "@/application/ui/LayerMouseControl";
+import { MouseMode } from "@/application/ui/MouseControl";
 import { dragItem } from "@/domain/animation/file2/drag";
 import {
   findParentId,
@@ -437,8 +437,8 @@ export const Composition: React.FC<CompositionProps> = ({
           label="Layers"
           onClick={() => onSectionChange?.("layers")}
         />
-        <ToolTab icon={<Icon>🤷🏼</Icon>} label="Composition" active />
-        <ToolTab icon={<Icon>🏃</Icon>} label="Animation" disabled />
+        <ToolTab active icon={<Icon>🤷🏼</Icon>} label="Composition" />
+        <ToolTab disabled icon={<Icon>🏃</Icon>} label="Animation" />
         <ToolSeparator />
         <ActionToolButton
           action={actions.toggleWireFrames}
@@ -453,63 +453,64 @@ export const Composition: React.FC<CompositionProps> = ({
       </ToolBar>
       <Row>
         <ResizePanel
-          direction={ResizeDirection.East}
           defaultSize={250}
+          direction={ResizeDirection.East}
           minSize={150}
         >
           <Column>
             <Panel padding="sm">
               <ShapeTree
-                selectedItemsState={[selectedItems, updateSelectedItems]}
-                focusedItemState={[focusedLayer, setFocusedLayer]}
                 editControlId={editingControl}
+                focusedItemState={[focusedLayer, setFocusedLayer]}
+                onSectionChange={onSectionChange}
+                selectedItemsState={[selectedItems, updateSelectedItems]}
               />
             </Panel>
             {!controlEditMode && (
               <ResizePanel
+                defaultSize={400}
                 direction={ResizeDirection.North}
                 minSize={300}
-                defaultSize={400}
               >
                 <ControlTree
+                  onEditControlSteps={() => setControlEditMode(true)}
                   selectedControlsState={[
                     selectedControls,
                     setSelectedControls,
                   ]}
-                  onEditControlSteps={() => setControlEditMode(true)}
                 />
               </ResizePanel>
             )}
             {controlEditMode && (
-              <Panel padding="sm" fitContent>
+              <Panel fitContent padding="sm">
                 <ControlEditSteps
-                  selectedControlIds={selectedControls}
                   activeControlStep={activeControlStep}
                   onControlEditDone={() => setControlEditMode(false)}
                   onControlStepSelect={setActiveControlStep}
+                  selectedControlIds={selectedControls}
                 />
               </Panel>
             )}
           </Column>
         </ResizePanel>
-        <Panel workspace center>
-          <StartupScreen file={file} texture={texture} screen="composition" />
+        <Panel center workspace>
+          <StartupScreen file={file} screen="composition" texture={texture} />
           {texture && hasPoints(file) && (
             <LayerMouseControl
-              mode={MouseMode.Normal}
-              maxZoomFactor={maxZoom}
-              hoverCursor={hoverCursor}
               handleDrag={handleDrag}
+              hoverCursor={hoverCursor}
+              maxZoomFactor={maxZoom}
+              mode={MouseMode.Normal}
               onClick={handleClick}
               onContextMenu={handleContextMenu}
             >
               <CompositionCanvas
-                image={texture}
                 activeLayers={selectedItems}
                 activeMutation={activeMutator}
-                showWireFrames={showWireFrames}
                 file={file}
+                image={texture}
                 ref={containerRef}
+                showWireFrames={showWireFrames}
               >
                 {/*activeMutator && containerRef.current && (
                   <DebugMutatorPoint
@@ -525,14 +526,14 @@ export const Composition: React.FC<CompositionProps> = ({
                   onClose={() => toggleMenu(false)}
                 >
                   <SubMenu
-                    label="Add mutation"
                     disabled={selectedItems.length !== 1}
+                    label="Add mutation"
                   >
                     {Object.keys(mutationLabels).map((key) => (
                       <MenuItem
                         key={key}
-                        value={key}
                         onClick={addMutationHandler}
+                        value={key}
                       >
                         {iconMapping[key as MutationVector["type"]]}{" "}
                         {mutationLabels[key as MutationVector["type"]]}
@@ -560,20 +561,20 @@ export const Composition: React.FC<CompositionProps> = ({
         </Panel>
         {showItemDetails && (
           <ResizePanel
-            direction={ResizeDirection.West}
             defaultSize={250}
+            direction={ResizeDirection.West}
             minSize={150}
           >
             <Column>
               <Panel padding="sm">
                 <ItemEdit
                   activeMutator={activeMutator}
-                  selectedShapeIds={selectedItems}
                   editingControlId={editingControl}
                   editingControlStep={activeControlStep}
                   onSelectControl={(controlId) =>
                     setSelectedControls([controlId])
                   }
+                  selectedShapeIds={selectedItems}
                 />
               </Panel>
             </Column>

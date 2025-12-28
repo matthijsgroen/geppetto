@@ -32,14 +32,14 @@ export const VectorControl: React.FC<VectorControlProps> = ({
     [onChange, value]
   );
   return (
-    <Control label={label} htmlFor={`${label}_Field`}>
+    <Control htmlFor={`${label}_Field`} label={label}>
       <NumberInput
         htmlId={`${label}_Field`}
-        value={value[0]}
-        prefix="x:"
         onChange={xChangeHandler}
+        prefix="x:"
+        value={value[0]}
       />
-      <NumberInput value={value[1]} prefix="y:" onChange={yChangeHandler} />
+      <NumberInput onChange={yChangeHandler} prefix="y:" value={value[1]} />
     </Control>
   );
 };

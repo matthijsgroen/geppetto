@@ -20,7 +20,7 @@ const meta = preview.meta({
     size: "default",
     vertical: false,
     children: [
-      <ToolTab label="Canvas" active key="tab0" />,
+      <ToolTab active key="tab0" label="Canvas" />,
       <ToolButton icon={<Icon>💡</Icon>} key={0} />,
       <ToolButton active icon={<Icon>🎓</Icon>} key={1} />,
       <ToolSeparator key={2} />,

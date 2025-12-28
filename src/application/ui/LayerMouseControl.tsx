@@ -205,12 +205,12 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   return (
     <MouseControl
       mode={cursorMode}
+      onContextMenu={onContextMenu}
+      onKeyDown={onKeyDown}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onContextMenu={onContextMenu}
       onWheel={handleMouseWheel}
-      onKeyDown={onKeyDown}
     >
       {children}
     </MouseControl>

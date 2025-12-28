@@ -94,8 +94,8 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
     }
   );
 
-  const controlValues = useControlValues();
-  const mutationValues = useMutationValues();
+  const controlValuesRef = useControlValues();
+  const mutationValuesRef = useMutationValues();
   const subscribe = useControlValueSubscription();
 
   useEffect(() => {
@@ -106,8 +106,8 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
     }
     if (mutationsControlsChanged(file, fileRef.current)) {
       updateControlValues(file.controlValues, file.defaultFrame);
-      mutationValues.current = file.defaultFrame;
-      controlValues.current = file.controlValues;
+      mutationValuesRef.current = file.defaultFrame;
+      controlValuesRef.current = file.controlValues;
     }
     fileRef.current = file;
   }, [
@@ -116,15 +116,15 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
     compositionMap,
     vectorMap,
     updateControlValues,
-    mutationValues,
-    controlValues,
+    mutationValuesRef,
+    controlValuesRef,
   ]);
 
   useEffect(() => {
     const unsubscribe = subscribe(updateControlValues);
-    updateControlValues(controlValues.current, mutationValues.current);
+    updateControlValues(controlValuesRef.current, mutationValuesRef.current);
     return unsubscribe;
-  }, [controlValues, mutationValues, subscribe, updateControlValues]);
+  }, [controlValuesRef, mutationValuesRef, subscribe, updateControlValues]);
 
   useEffect(() => {
     compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);
@@ -136,7 +136,7 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
   }, [activeMutation, vectorMap]);
 
   return (
-    <WebGLCanvas renderers={renderers} ref={ref}>
+    <WebGLCanvas ref={ref} renderers={renderers}>
       {children}
     </WebGLCanvas>
   );

@@ -26,18 +26,18 @@ export const InstallToolButton: React.FC = () => {
     <>
       <ToolButton
         icon={<Icon>🖥</Icon>}
-        tooltip="Install Geppetto as desktop application"
         onClick={installer}
         ref={anchor}
+        tooltip="Install Geppetto as desktop application"
       />
       <ControlledMenu
-        captureFocus={false}
         anchorRef={anchor as RefObject<HTMLElement>}
+        arrow
+        captureFocus={false}
         portal
         position="anchor"
-        arrow
-        state={state}
         role="tooltip"
+        state={state}
       >
         <Label>Install Geppetto as desktop application</Label>
       </ControlledMenu>

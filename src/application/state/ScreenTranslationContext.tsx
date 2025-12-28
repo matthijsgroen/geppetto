@@ -1,3 +1,4 @@
+import type { RefObject } from "react";
 import {
   createContext,
   type FC,
@@ -21,11 +22,11 @@ export type Subscription = (
 ) => Unsubscribe;
 
 const ScreenTransContext = createContext<{
-  translation: ScreenTranslation;
+  translation: RefObject<ScreenTranslation>;
   update: (updater: (current: ScreenTranslation) => ScreenTranslation) => void;
   onUpdate: Subscription;
 }>({
-  translation: { zoom: 1.0, scale: 1.0, panX: 0, panY: 0 },
+  translation: { current: { zoom: 1.0, scale: 1.0, panX: 0, panY: 0 } },
   update: () => {},
   onUpdate: () => {
     return () => {};
@@ -69,15 +70,15 @@ export const ScreenTranslationContext: FC<PropsWithChildren> = ({
   );
   return (
     <ScreenTransContext.Provider
-      value={{ translation: value.current, onUpdate, update }}
+      value={{ translation: value, onUpdate, update }}
     >
       {children}
     </ScreenTransContext.Provider>
   );
 };
 
-export const useScreenTranslation = () =>
-  useContext(ScreenTransContext).translation;
+export const useScreenTranslation = (): ScreenTranslation =>
+  useContext(ScreenTransContext).translation.current;
 
 export const useScreenSubscription = () =>
   useContext(ScreenTransContext).onUpdate;

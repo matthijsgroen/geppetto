@@ -1,9 +1,11 @@
 import { produce } from "immer";
 import { useEffect, useState, useTransition } from "react";
 
-import { BooleanControl } from "@/application/modules/composition/ui/controls/CheckControl.js";
-import { NumberControl } from "@/application/modules/composition/ui/controls/NumberControl.js";
-import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl.js";
+import {
+  NumberControl,
+  ToggleControl,
+  VectorControl,
+} from "@/application/modules/composition/ui/controls";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
@@ -61,11 +63,11 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
         <Icon>📁</Icon> {layerFolder.name}
       </PanelTitle>
       <ControlPanel>
-        <Control label="Visible" htmlFor={`${itemId}_visibility`}>
+        <Control htmlFor={`${itemId}_visibility`} label="Visible">
           <ToggleInput
             checked={layerFolder.visible}
-            onChange={handleClick}
             id={`${itemId}_visibility`}
+            onChange={handleClick}
           />
         </Control>
       </ControlPanel>
@@ -102,8 +104,8 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
       <ControlPanel>
         <VectorControl
           label="Offset"
-          value={layer.translate}
           onChange={offsetChangeHandler}
+          value={layer.translate}
         />
         <Control label="Visible">
           <ToggleInput checked={layer.visible} onChange={handleClick} />
@@ -185,23 +187,23 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
         {isShapeMutationVector(mutation) && (
           <VectorControl
             label="Origin"
-            value={mutation.origin}
             onChange={originChangeHandler}
+            value={mutation.origin}
           />
         )}
         {hasRadius(mutation) && (
           <>
-            <BooleanControl
+            <ToggleControl
               label="Use radius"
-              value={mutation.radius !== -1}
               onChange={toggleRadius}
+              value={mutation.radius !== -1}
             />
             {mutation.radius !== -1 && (
               <NumberControl
                 label="Radius"
-                value={mutation.radius}
                 minValue={0}
                 onChange={radiusChange}
+                value={mutation.radius}
               />
             )}
           </>
@@ -212,8 +214,8 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
         />
         <MutationValueEdit
           mutationType={mutation.type}
-          value={slideValue}
           onValueChange={valueChangeHandler}
+          value={slideValue}
         />
       </ControlPanel>
       {isShapeMutationVector(mutation) && (
@@ -321,14 +323,14 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
     return (
       <ControlPanel shadow>
         <MutationControlled
+          editingControlId={editingControlId}
           mutationId={activeMutator}
           onSelectControl={onSelectControl}
-          editingControlId={editingControlId}
         />
         <MutationValueEdit
           mutationType={mutationType}
-          value={slideValue}
           onValueChange={valueChangeHandler}
+          value={slideValue}
         />
       </ControlPanel>
     );
