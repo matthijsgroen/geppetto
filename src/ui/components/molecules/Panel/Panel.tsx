@@ -20,16 +20,11 @@ export const Panel: FC<PanelProps> = ({
   fitContent = false,
 }) => (
   <div
-    className={clsx({
+    className={clsx("relative flex flex-col overflow-hidden border text-text", {
       "p-1": padding === "sm",
       "p-2": padding === "md",
-      "bg-workspace": workspace,
-      "bg-toolbar": !workspace,
-      border: true,
-      "border-transparent": !workspace,
-      "border-control-edge": workspace,
-      "text-text": true,
-      "flex flex-col overflow-hidden": true,
+      "border-control-edge bg-workspace": workspace,
+      "border-transparent bg-toolbar": !workspace,
       "flex-1": !fitContent,
       "flex-[0_0_fit-content]": fitContent,
       "items-center justify-center": center,

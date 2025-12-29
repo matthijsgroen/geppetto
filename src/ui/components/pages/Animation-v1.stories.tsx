@@ -8,6 +8,7 @@ import {
   Control,
   ControlPanel,
   Icon,
+  Inlay,
   LogoIcon,
   Menu,
   MenuDivider,
@@ -16,6 +17,7 @@ import {
   Panel,
   PanelTitle,
   RangeInput,
+  RangeValue,
   ResizeDirection,
   ResizePanel,
   Row,
@@ -45,7 +47,7 @@ const TimePin: FC<{ location: TimeStamp; activeTrack?: boolean }> = ({
 }) => {
   return (
     <div
-      className="absolute top-0.5 bottom-0.5 z-20 w-0 border-r border-l border-dashed border-control-edge"
+      className="absolute top-0.5 bottom-0.5 z-20 w-0 border-x border-dashed border-control-edge"
       style={{ left: `${location}em` }}
     >
       <div
@@ -55,6 +57,37 @@ const TimePin: FC<{ location: TimeStamp; activeTrack?: boolean }> = ({
           activeTrack && "-ml-2 size-4"
         )}
       ></div>
+    </div>
+  );
+};
+
+const TimeStretchHandle: FC = () => {
+  return (
+    <div className="h-4 w-1 cursor-ew-resize border-x border-control-edge hover:bg-control-active"></div>
+  );
+};
+
+const TimeBar: FC<{
+  start: number;
+  duration: number;
+  selected?: boolean;
+  trackIndex: number;
+}> = ({ start, duration, selected = false, trackIndex }) => {
+  return (
+    <div
+      className={clsx(
+        "absolute z-10 flex h-5 cursor-pointer items-center justify-between rounded-control-small border shadow-sm hover:bg-control-highlight",
+        selected && "border-control-focus bg-control-active",
+        !selected && "border-control-edge bg-toolbar"
+      )}
+      style={{
+        left: `${start}em`,
+        width: `${duration}em`,
+        top: `calc(${(trackIndex + 1) * 5} * var(--spacing))`,
+      }}
+    >
+      <TimeStretchHandle />
+      <TimeStretchHandle />
     </div>
   );
 };
@@ -103,7 +136,36 @@ export const Version1 = meta.story({
         <ToolTab active icon={<Icon>🏃</Icon>} label={"Animation"} />
       </ToolBar>
       <Column>
-        <Panel workspace> </Panel>
+        <Panel workspace>
+          <Inlay>
+            <ControlPanel>
+              <Control label="Control">
+                <select>
+                  <option value="control1">Control 1</option>
+                  <option value="control2">Control 2</option>
+                  <option value="control3">Control 3</option>
+                </select>
+              </Control>
+              <Control label="End value">
+                <Column>
+                  <RangeInput defaultValue={1} max={5} min={0.1} step={0.1} />
+                  <RangeValue value={1} />
+                </Column>
+              </Control>
+              <Control label="Easing function">
+                <select>
+                  <option value="linear">Linear</option>
+                  <option value="easeIn">Ease In</option>
+                  <option value="easeOut">Ease Out</option>
+                  <option value="easeInOut">Ease In Out</option>
+                </select>
+              </Control>
+              <Control>
+                <ToolButton label="Done" standAlone />
+              </Control>
+            </ControlPanel>
+          </Inlay>
+        </Panel>
         <ResizePanel
           defaultSize={250}
           direction={ResizeDirection.North}
@@ -158,14 +220,19 @@ export const Version1 = meta.story({
                   <div className="sticky left-0 z-30 border-b border-control-edge bg-control-active/50 px-2 py-1 text-right whitespace-nowrap backdrop-blur-md">
                     <Column>
                       <div className="h-5">Track {3 + 1}</div>
-                      <div className="pl-4 text-sm">Control 1</div>
-                      <div className="pl-4 text-sm">Control 3</div>
-                      <div className="pl-4 text-sm">Control 4</div>
-                      <div className="pl-4 text-sm">Control 6</div>
+                      <div className="h-5 pl-4 text-sm">Control 1</div>
+                      <div className="h-5 pl-4 text-sm">Control 3</div>
+                      <div className="h-5 pl-4 text-sm">Control 4</div>
+                      <div className="h-5 pl-4 text-sm">Control 6</div>
                     </Column>
                   </div>
                   <div className="relative w-7xl border-b border-control-edge/50 bg-panel px-1 py-0.5 last:rounded-b-control nth-[4]:rounded-t-control">
                     <div className="h-4 w-full bg-toolbar"></div>
+                    <TimeBar duration={5} selected start={10} trackIndex={0} />
+                    <TimeBar duration={8} start={20} trackIndex={0} />
+                    <TimeBar duration={14} start={7} trackIndex={1} />
+                    <TimeBar duration={14} start={12} trackIndex={2} />
+
                     <TimePin activeTrack location={3} />
                     <TimePin activeTrack location={10} />
                     <TimePin activeTrack location={25} />

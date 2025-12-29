@@ -1,3 +1,5 @@
+/* global process -- Globals defined by node.js */
+
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import react from "eslint-plugin-react";
@@ -5,6 +7,8 @@ import reactHooks from "eslint-plugin-react-hooks";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
 import prettierConfig from "eslint-config-prettier";
+import tailwind from "eslint-plugin-tailwindcss";
+import { join } from "node:path";
 
 export default [
   // Base configs
@@ -28,11 +32,15 @@ export default [
       "react-hooks": reactHooks,
       "simple-import-sort": simpleImportSort,
       "no-relative-import-paths": noRelativeImportPaths,
+      tailwindcss: tailwind,
     },
     settings: {
       react: {
         version: "detect",
         runtime: "automatic", // React 17+ JSX transform - React doesn't need to be in scope
+      },
+      tailwindcss: {
+        config: join(process.cwd(), "src", "ui", "index.css"),
       },
     },
     rules: {
@@ -73,6 +81,18 @@ export default [
         {
           prefer: "type-imports",
           fixStyle: "separate-type-imports",
+        },
+      ],
+
+      // Tailwind CSS
+      "tailwindcss/classnames-order": ["error"],
+      "tailwindcss/enforces-negative-arbitrary-values": ["error"],
+      "tailwindcss/enforces-shorthand": ["error"],
+      "tailwindcss/no-contradicting-classname": ["error"],
+      "tailwindcss/no-custom-classname": [
+        "error",
+        {
+          whitelist: ["rct\\-tree\\-.*"],
         },
       ],
 

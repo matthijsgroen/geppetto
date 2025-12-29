@@ -20,6 +20,7 @@ export { Column } from "./molecules/Column/Column";
 export { Control } from "./molecules/Control/Control";
 export { ControlPanel } from "./molecules/ControlPanel/ControlPanel";
 export { EmptyTree } from "./molecules/EmptyTree/EmptyTree";
+export { Inlay } from "./molecules/Inlay/Inlay";
 export { Panel } from "./molecules/Panel/Panel";
 export {
   ResizeDirection,

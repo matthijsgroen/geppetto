@@ -61,6 +61,7 @@ import {
   Column,
   ControlledMenu,
   Icon,
+  Inlay,
   MenuItem,
   Panel,
   ResizeDirection,
@@ -78,7 +79,6 @@ import {
 import CompositionCanvas from "./CompositionCanvas";
 import { ControlEditSteps } from "./ControlEdit";
 import { ControlTree } from "./ControlTree";
-import { Inlay } from "./Inlay";
 import { InlayControlPanel, ItemEdit } from "./ItemEdit";
 import { ShapeTree } from "./ShapeTree";
 
