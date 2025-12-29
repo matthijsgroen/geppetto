@@ -4,7 +4,7 @@ import { VectorControl } from "@/application/modules/composition/ui/controls/Vec
 import { useFile } from "@/application/state/FileContext";
 import { type MutationVectorTypes } from "@/dtos/animation-file1.dto";
 import { type Vec2 } from "@/shared/types/global";
-import { Control, TextButton } from "@/ui/components";
+import { ColorPreview, Control, TextButton } from "@/ui/components";
 
 import styles from "./MutationValueEdit.module.css";
 import { ValueSlider } from "./ValueSlider";
@@ -80,14 +80,7 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
     return (
       <>
         <Control label="Color">
-          <div
-            className={styles.colorPreview}
-            style={{
-              backgroundColor: `hsl(${value[0] * 360}deg, ${
-                value[1] * 100
-              }%, 50%)`,
-            }}
-          />
+          <ColorPreview hue={value[0]} saturation={value[1]} />
         </Control>
         <ValueSlider
           label="Hue"

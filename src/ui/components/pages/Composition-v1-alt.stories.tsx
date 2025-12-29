@@ -1,4 +1,5 @@
 import preview from "@sb/preview";
+import { T } from "node_modules/vitest/dist/chunks/traces.d.402V_yFI";
 
 import {
   storyTreeItems,
@@ -30,6 +31,7 @@ import {
   ToggleInput,
   ToolBar,
   ToolButton,
+  ToolGrid,
   ToolSeparator,
   ToolSpacer,
   ToolTab,
@@ -174,9 +176,11 @@ export const Version1Alt = meta.story({
                     <RangeInput />
                   </Control>
                   <Control label="Steps">
-                    <ToolButton icon="1" size="small" />
-                    <ToolButton icon="2" size="small" />
-                    <ToolButton icon="+" size="small" />
+                    <ToolGrid>
+                      <ToolButton icon="1" size="small" />
+                      <ToolButton icon="2" size="small" />
+                      <ToolButton icon="+" size="small" />
+                    </ToolGrid>
                   </Control>
                 </ControlPanel>
               </Panel>

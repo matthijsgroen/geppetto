@@ -1,3 +1,4 @@
+export { ColorPreview } from "./atoms/ColorPreview/ColorPreview";
 export { Icon } from "./atoms/Icon/Icon";
 export * from "./atoms/Kbd/Kbd";
 export * from "./atoms/Kbd/shortcut";
