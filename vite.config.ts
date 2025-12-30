@@ -6,6 +6,7 @@ import svgrPlugin from "vite-plugin-svgr";
 
 export default defineConfig({
   plugins: [glsl(), tailwindcss(), svgrPlugin()],
+  base: "/app/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
