@@ -18,12 +18,12 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v4
-      - name: Enable Corepack
-        run: corepack enable
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Enable Corepack
+        run: corepack enable
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
