@@ -3,6 +3,7 @@ import { clsx } from "clsx";
 import type { FC } from "react";
 import { Fragment } from "react/jsx-runtime";
 
+import type { EasingFunction } from "@/dtos/animation-file2.dto";
 import {
   Column,
   Control,
@@ -28,8 +29,6 @@ import {
   ToolSpacer,
   ToolTab,
 } from "@/ui/components";
-import { Easing } from "storybook/theming";
-import { EasingFunction } from "@/dtos/animation-file2.dto";
 
 const meta = preview.meta({
   title: "Pages/Animation",
@@ -249,28 +248,28 @@ export const Version1 = meta.story({
                     <div className="h-4 w-full bg-toolbar"></div>
                     <TimeBar
                       duration={5}
+                      easing="easeInOut"
                       selected
                       start={10}
                       trackIndex={0}
-                      easing="easeInOut"
                     />
                     <TimeBar
                       duration={8}
+                      easing="linear"
                       start={20}
                       trackIndex={0}
-                      easing="linear"
                     />
                     <TimeBar
                       duration={14}
+                      easing="easeIn"
                       start={7}
                       trackIndex={1}
-                      easing="easeIn"
                     />
                     <TimeBar
                       duration={14}
+                      easing="easeOut"
                       start={12}
                       trackIndex={2}
-                      easing="easeOut"
                     />
 
                     <TimePin activeTrack location={3} />
