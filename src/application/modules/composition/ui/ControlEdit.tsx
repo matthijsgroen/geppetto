@@ -19,6 +19,7 @@ import {
   removeControlStep,
 } from "@/domain/animation/file2/controls";
 import {
+  Column,
   Control,
   ControlledMenu,
   ControlPanel,
@@ -112,14 +113,16 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
       </PanelTitle>
       <ControlPanel>
         <Control label="Value">
-          <RangeInput
-            max={control.steps.length - 1}
-            min={0}
-            onChange={onChange}
-            step={0.01}
-            value={slideValue}
-          />
-          <RangeValue value={slideValue} />
+          <Column>
+            <RangeInput
+              max={control.steps.length - 1}
+              min={0}
+              onChange={onChange}
+              step={0.01}
+              value={slideValue}
+            />
+            <RangeValue value={slideValue} />
+          </Column>
         </Control>
         {onEditControlSteps && (
           <EditStepsToggle

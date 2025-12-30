@@ -1,3 +1,5 @@
+export { ColorPreview } from "./atoms/ColorPreview/ColorPreview";
+export { Curves } from "./atoms/Curves/Curves";
 export { Icon } from "./atoms/Icon/Icon";
 export * from "./atoms/Kbd/Kbd";
 export * from "./atoms/Kbd/shortcut";
@@ -19,6 +21,7 @@ export { Column } from "./molecules/Column/Column";
 export { Control } from "./molecules/Control/Control";
 export { ControlPanel } from "./molecules/ControlPanel/ControlPanel";
 export { EmptyTree } from "./molecules/EmptyTree/EmptyTree";
+export { Inlay } from "./molecules/Inlay/Inlay";
 export { Panel } from "./molecules/Panel/Panel";
 export {
   ResizeDirection,

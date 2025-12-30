@@ -26,9 +26,11 @@ import {
   ResizePanel,
   Row,
   SubMenu,
+  Title,
   ToggleInput,
   ToolBar,
   ToolButton,
+  ToolGrid,
   ToolSeparator,
   ToolTab,
   Tree,
@@ -188,9 +190,11 @@ export const Version1 = meta.story({
                     <RangeInput />
                   </Control>
                   <Control label="Steps">
-                    <ToolButton icon="1" size="small" />
-                    <ToolButton icon="2" size="small" />
-                    <ToolButton icon="+" size="small" />
+                    <ToolGrid>
+                      <ToolButton icon="1" size="small" />
+                      <ToolButton icon="2" size="small" />
+                      <ToolButton icon="+" size="small" />
+                    </ToolGrid>
                   </Control>
                 </ControlPanel>
               </Panel>
@@ -200,7 +204,7 @@ export const Version1 = meta.story({
         <Panel center workspace>
           <div>
             <Logo />
-            <h1>Welcome to Geppetto</h1>
+            <Title>Welcome to Geppetto</Title>
             <Paragraph>Some introduction text here...</Paragraph>
             <Paragraph>
               <ToolButton

@@ -90,7 +90,7 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
   const resizeBarClasses =
     borderClass ??
     clsx(
-      "z-10 flex content-center items-center justify-center bg-transparent hover:bg-control-focus",
+      "z-10 flex place-content-center items-center bg-transparent hover:bg-control-focus",
       {
         "-mx-0.5 w-1 cursor-ew-resize": horizontal,
         "-my-0.5 h-1 cursor-ns-resize": !horizontal,
