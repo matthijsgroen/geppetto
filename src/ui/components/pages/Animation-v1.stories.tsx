@@ -28,6 +28,8 @@ import {
   ToolSpacer,
   ToolTab,
 } from "@/ui/components";
+import { Easing } from "storybook/theming";
+import { EasingFunction } from "@/dtos/animation-file2.dto";
 
 const meta = preview.meta({
   title: "Pages/Animation",
@@ -67,16 +69,33 @@ const TimeStretchHandle: FC = () => {
   );
 };
 
+const TimeCurve: FC<{
+  variant: EasingFunction;
+}> = ({ variant }) => {
+  return (
+    <div
+      className={clsx(
+        "h-full flex-1 bg-control-focus/50",
+        variant === "linear" && "clip-linear",
+        variant === "easeIn" && "clip-ease-in",
+        variant === "easeOut" && "clip-ease-out",
+        variant === "easeInOut" && "clip-ease-in-out"
+      )}
+    ></div>
+  );
+};
+
 const TimeBar: FC<{
   start: number;
   duration: number;
   selected?: boolean;
   trackIndex: number;
-}> = ({ start, duration, selected = false, trackIndex }) => {
+  easing?: EasingFunction;
+}> = ({ start, duration, selected = false, trackIndex, easing }) => {
   return (
     <div
       className={clsx(
-        "absolute z-10 flex h-5 cursor-pointer items-center justify-between rounded-control-small border shadow-sm hover:bg-control-highlight",
+        "absolute z-10 flex h-5 cursor-pointer items-center justify-between gap-0.5 rounded-control-small border shadow-sm hover:bg-control-highlight",
         selected && "border-control-focus bg-control-active",
         !selected && "border-control-edge bg-toolbar"
       )}
@@ -87,6 +106,7 @@ const TimeBar: FC<{
       }}
     >
       <TimeStretchHandle />
+      {easing && <TimeCurve variant={easing} />}
       <TimeStretchHandle />
     </div>
   );
@@ -223,15 +243,35 @@ export const Version1 = meta.story({
                       <div className="h-5 pl-4 text-sm">Control 1</div>
                       <div className="h-5 pl-4 text-sm">Control 3</div>
                       <div className="h-5 pl-4 text-sm">Control 4</div>
-                      <div className="h-5 pl-4 text-sm">Control 6</div>
                     </Column>
                   </div>
                   <div className="relative w-7xl border-b border-control-edge/50 bg-panel px-1 py-0.5 last:rounded-b-control nth-[4]:rounded-t-control">
                     <div className="h-4 w-full bg-toolbar"></div>
-                    <TimeBar duration={5} selected start={10} trackIndex={0} />
-                    <TimeBar duration={8} start={20} trackIndex={0} />
-                    <TimeBar duration={14} start={7} trackIndex={1} />
-                    <TimeBar duration={14} start={12} trackIndex={2} />
+                    <TimeBar
+                      duration={5}
+                      selected
+                      start={10}
+                      trackIndex={0}
+                      easing="easeInOut"
+                    />
+                    <TimeBar
+                      duration={8}
+                      start={20}
+                      trackIndex={0}
+                      easing="linear"
+                    />
+                    <TimeBar
+                      duration={14}
+                      start={7}
+                      trackIndex={1}
+                      easing="easeIn"
+                    />
+                    <TimeBar
+                      duration={14}
+                      start={12}
+                      trackIndex={2}
+                      easing="easeOut"
+                    />
 
                     <TimePin activeTrack location={3} />
                     <TimePin activeTrack location={10} />

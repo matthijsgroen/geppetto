@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 
 import { type AppSection } from "@/dtos/application.dto";
+import { Curves } from "@/ui/components";
 
 import { ApplicationMenu } from "./modules/application-menu/ui/ApplicationMenu";
 import { Composition } from "./modules/composition/ui/Composition";
@@ -47,6 +48,7 @@ const App: React.FC = () => {
 
   return (
     <FileContext>
+      <Curves />
       <ImageControlContext>
         <AppContext>
           <ScreenTranslationContext>

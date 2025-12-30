@@ -33,7 +33,7 @@ export type LayerFolder = Folder & {
   visible: boolean;
 };
 
-type EasingFunction = "easeIn" | "easeOut" | "easeInOut" | "linear";
+export type EasingFunction = "easeIn" | "easeOut" | "easeInOut" | "linear";
 
 export type FrameAction =
   | FrameControlAction
