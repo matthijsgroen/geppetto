@@ -1,1 +1,0 @@
-import{j as o}from"./iframe-BB5eUGr5.js";const t=({children:s})=>o.jsx("span",{className:"text-black text-shadow-black text-shadow-xs",children:s});t.__docgenInfo={description:"",methods:[],displayName:"Icon"};export{t as I};

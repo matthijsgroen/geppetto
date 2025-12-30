@@ -1,3 +1,0 @@
-import{p as e,j as s}from"./iframe-BB5eUGr5.js";import{L as a,a as n}from"./Logo-ndBSlh0y.js";import"./preload-helper-PPVm8Dsz.js";import"./Icon-CXRC-y-A.js";const t=e.meta({title:"Atoms/Logo",component:a,tags:["svg"]}),o=t.story(),r=t.story({render:()=>s.jsx(n,{})});o.input.parameters={...o.input.parameters,docs:{...o.input.parameters?.docs,source:{originalSource:"meta.story()",...o.input.parameters?.docs?.source}}};r.input.parameters={...r.input.parameters,docs:{...r.input.parameters?.docs,source:{originalSource:`meta.story({
-  render: () => <LogoIconElement />
-})`,...r.input.parameters?.docs?.source}}};const u=["Logo","LogoIcon"];export{o as Logo,r as LogoIcon,u as __namedExportsOrder,t as default};
