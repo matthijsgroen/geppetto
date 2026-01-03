@@ -25,7 +25,11 @@ const macKeyMap: Record<SpecialKeys, string> = {
 };
 
 export type Shortcut = {
-  interaction: `Key${string}` | SpecialKeys | MouseInteractions;
+  interaction:
+    | `Key${string}`
+    | `Digit${number}`
+    | SpecialKeys
+    | MouseInteractions;
   ctrlOrCmd?: boolean;
   shift?: boolean;
   alt?: boolean;
@@ -45,6 +49,8 @@ const macShortcut = (shortcut: Shortcut): string => {
   let key = "";
   if (shortcut.interaction.startsWith("Key")) {
     key = shortcut.interaction.slice(3);
+  } else if (shortcut.interaction.startsWith("Digit")) {
+    key = shortcut.interaction.slice(5);
   } else {
     key =
       macKeyMap[shortcut.interaction as SpecialKeys] ||
@@ -68,6 +74,8 @@ export const shortcutStr = (shortcut: Shortcut): string => {
   let key = "";
   if (shortcut.interaction.startsWith("Key")) {
     key = shortcut.interaction.slice(3);
+  } else if (shortcut.interaction.startsWith("Digit")) {
+    key = shortcut.interaction.slice(5);
   } else {
     key =
       keyMap[shortcut.interaction as SpecialKeys] ||

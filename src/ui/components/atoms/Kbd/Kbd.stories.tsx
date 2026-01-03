@@ -9,18 +9,18 @@ type StoryProps = {
   disabled?: boolean;
   dimmed?: boolean;
   inMenu?: boolean;
-  ctrlOrCmd: boolean;
-  shift: boolean;
-  alt: boolean;
-  mac: boolean;
+  ctrlOrCmd?: boolean;
+  shift?: boolean;
+  alt?: boolean;
+  mac?: boolean;
 };
 
 const StoryTemplate: React.FC<StoryProps> = ({
   interaction = "KeyO",
-  ctrlOrCmd,
-  shift,
-  alt,
-  mac,
+  ctrlOrCmd = false,
+  shift = false,
+  alt = false,
+  mac = false,
   ...props
 }) => {
   const shortcut: Shortcut = { interaction, ctrlOrCmd, shift, alt, mac };
@@ -45,6 +45,8 @@ const meta = preview.meta({
         "KeyO",
         "KeyS",
         "Backspace",
+        "Digit1",
+        "Digit3",
         "Delete",
         "DelOrBackspace",
         "MouseDrag",
@@ -66,3 +68,11 @@ const meta = preview.meta({
 export default meta;
 
 export const Kbd = meta.story();
+
+export const KbdCmd = meta.story({
+  args: { interaction: "KeyO", ctrlOrCmd: true },
+});
+
+export const KbdShiftDigit = meta.story({
+  args: { interaction: "Digit1", shift: true },
+});
