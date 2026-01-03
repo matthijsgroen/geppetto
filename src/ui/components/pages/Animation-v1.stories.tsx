@@ -1,10 +1,8 @@
 import preview from "@sb/preview";
-import { clsx } from "clsx";
-import type { FC, PropsWithChildren } from "react";
-import { Fragment } from "react/jsx-runtime";
 
-import type { EasingFunction } from "@/dtos/animation-file2.dto";
 import {
+  AnimationsContainer,
+  AnimationTrack,
   Column,
   Control,
   ControlPanel,
@@ -22,8 +20,10 @@ import {
   RangeValue,
   ResizeDirection,
   ResizePanel,
-  Row,
   SubMenu,
+  TimeBar,
+  TimeCurve,
+  TimePin,
   ToolBar,
   ToolButton,
   ToolSeparator,
@@ -42,151 +42,6 @@ const meta = preview.meta({
   tags: ["svg"],
 });
 export default meta;
-
-/** In Seconds */
-type TimeStamp = number;
-
-const TimePin: FC<{ location: TimeStamp; activeTrack?: boolean }> = ({
-  location,
-  activeTrack = false,
-}) => {
-  return (
-    <div
-      className="absolute top-0.5 bottom-0.5 z-20 w-0 border-x border-dashed border-control-edge"
-      style={{ left: `${location}em` }}
-    >
-      <div
-        className={clsx(
-          "cursor-grab rounded-full border border-control-edge bg-toolbar hover:bg-control-highlight",
-          !activeTrack && "-ml-1.5 size-3",
-          activeTrack && "-ml-2 size-4"
-        )}
-      ></div>
-    </div>
-  );
-};
-
-const TimeStretchHandle: FC = () => {
-  return (
-    <div className="h-4 w-1 cursor-ew-resize border-x border-control-edge hover:bg-control-active"></div>
-  );
-};
-
-const TimeCurve: FC<{
-  size?: "flex" | "option";
-  variant: EasingFunction;
-}> = ({ variant, size = "flex" }) => {
-  return (
-    <div
-      className={clsx(
-        "bg-control-focus/50",
-        size === "flex" && "h-full flex-1",
-        size === "option" && "me-1 inline-block h-4 w-8",
-        variant === "linear" && "clip-linear",
-        variant === "easeIn" && "clip-ease-in",
-        variant === "easeOut" && "clip-ease-out",
-        variant === "easeInOut" && "clip-ease-in-out"
-      )}
-    ></div>
-  );
-};
-
-const TimeBar: FC<{
-  start: number;
-  duration: number;
-  selected?: boolean;
-  trackIndex: number;
-  easing?: EasingFunction;
-  variant?: "mini" | "default";
-}> = ({
-  start,
-  duration,
-  selected = false,
-  trackIndex,
-  easing,
-  variant = "default",
-}) => {
-  return (
-    <div
-      className={clsx(
-        "absolute z-10 flex cursor-pointer items-center justify-between gap-0.5 rounded-control-small border hover:bg-control-highlight",
-        variant === "default" && "h-5 shadow-sm",
-        variant === "mini" && "h-0.5",
-        selected && "border-control-focus bg-control-active",
-        !selected && "border-control-edge bg-toolbar"
-      )}
-      style={{
-        left: `${start}em`,
-        width: `${duration}em`,
-        top:
-          variant === "default"
-            ? `calc(${(trackIndex + 1) * 5} * var(--spacing))`
-            : `calc(${4 + trackIndex * 0.5} * var(--spacing))`,
-      }}
-    >
-      {variant === "default" && (
-        <>
-          <TimeStretchHandle />
-          {easing && <TimeCurve variant={easing} />}
-          <TimeStretchHandle />
-        </>
-      )}
-    </div>
-  );
-};
-
-const AnimationsContainer: FC<PropsWithChildren> = ({ children }) => {
-  return (
-    <div className="overflow-scroll">
-      <div className="grid grid-cols-[minmax(min-content,20vw)_1fr] gap-x-1">
-        <div className="sticky top-0 left-0 z-40 border-b border-control-edge bg-toolbar/70 p-2 text-right backdrop-blur-md">
-          Timeline
-        </div>
-        <div className="sticky top-0 z-30 border-b border-control-edge bg-toolbar/70 p-2 backdrop-blur-md">
-          Timestamps
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-};
-
-const AnimationTrack: FC<
-  PropsWithChildren<{
-    name: string;
-    controlNames?: string[];
-    selected?: boolean;
-  }>
-> = ({ children, name, controlNames = [], selected = false }) => {
-  return (
-    <Fragment>
-      <div
-        className={clsx(
-          "sticky left-0 z-30 border-b border-control-edge px-2 text-right whitespace-nowrap backdrop-blur-md",
-          selected && "bg-control-active/50 py-1",
-          !selected && "bg-toolbar/50 py-2"
-        )}
-      >
-        {selected ? (
-          <Column>
-            <div className="h-5">{name}</div>
-            {controlNames.map((controlName) => (
-              <div className="h-5 pl-4 text-sm" key={controlName}>
-                {controlName}
-              </div>
-            ))}
-          </Column>
-        ) : (
-          name
-        )}
-      </div>
-      <div className="relative w-7xl items-center border-b border-control-edge/50 bg-panel px-1 py-0.5 last:rounded-b-control nth-[4]:rounded-t-control">
-        {selected && <div className="h-4 w-full bg-toolbar"></div>}
-        {children}
-      </div>
-    </Fragment>
-  );
-};
 
 export const Version1 = meta.story({
   render: () => (
@@ -318,7 +173,7 @@ export const Version1 = meta.story({
               <ToolSpacer />
               <ToolButton icon={<Icon>?</Icon>} tooltip="Help" />
             </ToolBar>
-            <AnimationsContainer>
+            <AnimationsContainer duration={60} zoom={1}>
               {Array.from({ length: 3 }).map((_, i) => (
                 <AnimationTrack key={i} name={`Track ${1 + i}`}>
                   <TimePin location={3 + i * 2} />
@@ -328,14 +183,12 @@ export const Version1 = meta.story({
                     easing="easeInOut"
                     start={10}
                     trackIndex={0}
-                    variant="mini"
                   />
                   <TimeBar
                     duration={5}
                     easing="easeInOut"
                     start={12}
                     trackIndex={1}
-                    variant="mini"
                   />
                 </AnimationTrack>
               ))}
@@ -371,10 +224,10 @@ export const Version1 = meta.story({
                   trackIndex={2}
                 />
 
-                <TimePin activeTrack location={3} />
-                <TimePin activeTrack location={10} />
-                <TimePin activeTrack location={25} />
-                <TimePin activeTrack location={45} />
+                <TimePin location={3} />
+                <TimePin location={10} />
+                <TimePin location={25} />
+                <TimePin location={45} />
               </AnimationTrack>
               {Array.from({ length: 10 }).map((_, i) => (
                 <AnimationTrack key={5 + i} name={`Track ${5 + i}`}>
