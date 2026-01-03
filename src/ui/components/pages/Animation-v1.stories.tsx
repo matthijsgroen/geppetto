@@ -15,6 +15,7 @@ import {
   MenuDivider,
   MenuHeader,
   MenuItem,
+  MenuRadioGroup,
   Panel,
   PanelTitle,
   RangeInput,
@@ -34,6 +35,9 @@ const meta = preview.meta({
   title: "Pages/Animation",
   argTypes: {
     children: { control: false },
+  },
+  parameters: {
+    layout: "fullscreen",
   },
   tags: ["svg"],
 });
@@ -69,12 +73,15 @@ const TimeStretchHandle: FC = () => {
 };
 
 const TimeCurve: FC<{
+  size?: "flex" | "option";
   variant: EasingFunction;
-}> = ({ variant }) => {
+}> = ({ variant, size = "flex" }) => {
   return (
     <div
       className={clsx(
-        "h-full flex-1 bg-control-focus/50",
+        "bg-control-focus/50",
+        size === "flex" && "h-full flex-1",
+        size === "option" && "me-1 inline-block h-4 w-8",
         variant === "linear" && "clip-linear",
         variant === "easeIn" && "clip-ease-in",
         variant === "easeOut" && "clip-ease-out",
@@ -90,23 +97,40 @@ const TimeBar: FC<{
   selected?: boolean;
   trackIndex: number;
   easing?: EasingFunction;
-}> = ({ start, duration, selected = false, trackIndex, easing }) => {
+  variant?: "mini" | "default";
+}> = ({
+  start,
+  duration,
+  selected = false,
+  trackIndex,
+  easing,
+  variant = "default",
+}) => {
   return (
     <div
       className={clsx(
-        "absolute z-10 flex h-5 cursor-pointer items-center justify-between gap-0.5 rounded-control-small border shadow-sm hover:bg-control-highlight",
+        "absolute z-10 flex cursor-pointer items-center justify-between gap-0.5 rounded-control-small border hover:bg-control-highlight",
+        variant === "default" && "h-5 shadow-sm",
+        variant === "mini" && "h-0.5",
         selected && "border-control-focus bg-control-active",
         !selected && "border-control-edge bg-toolbar"
       )}
       style={{
         left: `${start}em`,
         width: `${duration}em`,
-        top: `calc(${(trackIndex + 1) * 5} * var(--spacing))`,
+        top:
+          variant === "default"
+            ? `calc(${(trackIndex + 1) * 5} * var(--spacing))`
+            : `calc(${4 + trackIndex * 0.5} * var(--spacing))`,
       }}
     >
-      <TimeStretchHandle />
-      {easing && <TimeCurve variant={easing} />}
-      <TimeStretchHandle />
+      {variant === "default" && (
+        <>
+          <TimeStretchHandle />
+          {easing && <TimeCurve variant={easing} />}
+          <TimeStretchHandle />
+        </>
+      )}
     </div>
   );
 };
@@ -172,12 +196,38 @@ export const Version1 = meta.story({
                 </Column>
               </Control>
               <Control label="Easing function">
-                <select>
-                  <option value="linear">Linear</option>
-                  <option value="easeIn">Ease In</option>
-                  <option value="easeOut">Ease Out</option>
-                  <option value="easeInOut">Ease In Out</option>
-                </select>
+                <Menu
+                  align="center"
+                  arrow
+                  direction="bottom"
+                  menuButton={({ open }) => (
+                    <ToolButton
+                      active={open}
+                      label={
+                        <>
+                          <TimeCurve size="option" variant="linear" /> Linear
+                        </>
+                      }
+                    />
+                  )}
+                  portal
+                  transition
+                >
+                  <MenuRadioGroup value={"linear"}>
+                    {(
+                      ["linear", "easeIn", "easeOut", "easeInOut"] as const
+                    ).map((timing) => (
+                      <MenuItem
+                        key={`timing${timing}`}
+                        onClick={() => {}}
+                        type="radio"
+                        value={timing}
+                      >
+                        <TimeCurve size="option" variant={timing} /> {timing}
+                      </MenuItem>
+                    ))}
+                  </MenuRadioGroup>
+                </Menu>
               </Control>
               <Control>
                 <ToolButton label="Done" standAlone />
@@ -194,7 +244,6 @@ export const Version1 = meta.story({
             <ToolBar>
               <PanelTitle>Animations</PanelTitle>
               <ToolButton icon={<Icon>⏮️</Icon>} tooltip="Go to start" />
-              <ToolButton icon={<Icon>◀️</Icon>} tooltip="Step backward" />
               <ToolButton icon={<Icon>▶️</Icon>} tooltip="Play/Pause" />
               <ToolButton icon={<Icon>⏭️</Icon>} tooltip="Go to end" />
               <ToolSeparator />
@@ -232,6 +281,20 @@ export const Version1 = meta.story({
                     <div className="relative w-7xl items-center border-b border-control-edge/50 bg-panel px-1 py-0.5 last:rounded-b-control nth-[4]:rounded-t-control">
                       <TimePin location={3 + i * 2} />
                       <TimePin location={10 + i} />
+                      <TimeBar
+                        duration={5}
+                        easing="easeInOut"
+                        start={10}
+                        trackIndex={0}
+                        variant="mini"
+                      />
+                      <TimeBar
+                        duration={5}
+                        easing="easeInOut"
+                        start={12}
+                        trackIndex={1}
+                        variant="mini"
+                      />
                     </div>
                   </Fragment>
                 ))}
