@@ -173,7 +173,7 @@ export const Version1 = meta.story({
               <ToolSpacer />
               <ToolButton icon={<Icon>?</Icon>} tooltip="Help" />
             </ToolBar>
-            <AnimationsContainer duration={60} zoom={1}>
+            <AnimationsContainer duration={60} title="Timeline" zoom={1}>
               {Array.from({ length: 3 }).map((_, i) => (
                 <AnimationTrack key={i} name={`Track ${1 + i}`}>
                   <TimePin location={3 + i * 2} />
