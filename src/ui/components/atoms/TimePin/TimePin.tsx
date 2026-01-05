@@ -21,9 +21,9 @@ export const TimePin: FC<{
     >
       <div
         className={clsx(
-          "cursor-grab rounded-full border border-control-edge bg-control-interaction hover:bg-control-highlight",
+          "rounded-full border border-control-edge bg-control-interaction",
           !isActiveTrack && "-ms-1 size-2",
-          isActiveTrack && "-ms-2 size-4"
+          isActiveTrack && "-ms-2 size-4 cursor-grab hover:bg-control-highlight"
         )}
         title={`${label ? label + " " : ""}${location}s`}
       ></div>

@@ -40,7 +40,14 @@ export const AnimationTrack: FC<
             ))}
         </Column>
       </div>
-      <div className="items-center border-b border-control-edge/50 bg-panel px-2 last:rounded-b-control nth-[4]:rounded-t-control">
+      <div
+        className={clsx(
+          "items-center border-b border-control-edge/50 bg-panel px-2 last:rounded-b-control nth-[4]:rounded-t-control",
+          {
+            "cursor-pointer hover:bg-control-highlight": !selected,
+          }
+        )}
+      >
         <div className="relative h-full py-0.5">
           <div
             className={clsx("w-full rounded-sm bg-toolbar transition-all", {
