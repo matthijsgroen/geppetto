@@ -41,7 +41,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
         </div>
         {isNewFile(file) && (
           <>
-            <Paragraph align="right">
+            <Paragraph align="right" selectable={false}>
               <ToolButton
                 icon={<Icon>📄</Icon>}
                 label="Load file..."
@@ -52,10 +52,12 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
               <br />
               <Kbd dimmed shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
             </Paragraph>
-            <Paragraph>Load a Geppetto file from disk</Paragraph>
+            <Paragraph selectable={false}>
+              Load a Geppetto file from disk
+            </Paragraph>
           </>
         )}
-        <Paragraph align="right">
+        <Paragraph align="right" selectable={false}>
           <ToolButton
             icon={<Icon>🌅</Icon>}
             label="Load texture..."
@@ -69,8 +71,10 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
             shortcut={{ interaction: "KeyO", ctrlOrCmd: true, shift: true }}
           />
         </Paragraph>
-        <Paragraph>Load a texture from disk</Paragraph>
-        <Paragraph align="right">&mdash; Or &mdash;</Paragraph>
+        <Paragraph selectable={false}>Load a texture from disk</Paragraph>
+        <Paragraph align="right" selectable={false}>
+          &mdash; Or &mdash;
+        </Paragraph>
         <div></div>
         <Paragraph align="right">
           <ToolButton
@@ -81,7 +85,9 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
             standAlone
           />
         </Paragraph>
-        <Paragraph>Load a demo file to explore the app</Paragraph>
+        <Paragraph selectable={false}>
+          Load a demo file to explore the app
+        </Paragraph>
         <div className="col-span-2 pt-4">
           <Paragraph size="small">
             Version: {versionInfo.version} - {versionInfo.commit.slice(0, 6)},
