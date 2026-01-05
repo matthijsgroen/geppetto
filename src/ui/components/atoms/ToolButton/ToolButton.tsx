@@ -16,7 +16,7 @@ type ToolButtonProps = {
   active?: boolean;
   disabled?: boolean;
   icon?: ReactNode;
-  label?: string;
+  label?: ReactNode;
   notificationBadge?: boolean;
   standAlone?: boolean;
   size?: ToolBarSize;

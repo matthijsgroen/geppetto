@@ -12,14 +12,14 @@ export const updateDarkModeClass = () => {
 };
 
 export const preferDarkMode = () => {
-  // Whenever the user explicitly chooses light mode
-  localStorage.theme = "light";
+  // Whenever the user explicitly chooses dark mode
+  localStorage.theme = "dark";
   updateDarkModeClass();
 };
 
 export const preferLightMode = () => {
-  // Whenever the user explicitly chooses dark mode
-  localStorage.theme = "dark";
+  // Whenever the user explicitly chooses light mode
+  localStorage.theme = "light";
   updateDarkModeClass();
 };
 

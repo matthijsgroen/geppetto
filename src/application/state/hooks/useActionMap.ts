@@ -8,12 +8,14 @@ export type Action = {
   icon?: string;
   tooltip?: string;
   shortcut: Shortcut;
+  type?: "checkbox" | "normal" | "radio";
+  isChecked?: () => boolean;
   handler: () => void;
 };
 
-type ActionHandlers<T extends string> = Record<T, Action>;
+export type ActionHandlers<T extends string> = Record<T, Action>;
 
-type ActionMap<ActionHandlers> = {
+export type ActionMap<ActionHandlers> = {
   triggerKeyboardAction: (
     event: KeyboardEvent | React.KeyboardEvent<HTMLElement>
   ) => boolean;

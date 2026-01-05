@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useRef } from "react";
 
 import { ApplicationContext } from "@/application/state/ApplicationContext";
 import { useFile } from "@/application/state/FileContext";
+import type { ActionHandlers } from "@/application/state/hooks/useActionMap";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useAppInstall } from "@/application/state/hooks/useAppInstall";
 import { useAppUpdate } from "@/application/state/hooks/useAppUpdate";
@@ -16,6 +17,11 @@ import { verifyFile as verifyVersion2 } from "@/domain/animation/file2/verifyFil
 import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import { type UseState } from "@/dtos/application.dto";
 import { loadGeppettoFile, saveGeppettoFile } from "@/dtos/geppetto-file";
+import {
+  preferDarkMode,
+  preferLightMode,
+  respectOSColorScheme,
+} from "@/shared/utils/darkMode";
 import {
   LogoIcon,
   Menu,
@@ -79,124 +85,146 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
-      () => ({
-        openImageFile: {
-          caption: "Open...",
-          shortcut: FILE_OPEN,
-          handler: async () => {
-            if (window.showOpenFilePicker) {
-              try {
-                const [fileHandle] = await window.showOpenFilePicker({
-                  multiple: false,
-                  excludeAcceptAllOption: true,
-                  types: [
-                    {
-                      description: "JSON File",
-                      accept: { "application/json": [".json"] },
-                    },
-                  ],
-                });
-                fileRef.current = fileHandle;
-                const [filename, image] = await loadGeppettoFile(fileHandle);
-                fileNameState[1](filename);
-                setFile(image);
-                controlUpdate(() => image.controlValues);
-                mutationUpdate(() => image.defaultFrame);
-              } catch (_ignore) {
-                // user abort
+      () =>
+        ({
+          openImageFile: {
+            caption: "Open...",
+            shortcut: FILE_OPEN,
+            handler: async () => {
+              if (window.showOpenFilePicker) {
+                try {
+                  const [fileHandle] = await window.showOpenFilePicker({
+                    multiple: false,
+                    excludeAcceptAllOption: true,
+                    types: [
+                      {
+                        description: "JSON File",
+                        accept: { "application/json": [".json"] },
+                      },
+                    ],
+                  });
+                  fileRef.current = fileHandle;
+                  const [filename, image] = await loadGeppettoFile(fileHandle);
+                  fileNameState[1](filename);
+                  setFile(image);
+                  controlUpdate(() => image.controlValues);
+                  mutationUpdate(() => image.defaultFrame);
+                } catch (_ignore) {
+                  // user abort
+                }
+              } else {
+                alert("Sorry no support for local filesystem");
               }
-            } else {
-              alert("Sorry no support for local filesystem");
-            }
+            },
           },
-        },
-        saveImageFileAs: {
-          caption: "Save as...",
-          shortcut: FILE_SAVE_AS,
-          handler: async () => {
-            if (window.showSaveFilePicker) {
-              try {
-                const fileHandle = await window.showSaveFilePicker({
-                  suggestedName: "animation.json",
-                  excludeAcceptAllOption: true,
-                  types: [
-                    {
-                      description: "JSON File",
-                      accept: { "application/json": [".json"] },
-                    },
-                  ],
-                });
-                fileRef.current = fileHandle;
-                fileNameState[1](fileHandle.name);
-                await saveGeppettoFile(fileHandle, file);
-              } catch (e) {
-                // user abort
+          saveImageFileAs: {
+            caption: "Save as...",
+            shortcut: FILE_SAVE_AS,
+            handler: async () => {
+              if (window.showSaveFilePicker) {
+                try {
+                  const fileHandle = await window.showSaveFilePicker({
+                    suggestedName: "animation.json",
+                    excludeAcceptAllOption: true,
+                    types: [
+                      {
+                        description: "JSON File",
+                        accept: { "application/json": [".json"] },
+                      },
+                    ],
+                  });
+                  fileRef.current = fileHandle;
+                  fileNameState[1](fileHandle.name);
+                  await saveGeppettoFile(fileHandle, file);
+                } catch (e) {
+                  // user abort
+                }
+              } else {
+                alert("Sorry no support for local filesystem");
               }
-            } else {
-              alert("Sorry no support for local filesystem");
-            }
+            },
           },
-        },
-        saveImageFile: {
-          caption: "Save",
-          shortcut: FILE_SAVE,
-          handler: async () => {
-            if (!fileRef.current && window.showSaveFilePicker) {
-              try {
-                const fileHandle = await window.showSaveFilePicker({
-                  suggestedName: "animation.json",
-                  excludeAcceptAllOption: true,
-                  types: [
-                    {
-                      description: "JSON File",
-                      accept: { "application/json": [".json"] },
-                    },
-                  ],
-                });
-                fileRef.current = fileHandle;
-                fileNameState[1](fileHandle.name);
-              } catch (e) {
-                // user abort
+          saveImageFile: {
+            caption: "Save",
+            shortcut: FILE_SAVE,
+            handler: async () => {
+              if (!fileRef.current && window.showSaveFilePicker) {
+                try {
+                  const fileHandle = await window.showSaveFilePicker({
+                    suggestedName: "animation.json",
+                    excludeAcceptAllOption: true,
+                    types: [
+                      {
+                        description: "JSON File",
+                        accept: { "application/json": [".json"] },
+                      },
+                    ],
+                  });
+                  fileRef.current = fileHandle;
+                  fileNameState[1](fileHandle.name);
+                } catch (e) {
+                  // user abort
+                }
               }
-            }
-            if (fileRef.current) {
-              try {
-                await saveGeppettoFile(fileRef.current, file);
-              } catch (e) {
-                // user abort
+              if (fileRef.current) {
+                try {
+                  await saveGeppettoFile(fileRef.current, file);
+                } catch (e) {
+                  // user abort
+                }
               }
-            }
+            },
           },
-        },
-        openTextureFile: {
-          caption: "Load texture...",
-          shortcut: TEXTURE_OPEN,
-          handler: async () => {
-            if (window.showOpenFilePicker) {
-              try {
-                const [file] = await window.showOpenFilePicker({
-                  multiple: false,
-                  excludeAcceptAllOption: true,
-                  types: [
-                    {
-                      description: "Texture File",
-                      accept: { "image/png": [".png"] },
-                    },
-                  ],
-                });
-                textureFileRef.current = file;
-                const [filename, image] = await loadTextureImage(file);
-                setTextureFileName(filename);
-                setTextureFile(image);
-              } catch (e) {
-                // user abort
+          openTextureFile: {
+            caption: "Load texture...",
+            shortcut: TEXTURE_OPEN,
+            handler: async () => {
+              if (window.showOpenFilePicker) {
+                try {
+                  const [file] = await window.showOpenFilePicker({
+                    multiple: false,
+                    excludeAcceptAllOption: true,
+                    types: [
+                      {
+                        description: "Texture File",
+                        accept: { "image/png": [".png"] },
+                      },
+                    ],
+                  });
+                  textureFileRef.current = file;
+                  const [filename, image] = await loadTextureImage(file);
+                  setTextureFileName(filename);
+                  setTextureFile(image);
+                } catch (e) {
+                  // user abort
+                }
+              } else {
+                alert("Sorry no support for local filesystem");
               }
-            } else {
-              alert("Sorry no support for local filesystem");
-            }
+            },
           },
-        },
-      }),
+          setLightMode: {
+            caption: "Light mode",
+            shortcut: { interaction: "Digit1", shift: true, ctrlOrCmd: true },
+            handler: () => {
+              preferLightMode();
+            },
+          },
+          setDarkMode: {
+            caption: "Dark mode",
+            shortcut: { interaction: "Digit2", shift: true, ctrlOrCmd: true },
+            handler: () => {
+              preferDarkMode();
+            },
+          },
+          setSystemMode: {
+            caption: "System mode",
+            shortcut: { interaction: "Digit3", shift: true, ctrlOrCmd: true },
+            handler: () => {
+              respectOSColorScheme();
+            },
+          },
+        }) satisfies ActionHandlers<string>,
       [
         fileNameState,
         file,
@@ -288,6 +316,13 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         <ActionMenuItem action={actions.saveImageFileAs} />
         <MenuDivider />
         <MenuItem disabled>Revert file</MenuItem>
+      </SubMenu>
+      <SubMenu label="Preferences">
+        <SubMenu label="Color scheme">
+          <ActionMenuItem action={actions.setLightMode} />
+          <ActionMenuItem action={actions.setDarkMode} />
+          <ActionMenuItem action={actions.setSystemMode} />
+        </SubMenu>
       </SubMenu>
       <SubMenu label="Help">
         <MenuItem disabled>Documentation</MenuItem>

@@ -12,6 +12,11 @@ describe("shortcutStr", () => {
       expect(result).toEqual("H");
     });
 
+    it("supports digits", () => {
+      const result = mShort({ interaction: "Digit1" });
+      expect(result).toEqual("1");
+    });
+
     it("supports Delete", () => {
       const result = mShort({ interaction: "Delete" });
       expect(result).toEqual("⌦");
@@ -106,6 +111,11 @@ describe("shortcutStr", () => {
     it("supports BackSpace", () => {
       const result = short({ interaction: "Backspace" });
       expect(result).toEqual("Backspace");
+    });
+
+    it("supports digits", () => {
+      const result = short({ interaction: "Digit1" });
+      expect(result).toEqual("1");
     });
 
     it("supports shift", () => {

@@ -38,6 +38,9 @@ import {
 
 const meta = preview.meta({
   title: "Pages/Composition",
+  parameters: {
+    layout: "fullscreen",
+  },
   tags: ["svg"],
 });
 export default meta;
