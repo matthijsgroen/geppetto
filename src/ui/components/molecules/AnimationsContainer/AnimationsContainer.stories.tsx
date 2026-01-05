@@ -23,7 +23,6 @@ const meta = preview.meta({
       <>
         <AnimationTrack
           controlNames={["Control 1", "Control 2", "Control 3"]}
-          key={0}
           name={`Track 1`}
           selected={false}
         >
@@ -38,7 +37,6 @@ const meta = preview.meta({
         </AnimationTrack>
         <AnimationTrack
           controlNames={["Control 1", "Control 2", "Control 3"]}
-          key={0}
           name={`Track 2`}
           selected={true}
         >
