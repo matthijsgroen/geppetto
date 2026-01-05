@@ -1,3 +1,5 @@
+import { isInDarkMode, listenToDarkModeChanges } from "@/shared/utils/darkMode";
+
 export enum ShaderType {
   Vertex,
   Fragment,
@@ -101,22 +103,15 @@ export const webGLScene = async (
 
   let onChange: () => void;
 
-  const colorSchemeListener = ({
-    matches: darkMode,
-  }: MediaQueryListEvent | MediaQueryList) => {
-    if (darkMode) {
+  const changeListener = listenToDarkModeChanges(() => {
+    if (isInDarkMode()) {
       gl.clearColor(0 / 256, 79 / 256, 59 / 256, 1.0);
     } else {
       // Emerald 500
       gl.clearColor(0 / 256, 188 / 256, 125 / 256, 1.0);
     }
     onChange?.();
-  };
-
-  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-
-  colorSchemeListener(mediaQuery);
-  mediaQuery.addEventListener("change", colorSchemeListener);
+  });
 
   renders.forEach((r) => {
     r.onChange(() => {
@@ -139,7 +134,7 @@ export const webGLScene = async (
     cleanup: () => {
       cleanedUp = true;
       renders.forEach((item) => item.cleanup());
-      mediaQuery.removeEventListener("change", colorSchemeListener);
+      changeListener();
     },
   };
 };

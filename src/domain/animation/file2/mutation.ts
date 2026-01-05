@@ -59,6 +59,9 @@ export type MutationSettings<MutationType> = Omit<
   "name" | "type" | "origin"
 > & { origin?: Vec2 };
 
+export const hasMutations = (file: GeppettoImage): boolean =>
+  Object.keys(file.mutations).length > 0;
+
 export const addMutation = <MutationType extends MutationVector["type"]>(
   file: GeppettoImage,
   name: string,

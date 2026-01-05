@@ -5,6 +5,7 @@ import {
   addControl,
   type AddControlDetails,
   addMutationToControl,
+  hasControls,
   insertControlStep,
   isMutationUnderControl,
   removeControls,
@@ -35,6 +36,19 @@ describe("addControl", () => {
       type: "slider",
     });
     expect(result).toHaveProperty("id", "0");
+  });
+});
+
+describe("hasControls", () => {
+  it("returns false for files without controls", () => {
+    const file = newFile();
+    expect(hasControls(file)).toBe(false);
+  });
+
+  it("returns true for files with controls", () => {
+    const file = newFile();
+    const image = addControl("New Control", undefined, {})(file);
+    expect(hasControls(image)).toBe(true);
   });
 });
 

@@ -89,8 +89,10 @@ const populateTree = (
     }
     if (item.type === "layer") {
       const layerData = newFile.layers[nodeId];
+      const hasWarning = layerData.points.length < 3;
+
       const data: TreeData<NodeType> = {
-        name: layerData.name,
+        name: hasWarning ? `⚠️ ${layerData.name}` : layerData.name,
         icon: "📄",
         type: item.type,
       };
@@ -195,9 +197,7 @@ export const useLayerTreeItems = (
   useMemo(() => {
     populateTree(
       file,
-
       fileRef.current,
-
       treeItemsRef,
       actionHandler,
       showMutations,
