@@ -86,45 +86,43 @@ export const Version1 = meta.story({
         <ToolTab icon={<Icon>🤷🏼</Icon>} label={"Composition"} />
         <ToolTab active icon={<Icon>🏃</Icon>} label={"Animation"} />
       </ToolBar>
-      <Column>
-        <Panel workspace>
-          <Inlay>
-            <ControlPanel>
-              <Control label="Control">
-                <select>
-                  <option value="control1">Control 1</option>
-                  <option value="control2">Control 2</option>
-                  <option value="control3">Control 3</option>
-                </select>
-              </Control>
-              <Control label="End value">
-                <Column>
-                  <RangeInput defaultValue={1} max={5} min={0.1} step={0.1} />
-                  <RangeValue value={1} />
-                </Column>
-              </Control>
-              <Control label="Easing function">
-                <Menu
-                  align="center"
-                  arrow
-                  direction="bottom"
-                  menuButton={({ open }) => (
-                    <ToolButton
-                      active={open}
-                      label={
-                        <>
-                          <TimeCurve size="option" variant="linear" /> Linear
-                        </>
-                      }
-                    />
-                  )}
-                  portal
-                  transition
-                >
-                  <MenuRadioGroup value={"linear"}>
-                    {(
-                      ["linear", "easeIn", "easeOut", "easeInOut"] as const
-                    ).map((timing) => (
+      <Panel workspace>
+        <Inlay>
+          <ControlPanel>
+            <Control label="Control">
+              <select>
+                <option value="control1">Control 1</option>
+                <option value="control2">Control 2</option>
+                <option value="control3">Control 3</option>
+              </select>
+            </Control>
+            <Control label="End value">
+              <Column>
+                <RangeInput defaultValue={1} max={5} min={0.1} step={0.1} />
+                <RangeValue value={1} />
+              </Column>
+            </Control>
+            <Control label="Easing function">
+              <Menu
+                align="center"
+                arrow
+                direction="bottom"
+                menuButton={({ open }) => (
+                  <ToolButton
+                    active={open}
+                    label={
+                      <>
+                        <TimeCurve size="option" variant="linear" /> Linear
+                      </>
+                    }
+                  />
+                )}
+                portal
+                transition
+              >
+                <MenuRadioGroup value={"linear"}>
+                  {(["linear", "easeIn", "easeOut", "easeInOut"] as const).map(
+                    (timing) => (
                       <MenuItem
                         key={`timing${timing}`}
                         onClick={() => {}}
@@ -133,112 +131,102 @@ export const Version1 = meta.story({
                       >
                         <TimeCurve size="option" variant={timing} /> {timing}
                       </MenuItem>
-                    ))}
-                  </MenuRadioGroup>
-                </Menu>
-              </Control>
-              <Control>
-                <ToolButton label="Done" standAlone />
-              </Control>
-            </ControlPanel>
-          </Inlay>
-        </Panel>
-        <ResizePanel
-          defaultSize={250}
-          direction={ResizeDirection.North}
-          minSize={100}
-        >
-          <Panel padding="sm">
-            <ToolBar>
-              <PanelTitle>Animations</PanelTitle>
-              <ToolButton icon={<Icon>⏮️</Icon>} tooltip="Go to start" />
-              <ToolButton icon={<Icon>▶️</Icon>} tooltip="Play/Pause" />
-              <ToolButton icon={<Icon>⏭️</Icon>} tooltip="Go to end" />
-              <ToolSeparator />
-              <ToolButton
-                icon={<Icon>➕</Icon>}
-                label="Animation"
-                tooltip="Add Animation track"
-              />
-              <ToolButton
-                icon={<Icon>➕</Icon>}
-                label="Event"
-                tooltip="Add Event"
-              />
-              <ToolButton
-                icon={<Icon>➕</Icon>}
-                label="Control"
-                tooltip="Add Control layer"
-              />
-              <ToolSpacer />
-              <ToolButton icon={<Icon>?</Icon>} tooltip="Help" />
-            </ToolBar>
-            <AnimationsContainer duration={60} title="Timeline" zoom={1}>
-              {Array.from({ length: 3 }).map((_, i) => (
-                <AnimationTrack key={i} name={`Track ${1 + i}`}>
-                  <TimePin location={3 + i * 2} />
-                  <TimePin location={10 + i} />
-                  <TimeBar
-                    duration={5}
-                    easing="easeInOut"
-                    start={10}
-                    trackIndex={0}
-                  />
-                  <TimeBar
-                    duration={5}
-                    easing="easeInOut"
-                    start={12}
-                    trackIndex={1}
-                  />
-                </AnimationTrack>
-              ))}
-              <AnimationTrack
-                controlNames={["Control 1", "Control 3", "Control 4"]}
-                key={3}
-                name={`Track 4`}
-                selected
-              >
+                    )
+                  )}
+                </MenuRadioGroup>
+              </Menu>
+            </Control>
+            <Control>
+              <ToolButton label="Done" standAlone />
+            </Control>
+          </ControlPanel>
+        </Inlay>
+      </Panel>
+      <ResizePanel
+        defaultSize={250}
+        direction={ResizeDirection.North}
+        minSize={100}
+      >
+        <Panel padding="sm">
+          <ToolBar>
+            <PanelTitle>Animations</PanelTitle>
+            <ToolButton icon={<Icon>⏮️</Icon>} tooltip="Go to start" />
+            <ToolButton icon={<Icon>▶️</Icon>} tooltip="Play/Pause" />
+            <ToolButton icon={<Icon>⏭️</Icon>} tooltip="Go to end" />
+            <ToolSeparator />
+            <ToolButton
+              icon={<Icon>➕</Icon>}
+              label="Animation"
+              tooltip="Add Animation track"
+            />
+            <ToolButton
+              icon={<Icon>➕</Icon>}
+              label="Event"
+              tooltip="Add Event"
+            />
+            <ToolButton
+              icon={<Icon>➕</Icon>}
+              label="Control"
+              tooltip="Add Control layer"
+            />
+            <ToolSpacer />
+            <ToolButton icon={<Icon>?</Icon>} tooltip="Help" />
+          </ToolBar>
+          <AnimationsContainer duration={60} title="Timeline" zoom={1}>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <AnimationTrack key={i} name={`Track ${1 + i}`}>
+                <TimePin location={3 + i * 2} />
+                <TimePin location={10 + i} />
                 <TimeBar
                   duration={5}
                   easing="easeInOut"
-                  selected
                   start={10}
                   trackIndex={0}
                 />
                 <TimeBar
-                  duration={8}
-                  easing="linear"
-                  start={20}
-                  trackIndex={0}
-                />
-                <TimeBar
-                  duration={14}
-                  easing="easeIn"
-                  start={7}
+                  duration={5}
+                  easing="easeInOut"
+                  start={12}
                   trackIndex={1}
                 />
-                <TimeBar
-                  duration={14}
-                  easing="easeOut"
-                  start={12}
-                  trackIndex={2}
-                />
-
-                <TimePin location={3} />
-                <TimePin location={10} />
-                <TimePin location={25} />
-                <TimePin location={45} />
               </AnimationTrack>
-              {Array.from({ length: 10 }).map((_, i) => (
-                <AnimationTrack key={5 + i} name={`Track ${5 + i}`}>
-                  <TimePin location={3 + i * 2} />
-                  <TimePin location={10 + i} />
-                </AnimationTrack>
-              ))}
-            </AnimationsContainer>
-          </Panel>
-        </ResizePanel>
-      </Column>
+            ))}
+            <AnimationTrack
+              controlNames={["Control 1", "Control 3", "Control 4"]}
+              key={3}
+              name={`Track 4`}
+              selected
+            >
+              <TimeBar
+                duration={5}
+                easing="easeInOut"
+                selected
+                start={10}
+                trackIndex={0}
+              />
+              <TimeBar duration={8} easing="linear" start={20} trackIndex={0} />
+              <TimeBar duration={14} easing="easeIn" start={7} trackIndex={1} />
+              <TimeBar
+                duration={14}
+                easing="easeOut"
+                start={12}
+                trackIndex={2}
+              />
+
+              <TimePin location={3} />
+              <TimePin location={10} />
+              <TimePin location={25} />
+              <TimePin location={45} />
+            </AnimationTrack>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <AnimationTrack key={5 + i} name={`Track ${5 + i}`}>
+                <TimePin location={3 + i * 2} />
+                <TimePin location={10 + i} />
+              </AnimationTrack>
+            ))}
+          </AnimationsContainer>
+        </Panel>
+      </ResizePanel>
     </Column>
   ),
 });

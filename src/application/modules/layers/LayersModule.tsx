@@ -12,6 +12,7 @@ import { useScreenTranslation } from "@/application/state/ScreenTranslationConte
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import LayerMouseControl from "@/application/ui/LayerMouseControl";
 import { MouseMode } from "@/application/ui/MouseControl";
+import { SectionSelector } from "@/application/ui/SectionSelector";
 import {
   addPoint,
   deletePoint,
@@ -41,15 +42,14 @@ import {
   ToolButton,
   ToolSeparator,
   ToolSpacer,
-  ToolTab,
 } from "@/ui/components";
 
-import { type IDLayer } from "../programs/showLayerPoints";
-import { ShapeTree } from "./ShapeTree";
+import { type IDLayer } from "./programs/showLayerPoints";
+import { ShapeTree } from "./ui/ShapeTree";
 
-type LayersProps = {
+type LayersModuleProps = {
   onSectionChange?: (newSection: AppSection) => void;
-  textureState: UseState<HTMLImageElement | null>;
+  texture: HTMLImageElement | null;
   menu?: React.ReactNode;
 };
 
@@ -72,8 +72,8 @@ const alignOnGrid = (gridSettings: GridSettings, coord: Vec2): Vec2 =>
 
 const DELETE_POINT: Shortcut = { interaction: "DelOrBackspace" };
 
-export const Layers: React.FC<LayersProps> = ({
-  textureState,
+export const LayersModule: React.FC<LayersModuleProps> = ({
+  texture,
   onSectionChange,
   menu,
 }) => {
@@ -88,7 +88,6 @@ export const Layers: React.FC<LayersProps> = ({
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
-  const texture = textureState[0];
   const [file, setFile] = useFile();
 
   const layers = file.layers;
@@ -244,13 +243,10 @@ export const Layers: React.FC<LayersProps> = ({
       <ToolBar>
         {menu}
         <ToolSeparator />
-        <ToolTab active icon={<Icon>🧬</Icon>} label="Layers" />
-        <ToolTab
-          icon={<Icon>🤷🏼</Icon>}
-          label="Composition"
-          onClick={() => onSectionChange?.("composition")}
+        <SectionSelector
+          activeSection="layers"
+          onSectionChange={onSectionChange}
         />
-        <ToolTab disabled icon={<Icon>🏃</Icon>} label="Animation" />
         <ToolSeparator />
         <ToolButton
           active={mouseMode === MouseMode.Normal}

@@ -3,9 +3,10 @@ import React, { useEffect, useState } from "react";
 import { type AppSection } from "@/dtos/application.dto";
 import { Curves } from "@/ui/components";
 
+import { AnimationModule } from "./modules/animation/AnimationModule";
 import { ApplicationMenu } from "./modules/application-menu/ui/ApplicationMenu";
-import { Composition } from "./modules/composition/ui/Composition";
-import { Layers } from "./modules/layers/ui/Layers";
+import { CompositionModule } from "./modules/composition/CompositionModule";
+import { LayersModule } from "./modules/layers/LayersModule";
 import { AppContext } from "./state/ApplicationContext";
 import { FileContext } from "./state/FileContext";
 import { ImageControlContext } from "./state/ImageControlContext";
@@ -28,7 +29,7 @@ if (process.env.NODE_ENV !== "development") {
 }
 
 const App: React.FC = () => {
-  const textureFileState = useState<HTMLImageElement | null>(null);
+  const [textureFile, setTextureFile] = useState<HTMLImageElement | null>(null);
   const [appSection, setAppSection] = useState<AppSection>("layers");
 
   const [fileName, setFileName] = useState<string | null>(null);
@@ -42,7 +43,7 @@ const App: React.FC = () => {
     <ApplicationMenu
       fileNameState={[fileName, setFileName]}
       textureFileNameState={[textureFileName, setTextureFileName]}
-      textureFileState={textureFileState}
+      textureFileState={[textureFile, setTextureFile]}
     />
   );
 
@@ -53,19 +54,28 @@ const App: React.FC = () => {
         <AppContext>
           <ScreenTranslationContext>
             {appSection === "layers" && (
-              <Layers
+              <LayersModule
                 menu={applicationMenu}
                 onSectionChange={setAppSection}
-                textureState={textureFileState}
+                texture={textureFile}
               />
             )}
           </ScreenTranslationContext>
           <ScreenTranslationContext>
             {appSection === "composition" && (
-              <Composition
+              <CompositionModule
                 menu={applicationMenu}
                 onSectionChange={setAppSection}
-                textureState={textureFileState}
+                texture={textureFile}
+              />
+            )}
+          </ScreenTranslationContext>
+          <ScreenTranslationContext>
+            {appSection === "animation" && (
+              <AnimationModule
+                menu={applicationMenu}
+                onSectionChange={setAppSection}
+                texture={textureFile}
               />
             )}
           </ScreenTranslationContext>

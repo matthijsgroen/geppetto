@@ -2,6 +2,7 @@ import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useContext } from "react";
 
 import { ApplicationContext } from "@/application/state/ApplicationContext";
+import { hasControls } from "@/domain/animation/file2/controls";
 import { isNewFile } from "@/domain/animation/file2/new";
 import { hasPoints } from "@/domain/animation/file2/shapes";
 import { type GeppettoImage } from "@/dtos/animation-file2.dto";
@@ -99,10 +100,22 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
     );
   }
 
-  if (screen === "composition" && texture && !hasPoints(file)) {
+  if (
+    (screen === "composition" || screen === "animation") &&
+    texture &&
+    !hasPoints(file)
+  ) {
     return (
       <p>
         No layers with a surface. Add a layer in the &ldquo;Layers&rdquo;
+        screen.
+      </p>
+    );
+  }
+  if (screen === "animation" && texture && !hasControls(file)) {
+    return (
+      <p>
+        No Controls defined. Add a control in the &ldquo;Composition&rdquo;
         screen.
       </p>
     );

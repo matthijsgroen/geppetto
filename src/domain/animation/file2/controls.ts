@@ -16,6 +16,10 @@ export type AddControlDetails = {
   control: ControlDefinition;
   id: string;
 };
+
+export const hasControls = (file: GeppettoImage) =>
+  Object.keys(file.controls).length > 0;
+
 export const addControl = (
   controlName: string,
   position?: PlacementInfo,
