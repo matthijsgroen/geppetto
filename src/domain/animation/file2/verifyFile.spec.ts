@@ -1,6 +1,6 @@
-import { v1Format } from "@/domain/animation/file1/mockdata/file1.1";
+import { v1Format } from "@/shared/test/mockdata/file1.1";
+import { v2Format } from "@/shared/test/mockdata/file2.0";
 
-import { v2Format } from "./mockdata/file2.0";
 import { verifyFile } from "./verifyFile";
 
 describe("verifyFile", () => {
