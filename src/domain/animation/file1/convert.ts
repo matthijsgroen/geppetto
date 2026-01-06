@@ -5,6 +5,7 @@ import {
   type Keyframe,
   type MutationVector,
 } from "@/dtos/animation-file1.dto";
+import type { Animation } from "@/dtos/animation-file2.dto";
 import {
   type FrameAction,
   type FrameControlAction,
@@ -97,45 +98,64 @@ const convertControls = (
 };
 
 const isEventAction = (frame: FrameAction): frame is FrameEvent =>
-  "event" in frame;
+  "eventName" in frame;
 
 const isControlAction = (frame: FrameAction): frame is FrameControlAction =>
-  "controlId" in frame;
+  "controlEndValue" in frame;
 
 const convertAnimations = (
-  items: Hierarchy<string>,
+  animations: Record<string, Animation>,
   source: GeppettoImage,
   target: ImageDefinition
 ) => {
-  for (const [itemId, item] of Object.entries(items)) {
-    if (item.type === "animation") {
-      const animation = source.animations[itemId];
+  for (const animation of Object.values(animations)) {
+    const keyframes: AnimationFrame[] = [];
 
-      const keyframes: AnimationFrame[] = [];
+    for (const frameEvent of animation.events) {
+      const time = frameEvent.start;
+      const existing = keyframes.findIndex((v) => v.time === time);
+      if (existing !== -1) {
+        keyframes[existing].event = frameEvent.eventName;
+      } else {
+        keyframes.push({
+          time,
+          controlValues: {},
+          event: frameEvent.eventName,
+        });
+      }
+    }
 
-      for (const frameAction of animation.actions) {
-        if (isEventAction(frameAction)) {
-          const time = frameAction.start;
-          const existing = keyframes.findIndex((v) => v.time === time);
-          if (existing !== -1) {
-            keyframes[existing].event = frameAction.event;
-          } else {
-            keyframes.push({
-              time,
-              controlValues: {},
-              event: frameAction.event,
-            });
+    for (const track of animation.tracks) {
+      if (track.type !== "control") {
+        continue;
+      }
+      for (const frameAction of track.actions) {
+        if (isControlAction(frameAction)) {
+          const endTime = frameAction.start + frameAction.duration;
+          const existingEnd = keyframes.findIndex((v) => v.time === endTime);
+          const controlName = source.controls[track.controlId].name;
+          if (frameAction.controlStartValue !== undefined) {
+            const existingStart = keyframes.findIndex(
+              (v) => v.time === frameAction.start
+            );
+            if (existingStart !== -1) {
+              keyframes[existingStart].controlValues[controlName] =
+                frameAction.controlStartValue;
+            } else {
+              keyframes.push({
+                time: frameAction.start,
+                controlValues: {
+                  [controlName]: frameAction.controlStartValue,
+                },
+              });
+            }
           }
-        } else if (isControlAction(frameAction)) {
-          const time = frameAction.start + frameAction.duration;
-          const existing = keyframes.findIndex((v) => v.time === time);
-          const controlName = source.controls[frameAction.controlId].name;
-          if (existing !== -1) {
-            keyframes[existing].controlValues[controlName] =
+          if (existingEnd !== -1) {
+            keyframes[existingEnd].controlValues[controlName] =
               frameAction.controlEndValue;
           } else {
             keyframes.push({
-              time,
+              time: endTime,
               controlValues: {
                 [controlName]: frameAction.controlEndValue,
               },
@@ -143,13 +163,13 @@ const convertAnimations = (
           }
         }
       }
-
-      target.animations.push({
-        name: animation.name,
-        looping: animation.looping,
-        keyframes,
-      });
     }
+
+    target.animations.push({
+      name: animation.name,
+      looping: animation.looping,
+      keyframes: keyframes.toSorted((a, b) => a.time - b.time),
+    });
   }
 };
 
@@ -177,7 +197,7 @@ export const convertFromV2 = (
     result.defaultFrame[mutationName] = mutationValue;
   }
 
-  convertAnimations(geppettoImage.animationHierarchy, geppettoImage, result);
+  convertAnimations(geppettoImage.animations, geppettoImage, result);
 
   return result;
 };

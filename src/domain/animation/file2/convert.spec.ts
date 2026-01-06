@@ -26,6 +26,12 @@ describe("from version 1 to 2", () => {
                 },
               },
               {
+                time: 800,
+                controlValues: {
+                  HeadRotate: 0.5,
+                },
+              },
+              {
                 time: 1000,
                 controlValues: {
                   HeadRotate: 1,
@@ -41,15 +47,27 @@ describe("from version 1 to 2", () => {
 
       const animation = v2.animations[animationIds[0]];
       expect(animation.name).toBe("Test Animation");
-      expect(animation.actions).toEqual([
+      expect(animation.looping).toBe(true);
+      expect(animation.tracks).toEqual([
         {
-          frameId: "1",
-          start: 0,
-          duration: 1000,
-          easingFunction: "linear",
+          type: "control",
           controlId: "0",
-          controlStartValue: 0,
-          controlEndValue: 1,
+          length: 1000,
+          actions: [
+            {
+              start: 0,
+              duration: 800,
+              easingFunction: "linear",
+              controlStartValue: 0,
+              controlEndValue: 0.5,
+            },
+            {
+              start: 800,
+              duration: 200,
+              easingFunction: "linear",
+              controlEndValue: 1,
+            },
+          ],
         },
       ]);
     });
@@ -96,24 +114,27 @@ describe("from version 1 to 2", () => {
 
       const animation = v2.animations[animationIds[0]];
       expect(animation.name).toBe("Test Animation");
-      expect(animation.actions).toEqual([
+      expect(animation.tracks).toEqual([
         {
-          frameId: "1",
-          start: 0,
-          duration: 1000,
-          easingFunction: "linear",
+          type: "control",
           controlId: "0",
-          controlStartValue: 0,
-          controlEndValue: 1,
-        },
-        {
-          frameId: "2",
-          start: 1000,
-          duration: 1000,
-          easingFunction: "linear",
-          controlId: "0",
-          controlStartValue: 0,
-          controlEndValue: 1,
+          length: 2000,
+          actions: [
+            {
+              start: 0,
+              duration: 1000,
+              easingFunction: "linear",
+              controlStartValue: 0,
+              controlEndValue: 1,
+            },
+            {
+              start: 1000,
+              duration: 1000,
+              easingFunction: "linear",
+              controlStartValue: 0,
+              controlEndValue: 1,
+            },
+          ],
         },
       ]);
     });

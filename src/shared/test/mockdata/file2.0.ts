@@ -112,42 +112,47 @@ export const v2Format: GeppettoImage = {
     "1": 0.5,
   },
 
-  animationHierarchy: {
-    root: { type: "root", children: ["0"] },
-    "0": { type: "animation", parentId: "root" },
-  },
-  animationFolders: {},
   animations: {
     "0": {
       name: "breathing",
       looping: true,
-      actions: [
+      tracks: [
         {
-          frameId: "1",
-          start: 0,
-          duration: 500,
-          easingFunction: "linear",
+          type: "control",
           controlId: "0",
-          controlEndValue: 0,
+          length: 2500,
+          actions: [
+            {
+              start: 0,
+              duration: 500,
+              easingFunction: "linear",
+              controlEndValue: 0,
+            },
+            {
+              start: 500,
+              duration: 2000,
+              easingFunction: "linear",
+              controlEndValue: 1,
+            },
+          ],
         },
         {
-          frameId: "3",
-          start: 0,
-          duration: 2500,
-          easingFunction: "linear",
+          type: "control",
           controlId: "1",
-          controlEndValue: 1,
+          length: 2500,
+          actions: [
+            {
+              start: 0,
+              duration: 2500,
+              easingFunction: "linear",
+              controlEndValue: 1,
+            },
+          ],
         },
-        {
-          frameId: "2",
-          start: 500,
-          duration: 2000,
-          easingFunction: "linear",
-          controlId: "0",
-          controlEndValue: 1,
-        },
-        { frameId: "4", start: 2500, event: "Breathing" },
-        { frameId: "5", start: 3500, event: "Blink" },
+      ],
+      events: [
+        { start: 2500, eventName: "Breathing" },
+        { start: 3500, eventName: "Blink" },
       ],
     },
   },

@@ -1,11 +1,14 @@
 import {
-  type AnimationFrame,
   type ImageDefinition,
   type MutationVector,
 } from "@/dtos/animation-file1.dto";
-import type { FrameControlAction } from "@/dtos/animation-file2.dto";
+import type {
+  AnimationControlTrack,
+  FrameControlAction,
+  FrameEvent,
+} from "@/dtos/animation-file2.dto";
 import {
-  type FrameAction,
+  type Animation,
   type GeppettoImage,
   type Hierarchy,
   type NodeType,
@@ -143,102 +146,101 @@ const populateControls = (
   return result;
 };
 
-const convertKeyframes = (
-  keyframes: AnimationFrame[],
+const convertKeyframeToTracks = (
+  keyframes: ImageDefinition["animations"][0]["keyframes"],
   target: GeppettoImage
-): FrameAction[] => {
-  const result: FrameAction[] = [];
-  const lastControlEvent: Record<string, number> = {};
-  const lastControlFrameActions: Record<string, FrameControlAction> = {};
-  let frameId = 0;
+): AnimationControlTrack[] => {
+  const controlTracks: Record<string, AnimationControlTrack> = {};
+  let trackLength = 0;
 
-  for (const frame of keyframes) {
-    for (const control in frame.controlValues) {
-      const controlId = getControlId(target, control);
-
-      const controlStart = lastControlEvent[controlId] ?? 0;
-      const duration = frame.time - controlStart;
-
-      const lastControlFrameAction = lastControlFrameActions[controlId];
-      if (
-        lastControlFrameAction &&
-        lastControlFrameAction.duration === 0 &&
-        lastControlFrameAction.start === controlStart
-      ) {
-        // Replace start and end value
-        lastControlFrameAction.controlStartValue =
-          lastControlFrameAction.controlEndValue;
-        lastControlFrameAction.controlEndValue = frame.controlValues[control];
-        lastControlFrameAction.duration = duration;
-
-        lastControlEvent[controlId] = frame.time;
-
-        continue;
-      }
-      if (
-        lastControlFrameAction &&
-        lastControlFrameAction.duration === 1 &&
-        lastControlFrameAction.start === controlStart - 1
-      ) {
-        // Replace start and end value
-        lastControlFrameAction.controlStartValue =
-          lastControlFrameAction.controlEndValue;
-        lastControlFrameAction.controlEndValue = frame.controlValues[control];
-        lastControlFrameAction.duration = duration + 1;
-        lastControlFrameAction.start = controlStart - 1;
-
-        lastControlEvent[controlId] = frame.time;
-
-        continue;
+  for (const keyframe of keyframes) {
+    for (const [controlName, controlValue] of Object.entries(
+      keyframe.controlValues
+    )) {
+      const controlId = getControlId(target, controlName);
+      if (!controlTracks[controlId]) {
+        controlTracks[controlId] = {
+          type: "control",
+          controlId,
+          length: 0,
+          actions: [],
+        };
       }
 
-      const frameControlAction: FrameAction = {
-        frameId: `${++frameId}`,
-        start: controlStart,
-        duration,
+      const track = controlTracks[controlId];
+      const lastAction: FrameControlAction | undefined =
+        track.actions[track.actions.length - 1];
+      const previousEnd = lastAction
+        ? lastAction.start + lastAction.duration
+        : 0;
+
+      if (keyframe.time > trackLength) {
+        trackLength = keyframe.time;
+      }
+
+      if (lastAction && lastAction.duration === 1) {
+        lastAction.controlStartValue = lastAction.controlEndValue;
+        lastAction.duration = keyframe.time - lastAction.start;
+
+        lastAction.controlEndValue = controlValue;
+        continue;
+      }
+      if (lastAction && lastAction.duration === 0) {
+        lastAction.controlStartValue = lastAction.controlEndValue;
+        lastAction.duration = keyframe.time - lastAction.start;
+
+        lastAction.controlEndValue = controlValue;
+        continue;
+      }
+
+      track.actions.push({
+        start: previousEnd,
+        duration: keyframe.time - previousEnd,
         easingFunction: "linear",
-        controlId,
-        controlEndValue: frame.controlValues[control],
-      };
-
-      result.push(frameControlAction);
-      lastControlEvent[controlId] = frame.time;
-      lastControlFrameActions[controlId] = frameControlAction;
-    }
-    if (frame.event) {
-      result.push({
-        frameId: `${++frameId}`,
-        start: frame.time,
-        event: frame.event,
+        controlEndValue: controlValue,
       });
     }
   }
 
-  return result.sort((a, b) => a.start - b.start);
+  return Object.values(controlTracks).map((track) => ({
+    ...track,
+    length: trackLength,
+  }));
+};
+
+const convertEvents = (
+  keyframes: ImageDefinition["animations"][0]["keyframes"],
+  target: GeppettoImage
+): FrameEvent[] => {
+  const events: FrameEvent[] = [];
+  for (const keyframe of keyframes) {
+    if (keyframe.event) {
+      events.push({
+        start: keyframe.time,
+        eventName: keyframe.event,
+      });
+    }
+  }
+  return events;
 };
 
 const populateAnimations = (
   animations: ImageDefinition["animations"],
   target: GeppettoImage,
   createId: () => string
-): Hierarchy<"animationFolder" | "animation"> => {
-  const result: Hierarchy<"animation"> = {};
+): Record<string, Animation> => {
+  const result: Record<string, Animation> = {};
   const ids: string[] = [];
   for (const animation of animations) {
     const id = createId();
     ids.push(id);
     result[id] = {
-      type: "animation",
-      parentId: "root",
-    };
-
-    target.animations[id] = {
       name: animation.name,
       looping: animation.looping,
-      actions: convertKeyframes(animation.keyframes, target),
+      tracks: convertKeyframeToTracks(animation.keyframes, target),
+      events: convertEvents(animation.keyframes, target),
     };
   }
-  result.root = { type: "root", children: ids };
   return result;
 };
 
@@ -278,11 +280,7 @@ export const convertFromV1 = (imageDef: ImageDefinition): GeppettoImage => {
   }
 
   id = 0;
-  result.animationHierarchy = populateAnimations(
-    imageDef.animations,
-    result,
-    createId
-  );
+  result.animations = populateAnimations(imageDef.animations, result, createId);
 
   return result;
 };
