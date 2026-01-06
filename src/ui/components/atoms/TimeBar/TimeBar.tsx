@@ -3,13 +3,14 @@ import { type FC, use } from "react";
 
 import type { EasingFunction } from "@/dtos/animation-file2.dto";
 import { TimeCurve } from "@/ui/components/atoms/TimeCurve/TimeCurve";
+import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { AnimationTrackContext } from "@/ui/components/molecules/AnimationTrack/AnimationTrackContext";
 
 import { TimeStretchHandle } from "./TimeStretchHandle";
 
 export const TimeBar: FC<{
-  start: number;
-  duration: number;
+  start: TimeStamp;
+  duration: TimeStamp;
   selected?: boolean;
   trackIndex: number;
   easing?: EasingFunction;
@@ -29,11 +30,11 @@ export const TimeBar: FC<{
         !selected && "border-control-edge bg-toolbar"
       )}
       style={{
-        left: `${start}em`,
+        left: `calc(${start}em + 2 * var(--spacing))`,
         width: `${duration}em`,
         top:
           activeVariant === "default"
-            ? `calc(${(trackIndex + 1) * 5} * var(--spacing))`
+            ? `calc(${6 + trackIndex * 5} * var(--spacing))`
             : `calc(${4 + trackIndex * 0.5} * var(--spacing))`,
       }}
     >

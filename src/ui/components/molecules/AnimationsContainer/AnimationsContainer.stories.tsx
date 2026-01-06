@@ -22,9 +22,9 @@ const meta = preview.meta({
     children: (
       <>
         <AnimationTrack
-          trackNames={["Control 1", "Control 2", "Control 3"]}
           name="Track 1"
           selected={false}
+          trackNames={["Control 1", "Control 2", "Control 3"]}
         >
           <TimeBar duration={5} easing="easeInOut" start={10} trackIndex={0} />
           <TimeBar duration={8} easing="linear" start={20} trackIndex={0} />
@@ -36,9 +36,9 @@ const meta = preview.meta({
           <TimePin location={25} />
         </AnimationTrack>
         <AnimationTrack
-          trackNames={["Control 1", "Control 2", "Control 3"]}
           name="Track 2"
           selected={true}
+          trackNames={["Control 1", "Control 2", "Control 3"]}
         >
           <TimeBar duration={5} easing="easeInOut" start={10} trackIndex={0} />
           <TimeBar duration={8} easing="linear" start={20} trackIndex={0} />

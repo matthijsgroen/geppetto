@@ -16,16 +16,16 @@ const meta = preview.meta({
     (Story, { args }) => (
       <AnimationsContainer duration={30} zoom={1}>
         <AnimationTrack
-          trackNames={["Control 1", "Control 2"]}
           name={`Track 1`}
           selected={args.activeTrack}
+          trackNames={["Control 1", "Control 2"]}
         >
           <Story />
         </AnimationTrack>
         <AnimationTrack
-          trackNames={["Control 1"]}
           name={`ShadowTrack 1`}
           selected={false}
+          trackNames={["Control 1"]}
         >
           <TimePinComponent
             activeTrack={false}

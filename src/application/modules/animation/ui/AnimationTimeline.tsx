@@ -4,7 +4,12 @@ import type {
   FrameControlAction,
   GeppettoImage,
 } from "@/dtos/animation-file2.dto";
-import { AnimationTrack, TimeBar, TimePin } from "@/ui/components";
+import {
+  AnimationTrack,
+  TimeBar,
+  TimeLineEndHandle,
+  TimePin,
+} from "@/ui/components";
 
 export const AnimationTimeline: FC<{
   animationId: string;
@@ -24,10 +29,21 @@ export const AnimationTimeline: FC<{
       ? file.controls[track.controlId].name
       : (file.layerFolders[track.layerId] ?? file.layers[track.layerId]).name
   );
+  const animationLength = Math.max(
+    ...animation.tracks.map((track) => {
+      if (track.type === "control") {
+        return track.length;
+      }
+      return 0;
+    }),
+    ...animation.events.map((event) => event.start)
+  );
 
   return (
     <AnimationTrack
       key={animationId}
+      length={animationLength / 1000}
+      loop={animation.looping}
       name={animation.name}
       onSelect={onSelect}
       selected={selected}
@@ -46,6 +62,16 @@ export const AnimationTimeline: FC<{
             ))
           : null
       )}
+      {animation.tracks.map((track, index) => {
+        return track.type === "control" ? (
+          <TimeLineEndHandle
+            key={`${track.controlId}-end`}
+            location={track.length / 1000}
+            loop={animation.looping}
+            trackIndex={index}
+          />
+        ) : null;
+      })}
       {animation.events.map((event, eventIndex) => (
         <TimePin
           key={`event-${eventIndex}`}

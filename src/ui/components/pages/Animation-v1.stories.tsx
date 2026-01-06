@@ -23,6 +23,7 @@ import {
   SubMenu,
   TimeBar,
   TimeCurve,
+  TimeLineEndHandle,
   TimePin,
   ToolBar,
   ToolButton,
@@ -172,9 +173,13 @@ export const Version1 = meta.story({
             <ToolSpacer />
             <ToolButton icon={<Icon>?</Icon>} tooltip="Help" />
           </ToolBar>
-          <AnimationsContainer duration={60} title="Timeline" zoom={1}>
+          <AnimationsContainer duration={60} title="Timeline" zoom={2}>
             {Array.from({ length: 3 }).map((_, i) => (
-              <AnimationTrack key={i} name={`Track ${1 + i}`}>
+              <AnimationTrack
+                key={i}
+                length={Math.max(3 + i * 2, 10 + i, 17)}
+                name={`Track ${1 + i}`}
+              >
                 <TimePin location={3 + i * 2} />
                 <TimePin location={10 + i} />
                 <TimeBar
@@ -192,34 +197,42 @@ export const Version1 = meta.story({
               </AnimationTrack>
             ))}
             <AnimationTrack
-              trackNames={["Control 1", "Control 3", "Control 4"]}
               key={3}
-              name={`Track 4`}
+              length={22}
+              loop={true}
+              name="Track 4"
               selected
+              trackNames={["Control 1", "Control 3", "Control 4"]}
             >
               <TimeBar
-                duration={5}
+                duration={3}
                 easing="easeInOut"
                 selected
-                start={10}
+                start={3}
                 trackIndex={0}
               />
-              <TimeBar duration={8} easing="linear" start={20} trackIndex={0} />
+              <TimeBar duration={8} easing="linear" start={12} trackIndex={0} />
               <TimeBar duration={14} easing="easeIn" start={7} trackIndex={1} />
               <TimeBar
                 duration={14}
                 easing="easeOut"
-                start={12}
+                start={0}
                 trackIndex={2}
               />
+              <TimeLineEndHandle location={14} loop={true} trackIndex={2} />
+              <TimeLineEndHandle location={22} loop={true} trackIndex={1} />
+              <TimeLineEndHandle location={20} loop={true} trackIndex={0} />
 
               <TimePin location={3} />
-              <TimePin location={10} />
-              <TimePin location={25} />
-              <TimePin location={45} />
+              <TimePin location={8} />
+              <TimePin location={16} />
             </AnimationTrack>
             {Array.from({ length: 10 }).map((_, i) => (
-              <AnimationTrack key={5 + i} name={`Track ${5 + i}`}>
+              <AnimationTrack
+                key={5 + i}
+                length={Math.max(3 + i * 2, 10 + i)}
+                name={`Track ${5 + i}`}
+              >
                 <TimePin location={3 + i * 2} />
                 <TimePin location={10 + i} />
               </AnimationTrack>
