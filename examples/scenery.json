@@ -65,8 +65,8 @@
       "name": "Smoke",
       "looping": true,
       "keyframes": [
-        { "time": 0, "controlValues": { "Rook": 0, "Smoke": 0 } },
-        { "time": 10000, "controlValues": { "Rook": 1, "Smoke": 1 } }
+        { "time": 0, "controlValues": { "Smoke": 0 } },
+        { "time": 10000, "controlValues": { "Smoke": 1 } }
       ]
     },
     {

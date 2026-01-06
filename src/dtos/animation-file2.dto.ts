@@ -40,23 +40,26 @@ export type FrameAction =
   | FrameLayerVisibilityAction
   | FrameEvent;
 
-export type FrameControlAction = {
+type FrameBase = {
+  frameId: string;
+  start: number;
+};
+
+export type FrameControlAction = FrameBase & {
   controlId: string;
   easingFunction: EasingFunction;
-  controlValue: number;
-  start: number;
+  controlEndValue: number;
+  controlStartValue?: number;
   duration: number;
 };
 
-export type FrameLayerVisibilityAction = {
+export type FrameLayerVisibilityAction = FrameBase & {
   layerId: string;
   visible: boolean;
-  start: number;
 };
 
-export type FrameEvent = {
+export type FrameEvent = FrameBase & {
   event: string;
-  start: number;
 };
 
 type Animation = {

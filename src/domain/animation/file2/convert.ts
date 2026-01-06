@@ -3,6 +3,7 @@ import {
   type ImageDefinition,
   type MutationVector,
 } from "@/dtos/animation-file1.dto";
+import type { FrameControlAction } from "@/dtos/animation-file2.dto";
 import {
   type FrameAction,
   type GeppettoImage,
@@ -148,6 +149,8 @@ const convertKeyframes = (
 ): FrameAction[] => {
   const result: FrameAction[] = [];
   const lastControlEvent: Record<string, number> = {};
+  const lastControlFrameActions: Record<string, FrameControlAction> = {};
+  let frameId = 0;
 
   for (const frame of keyframes) {
     for (const control in frame.controlValues) {
@@ -156,17 +159,55 @@ const convertKeyframes = (
       const controlStart = lastControlEvent[controlId] ?? 0;
       const duration = frame.time - controlStart;
 
-      result.push({
+      const lastControlFrameAction = lastControlFrameActions[controlId];
+      if (
+        lastControlFrameAction &&
+        lastControlFrameAction.duration === 0 &&
+        lastControlFrameAction.start === controlStart
+      ) {
+        // Replace start and end value
+        lastControlFrameAction.controlStartValue =
+          lastControlFrameAction.controlEndValue;
+        lastControlFrameAction.controlEndValue = frame.controlValues[control];
+        lastControlFrameAction.duration = duration;
+
+        lastControlEvent[controlId] = frame.time;
+
+        continue;
+      }
+      if (
+        lastControlFrameAction &&
+        lastControlFrameAction.duration === 1 &&
+        lastControlFrameAction.start === controlStart - 1
+      ) {
+        // Replace start and end value
+        lastControlFrameAction.controlStartValue =
+          lastControlFrameAction.controlEndValue;
+        lastControlFrameAction.controlEndValue = frame.controlValues[control];
+        lastControlFrameAction.duration = duration + 1;
+        lastControlFrameAction.start = controlStart - 1;
+
+        lastControlEvent[controlId] = frame.time;
+
+        continue;
+      }
+
+      const frameControlAction: FrameAction = {
+        frameId: `${++frameId}`,
         start: controlStart,
         duration,
         easingFunction: "linear",
         controlId,
-        controlValue: frame.controlValues[control],
-      });
+        controlEndValue: frame.controlValues[control],
+      };
+
+      result.push(frameControlAction);
       lastControlEvent[controlId] = frame.time;
+      lastControlFrameActions[controlId] = frameControlAction;
     }
     if (frame.event) {
       result.push({
+        frameId: `${++frameId}`,
         start: frame.time,
         event: frame.event,
       });

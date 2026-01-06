@@ -1,8 +1,21 @@
+import { AnimationTimelines } from "@/application/modules/animation/ui/AnimationTimelines";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFile } from "@/application/state/FileContext";
 import { SectionSelector } from "@/application/ui/SectionSelector";
+import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
-import { Column, Panel, ToolBar, ToolSeparator } from "@/ui/components";
+import {
+  Column,
+  Icon,
+  Panel,
+  PanelTitle,
+  ResizeDirection,
+  ResizePanel,
+  ToolBar,
+  ToolButton,
+  ToolSeparator,
+  ToolSpacer,
+} from "@/ui/components";
 
 type AnimationModuleProps = {
   onSectionChange?: (newSection: AppSection) => void;
@@ -29,6 +42,52 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
       <Panel center workspace>
         <StartupScreen file={file} screen="animation" texture={texture} />
       </Panel>
+      {texture && hasControls(file) && (
+        <ResizePanel
+          defaultSize={250}
+          direction={ResizeDirection.North}
+          minSize={50}
+        >
+          <Panel padding="sm">
+            <ToolBar>
+              <PanelTitle>Animations</PanelTitle>
+              <ToolButton
+                disabled
+                icon={<Icon>⏮️</Icon>}
+                tooltip="Go to start"
+              />
+              <ToolButton
+                disabled
+                icon={<Icon>▶️</Icon>}
+                tooltip="Play/Pause"
+              />
+              <ToolButton disabled icon={<Icon>⏭️</Icon>} tooltip="Go to end" />
+              <ToolSeparator />
+              <ToolButton
+                disabled
+                icon={<Icon>➕</Icon>}
+                label="Animation"
+                tooltip="Add Animation track"
+              />
+              <ToolButton
+                disabled
+                icon={<Icon>➕</Icon>}
+                label="Event"
+                tooltip="Add Event"
+              />
+              <ToolButton
+                disabled
+                icon={<Icon>➕</Icon>}
+                label="Control"
+                tooltip="Add Control layer"
+              />
+              <ToolSpacer />
+              <ToolButton disabled icon={<Icon>?</Icon>} tooltip="Help" />
+            </ToolBar>
+            <AnimationTimelines />
+          </Panel>
+        </ResizePanel>
+      )}
     </Column>
   );
 };

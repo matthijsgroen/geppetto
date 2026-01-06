@@ -10,8 +10,9 @@ export const AnimationTrack: FC<
     name: string;
     controlNames?: string[];
     selected?: boolean;
+    onSelect?: () => void;
   }>
-> = ({ children, name, controlNames = [], selected = false }) => {
+> = ({ children, name, controlNames = [], selected = false, onSelect }) => {
   return (
     <>
       <div
@@ -47,6 +48,10 @@ export const AnimationTrack: FC<
             "cursor-pointer hover:bg-control-highlight": !selected,
           }
         )}
+        onClick={() => {
+          if (selected) return;
+          onSelect?.();
+        }}
       >
         <div className="relative h-full py-0.5">
           <div

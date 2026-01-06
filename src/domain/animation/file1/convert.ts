@@ -132,12 +132,12 @@ const convertAnimations = (
           const controlName = source.controls[frameAction.controlId].name;
           if (existing !== -1) {
             keyframes[existing].controlValues[controlName] =
-              frameAction.controlValue;
+              frameAction.controlEndValue;
           } else {
             keyframes.push({
               time,
               controlValues: {
-                [controlName]: frameAction.controlValue,
+                [controlName]: frameAction.controlEndValue,
               },
             });
           }
