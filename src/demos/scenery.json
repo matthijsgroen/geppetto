@@ -4157,577 +4157,536 @@
     "19": 0.78,
     "error": 1.46
   },
-  "animationHierarchy": {
-    "0": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "1": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "2": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "3": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "4": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "5": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "6": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "7": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "8": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "9": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "10": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "11": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "12": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "13": {
-      "type": "animation",
-      "parentId": "root"
-    },
-    "root": {
-      "type": "root",
-      "children": [
-        "0",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13"
-      ]
-    }
-  },
-  "animationFolders": {},
   "animations": {
     "0": {
       "name": "Wheel",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 19200,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "19",
-          "controlEndValue": 0,
-          "controlStartValue": 1
+          "length": 19200,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 19200,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 1
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "1": {
       "name": "Tree",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 8000,
-          "easingFunction": "linear",
+          "type": "control",
+          "controlId": "17",
+          "length": 16000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 500,
+              "duration": 8000,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 8500,
+              "duration": 7500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.04
+            }
+          ]
+        },
+        {
+          "type": "control",
           "controlId": "18",
-          "controlEndValue": 1,
-          "controlStartValue": 0
-        },
-        {
-          "frameId": "2",
-          "start": 0,
-          "duration": 500,
-          "easingFunction": "linear",
-          "controlId": "17",
-          "controlEndValue": 0
-        },
-        {
-          "frameId": "3",
-          "start": 500,
-          "duration": 8000,
-          "easingFunction": "linear",
-          "controlId": "17",
-          "controlEndValue": 1
-        },
-        {
-          "frameId": "4",
-          "start": 8000,
-          "duration": 8000,
-          "easingFunction": "linear",
-          "controlId": "18",
-          "controlEndValue": 0
-        },
-        {
-          "frameId": "5",
-          "start": 8500,
-          "duration": 7500,
-          "easingFunction": "linear",
-          "controlId": "17",
-          "controlEndValue": 0.04
+          "length": 16000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 8000,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0
+            },
+            {
+              "start": 8000,
+              "duration": 8000,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "2": {
       "name": "Bird",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 6000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "16",
-          "controlEndValue": 0
-        },
-        {
-          "frameId": "2",
-          "start": 6000,
-          "duration": 200,
-          "easingFunction": "linear",
-          "controlId": "16",
-          "controlEndValue": 1
-        },
-        {
-          "frameId": "3",
-          "start": 6200,
-          "duration": 800,
-          "easingFunction": "linear",
-          "controlId": "16",
-          "controlEndValue": 1
-        },
-        {
-          "frameId": "4",
-          "start": 7000,
-          "duration": 200,
-          "easingFunction": "linear",
-          "controlId": "16",
-          "controlEndValue": 0
+          "length": 7200,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 6000,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 6000,
+              "duration": 200,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 6200,
+              "duration": 800,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 7000,
+              "duration": 200,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "3": {
       "name": "Cloud1",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 20000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "13",
-          "controlEndValue": 1,
-          "controlStartValue": 0.5
-        },
-        {
-          "frameId": "2",
-          "start": 20000,
-          "duration": 20000,
-          "easingFunction": "linear",
-          "controlId": "13",
-          "controlEndValue": 0.5,
-          "controlStartValue": 0
+          "length": 40000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 20000,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0.5
+            },
+            {
+              "start": 20000,
+              "duration": 20000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.5,
+              "controlStartValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "4": {
       "name": "Eyes",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 3000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "12",
-          "controlEndValue": 0,
-          "controlStartValue": 0
-        },
-        {
-          "frameId": "2",
-          "start": 3000,
-          "duration": 300,
-          "easingFunction": "linear",
-          "controlId": "12",
-          "controlEndValue": 1
-        },
-        {
-          "frameId": "3",
-          "start": 3300,
-          "duration": 200,
-          "easingFunction": "linear",
-          "controlId": "12",
-          "controlEndValue": 1
-        },
-        {
-          "frameId": "4",
-          "start": 3500,
-          "duration": 200,
-          "easingFunction": "linear",
-          "controlId": "12",
-          "controlEndValue": 0
+          "length": 3700,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 3000,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 0
+            },
+            {
+              "start": 3000,
+              "duration": 300,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 3300,
+              "duration": 200,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 3500,
+              "duration": 200,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "5": {
       "name": "ButterflyWings",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 300,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "11",
-          "controlEndValue": 1
-        },
-        {
-          "frameId": "2",
-          "start": 300,
-          "duration": 300,
-          "easingFunction": "linear",
-          "controlId": "11",
-          "controlEndValue": 0
+          "length": 600,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 300,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 300,
+              "duration": 300,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "6": {
       "name": "Smoke",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 10000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "6",
-          "controlEndValue": 1,
-          "controlStartValue": 0
+          "length": 10000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 10000,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "7": {
       "name": "Cloud2",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 30000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "14",
-          "controlEndValue": 0,
-          "controlStartValue": 0.8
-        },
-        {
-          "frameId": "2",
-          "start": 30000,
-          "duration": 10000,
-          "easingFunction": "linear",
-          "controlId": "14",
-          "controlEndValue": 0.8,
-          "controlStartValue": 1
+          "length": 40000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 30000,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 0.8
+            },
+            {
+              "start": 30000,
+              "duration": 10000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.8,
+              "controlStartValue": 1
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "8": {
       "name": "Cloud3",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 10000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "15",
-          "controlEndValue": 0,
-          "controlStartValue": 0.2
-        },
-        {
-          "frameId": "2",
-          "start": 10000,
-          "duration": 30000,
-          "easingFunction": "linear",
-          "controlId": "15",
-          "controlEndValue": 0.2,
-          "controlStartValue": 1
+          "length": 40000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 10000,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 0.2
+            },
+            {
+              "start": 10000,
+              "duration": 30000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.2,
+              "controlStartValue": 1
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "9": {
       "name": "WheelBlades",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 1600,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "5",
-          "controlEndValue": 1,
-          "controlStartValue": 0
+          "length": 1600,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "10": {
       "name": "Water",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 400,
-          "easingFunction": "linear",
-          "controlId": "4",
-          "controlEndValue": 2,
-          "controlStartValue": 1.6
-        },
-        {
-          "frameId": "2",
-          "start": 0,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "3",
-          "controlEndValue": 1.6,
-          "controlStartValue": 0.9
-        },
-        {
-          "frameId": "3",
-          "start": 0,
-          "duration": 1600,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "2",
-          "controlEndValue": 0.9,
-          "controlStartValue": 0.3
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9,
+              "controlStartValue": 0.3
+            },
+            {
+              "start": 1600,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6
+            },
+            {
+              "start": 3200,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 3600,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            }
+          ]
         },
         {
-          "frameId": "4",
-          "start": 400,
-          "duration": 1200,
-          "easingFunction": "linear",
-          "controlId": "4",
-          "controlEndValue": 0.3,
-          "controlStartValue": 0
-        },
-        {
-          "frameId": "5",
-          "start": 1600,
-          "duration": 400,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "3",
-          "controlEndValue": 2
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6,
+              "controlStartValue": 0.9
+            },
+            {
+              "start": 1600,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 2000,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            },
+            {
+              "start": 3200,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9
+            }
+          ]
         },
         {
-          "frameId": "7",
-          "start": 1600,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "2",
-          "controlEndValue": 1.6
-        },
-        {
-          "frameId": "8",
-          "start": 1600,
-          "duration": 1600,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "4",
-          "controlEndValue": 0.9
-        },
-        {
-          "frameId": "6",
-          "start": 2000,
-          "duration": 1200,
-          "easingFunction": "linear",
-          "controlId": "3",
-          "controlEndValue": 0.3,
-          "controlStartValue": 0
-        },
-        {
-          "frameId": "9",
-          "start": 3200,
-          "duration": 400,
-          "easingFunction": "linear",
-          "controlId": "2",
-          "controlEndValue": 2
-        },
-        {
-          "frameId": "11",
-          "start": 3200,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "3",
-          "controlEndValue": 0.9
-        },
-        {
-          "frameId": "12",
-          "start": 3200,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "4",
-          "controlEndValue": 1.6
-        },
-        {
-          "frameId": "10",
-          "start": 3600,
-          "duration": 1200,
-          "easingFunction": "linear",
-          "controlId": "2",
-          "controlEndValue": 0.3,
-          "controlStartValue": 0
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2,
+              "controlStartValue": 1.6
+            },
+            {
+              "start": 400,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            },
+            {
+              "start": 1600,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9
+            },
+            {
+              "start": 3200,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "11": {
       "name": "Day night",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 6000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "1",
-          "controlEndValue": 0.36,
-          "controlStartValue": 0
-        },
+          "length": 35000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 6000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.36,
+              "controlStartValue": 0
+            },
+            {
+              "start": 6000,
+              "duration": 6000,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 12000,
+              "duration": 4000,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 16000,
+              "duration": 5000,
+              "easingFunction": "linear",
+              "controlEndValue": 3.16
+            },
+            {
+              "start": 21000,
+              "duration": 6000,
+              "easingFunction": "linear",
+              "controlEndValue": 4
+            },
+            {
+              "start": 27000,
+              "duration": 8000,
+              "easingFunction": "linear",
+              "controlEndValue": 4
+            }
+          ]
+        }
+      ],
+      "events": [
         {
-          "frameId": "2",
           "start": 6000,
-          "event": "evening"
+          "eventName": "evening"
         },
         {
-          "frameId": "3",
-          "start": 6000,
-          "duration": 6000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlEndValue": 2
-        },
-        {
-          "frameId": "4",
-          "start": 12000,
-          "duration": 4000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlEndValue": 2
-        },
-        {
-          "frameId": "5",
           "start": 16000,
-          "event": "endNight"
+          "eventName": "endNight"
         },
         {
-          "frameId": "6",
-          "start": 16000,
-          "duration": 5000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlEndValue": 3.16
-        },
-        {
-          "frameId": "7",
           "start": 21000,
-          "event": "morning"
-        },
-        {
-          "frameId": "8",
-          "start": 21000,
-          "duration": 6000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlEndValue": 4
-        },
-        {
-          "frameId": "9",
-          "start": 27000,
-          "duration": 8000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlEndValue": 4
+          "eventName": "morning"
         }
       ]
     },
     "12": {
       "name": "LightFlicker",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 630,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "0",
-          "controlEndValue": 0.72
-        },
-        {
-          "frameId": "2",
-          "start": 630,
-          "duration": 580,
-          "easingFunction": "linear",
-          "controlId": "0",
-          "controlEndValue": 0.78
-        },
-        {
-          "frameId": "3",
-          "start": 1210,
-          "duration": 660,
-          "easingFunction": "linear",
-          "controlId": "0",
-          "controlEndValue": 0.69
-        },
-        {
-          "frameId": "4",
-          "start": 1870,
-          "duration": 740,
-          "easingFunction": "linear",
-          "controlId": "0",
-          "controlEndValue": 0.89
+          "length": 2610,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 630,
+              "easingFunction": "linear",
+              "controlEndValue": 0.72
+            },
+            {
+              "start": 630,
+              "duration": 580,
+              "easingFunction": "linear",
+              "controlEndValue": 0.78
+            },
+            {
+              "start": 1210,
+              "duration": 660,
+              "easingFunction": "linear",
+              "controlEndValue": 0.69
+            },
+            {
+              "start": 1870,
+              "duration": 740,
+              "easingFunction": "linear",
+              "controlEndValue": 0.89
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "13": {
       "name": "LightOff",
       "looping": false,
-      "actions": [
+      "tracks": [
         {
-          "frameId": "1",
-          "start": 0,
-          "duration": 1260,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "0",
-          "controlEndValue": 0
+          "length": 1260,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1260,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     }
   }
 }

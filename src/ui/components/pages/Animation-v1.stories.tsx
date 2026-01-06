@@ -192,7 +192,7 @@ export const Version1 = meta.story({
               </AnimationTrack>
             ))}
             <AnimationTrack
-              controlNames={["Control 1", "Control 3", "Control 4"]}
+              trackNames={["Control 1", "Control 3", "Control 4"]}
               key={3}
               name={`Track 4`}
               selected

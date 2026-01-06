@@ -8,13 +8,13 @@ const meta = preview.meta({
   title: "Molecules/AnimationTrack",
   component: AnimationTrackComponent,
   argTypes: {
-    controlNames: { control: false },
+    trackNames: { control: false },
     children: { control: false },
   },
   args: {
     name: "Track 1",
     selected: false,
-    controlNames: ["Control 1", "Control 2", "Control 3"],
+    trackNames: ["Control 1", "Control 2", "Control 3"],
     children: (
       <>
         <TimeBar duration={5} easing="easeInOut" start={10} trackIndex={0} />

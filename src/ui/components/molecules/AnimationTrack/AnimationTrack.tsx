@@ -8,24 +8,24 @@ import { AnimationTrackContext } from "./AnimationTrackContext";
 export const AnimationTrack: FC<
   PropsWithChildren<{
     name: string;
-    controlNames?: string[];
+    trackNames?: string[];
     selected?: boolean;
     onSelect?: () => void;
   }>
-> = ({ children, name, controlNames = [], selected = false, onSelect }) => {
+> = ({ children, name, trackNames = [], selected = false, onSelect }) => {
   return (
     <>
       <div
         className={clsx(
-          "sticky left-0 z-30 border-b border-control-edge px-2 text-right whitespace-nowrap backdrop-blur-md",
-          selected && "bg-control-active/50 pb-1",
-          !selected && "bg-toolbar/50 py-1"
+          "sticky left-0 z-30 border-b border-control-edge text-right whitespace-nowrap backdrop-blur-md",
+          selected && "bg-control-active/80 pb-1",
+          !selected && "bg-toolbar/80 py-1"
         )}
       >
         <Column>
           <div
             className={clsx(
-              "box-content h-5 text-base text-text transition-all",
+              "box-content h-5 px-2 text-base text-text transition-all",
               {
                 "pb-1": selected,
               }
@@ -34,9 +34,12 @@ export const AnimationTrack: FC<
             {name}
           </div>
           {selected &&
-            controlNames.map((controlName) => (
-              <div className="h-5 pl-4 text-sm text-text" key={controlName}>
-                {controlName}
+            trackNames.map((trackName) => (
+              <div
+                className="h-5 cursor-grab px-2 pl-4 text-sm text-text hover:bg-control-highlight"
+                key={trackName}
+              >
+                {trackName}
               </div>
             ))}
         </Column>

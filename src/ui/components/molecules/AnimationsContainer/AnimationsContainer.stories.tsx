@@ -22,7 +22,7 @@ const meta = preview.meta({
     children: (
       <>
         <AnimationTrack
-          controlNames={["Control 1", "Control 2", "Control 3"]}
+          trackNames={["Control 1", "Control 2", "Control 3"]}
           name="Track 1"
           selected={false}
         >
@@ -36,7 +36,7 @@ const meta = preview.meta({
           <TimePin location={25} />
         </AnimationTrack>
         <AnimationTrack
-          controlNames={["Control 1", "Control 2", "Control 3"]}
+          trackNames={["Control 1", "Control 2", "Control 3"]}
           name="Track 2"
           selected={true}
         >
