@@ -12,8 +12,6 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.57.0-noble
 
     steps:
       - uses: actions/checkout@v4
