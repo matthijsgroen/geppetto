@@ -1,5 +1,6 @@
 import path from "node:path";
 import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 import glsl from "vite-plugin-glsl";
 import tailwindcss from "@tailwindcss/vite";
 import svgrPlugin from "vite-plugin-svgr";
@@ -7,11 +8,15 @@ import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
   plugins: [
+    react(),
     glsl(),
     tailwindcss(),
     svgrPlugin(),
     VitePWA({
       registerType: "prompt",
+      devOptions: {
+        enabled: false, // Disable in dev to allow HMR
+      },
       includeAssets: [
         "favicon.ico",
         "icon192.png",
