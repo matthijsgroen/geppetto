@@ -23,6 +23,7 @@ export default defineConfig({
         "icon512.png",
         "icon1024.png",
       ],
+      filename: "service-worker.js",
       manifest: {
         short_name: "Geppetto",
         name: "Geppetto",
