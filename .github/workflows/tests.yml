@@ -48,4 +48,7 @@ jobs:
         run: yarn turbo run format:check
 
       - name: Report coverage
-        uses: codecov/codecov-action@v3
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: packages/studio
