@@ -41,7 +41,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
   // TODO have only root li component create all the classes
   return (
     <li
-      {...context.itemContainerWithChildrenProps}
+      {...(context.itemContainerWithChildrenProps as React.HTMLAttributes<HTMLLIElement>)}
       className={clsx(
         "rct-tree-item-li",
         item.hasChildren && "rct-tree-item-li-hasChildren",
@@ -53,7 +53,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
       )}
     >
       <div
-        {...context.itemContainerWithoutChildrenProps}
+        {...(context.itemContainerWithoutChildrenProps as React.HTMLAttributes<HTMLDivElement>)}
         className={clsx(
           "rct-tree-item-title-container",
           item.hasChildren && "rct-tree-item-title-container-hasChildren",
@@ -70,7 +70,7 @@ const renderItem: TreeRenderProps<TreeData<string>>["renderItem"] = ({
         {arrow}
         <Icon>{item.data.icon}</Icon>
         <InteractiveComponent
-          {...context.interactiveElementProps}
+          {...(context.interactiveElementProps as React.HTMLAttributes<HTMLElement>)}
           className={clsx(
             "rct-tree-item-button",
             item.hasChildren && "rct-tree-item-button-hasChildren",

@@ -105,5 +105,6 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@sb": path.resolve(__dirname, "./.storybook"),
     },
+    dedupe: ["react", "react-dom"],
   },
 });
