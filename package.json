@@ -9,6 +9,7 @@
   "scripts": {
     "studio-dev": "turbo run dev --filter=@geppetto/studio",
     "storybook": "turbo run storybook --filter=@geppetto/studio",
+    "build-player": "turbo run build --filter=geppetto-player",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
@@ -20,7 +21,11 @@
     "types:check": "turbo run types:check"
   },
   "devDependencies": {
-    "turbo": "^2.7.3"
+    "@parcel/packager-ts": "2.16.3",
+    "@parcel/transformer-glsl": "2.16.3",
+    "@parcel/transformer-typescript-types": "2.16.3",
+    "turbo": "^2.7.3",
+    "typescript": ">=3.0.0"
   },
   "engines": {
     "node": ">=18"

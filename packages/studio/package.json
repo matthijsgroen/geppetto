@@ -15,7 +15,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "delaunator": "^5.0.1",
-    "geppetto-player": "1.3.3",
+    "geppetto-player": "workspace:*",
     "immer": "^11.0.1",
     "react": "^19.2.1",
     "react-complex-tree": "1.1.8",
