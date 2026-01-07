@@ -6,8 +6,8 @@ on:
     types: [completed]
     branches: [next]
     paths:
-      - package.json
-      - src/**
+      - packages/studio/package.json
+      - packages/studio/src/**
 
 jobs:
   deploy:
@@ -39,13 +39,13 @@ jobs:
         run: yarn install
 
       - name: Create version file
-        run: yarn set-version
+        run: yarn turbo run set-version --filter=@geppetto/studio
 
       - name: Build application
-        run: yarn build
+        run: yarn turbo run build --filter=@geppetto/studio
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist
+          folder: packages/studio/dist
           target-folder: docs/app

@@ -36,16 +36,16 @@ jobs:
         run: yarn install
 
       - name: Check linting rules
-        run: yarn lint
+        run: yarn turbo run lint
 
       - name: Run unit tests
-        run: yarn test --coverage
+        run: yarn turbo run test:coverage
 
       - name: Check types
-        run: yarn types:check
+        run: yarn turbo run types:check
 
       - name: Check formatting
-        run: yarn format:check
+        run: yarn turbo run format:check
 
       - name: Report coverage
         uses: codecov/codecov-action@v3

@@ -1,11 +1,5 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Turborepo
-.turbo
-
-# Vite
-.vite
-
 # dependencies
 /node_modules
 /.pnp
@@ -15,10 +9,11 @@
 /coverage
 
 # production
-/packages/studio/build
-/packages/studio/storybook-static
-/packages/studio/dist
-/packages/studio/src/data
+/build
+/storybook-static
+/dist
+/old-electron-dist
+/src/data
 
 /images
 
