@@ -3,7 +3,6 @@ import React, {
   type CSSProperties,
   type PropsWithChildren,
   useCallback,
-  useEffect,
   useRef,
   useState,
 } from "react";

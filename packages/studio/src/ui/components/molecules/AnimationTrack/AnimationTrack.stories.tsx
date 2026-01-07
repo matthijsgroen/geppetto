@@ -40,7 +40,7 @@ const meta = preview.meta({
     ),
   },
   decorators: [
-    (Story, { args }) => (
+    (Story) => (
       <AnimationsContainer duration={30} title="Timeline" zoom={2}>
         <Story />
       </AnimationsContainer>
