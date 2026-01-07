@@ -31,5 +31,8 @@ jobs:
       - name: yarn install
         run: yarn install
 
+      - name: Install Playwright browsers
+        run: yarn playwright install
+
       - name: Run tests
         run: yarn test-storybook
