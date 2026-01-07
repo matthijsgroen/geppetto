@@ -13,9 +13,7 @@ import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import {
   Column,
-  ControlPanel,
   Icon,
-  Inlay,
   Panel,
   PanelTitle,
   ResizeDirection,
@@ -41,7 +39,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
   texture,
   onSectionChange,
 }) => {
-  const [file, setFile] = useFile();
+  const [file] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
 
   return (

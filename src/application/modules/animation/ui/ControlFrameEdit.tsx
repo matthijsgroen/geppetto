@@ -25,8 +25,8 @@ export const ControlFrameEdit: FC<{
   track: AnimationControlTrack;
   frame: FrameControlAction;
   actionIndex: number;
-}> = ({ animationId, track, frame, actionIndex }) => {
-  const [file, setFile] = useFile();
+}> = ({ track, frame }) => {
+  const [file] = useFile();
 
   return (
     <Inlay>

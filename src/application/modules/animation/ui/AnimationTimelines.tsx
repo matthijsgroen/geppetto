@@ -1,7 +1,6 @@
 import { type FC, useState } from "react";
 
 import { useFile } from "@/application/state/FileContext";
-import type { AnimationTrack, FrameAction } from "@/dtos/animation-file2.dto";
 import { AnimationsContainer } from "@/ui/components";
 
 import type { AnimationFrame } from "./AnimationTimeline";
@@ -14,7 +13,7 @@ export const AnimationTimelines: FC<{
   onFrameSelect?: (frame: AnimationFrame | null) => void;
   selectedFrame?: AnimationFrame | null;
 }> = ({ zoom = 2, onFrameSelect, selectedFrame }) => {
-  const [file, setFile] = useFile();
+  const [file] = useFile();
   const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
     null
   );
