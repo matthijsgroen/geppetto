@@ -13,22 +13,34 @@ export const TimeBar: FC<{
   duration: TimeStamp;
   selected?: boolean;
   trackIndex: number;
+  onClick?: () => void;
   easing?: EasingFunction;
   variant?: "mini" | "default";
-}> = ({ start, duration, selected = false, trackIndex, easing, variant }) => {
+}> = ({
+  start,
+  duration,
+  selected = false,
+  trackIndex,
+  onClick,
+  easing,
+  variant,
+}) => {
   const containerProps = use(AnimationTrackContext);
   const activeVariant =
     variant ?? (containerProps.activeTrack ? "default" : "mini");
+
+  const Element = activeVariant === "default" ? "button" : "div";
   return (
-    <div
+    <Element
       className={clsx(
         "absolute z-10 flex items-center justify-between gap-0.5 rounded-control-small border",
         activeVariant === "default" &&
-          "h-5 cursor-pointer shadow-sm hover:bg-control-highlight",
+          "h-5 cursor-pointer shadow-sm hover:bg-control-highlight focus:outline-control-focus",
         activeVariant === "mini" && "h-0.5",
         selected && "border-control-focus bg-control-active",
         !selected && "border-control-edge bg-toolbar"
       )}
+      onClick={activeVariant === "default" ? onClick : undefined}
       style={{
         left: `calc(${start}em + 2 * var(--spacing))`,
         width: `${duration}em`,
@@ -45,6 +57,6 @@ export const TimeBar: FC<{
           <TimeStretchHandle />
         </>
       )}
-    </div>
+    </Element>
   );
 };

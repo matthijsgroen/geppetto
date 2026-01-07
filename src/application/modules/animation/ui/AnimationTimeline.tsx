@@ -1,27 +1,50 @@
 import type { FC } from "react";
 
 import type {
+  AnimationControlTrack,
+  AnimationVisibilityTrack,
   FrameControlAction,
+  FrameLayerVisibilityAction,
   GeppettoImage,
 } from "@/dtos/animation-file2.dto";
 import {
-  AnimationTrack,
+  AnimationTrack as AnimationTrackComponent,
   TimeBar,
   TimeLineEndHandle,
   TimePin,
 } from "@/ui/components";
 
+export type AnimationControlFrame = {
+  animationId: string;
+  track: AnimationControlTrack;
+  frame: FrameControlAction;
+  actionIndex: number;
+};
+
+export type AnimationVisibilityFrame = {
+  animationId: string;
+  track: AnimationVisibilityTrack;
+  frame: FrameLayerVisibilityAction;
+  actionIndex: number;
+};
+
+export type AnimationFrame = AnimationControlFrame | AnimationVisibilityFrame;
+
 export const AnimationTimeline: FC<{
   animationId: string;
   file: GeppettoImage;
   onSelect: () => void;
-  onFrameSelect?: (
-    frame: FrameControlAction,
-    animationId: string,
-    actionIndex: number
-  ) => void;
+  onFrameSelect?: (frame: AnimationFrame) => void;
   selected: boolean;
-}> = ({ animationId, file, onSelect, onFrameSelect, selected }) => {
+  selectedTimeBar?: AnimationFrame | null;
+}> = ({
+  animationId,
+  file,
+  onSelect,
+  onFrameSelect,
+  selected,
+  selectedTimeBar,
+}) => {
   const animation = file.animations[animationId];
 
   const trackNames = animation.tracks.map((track) =>
@@ -40,7 +63,7 @@ export const AnimationTimeline: FC<{
   );
 
   return (
-    <AnimationTrack
+    <AnimationTrackComponent
       key={animationId}
       length={animationLength / 1000}
       loop={animation.looping}
@@ -56,6 +79,22 @@ export const AnimationTimeline: FC<{
                 duration={action.duration / 1000}
                 easing={action.easingFunction}
                 key={`${track.controlId}-${actionIndex}`}
+                onClick={() => {
+                  onFrameSelect?.({
+                    animationId,
+                    track,
+                    frame: action,
+                    actionIndex,
+                  });
+                }}
+                selected={
+                  (selectedTimeBar &&
+                    selectedTimeBar.animationId === animationId &&
+                    selectedTimeBar.track.type === track.type &&
+                    selectedTimeBar.track.controlId === track.controlId &&
+                    selectedTimeBar.actionIndex === actionIndex) ??
+                  false
+                }
                 start={action.start / 1000}
                 trackIndex={index}
               />
@@ -79,6 +118,6 @@ export const AnimationTimeline: FC<{
           location={event.start / 1000}
         />
       ))}
-    </AnimationTrack>
+    </AnimationTrackComponent>
   );
 };

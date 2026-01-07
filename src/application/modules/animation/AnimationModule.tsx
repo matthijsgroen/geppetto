@@ -1,4 +1,11 @@
+import { useState } from "react";
+
+import type {
+  AnimationControlFrame,
+  AnimationFrame,
+} from "@/application/modules/animation/ui/AnimationTimeline";
 import { AnimationTimelines } from "@/application/modules/animation/ui/AnimationTimelines";
+import { ControlFrameEdit } from "@/application/modules/animation/ui/ControlFrameEdit";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFile } from "@/application/state/FileContext";
 import { SectionSelector } from "@/application/ui/SectionSelector";
@@ -6,7 +13,9 @@ import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import {
   Column,
+  ControlPanel,
   Icon,
+  Inlay,
   Panel,
   PanelTitle,
   ResizeDirection,
@@ -23,12 +32,18 @@ type AnimationModuleProps = {
   texture: HTMLImageElement | null;
 };
 
+const isControlFrame = (
+  frame: AnimationFrame
+): frame is AnimationControlFrame => frame.track.type === "control";
+
 export const AnimationModule: React.FC<AnimationModuleProps> = ({
   menu,
   texture,
   onSectionChange,
 }) => {
   const [file, setFile] = useFile();
+  const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
+
   return (
     <Column>
       <ToolBar>
@@ -41,6 +56,14 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
       </ToolBar>
       <Panel center workspace>
         <StartupScreen file={file} screen="animation" texture={texture} />
+        {activeFrame && isControlFrame(activeFrame) && (
+          <ControlFrameEdit
+            actionIndex={activeFrame.actionIndex}
+            animationId={activeFrame.animationId}
+            frame={activeFrame.frame}
+            track={activeFrame.track}
+          />
+        )}
       </Panel>
       {texture && hasControls(file) && (
         <ResizePanel
@@ -84,7 +107,13 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
               <ToolSpacer />
               <ToolButton disabled icon={<Icon>?</Icon>} tooltip="Help" />
             </ToolBar>
-            <AnimationTimelines />
+            <AnimationTimelines
+              onFrameSelect={(frame) => {
+                setActiveFrame(frame);
+              }}
+              selectedFrame={activeFrame}
+              zoom={2}
+            />
           </Panel>
         </ResizePanel>
       )}

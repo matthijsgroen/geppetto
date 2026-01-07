@@ -25,6 +25,7 @@ export const AnimationTrack: FC<
   selected = false,
   onSelect,
 }) => {
+  const Element = selected ? "div" : "button";
   return (
     <>
       <div
@@ -56,11 +57,12 @@ export const AnimationTrack: FC<
             ))}
         </Column>
       </div>
-      <div
+      <Element
         className={clsx(
           "items-center border-b border-control-edge/50 bg-workspace last:rounded-b-control nth-[4]:rounded-t-control",
           {
-            "cursor-pointer hover:bg-control-highlight": !selected,
+            "group cursor-pointer hover:bg-control-highlight focus:bg-control-highlight focus-visible:outline-1 focus-visible:outline-control-focus":
+              !selected,
           }
         )}
         onClick={() => {
@@ -71,10 +73,13 @@ export const AnimationTrack: FC<
         <div className="relative flex h-full">
           <div className="flex w-min bg-panel/50">
             <div
-              className={clsx("box-content bg-panel ps-2", {
-                "h-5 py-0.5": selected,
-                "h-full": !selected,
-              })}
+              className={clsx(
+                "box-content bg-panel ps-2 transition-all group-hover:bg-control-highlight group-focus:bg-control-highlight",
+                {
+                  "h-5 py-0.5": selected,
+                  "h-full": !selected,
+                }
+              )}
               style={{ width: `${length}em` }}
             >
               <div
@@ -86,7 +91,7 @@ export const AnimationTrack: FC<
             </div>
             <div
               className={clsx(
-                "flex w-2 items-start justify-end rounded-e-sm bg-panel pt-0.5",
+                "flex w-2 items-start justify-end rounded-e-sm bg-panel pt-0.5 group-hover:bg-control-highlight group-focus:bg-control-highlight",
                 {
                   "h-6": selected,
                   "h-full": !selected,
@@ -101,7 +106,7 @@ export const AnimationTrack: FC<
             {children}
           </AnimationTrackContext.Provider>
         </div>
-      </div>
+      </Element>
     </>
   );
 };

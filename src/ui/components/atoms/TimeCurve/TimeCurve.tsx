@@ -10,7 +10,7 @@ export const TimeCurve: FC<{
   return (
     <div
       className={clsx(
-        "bg-control-focus/50",
+        "pointer-events-none bg-control-focus/50",
         size === "flex" && "h-full flex-1",
         size === "option" && "me-1 inline-block h-4 w-8",
         variant === "linear" && "clip-linear",

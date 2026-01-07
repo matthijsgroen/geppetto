@@ -1,13 +1,19 @@
 import { type FC, useState } from "react";
 
 import { useFile } from "@/application/state/FileContext";
+import type { AnimationTrack, FrameAction } from "@/dtos/animation-file2.dto";
 import { AnimationsContainer } from "@/ui/components";
 
+import type { AnimationFrame } from "./AnimationTimeline";
 import { AnimationTimeline } from "./AnimationTimeline";
 
 const EXTRA_TIME = 2000; // milliseconds
 
-export const AnimationTimelines: FC<{ zoom?: number }> = ({ zoom = 2 }) => {
+export const AnimationTimelines: FC<{
+  zoom?: number;
+  onFrameSelect?: (frame: AnimationFrame | null) => void;
+  selectedFrame?: AnimationFrame | null;
+}> = ({ zoom = 2, onFrameSelect, selectedFrame }) => {
   const [file, setFile] = useFile();
   const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
     null
@@ -32,8 +38,15 @@ export const AnimationTimelines: FC<{ zoom?: number }> = ({ zoom = 2 }) => {
           animationId={animationId}
           file={file}
           key={animationId}
-          onSelect={() => setSelectedAnimation(animationId)}
+          onFrameSelect={onFrameSelect}
+          onSelect={() => {
+            setSelectedAnimation(animationId);
+            if (animationId !== selectedFrame?.animationId) {
+              onFrameSelect?.(null);
+            }
+          }}
           selected={selectedAnimation === animationId}
+          selectedTimeBar={selectedFrame}
         />
       ))}
     </AnimationsContainer>
