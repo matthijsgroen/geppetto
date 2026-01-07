@@ -39,7 +39,7 @@ jobs:
         run: yarn install
 
       - name: Create version file
-        run: yarn turbo run set-version --filter=@geppetto/studio
+        run: yarn workspace @geppetto/studio set-version
 
       - name: Build application
         run: yarn turbo run build --filter=@geppetto/studio
