@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useRef } from "react";
 
+import { useLightModePreference } from "@/application/modules/application-menu/hooks/useLightModePreference";
 import { ApplicationContext } from "@/application/state/ApplicationContext";
 import { useFile } from "@/application/state/FileContext";
 import type { ActionHandlers } from "@/application/state/hooks/useActionMap";
@@ -21,12 +22,14 @@ import {
   preferDarkMode,
   preferLightMode,
   respectOSColorScheme,
+  userPreferences,
 } from "@/shared/utils/darkMode";
 import {
   LogoIcon,
   Menu,
   MenuDivider,
   MenuItem,
+  MenuRadioGroup,
   type Shortcut,
   SubMenu,
   ToolButton,
@@ -82,6 +85,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   const [, setTextureFileName] = textureFileNameState;
   const controlUpdate = useUpdateControlValues();
   const mutationUpdate = useUpdateMutationValues();
+  const lightModePreference = useLightModePreference();
 
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
@@ -319,9 +323,23 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       </SubMenu>
       <SubMenu label="Preferences">
         <SubMenu label="Color scheme">
-          <ActionMenuItem action={actions.setLightMode} />
-          <ActionMenuItem action={actions.setDarkMode} />
-          <ActionMenuItem action={actions.setSystemMode} />
+          <MenuRadioGroup value={lightModePreference}>
+            <ActionMenuItem
+              action={actions.setLightMode}
+              type="radio"
+              value={"light"}
+            />
+            <ActionMenuItem
+              action={actions.setDarkMode}
+              type="radio"
+              value={"dark"}
+            />
+            <ActionMenuItem
+              action={actions.setSystemMode}
+              type="radio"
+              value={"system"}
+            />
+          </MenuRadioGroup>
         </SubMenu>
       </SubMenu>
       <SubMenu label="Help">

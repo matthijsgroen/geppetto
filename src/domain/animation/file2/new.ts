@@ -19,8 +19,6 @@ export const newFile = (): GeppettoImage => ({
   defaultFrame: {},
   controlValues: {},
 
-  animationHierarchy: { root: { type: "root", children: [] } },
-  animationFolders: {},
   animations: {},
 });
 

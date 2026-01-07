@@ -6,6 +6,7 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import noRelativeImportPaths from "eslint-plugin-no-relative-import-paths";
+import unusedImports from "eslint-plugin-unused-imports";
 import prettierConfig from "eslint-config-prettier";
 import tailwind from "eslint-plugin-tailwindcss";
 import { join } from "node:path";
@@ -32,6 +33,7 @@ export default [
       "react-hooks": reactHooks,
       "simple-import-sort": simpleImportSort,
       "no-relative-import-paths": noRelativeImportPaths,
+      "unused-imports": unusedImports,
       tailwindcss: tailwind,
     },
     settings: {
@@ -47,6 +49,17 @@ export default [
       // Import sorting
       "simple-import-sort/imports": "warn",
       "simple-import-sort/exports": "warn",
+
+      // Unused imports (auto-fixable!)
+      "unused-imports/no-unused-imports": "warn",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
 
       // Import paths - enforce @/ alias (auto-fixable!)
       // Allow relative imports within same module (up to 3 levels: ./programs/ or ../programs/)
@@ -73,7 +86,7 @@ export default [
       "react-hooks/refs": "warn",
 
       // TypeScript
-      "@typescript-eslint/no-unused-vars": "off", // Turned off in favor of unused-imports
+      "@typescript-eslint/no-unused-vars": "off", // Handled by unused-imports plugin
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
       "@typescript-eslint/consistent-type-imports": [

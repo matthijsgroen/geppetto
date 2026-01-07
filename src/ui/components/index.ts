@@ -13,6 +13,7 @@ export { RangeValue } from "./atoms/RangeValue/RangeValue";
 export { TextButton } from "./atoms/TextButton/TextButton";
 export { TimeBar } from "./atoms/TimeBar/TimeBar";
 export { TimeCurve } from "./atoms/TimeCurve/TimeCurve";
+export { TimeLineEndHandle } from "./atoms/TimeLineEndHandle/TimeLineEndHandle";
 export { TimePin } from "./atoms/TimePin/TimePin";
 export { Title } from "./atoms/Title/Title";
 export { ToggleInput } from "./atoms/ToggleInput/ToggleInput";

@@ -1,17 +1,39 @@
 {
   "version": "2.0",
-  "metadata": { "width": 2048, "height": 1536, "zoom": 1, "pan": [0, 0] },
+  "metadata": {
+    "width": 2048,
+    "height": 1536,
+    "zoom": 1,
+    "pan": [0, 0]
+  },
   "layerHierarchy": {
-    "0": { "type": "layer", "parentId": "root", "children": ["1"] },
-    "1": { "parentId": "0", "type": "mutation" },
-    "2": { "type": "layer", "parentId": "root", "children": ["3"] },
-    "3": { "parentId": "2", "type": "mutation" },
+    "0": {
+      "type": "layer",
+      "parentId": "root",
+      "children": ["1"]
+    },
+    "1": {
+      "parentId": "0",
+      "type": "mutation"
+    },
+    "2": {
+      "type": "layer",
+      "parentId": "root",
+      "children": ["3"]
+    },
+    "3": {
+      "parentId": "2",
+      "type": "mutation"
+    },
     "4": {
       "type": "layerFolder",
       "parentId": "root",
       "children": ["5", "6", "74", "83"]
     },
-    "5": { "parentId": "4", "type": "mutation" },
+    "5": {
+      "parentId": "4",
+      "type": "mutation"
+    },
     "6": {
       "type": "layerFolder",
       "parentId": "4",
@@ -29,159 +51,518 @@
         "73"
       ]
     },
-    "7": { "parentId": "6", "type": "mutation" },
-    "8": { "parentId": "6", "type": "mutation" },
-    "9": { "type": "layerFolder", "parentId": "6", "children": ["10", "12"] },
-    "10": { "type": "layer", "parentId": "9", "children": ["11"] },
-    "11": { "parentId": "10", "type": "mutation" },
-    "12": { "type": "layer", "parentId": "9", "children": ["13"] },
-    "13": { "parentId": "12", "type": "mutation" },
+    "7": {
+      "parentId": "6",
+      "type": "mutation"
+    },
+    "8": {
+      "parentId": "6",
+      "type": "mutation"
+    },
+    "9": {
+      "type": "layerFolder",
+      "parentId": "6",
+      "children": ["10", "12"]
+    },
+    "10": {
+      "type": "layer",
+      "parentId": "9",
+      "children": ["11"]
+    },
+    "11": {
+      "parentId": "10",
+      "type": "mutation"
+    },
+    "12": {
+      "type": "layer",
+      "parentId": "9",
+      "children": ["13"]
+    },
+    "13": {
+      "parentId": "12",
+      "type": "mutation"
+    },
     "14": {
       "type": "layerFolder",
       "parentId": "6",
       "children": ["15", "16", "17", "18", "20", "21"]
     },
-    "15": { "parentId": "14", "type": "mutation" },
-    "16": { "parentId": "14", "type": "mutation" },
-    "17": { "parentId": "14", "type": "mutation" },
-    "18": { "type": "layer", "parentId": "14", "children": ["19"] },
-    "19": { "parentId": "18", "type": "mutation" },
-    "20": { "type": "layer", "parentId": "14" },
-    "21": { "type": "layer", "parentId": "14", "children": ["22"] },
-    "22": { "parentId": "21", "type": "mutation" },
-    "23": { "type": "layerFolder", "parentId": "6", "children": ["24", "26"] },
-    "24": { "type": "layer", "parentId": "23", "children": ["25"] },
-    "25": { "parentId": "24", "type": "mutation" },
-    "26": { "type": "layer", "parentId": "23", "children": ["27"] },
-    "27": { "parentId": "26", "type": "mutation" },
+    "15": {
+      "parentId": "14",
+      "type": "mutation"
+    },
+    "16": {
+      "parentId": "14",
+      "type": "mutation"
+    },
+    "17": {
+      "parentId": "14",
+      "type": "mutation"
+    },
+    "18": {
+      "type": "layer",
+      "parentId": "14",
+      "children": ["19"]
+    },
+    "19": {
+      "parentId": "18",
+      "type": "mutation"
+    },
+    "20": {
+      "type": "layer",
+      "parentId": "14"
+    },
+    "21": {
+      "type": "layer",
+      "parentId": "14",
+      "children": ["22"]
+    },
+    "22": {
+      "parentId": "21",
+      "type": "mutation"
+    },
+    "23": {
+      "type": "layerFolder",
+      "parentId": "6",
+      "children": ["24", "26"]
+    },
+    "24": {
+      "type": "layer",
+      "parentId": "23",
+      "children": ["25"]
+    },
+    "25": {
+      "parentId": "24",
+      "type": "mutation"
+    },
+    "26": {
+      "type": "layer",
+      "parentId": "23",
+      "children": ["27"]
+    },
+    "27": {
+      "parentId": "26",
+      "type": "mutation"
+    },
     "28": {
       "type": "layerFolder",
       "parentId": "6",
       "children": ["29", "30", "37", "38", "41", "42", "61"]
     },
-    "29": { "type": "layer", "parentId": "28" },
+    "29": {
+      "type": "layer",
+      "parentId": "28"
+    },
     "30": {
       "type": "layerFolder",
       "parentId": "28",
       "children": ["31", "33", "35"]
     },
-    "31": { "type": "layer", "parentId": "30", "children": ["32"] },
-    "32": { "parentId": "31", "type": "mutation" },
-    "33": { "type": "layer", "parentId": "30", "children": ["34"] },
-    "34": { "parentId": "33", "type": "mutation" },
-    "35": { "type": "layer", "parentId": "30", "children": ["36"] },
-    "36": { "parentId": "35", "type": "mutation" },
-    "37": { "type": "layer", "parentId": "28" },
-    "38": { "type": "layer", "parentId": "28", "children": ["39", "40"] },
-    "39": { "parentId": "38", "type": "mutation" },
-    "40": { "parentId": "38", "type": "mutation" },
-    "41": { "type": "layer", "parentId": "28" },
+    "31": {
+      "type": "layer",
+      "parentId": "30",
+      "children": ["32"]
+    },
+    "32": {
+      "parentId": "31",
+      "type": "mutation"
+    },
+    "33": {
+      "type": "layer",
+      "parentId": "30",
+      "children": ["34"]
+    },
+    "34": {
+      "parentId": "33",
+      "type": "mutation"
+    },
+    "35": {
+      "type": "layer",
+      "parentId": "30",
+      "children": ["36"]
+    },
+    "36": {
+      "parentId": "35",
+      "type": "mutation"
+    },
+    "37": {
+      "type": "layer",
+      "parentId": "28"
+    },
+    "38": {
+      "type": "layer",
+      "parentId": "28",
+      "children": ["39", "40"]
+    },
+    "39": {
+      "parentId": "38",
+      "type": "mutation"
+    },
+    "40": {
+      "parentId": "38",
+      "type": "mutation"
+    },
+    "41": {
+      "type": "layer",
+      "parentId": "28"
+    },
     "42": {
       "type": "layerFolder",
       "parentId": "28",
       "children": ["43", "47", "51", "55", "59"]
     },
-    "43": { "type": "layer", "parentId": "42", "children": ["44", "45", "46"] },
-    "44": { "parentId": "43", "type": "mutation" },
-    "45": { "parentId": "43", "type": "mutation" },
-    "46": { "parentId": "43", "type": "mutation" },
-    "47": { "type": "layer", "parentId": "42", "children": ["48", "49", "50"] },
-    "48": { "parentId": "47", "type": "mutation" },
-    "49": { "parentId": "47", "type": "mutation" },
-    "50": { "parentId": "47", "type": "mutation" },
-    "51": { "type": "layer", "parentId": "42", "children": ["52", "53", "54"] },
-    "52": { "parentId": "51", "type": "mutation" },
-    "53": { "parentId": "51", "type": "mutation" },
-    "54": { "parentId": "51", "type": "mutation" },
-    "55": { "type": "layer", "parentId": "42", "children": ["56", "57", "58"] },
-    "56": { "parentId": "55", "type": "mutation" },
-    "57": { "parentId": "55", "type": "mutation" },
-    "58": { "parentId": "55", "type": "mutation" },
-    "59": { "type": "layer", "parentId": "42", "children": ["60"] },
-    "60": { "parentId": "59", "type": "mutation" },
-    "61": { "type": "layer", "parentId": "28", "children": ["62", "63"] },
-    "62": { "parentId": "61", "type": "mutation" },
-    "63": { "parentId": "61", "type": "mutation" },
-    "64": { "type": "layer", "parentId": "6" },
-    "65": { "type": "layer", "parentId": "6", "children": ["66", "67", "68"] },
-    "66": { "parentId": "65", "type": "mutation" },
-    "67": { "parentId": "65", "type": "mutation" },
-    "68": { "parentId": "65", "type": "mutation" },
-    "69": { "type": "layer", "parentId": "6", "children": ["70"] },
-    "70": { "parentId": "69", "type": "mutation" },
-    "71": { "type": "layer", "parentId": "6", "children": ["72"] },
-    "72": { "parentId": "71", "type": "mutation" },
-    "73": { "type": "layer", "parentId": "6" },
+    "43": {
+      "type": "layer",
+      "parentId": "42",
+      "children": ["44", "45", "46"]
+    },
+    "44": {
+      "parentId": "43",
+      "type": "mutation"
+    },
+    "45": {
+      "parentId": "43",
+      "type": "mutation"
+    },
+    "46": {
+      "parentId": "43",
+      "type": "mutation"
+    },
+    "47": {
+      "type": "layer",
+      "parentId": "42",
+      "children": ["48", "49", "50"]
+    },
+    "48": {
+      "parentId": "47",
+      "type": "mutation"
+    },
+    "49": {
+      "parentId": "47",
+      "type": "mutation"
+    },
+    "50": {
+      "parentId": "47",
+      "type": "mutation"
+    },
+    "51": {
+      "type": "layer",
+      "parentId": "42",
+      "children": ["52", "53", "54"]
+    },
+    "52": {
+      "parentId": "51",
+      "type": "mutation"
+    },
+    "53": {
+      "parentId": "51",
+      "type": "mutation"
+    },
+    "54": {
+      "parentId": "51",
+      "type": "mutation"
+    },
+    "55": {
+      "type": "layer",
+      "parentId": "42",
+      "children": ["56", "57", "58"]
+    },
+    "56": {
+      "parentId": "55",
+      "type": "mutation"
+    },
+    "57": {
+      "parentId": "55",
+      "type": "mutation"
+    },
+    "58": {
+      "parentId": "55",
+      "type": "mutation"
+    },
+    "59": {
+      "type": "layer",
+      "parentId": "42",
+      "children": ["60"]
+    },
+    "60": {
+      "parentId": "59",
+      "type": "mutation"
+    },
+    "61": {
+      "type": "layer",
+      "parentId": "28",
+      "children": ["62", "63"]
+    },
+    "62": {
+      "parentId": "61",
+      "type": "mutation"
+    },
+    "63": {
+      "parentId": "61",
+      "type": "mutation"
+    },
+    "64": {
+      "type": "layer",
+      "parentId": "6"
+    },
+    "65": {
+      "type": "layer",
+      "parentId": "6",
+      "children": ["66", "67", "68"]
+    },
+    "66": {
+      "parentId": "65",
+      "type": "mutation"
+    },
+    "67": {
+      "parentId": "65",
+      "type": "mutation"
+    },
+    "68": {
+      "parentId": "65",
+      "type": "mutation"
+    },
+    "69": {
+      "type": "layer",
+      "parentId": "6",
+      "children": ["70"]
+    },
+    "70": {
+      "parentId": "69",
+      "type": "mutation"
+    },
+    "71": {
+      "type": "layer",
+      "parentId": "6",
+      "children": ["72"]
+    },
+    "72": {
+      "parentId": "71",
+      "type": "mutation"
+    },
+    "73": {
+      "type": "layer",
+      "parentId": "6"
+    },
     "74": {
       "type": "layerFolder",
       "parentId": "4",
       "children": ["75", "76", "77", "81", "82"]
     },
-    "75": { "parentId": "74", "type": "mutation" },
-    "76": { "parentId": "74", "type": "mutation" },
-    "77": { "type": "layer", "parentId": "74", "children": ["78", "79", "80"] },
-    "78": { "parentId": "77", "type": "mutation" },
-    "79": { "parentId": "77", "type": "mutation" },
-    "80": { "parentId": "77", "type": "mutation" },
-    "81": { "type": "layer", "parentId": "74" },
-    "82": { "type": "layer", "parentId": "74" },
+    "75": {
+      "parentId": "74",
+      "type": "mutation"
+    },
+    "76": {
+      "parentId": "74",
+      "type": "mutation"
+    },
+    "77": {
+      "type": "layer",
+      "parentId": "74",
+      "children": ["78", "79", "80"]
+    },
+    "78": {
+      "parentId": "77",
+      "type": "mutation"
+    },
+    "79": {
+      "parentId": "77",
+      "type": "mutation"
+    },
+    "80": {
+      "parentId": "77",
+      "type": "mutation"
+    },
+    "81": {
+      "type": "layer",
+      "parentId": "74"
+    },
+    "82": {
+      "type": "layer",
+      "parentId": "74"
+    },
     "83": {
       "type": "layerFolder",
       "parentId": "4",
       "children": ["84", "85", "86", "93", "94"]
     },
-    "84": { "parentId": "83", "type": "mutation" },
-    "85": { "parentId": "83", "type": "mutation" },
+    "84": {
+      "parentId": "83",
+      "type": "mutation"
+    },
+    "85": {
+      "parentId": "83",
+      "type": "mutation"
+    },
     "86": {
       "type": "layerFolder",
       "parentId": "83",
       "children": ["87", "89", "91"]
     },
-    "87": { "type": "layer", "parentId": "86", "children": ["88"] },
-    "88": { "parentId": "87", "type": "mutation" },
-    "89": { "type": "layer", "parentId": "86", "children": ["90"] },
-    "90": { "parentId": "89", "type": "mutation" },
-    "91": { "type": "layer", "parentId": "86", "children": ["92"] },
-    "92": { "parentId": "91", "type": "mutation" },
-    "93": { "type": "layer", "parentId": "83" },
-    "94": { "type": "layer", "parentId": "83" },
-    "95": { "type": "layer", "parentId": "root", "children": ["96"] },
-    "96": { "parentId": "95", "type": "mutation" },
+    "87": {
+      "type": "layer",
+      "parentId": "86",
+      "children": ["88"]
+    },
+    "88": {
+      "parentId": "87",
+      "type": "mutation"
+    },
+    "89": {
+      "type": "layer",
+      "parentId": "86",
+      "children": ["90"]
+    },
+    "90": {
+      "parentId": "89",
+      "type": "mutation"
+    },
+    "91": {
+      "type": "layer",
+      "parentId": "86",
+      "children": ["92"]
+    },
+    "92": {
+      "parentId": "91",
+      "type": "mutation"
+    },
+    "93": {
+      "type": "layer",
+      "parentId": "83"
+    },
+    "94": {
+      "type": "layer",
+      "parentId": "83"
+    },
+    "95": {
+      "type": "layer",
+      "parentId": "root",
+      "children": ["96"]
+    },
+    "96": {
+      "parentId": "95",
+      "type": "mutation"
+    },
     "97": {
       "type": "layerFolder",
       "parentId": "root",
       "children": ["98", "99", "101"]
     },
-    "98": { "parentId": "97", "type": "mutation" },
-    "99": { "type": "layer", "parentId": "97", "children": ["100"] },
-    "100": { "parentId": "99", "type": "mutation" },
-    "101": { "type": "layer", "parentId": "97", "children": ["102"] },
-    "102": { "parentId": "101", "type": "mutation" },
+    "98": {
+      "parentId": "97",
+      "type": "mutation"
+    },
+    "99": {
+      "type": "layer",
+      "parentId": "97",
+      "children": ["100"]
+    },
+    "100": {
+      "parentId": "99",
+      "type": "mutation"
+    },
+    "101": {
+      "type": "layer",
+      "parentId": "97",
+      "children": ["102"]
+    },
+    "102": {
+      "parentId": "101",
+      "type": "mutation"
+    },
     "103": {
       "type": "layerFolder",
       "parentId": "root",
       "children": ["104", "105", "106", "107"]
     },
-    "104": { "parentId": "103", "type": "mutation" },
-    "105": { "type": "layer", "parentId": "103" },
-    "106": { "type": "layer", "parentId": "103" },
-    "107": { "type": "layer", "parentId": "103" },
-    "root": { "type": "root", "children": ["0", "2", "4", "95", "97", "103"] }
+    "104": {
+      "parentId": "103",
+      "type": "mutation"
+    },
+    "105": {
+      "type": "layer",
+      "parentId": "103"
+    },
+    "106": {
+      "type": "layer",
+      "parentId": "103"
+    },
+    "107": {
+      "type": "layer",
+      "parentId": "103"
+    },
+    "root": {
+      "type": "root",
+      "children": ["0", "2", "4", "95", "97", "103"]
+    }
   },
   "layerFolders": {
-    "4": { "name": "Main", "visible": true, "collapsed": false },
-    "6": { "name": "Overall", "visible": true, "collapsed": false },
-    "9": { "name": "Bird", "visible": true, "collapsed": true },
-    "14": { "name": "Butterfly", "visible": true, "collapsed": true },
-    "23": { "name": "Tree", "visible": true, "collapsed": true },
-    "28": { "name": "Wheel", "visible": true, "collapsed": true },
-    "30": { "name": "Water", "visible": true, "collapsed": false },
-    "42": { "name": "Blades", "visible": true, "collapsed": false },
-    "74": { "name": "SatLayer", "visible": true, "collapsed": false },
-    "83": { "name": "Mountains", "visible": true, "collapsed": false },
-    "86": { "name": "Clouds", "visible": true, "collapsed": true },
-    "97": { "name": "Sky colors", "visible": true, "collapsed": true },
-    "103": { "name": "NightSky", "visible": true, "collapsed": true }
+    "4": {
+      "name": "New Folder",
+      "visible": true,
+      "collapsed": false
+    },
+    "6": {
+      "name": "Overall",
+      "visible": true,
+      "collapsed": false
+    },
+    "9": {
+      "name": "Bird",
+      "visible": true,
+      "collapsed": false
+    },
+    "14": {
+      "name": "Butterfly",
+      "visible": true,
+      "collapsed": false
+    },
+    "23": {
+      "name": "Tree",
+      "visible": true,
+      "collapsed": false
+    },
+    "28": {
+      "name": "Wheel",
+      "visible": true,
+      "collapsed": false
+    },
+    "30": {
+      "name": "Water",
+      "visible": true,
+      "collapsed": false
+    },
+    "42": {
+      "name": "Blades",
+      "visible": true,
+      "collapsed": false
+    },
+    "74": {
+      "name": "SatLayer",
+      "visible": true,
+      "collapsed": false
+    },
+    "83": {
+      "name": "Mountains",
+      "visible": true,
+      "collapsed": false
+    },
+    "86": {
+      "name": "Clouds",
+      "visible": true,
+      "collapsed": false
+    },
+    "97": {
+      "name": "New Folder (1)",
+      "visible": true,
+      "collapsed": false
+    },
+    "103": {
+      "name": "New Folder (2)",
+      "visible": true,
+      "collapsed": false
+    }
   },
   "layers": {
     "0": {
@@ -571,7 +952,7 @@
       "translate": [48, 0]
     },
     "64": {
-      "name": "Chimney",
+      "name": "Schoorsteen",
       "visible": true,
       "points": [
         [814, 123],
@@ -584,7 +965,7 @@
       "translate": [-151, -319]
     },
     "65": {
-      "name": "Smoke",
+      "name": "Rook",
       "visible": true,
       "points": [
         [96, 1696],
@@ -616,10 +997,10 @@
         [236, 1632],
         [95, 1664]
       ],
-      "translate": [-162, -384]
+      "translate": [-154, -384]
     },
     "69": {
-      "name": "Cigar",
+      "name": "Sigar",
       "visible": true,
       "points": [
         [1129, 1236],
@@ -802,7 +1183,7 @@
       "translate": [-821, -459]
     },
     "99": {
-      "name": "daylight",
+      "name": "Sky",
       "visible": true,
       "points": [
         [2112, 32],
@@ -813,7 +1194,7 @@
       "translate": [-14, -352]
     },
     "101": {
-      "name": "evening",
+      "name": "Sky2",
       "visible": true,
       "points": [
         [2464, 352],
@@ -835,7 +1216,7 @@
       "translate": [-777, -358]
     },
     "106": {
-      "name": "Stars 2",
+      "name": "Stars (1)",
       "visible": true,
       "points": [
         [2496, 32],
@@ -846,7 +1227,7 @@
       "translate": [-298, -387]
     },
     "107": {
-      "name": "Stars 3",
+      "name": "Stars (1) (1)",
       "visible": true,
       "points": [
         [2496, 32],
@@ -858,13 +1239,41 @@
     }
   },
   "mutations": {
-    "1": { "type": "opacity", "origin": [0, 0], "name": "New Mutator (12)" },
-    "3": { "type": "opacity", "origin": [0, 0], "name": "Opacity (2)" },
-    "5": { "type": "colorize", "origin": [1, 1], "name": "Colorize" },
-    "7": { "type": "saturation", "origin": [0, 0], "name": "Saturation (2)" },
-    "8": { "type": "lightness", "origin": [0, 0], "name": "Lightness (1)" },
-    "11": { "type": "rotate", "origin": [88, -386], "name": "New Mutator (6)" },
-    "13": { "type": "rotate", "origin": [90, -384], "name": "New Mutator (7)" },
+    "1": {
+      "type": "opacity",
+      "origin": [0, 0],
+      "name": "New Mutator (12)"
+    },
+    "3": {
+      "type": "opacity",
+      "origin": [0, 0],
+      "name": "Opacity (2)"
+    },
+    "5": {
+      "type": "colorize",
+      "origin": [1, 1],
+      "name": "Colorize"
+    },
+    "7": {
+      "type": "saturation",
+      "origin": [0, 0],
+      "name": "Saturation (2)"
+    },
+    "8": {
+      "type": "lightness",
+      "origin": [0, 0],
+      "name": "Lightness (1)"
+    },
+    "11": {
+      "type": "rotate",
+      "origin": [88, -386],
+      "name": "New Mutator (6)"
+    },
+    "13": {
+      "type": "rotate",
+      "origin": [90, -384],
+      "name": "New Mutator (7)"
+    },
     "15": {
       "name": "New Mutator (22)",
       "type": "translate",
@@ -883,7 +1292,7 @@
     },
     "19": {
       "type": "stretch",
-      "origin": [734, 241],
+      "origin": [753, 241],
       "name": "New Mutator (13)"
     },
     "22": {
@@ -921,8 +1330,16 @@
       "origin": [71, 172],
       "radius": -1
     },
-    "39": { "type": "stretch", "origin": [141, 4], "name": "New Mutator" },
-    "40": { "type": "rotate", "origin": [141, 4], "name": "New Mutator (2)" },
+    "39": {
+      "type": "stretch",
+      "origin": [141, 4],
+      "name": "New Mutator"
+    },
+    "40": {
+      "type": "rotate",
+      "origin": [141, 4],
+      "name": "New Mutator (2)"
+    },
     "44": {
       "name": "New Mutator (30)",
       "type": "translate",
@@ -997,8 +1414,16 @@
       "origin": [0, 0],
       "radius": -1
     },
-    "62": { "type": "stretch", "origin": [48, 0], "name": "New Mutator (1)" },
-    "63": { "type": "rotate", "origin": [48, 0], "name": "New Mutator (3)" },
+    "62": {
+      "type": "stretch",
+      "origin": [48, 0],
+      "name": "New Mutator (1)"
+    },
+    "63": {
+      "type": "rotate",
+      "origin": [48, 0],
+      "name": "New Mutator (3)"
+    },
     "66": {
       "type": "deform",
       "origin": [-234, -399],
@@ -1014,7 +1439,7 @@
     "68": {
       "name": "New Mutator (16)",
       "type": "translate",
-      "origin": [-130, -230],
+      "origin": [-7, 0],
       "radius": -1
     },
     "70": {
@@ -1029,8 +1454,16 @@
       "origin": [-356, -241],
       "radius": 9
     },
-    "75": { "type": "lightness", "origin": [0, 0], "name": "Lightness (4)" },
-    "76": { "type": "saturation", "origin": [0, 0], "name": "Saturation" },
+    "75": {
+      "type": "lightness",
+      "origin": [0, 0],
+      "name": "Lightness (4)"
+    },
+    "76": {
+      "type": "saturation",
+      "origin": [0, 0],
+      "name": "Saturation"
+    },
     "78": {
       "type": "deform",
       "origin": [289, -335],
@@ -1049,8 +1482,16 @@
       "name": "New Mutator (10)",
       "radius": 66
     },
-    "84": { "type": "lightness", "origin": [0, 0], "name": "Lightness" },
-    "85": { "type": "saturation", "origin": [0, 0], "name": "Saturation (1)" },
+    "84": {
+      "type": "lightness",
+      "origin": [0, 0],
+      "name": "Lightness"
+    },
+    "85": {
+      "type": "saturation",
+      "origin": [0, 0],
+      "name": "Saturation (1)"
+    },
     "88": {
       "name": "New Mutator (11)",
       "type": "translate",
@@ -1075,32 +1516,108 @@
       "origin": [0, 0],
       "radius": -1
     },
-    "98": { "type": "stretch", "origin": [-15, -323], "name": "Stretch" },
-    "100": { "type": "opacity", "origin": [1, 1], "name": "Opacity" },
-    "102": { "type": "opacity", "origin": [0, 0], "name": "Opacity (1)" },
-    "104": { "type": "stretch", "origin": [-1017, -511], "name": "Stretch (1)" }
+    "98": {
+      "type": "stretch",
+      "origin": [-15, -323],
+      "name": "Stretch"
+    },
+    "100": {
+      "type": "opacity",
+      "origin": [1, 1],
+      "name": "Opacity"
+    },
+    "102": {
+      "type": "opacity",
+      "origin": [0, 0],
+      "name": "Opacity (1)"
+    },
+    "104": {
+      "type": "stretch",
+      "origin": [-1017, -511],
+      "name": "Stretch (1)"
+    }
   },
   "controlHierarchy": {
-    "0": { "type": "control", "parentId": "root" },
-    "1": { "type": "control", "parentId": "root" },
-    "2": { "type": "control", "parentId": "root" },
-    "3": { "type": "control", "parentId": "root" },
-    "4": { "type": "control", "parentId": "root" },
-    "5": { "type": "control", "parentId": "root" },
-    "6": { "type": "control", "parentId": "root" },
-    "7": { "type": "control", "parentId": "root" },
-    "8": { "type": "control", "parentId": "root" },
-    "9": { "type": "control", "parentId": "root" },
-    "10": { "type": "control", "parentId": "root" },
-    "11": { "type": "control", "parentId": "root" },
-    "12": { "type": "control", "parentId": "root" },
-    "13": { "type": "control", "parentId": "root" },
-    "14": { "type": "control", "parentId": "root" },
-    "15": { "type": "control", "parentId": "root" },
-    "16": { "type": "control", "parentId": "root" },
-    "17": { "type": "control", "parentId": "root" },
-    "18": { "type": "control", "parentId": "root" },
-    "19": { "type": "control", "parentId": "root" },
+    "0": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "1": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "2": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "3": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "4": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "5": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "6": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "7": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "8": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "9": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "10": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "11": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "12": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "13": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "14": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "15": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "16": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "17": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "18": {
+      "type": "control",
+      "parentId": "root"
+    },
+    "19": {
+      "type": "control",
+      "parentId": "root"
+    },
     "root": {
       "type": "root",
       "children": [
@@ -1132,7 +1649,14 @@
     "0": {
       "name": "Light",
       "type": "slider",
-      "steps": [{ "3": [0, 0] }, { "3": [1, 0] }]
+      "steps": [
+        {
+          "3": [0, 0]
+        },
+        {
+          "3": [1, 0]
+        }
+      ]
     },
     "1": {
       "name": "DayNight",
@@ -1203,17 +1727,47 @@
     "2": {
       "name": "Bubble3",
       "type": "slider",
-      "steps": [{ "36": [-11, 0] }, { "36": [-77, 49] }, { "36": [-126, 107] }]
+      "steps": [
+        {
+          "36": [-11, 0]
+        },
+        {
+          "36": [-77, 49]
+        },
+        {
+          "36": [-126, 107]
+        }
+      ]
     },
     "3": {
       "name": "Bubble2",
       "type": "slider",
-      "steps": [{ "34": [-9, 2] }, { "34": [-75, 51] }, { "34": [-130, 110] }]
+      "steps": [
+        {
+          "34": [-9, 2]
+        },
+        {
+          "34": [-75, 51]
+        },
+        {
+          "34": [-130, 110]
+        }
+      ]
     },
     "4": {
       "name": "Bubble",
       "type": "slider",
-      "steps": [{ "32": [-19, 0] }, { "32": [-85, 43] }, { "32": [-149, 115] }]
+      "steps": [
+        {
+          "32": [-19, 0]
+        },
+        {
+          "32": [-85, 43]
+        },
+        {
+          "32": [-149, 115]
+        }
+      ]
     },
     "5": {
       "name": "WheelBlades",
@@ -1254,86 +1808,185 @@
     "6": {
       "name": "Smoke",
       "type": "slider",
-      "steps": [{ "68": [0, 0] }, { "68": [0, -128] }]
+      "steps": [
+        {
+          "68": [0, 0]
+        },
+        {
+          "68": [0, -128]
+        }
+      ]
     },
     "7": {
       "name": "ButterflyY",
       "type": "slider",
-      "steps": [{ "15": [0, -216] }, { "15": [0, 210] }]
+      "steps": [
+        {
+          "15": [0, -216]
+        },
+        {
+          "15": [0, 210]
+        }
+      ]
     },
     "8": {
       "name": "ButterflyX",
       "type": "slider",
-      "steps": [{ "15": [-400, 0] }, { "15": [200, 0] }]
+      "steps": [
+        {
+          "15": [-400, 0]
+        },
+        {
+          "15": [200, 0]
+        }
+      ]
     },
     "9": {
       "name": "ButterflyZoom",
       "type": "slider",
-      "steps": [{ "16": [1, 1] }, { "16": [0.5, 0.5] }]
+      "steps": [
+        {
+          "16": [1, 1]
+        },
+        {
+          "16": [0.5, 0.5]
+        }
+      ]
     },
     "10": {
       "name": "ButterflyTurn",
       "type": "slider",
-      "steps": [{ "16": [1, 1] }, { "16": [-1, 1] }]
+      "steps": [
+        {
+          "16": [1, 1]
+        },
+        {
+          "16": [-1, 1]
+        }
+      ]
     },
     "11": {
       "name": "ButterflyWings",
       "type": "slider",
       "steps": [
-        { "19": [1, 1], "22": [1, 1] },
-        { "19": [1, -1.05], "22": [1, -0.4] }
+        {
+          "19": [1, 1],
+          "22": [1, 1]
+        },
+        {
+          "19": [1, -1.05],
+          "22": [1, -0.4]
+        }
       ]
     },
     "12": {
       "name": "EyesBlink",
       "type": "slider",
-      "steps": [{ "1": [1, 1] }, { "1": [0, 0] }]
+      "steps": [
+        {
+          "1": [1, 1]
+        },
+        {
+          "1": [0, 0]
+        }
+      ]
     },
     "13": {
       "name": "Cloud1",
       "type": "slider",
-      "steps": [{ "88": [1200, 0] }, { "88": [-1300, 0] }]
+      "steps": [
+        {
+          "88": [1200, 0]
+        },
+        {
+          "88": [-1300, 0]
+        }
+      ]
     },
     "14": {
       "name": "Cloud2",
       "type": "slider",
-      "steps": [{ "90": [-2101, 0] }, { "90": [270, 0] }]
+      "steps": [
+        {
+          "90": [-2101, 0]
+        },
+        {
+          "90": [270, 0]
+        }
+      ]
     },
     "15": {
       "name": "Cloud3",
       "type": "slider",
-      "steps": [{ "92": [-546, 0] }, { "92": [1753, 0] }]
+      "steps": [
+        {
+          "92": [-546, 0]
+        },
+        {
+          "92": [1753, 0]
+        }
+      ]
     },
     "16": {
       "name": "Beak",
       "type": "slider",
       "steps": [
-        { "11": [0, 0], "13": [0, 0] },
-        { "11": [7, 0], "13": [-19, 0] }
+        {
+          "11": [0, 0],
+          "13": [0, 0]
+        },
+        {
+          "11": [7, 0],
+          "13": [-19, 0]
+        }
       ]
     },
     "17": {
       "name": "TreeLeaves2",
       "type": "slider",
       "steps": [
-        { "25": [-42, 0], "70": [-12, 0], "72": [0, 0], "79": [-11, 0] },
-        { "25": [48, 0], "70": [13, 0], "72": [0, 13], "79": [8, 0] }
+        {
+          "25": [-42, 0],
+          "70": [-12, 0],
+          "72": [0, 0],
+          "79": [-11, 0]
+        },
+        {
+          "25": [48, 0],
+          "70": [13, 0],
+          "72": [0, 13],
+          "79": [8, 0]
+        }
       ]
     },
     "18": {
       "name": "TreeLeaves1",
       "type": "slider",
       "steps": [
-        { "27": [-27, 0], "78": [-13, 0], "80": [-6, 0] },
-        { "27": [40, 0], "78": [12, 0], "80": [11, 0] }
+        {
+          "27": [-27, 0],
+          "78": [-13, 0],
+          "80": [-6, 0]
+        },
+        {
+          "27": [40, 0],
+          "78": [12, 0],
+          "80": [11, 0]
+        }
       ]
     },
     "19": {
       "name": "WheelRotate",
       "type": "slider",
       "steps": [
-        { "40": [0, 0], "63": [0, 0] },
-        { "40": [360, 0], "63": [360, 0] }
+        {
+          "40": [0, 0],
+          "63": [0, 0]
+        },
+        {
+          "40": [360, 0],
+          "63": [360, 0]
+        }
       ]
     }
   },
@@ -1365,7 +2018,7 @@
     "58": [0, 0],
     "62": [0.45, 1],
     "63": [90, 0],
-    "66": [51, 0],
+    "66": [43, 0],
     "67": [53, 0],
     "70": [0, 0],
     "72": [0, -9],
@@ -1385,7 +2038,7 @@
     "0": 0.91,
     "1": 0,
     "2": 1.56,
-    "3": 1.29,
+    "3": 0.9,
     "4": 0.3,
     "5": 1,
     "6": 1,
@@ -1404,598 +2057,536 @@
     "19": 0.78,
     "error": 1.46
   },
-  "animationHierarchy": {
-    "0": { "type": "animation", "parentId": "root" },
-    "1": { "type": "animation", "parentId": "root" },
-    "2": { "type": "animation", "parentId": "root" },
-    "3": { "type": "animation", "parentId": "root" },
-    "4": { "type": "animation", "parentId": "root" },
-    "5": { "type": "animation", "parentId": "root" },
-    "6": { "type": "animation", "parentId": "root" },
-    "7": { "type": "animation", "parentId": "root" },
-    "8": { "type": "animation", "parentId": "root" },
-    "9": { "type": "animation", "parentId": "root" },
-    "10": { "type": "animation", "parentId": "root" },
-    "11": { "type": "animation", "parentId": "root" },
-    "12": { "type": "animation", "parentId": "root" },
-    "13": { "type": "animation", "parentId": "root" },
-    "root": {
-      "type": "root",
-      "children": [
-        "0",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "10",
-        "11",
-        "12",
-        "13"
-      ]
-    }
-  },
-  "animationFolders": {},
   "animations": {
     "0": {
       "name": "Wheel",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "19",
-          "controlValue": 1
-        },
-        {
-          "start": 0,
-          "duration": 19200,
-          "easingFunction": "linear",
-          "controlId": "19",
-          "controlValue": 0
+          "length": 19200,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 19200,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 1
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "1": {
       "name": "Tree",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
-          "controlId": "18",
-          "controlValue": 0
-        },
-        {
-          "start": 0,
-          "duration": 500,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "17",
-          "controlValue": 0
+          "length": 16000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 500,
+              "duration": 8000,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 8500,
+              "duration": 7500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.04
+            }
+          ]
         },
         {
-          "start": 0,
-          "duration": 8000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "18",
-          "controlValue": 1
-        },
-        {
-          "start": 500,
-          "duration": 8000,
-          "easingFunction": "linear",
-          "controlId": "17",
-          "controlValue": 1
-        },
-        {
-          "start": 8000,
-          "duration": 8000,
-          "easingFunction": "linear",
-          "controlId": "18",
-          "controlValue": 0
-        },
-        {
-          "start": 8500,
-          "duration": 7500,
-          "easingFunction": "linear",
-          "controlId": "17",
-          "controlValue": 0.04
+          "length": 16000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 8000,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0
+            },
+            {
+              "start": 8000,
+              "duration": 8000,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "2": {
       "name": "Bird",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 6000,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "16",
-          "controlValue": 0
-        },
-        {
-          "start": 6000,
-          "duration": 200,
-          "easingFunction": "linear",
-          "controlId": "16",
-          "controlValue": 1
-        },
-        {
-          "start": 6200,
-          "duration": 800,
-          "easingFunction": "linear",
-          "controlId": "16",
-          "controlValue": 1
-        },
-        {
-          "start": 7000,
-          "duration": 200,
-          "easingFunction": "linear",
-          "controlId": "16",
-          "controlValue": 0
+          "length": 7200,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 6000,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 6000,
+              "duration": 200,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 6200,
+              "duration": 800,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 7000,
+              "duration": 200,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "3": {
       "name": "Cloud1",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "13",
-          "controlValue": 0.5
-        },
-        {
-          "start": 0,
-          "duration": 20000,
-          "easingFunction": "linear",
-          "controlId": "13",
-          "controlValue": 1
-        },
-        {
-          "start": 20000,
-          "duration": 1,
-          "easingFunction": "linear",
-          "controlId": "13",
-          "controlValue": 0
-        },
-        {
-          "start": 20001,
-          "duration": 19999,
-          "easingFunction": "linear",
-          "controlId": "13",
-          "controlValue": 0.5
+          "length": 40000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 20000,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0.5
+            },
+            {
+              "start": 20000,
+              "duration": 20000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.5,
+              "controlStartValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "4": {
       "name": "Eyes",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "12",
-          "controlValue": 0
-        },
-        {
-          "start": 0,
-          "duration": 3000,
-          "easingFunction": "linear",
-          "controlId": "12",
-          "controlValue": 0
-        },
-        {
-          "start": 3000,
-          "duration": 300,
-          "easingFunction": "linear",
-          "controlId": "12",
-          "controlValue": 1
-        },
-        {
-          "start": 3300,
-          "duration": 200,
-          "easingFunction": "linear",
-          "controlId": "12",
-          "controlValue": 1
-        },
-        {
-          "start": 3500,
-          "duration": 200,
-          "easingFunction": "linear",
-          "controlId": "12",
-          "controlValue": 0
+          "length": 3700,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 3000,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 0
+            },
+            {
+              "start": 3000,
+              "duration": 300,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 3300,
+              "duration": 200,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 3500,
+              "duration": 200,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "5": {
       "name": "ButterflyWings",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 300,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "11",
-          "controlValue": 1
-        },
-        {
-          "start": 300,
-          "duration": 300,
-          "easingFunction": "linear",
-          "controlId": "11",
-          "controlValue": 0
+          "length": 600,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 300,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 300,
+              "duration": 300,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "6": {
       "name": "Smoke",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
-          "controlId": "error",
-          "controlValue": 0
-        },
-        {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "6",
-          "controlValue": 0
-        },
-        {
-          "start": 0,
-          "duration": 10000,
-          "easingFunction": "linear",
-          "controlId": "error",
-          "controlValue": 1
-        },
-        {
-          "start": 0,
-          "duration": 10000,
-          "easingFunction": "linear",
-          "controlId": "6",
-          "controlValue": 1
+          "length": 10000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 10000,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "7": {
       "name": "Cloud2",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "14",
-          "controlValue": 0.8
-        },
-        {
-          "start": 0,
-          "duration": 30000,
-          "easingFunction": "linear",
-          "controlId": "14",
-          "controlValue": 0
-        },
-        {
-          "start": 30000,
-          "duration": 1,
-          "easingFunction": "linear",
-          "controlId": "14",
-          "controlValue": 1
-        },
-        {
-          "start": 30001,
-          "duration": 9999,
-          "easingFunction": "linear",
-          "controlId": "14",
-          "controlValue": 0.8
+          "length": 40000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 30000,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 0.8
+            },
+            {
+              "start": 30000,
+              "duration": 10000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.8,
+              "controlStartValue": 1
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "8": {
       "name": "Cloud3",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "15",
-          "controlValue": 0.2
-        },
-        {
-          "start": 0,
-          "duration": 10000,
-          "easingFunction": "linear",
-          "controlId": "15",
-          "controlValue": 0
-        },
-        {
-          "start": 10000,
-          "duration": 1,
-          "easingFunction": "linear",
-          "controlId": "15",
-          "controlValue": 1
-        },
-        {
-          "start": 10001,
-          "duration": 29999,
-          "easingFunction": "linear",
-          "controlId": "15",
-          "controlValue": 0.2
+          "length": 40000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 10000,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 0.2
+            },
+            {
+              "start": 10000,
+              "duration": 30000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.2,
+              "controlStartValue": 1
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "9": {
       "name": "WheelBlades",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "5",
-          "controlValue": 0
-        },
-        {
-          "start": 0,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "5",
-          "controlValue": 1
+          "length": 1600,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "10": {
       "name": "Water",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
-          "controlId": "4",
-          "controlValue": 1.6
-        },
-        {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
-          "controlId": "3",
-          "controlValue": 0.9
-        },
-        {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "2",
-          "controlValue": 0.3
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9,
+              "controlStartValue": 0.3
+            },
+            {
+              "start": 1600,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6
+            },
+            {
+              "start": 3200,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 3600,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            }
+          ]
         },
         {
-          "start": 0,
-          "duration": 400,
-          "easingFunction": "linear",
-          "controlId": "4",
-          "controlValue": 2
-        },
-        {
-          "start": 0,
-          "duration": 1600,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "3",
-          "controlValue": 1.6
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6,
+              "controlStartValue": 0.9
+            },
+            {
+              "start": 1600,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 2000,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            },
+            {
+              "start": 3200,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9
+            }
+          ]
         },
         {
-          "start": 0,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "2",
-          "controlValue": 0.9
-        },
-        {
-          "start": 400,
-          "duration": 1,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "4",
-          "controlValue": 0
-        },
-        {
-          "start": 401,
-          "duration": 1199,
-          "easingFunction": "linear",
-          "controlId": "4",
-          "controlValue": 0.3
-        },
-        {
-          "start": 1600,
-          "duration": 400,
-          "easingFunction": "linear",
-          "controlId": "3",
-          "controlValue": 2
-        },
-        {
-          "start": 1600,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "2",
-          "controlValue": 1.6
-        },
-        {
-          "start": 1600,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "4",
-          "controlValue": 0.9
-        },
-        {
-          "start": 2000,
-          "duration": 1,
-          "easingFunction": "linear",
-          "controlId": "3",
-          "controlValue": 0
-        },
-        {
-          "start": 2001,
-          "duration": 1199,
-          "easingFunction": "linear",
-          "controlId": "3",
-          "controlValue": 0.3
-        },
-        {
-          "start": 3200,
-          "duration": 400,
-          "easingFunction": "linear",
-          "controlId": "2",
-          "controlValue": 2
-        },
-        {
-          "start": 3200,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "3",
-          "controlValue": 0.9
-        },
-        {
-          "start": 3200,
-          "duration": 1600,
-          "easingFunction": "linear",
-          "controlId": "4",
-          "controlValue": 1.6
-        },
-        {
-          "start": 3600,
-          "duration": 1,
-          "easingFunction": "linear",
-          "controlId": "2",
-          "controlValue": 0
-        },
-        {
-          "start": 3601,
-          "duration": 1199,
-          "easingFunction": "linear",
-          "controlId": "2",
-          "controlValue": 0.3
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2,
+              "controlStartValue": 1.6
+            },
+            {
+              "start": 400,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            },
+            {
+              "start": 1600,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9
+            },
+            {
+              "start": 3200,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "11": {
       "name": "Day night",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 0,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "1",
-          "controlValue": 0
-        },
-        {
-          "start": 0,
-          "duration": 6000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlValue": 0.36
-        },
-        { "start": 6000, "event": "evening" },
+          "length": 35000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 6000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.36,
+              "controlStartValue": 0
+            },
+            {
+              "start": 6000,
+              "duration": 6000,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 12000,
+              "duration": 4000,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 16000,
+              "duration": 5000,
+              "easingFunction": "linear",
+              "controlEndValue": 3.16
+            },
+            {
+              "start": 21000,
+              "duration": 6000,
+              "easingFunction": "linear",
+              "controlEndValue": 4
+            },
+            {
+              "start": 27000,
+              "duration": 8000,
+              "easingFunction": "linear",
+              "controlEndValue": 4
+            }
+          ]
+        }
+      ],
+      "events": [
         {
           "start": 6000,
-          "duration": 6000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlValue": 2
+          "eventName": "evening"
         },
-        {
-          "start": 12000,
-          "duration": 4000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlValue": 2
-        },
-        { "start": 16000, "event": "endNight" },
         {
           "start": 16000,
-          "duration": 5000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlValue": 3.16
+          "eventName": "endNight"
         },
-        { "start": 21000, "event": "morning" },
         {
           "start": 21000,
-          "duration": 6000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlValue": 4
-        },
-        {
-          "start": 27000,
-          "duration": 8000,
-          "easingFunction": "linear",
-          "controlId": "1",
-          "controlValue": 4
+          "eventName": "morning"
         }
       ]
     },
     "12": {
       "name": "LightFlicker",
       "looping": true,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 630,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "0",
-          "controlValue": 0.72
-        },
-        {
-          "start": 630,
-          "duration": 580,
-          "easingFunction": "linear",
-          "controlId": "0",
-          "controlValue": 0.78
-        },
-        {
-          "start": 1210,
-          "duration": 660,
-          "easingFunction": "linear",
-          "controlId": "0",
-          "controlValue": 0.69
-        },
-        {
-          "start": 1870,
-          "duration": 740,
-          "easingFunction": "linear",
-          "controlId": "0",
-          "controlValue": 0.89
+          "length": 2610,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 630,
+              "easingFunction": "linear",
+              "controlEndValue": 0.72
+            },
+            {
+              "start": 630,
+              "duration": 580,
+              "easingFunction": "linear",
+              "controlEndValue": 0.78
+            },
+            {
+              "start": 1210,
+              "duration": 660,
+              "easingFunction": "linear",
+              "controlEndValue": 0.69
+            },
+            {
+              "start": 1870,
+              "duration": 740,
+              "easingFunction": "linear",
+              "controlEndValue": 0.89
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     },
     "13": {
       "name": "LightOff",
       "looping": false,
-      "actions": [
+      "tracks": [
         {
-          "start": 0,
-          "duration": 1260,
-          "easingFunction": "linear",
+          "type": "control",
           "controlId": "0",
-          "controlValue": 0
+          "length": 1260,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1260,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
         }
-      ]
+      ],
+      "events": []
     }
   }
 }

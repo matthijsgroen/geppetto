@@ -127,6 +127,49 @@
   }
 }
 
+/**
+ * Timeline background utility
+ * Shows lines for 10 seconds, seconds, 200mx, 100ms
+ */
+@utility timeline {
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      var(--color-workspace) 0px,
+      var(--color-workspace) 1px,
+      transparent 1px,
+      transparent 10em
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--color-workspace) 0px,
+      var(--color-workspace) 1px,
+      transparent 1px,
+      transparent 1em
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--color-workspace) 0px,
+      var(--color-workspace) 1px,
+      transparent 1px,
+      transparent 0.2em
+    ),
+    repeating-linear-gradient(
+      90deg,
+      var(--color-workspace) 0px,
+      var(--color-workspace) 1px,
+      transparent 1px,
+      transparent 0.1em
+    );
+  background-size:
+    100% 100%,
+    100% 80%,
+    100% 50%,
+    100% 30%;
+  background-position: left bottom;
+  background-repeat: repeat-x;
+}
+
 html,
 body,
 #root,

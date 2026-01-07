@@ -41,28 +41,44 @@ export type FrameAction =
   | FrameEvent;
 
 export type FrameControlAction = {
-  controlId: string;
-  easingFunction: EasingFunction;
-  controlValue: number;
   start: number;
+  easingFunction: EasingFunction;
+  controlEndValue: number;
+  controlStartValue?: number;
   duration: number;
 };
 
 export type FrameLayerVisibilityAction = {
-  layerId: string;
-  visible: boolean;
   start: number;
+  visible: boolean;
 };
 
 export type FrameEvent = {
-  event: string;
   start: number;
+  eventName: string;
 };
 
-type Animation = {
+export type AnimationTrack = AnimationControlTrack | AnimationVisibilityTrack;
+
+export type AnimationControlTrack = {
+  type: "control";
+  controlId: string;
+  actions: FrameControlAction[];
+  length: number;
+};
+
+export type AnimationVisibilityTrack = {
+  type: "visibility";
+  layerId: string;
+  actions: FrameLayerVisibilityAction[];
+  length: number;
+};
+
+export type Animation = {
   name: string;
   looping: boolean;
-  actions: FrameAction[];
+  tracks: AnimationTrack[];
+  events: FrameEvent[];
 };
 
 type BaseVector = {
@@ -142,7 +158,5 @@ export type GeppettoImage = {
   controls: Record<string, ControlDefinition>;
   controlValues: Record<string, number>;
 
-  animationHierarchy: Hierarchy<"animationFolder" | "animation">;
-  animationFolders: Record<string, Folder>;
   animations: Record<string, Animation>;
 };

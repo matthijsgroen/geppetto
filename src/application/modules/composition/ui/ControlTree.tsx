@@ -1,16 +1,23 @@
 import { ControlTreeEnvironment } from "@/application/modules/composition/ui/ControlTreeEnvironment";
 import { useFile } from "@/application/state/FileContext";
 import { useToolAction } from "@/application/state/hooks/useToolAction";
-import { addControl, removeControls } from "@/domain/animation/file2/controls";
+import {
+  addControl,
+  hasControls,
+  removeControls,
+} from "@/domain/animation/file2/controls";
 import {
   findParentId,
   type PlacementInfo,
 } from "@/domain/animation/file2/hierarchy";
+import { hasMutations } from "@/domain/animation/file2/mutation";
 import { type UseState } from "@/dtos/application.dto";
 import {
+  EmptyTree,
   Icon,
   Panel,
   PanelTitle,
+  Paragraph,
   ToolBar,
   ToolButton,
   ToolSeparator,
@@ -52,6 +59,9 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
     setFile(removeControls(selectedControls));
   });
 
+  const doesHaveMutations = hasMutations(file);
+  const doesHaveControls = hasControls(file);
+
   return (
     <ControlTreeEnvironment
       selectedItemsState={selectedControlsState}
@@ -61,6 +71,7 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
         <PanelTitle>Controls</PanelTitle>
         <ToolBar size="small">
           <ToolButton
+            disabled={!doesHaveMutations}
             icon={<Icon>⚙️</Icon>}
             label="+"
             onClick={addControlAction}
@@ -76,7 +87,22 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
             tooltip="Remove control"
           />
         </ToolBar>
-        <Tree treeId="controls" />
+        {doesHaveMutations && doesHaveControls ? (
+          <Tree treeId="controls" />
+        ) : (
+          <EmptyTree>
+            {!doesHaveMutations && (
+              <Paragraph selectable={false}>
+                Add mutators to layers or folders to create controls.
+              </Paragraph>
+            )}
+            {!doesHaveControls && doesHaveMutations && (
+              <Paragraph selectable={false}>
+                Add controls to manipulate mutators over time.
+              </Paragraph>
+            )}
+          </EmptyTree>
+        )}
         <ControlEdit
           onEditControlSteps={onEditControlSteps}
           selectedControlIds={selectedControls}

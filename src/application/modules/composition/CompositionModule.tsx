@@ -23,6 +23,7 @@ import LayerMouseControl, {
   type DragState,
 } from "@/application/ui/LayerMouseControl";
 import { MouseMode } from "@/application/ui/MouseControl";
+import { SectionSelector } from "@/application/ui/SectionSelector";
 import { dragItem } from "@/domain/animation/file2/drag";
 import {
   findParentId,
@@ -60,7 +61,6 @@ import { type Vec2 } from "@/shared/types/global";
 import {
   Column,
   ControlledMenu,
-  Icon,
   Inlay,
   MenuItem,
   Panel,
@@ -72,21 +72,14 @@ import {
   ToolBar,
   ToolSeparator,
   ToolSpacer,
-  ToolTab,
   useMenuState,
 } from "@/ui/components";
 
-import CompositionCanvas from "./CompositionCanvas";
-import { ControlEditSteps } from "./ControlEdit";
-import { ControlTree } from "./ControlTree";
-import { InlayControlPanel, ItemEdit } from "./ItemEdit";
-import { ShapeTree } from "./ShapeTree";
-
-type CompositionProps = {
-  onSectionChange?: (newSection: AppSection) => void;
-  textureState: UseState<HTMLImageElement | null>;
-  menu?: React.ReactNode;
-};
+import CompositionCanvas from "./ui/CompositionCanvas";
+import { ControlEditSteps } from "./ui/ControlEdit";
+import { ControlTree } from "./ui/ControlTree";
+import { InlayControlPanel, ItemEdit } from "./ui/ItemEdit";
+import { ShapeTree } from "./ui/ShapeTree";
 
 const TOGGLE_INFO_SHORTCUT: Shortcut = {
   ctrlOrCmd: true,
@@ -106,12 +99,10 @@ const useScaleUpdater = (
   texture: HTMLImageElement | null
 ) => {
   const updater = useUpdateScreenTranslation();
-  const textureRef = useRef(texture);
-  textureRef.current = texture;
   useEffect(() => {
     const handleResize = () => {
-      if (containerRef.current && textureRef.current) {
-        const img = textureRef.current;
+      if (containerRef.current && texture) {
+        const img = texture;
         const rect = containerRef.current.getBoundingClientRect();
         updater((current) => {
           return {
@@ -128,7 +119,7 @@ const useScaleUpdater = (
     return () => {
       ref.removeEventListener("resize", handleResize);
     };
-  }, [containerRef, updater]);
+  }, [containerRef, updater, texture]);
 };
 
 const useMutatorMap = (
@@ -140,12 +131,17 @@ const useMutatorMap = (
     [file.mutations, file.layerHierarchy, vectorValues]
   );
 
-export const Composition: React.FC<CompositionProps> = ({
+type CompositionModuleProps = {
+  onSectionChange?: (newSection: AppSection) => void;
+  texture: HTMLImageElement | null;
+  menu?: React.ReactNode;
+};
+
+export const CompositionModule: React.FC<CompositionModuleProps> = ({
   menu,
-  textureState,
+  texture,
   onSectionChange,
 }) => {
-  const texture = textureState[0];
   const [file, setFile] = useFile();
   const [showItemDetails, setShowItemDetails] = useState(false);
   const [showWireFrames, setShowWireFrames] = useState(true);
@@ -432,13 +428,10 @@ export const Composition: React.FC<CompositionProps> = ({
       <ToolBar>
         {menu}
         <ToolSeparator />
-        <ToolTab
-          icon={<Icon>🧬</Icon>}
-          label="Layers"
-          onClick={() => onSectionChange?.("layers")}
+        <SectionSelector
+          activeSection="composition"
+          onSectionChange={onSectionChange}
         />
-        <ToolTab active icon={<Icon>🤷🏼</Icon>} label="Composition" />
-        <ToolTab disabled icon={<Icon>🏃</Icon>} label="Animation" />
         <ToolSeparator />
         <ActionToolButton
           action={actions.toggleWireFrames}

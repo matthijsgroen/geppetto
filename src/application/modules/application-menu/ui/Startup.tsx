@@ -2,6 +2,7 @@ import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useContext } from "react";
 
 import { ApplicationContext } from "@/application/state/ApplicationContext";
+import { hasControls } from "@/domain/animation/file2/controls";
 import { isNewFile } from "@/domain/animation/file2/new";
 import { hasPoints } from "@/domain/animation/file2/shapes";
 import { type GeppettoImage } from "@/dtos/animation-file2.dto";
@@ -41,7 +42,7 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
         </div>
         {isNewFile(file) && (
           <>
-            <Paragraph align="right">
+            <Paragraph align="right" selectable={false}>
               <ToolButton
                 icon={<Icon>📄</Icon>}
                 label="Load file..."
@@ -52,10 +53,12 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
               <br />
               <Kbd dimmed shortcut={{ interaction: "KeyO", ctrlOrCmd: true }} />
             </Paragraph>
-            <Paragraph>Load a Geppetto file from disk</Paragraph>
+            <Paragraph selectable={false}>
+              Load a Geppetto file from disk
+            </Paragraph>
           </>
         )}
-        <Paragraph align="right">
+        <Paragraph align="right" selectable={false}>
           <ToolButton
             icon={<Icon>🌅</Icon>}
             label="Load texture..."
@@ -69,8 +72,10 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
             shortcut={{ interaction: "KeyO", ctrlOrCmd: true, shift: true }}
           />
         </Paragraph>
-        <Paragraph>Load a texture from disk</Paragraph>
-        <Paragraph align="right">&mdash; Or &mdash;</Paragraph>
+        <Paragraph selectable={false}>Load a texture from disk</Paragraph>
+        <Paragraph align="right" selectable={false}>
+          &mdash; Or &mdash;
+        </Paragraph>
         <div></div>
         <Paragraph align="right">
           <ToolButton
@@ -81,7 +86,9 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
             standAlone
           />
         </Paragraph>
-        <Paragraph>Load a demo file to explore the app</Paragraph>
+        <Paragraph selectable={false}>
+          Load a demo file to explore the app
+        </Paragraph>
         <div className="col-span-2 pt-4">
           <Paragraph size="small">
             Version: {versionInfo.version} - {versionInfo.commit.slice(0, 6)},
@@ -93,10 +100,22 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
     );
   }
 
-  if (screen === "composition" && texture && !hasPoints(file)) {
+  if (
+    (screen === "composition" || screen === "animation") &&
+    texture &&
+    !hasPoints(file)
+  ) {
     return (
       <p>
         No layers with a surface. Add a layer in the &ldquo;Layers&rdquo;
+        screen.
+      </p>
+    );
+  }
+  if (screen === "animation" && texture && !hasControls(file)) {
+    return (
+      <p>
+        No Controls defined. Add a control in the &ldquo;Composition&rdquo;
         screen.
       </p>
     );

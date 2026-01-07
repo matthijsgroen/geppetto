@@ -11,6 +11,7 @@ export default meta;
 
 export const Title = meta.story({
   args: {
+    selectable: true,
     children: "️Hello world",
   },
 });
