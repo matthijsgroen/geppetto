@@ -54,8 +54,4 @@ const meta = preview.meta({
 
 export default meta;
 
-export const TimeBar = meta.story({
-  args: {
-    variant: "default",
-  },
-});
+export const TimeBar = meta.story();
