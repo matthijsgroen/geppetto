@@ -12,6 +12,8 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.57.0-noble
 
     steps:
       - uses: actions/checkout@v4
@@ -40,6 +42,12 @@ jobs:
 
       - name: Run unit tests
         run: yarn turbo run test:coverage
+
+      - name: Install Playwright browsers
+        run: yarn workspace @geppetto/studio playwright install
+
+      - name: Run Storybook tests
+        run: yarn test-storybook
 
       - name: Check types
         run: yarn turbo run types:check
