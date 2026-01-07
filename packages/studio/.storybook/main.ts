@@ -16,4 +16,12 @@ export default defineMain({
     getAbsolutePath("@storybook/addon-vitest"),
   ],
   framework: { name: getAbsolutePath("@storybook/react-vite"), options: {} },
+  core: {
+    builder: {
+      name: "@storybook/builder-vite",
+      options: {
+        viteConfigPath: "viteStorybook.config.ts",
+      },
+    },
+  },
 });

@@ -144,6 +144,7 @@ export default [
       "storybook-static/**",
       "vitest.shims.d.ts",
       "vite.config.ts",
+      "viteStorybook.config.ts",
     ],
   },
 ];
