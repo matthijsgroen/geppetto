@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start --port 3001",
+    "dev": "docusaurus start --port 3001",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -15,17 +15,17 @@
     "write-api-doc": "ts-node bin/write-api-doc.ts"
   },
   "dependencies": {
-    "@docusaurus/core": "^0.0.0-4192",
-    "@docusaurus/preset-classic": "^0.0.0-4192",
-    "@mdx-js/react": "^1.6.21",
-    "@svgr/webpack": "^5.5.0",
-    "clsx": "^1.1.1",
+    "@docusaurus/core": "^3.9.0",
+    "@docusaurus/preset-classic": "^3.9.0",
+    "@mdx-js/react": "^3.1.0",
+    "@svgr/webpack": "^8.1.0",
+    "clsx": "^2.1.1",
     "file-loader": "^6.2.0",
     "geppetto-player": "workspace:*",
-    "prism-react-renderer": "^1.2.1",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
-    "styled-components": "^5.3.3",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "styled-components": "^6.2.0",
     "url-loader": "^4.1.1"
   },
   "browserslist": {
@@ -43,11 +43,11 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^16.11.6",
-    "@types/react": "^17.0.30",
-    "@types/react-dom": "^17.0.9",
-    "@types/styled-components": "^5.1.15",
-    "ts-node": "^10.4.0",
-    "typescript": "^4.4.4"
+    "@types/node": "^22.10.7",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@types/styled-components": "^5.1.34",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   }
 }
