@@ -9,7 +9,6 @@ import type { Animation } from "@/dtos/animation-file2.dto";
 import {
   type FrameAction,
   type FrameControlAction,
-  type FrameEvent,
   type GeppettoImage,
   type Hierarchy,
 } from "@/dtos/animation-file2.dto";
@@ -96,9 +95,6 @@ const convertControls = (
     }
   }
 };
-
-const isEventAction = (frame: FrameAction): frame is FrameEvent =>
-  "eventName" in frame;
 
 const isControlAction = (frame: FrameAction): frame is FrameControlAction =>
   "controlEndValue" in frame;

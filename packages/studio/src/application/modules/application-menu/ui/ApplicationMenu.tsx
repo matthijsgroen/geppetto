@@ -22,7 +22,6 @@ import {
   preferDarkMode,
   preferLightMode,
   respectOSColorScheme,
-  userPreferences,
 } from "@/shared/utils/darkMode";
 import {
   LogoIcon,
@@ -140,7 +139,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                   fileRef.current = fileHandle;
                   fileNameState[1](fileHandle.name);
                   await saveGeppettoFile(fileHandle, file);
-                } catch (e) {
+                } catch (_e) {
                   // user abort
                 }
               } else {
@@ -166,14 +165,14 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                   });
                   fileRef.current = fileHandle;
                   fileNameState[1](fileHandle.name);
-                } catch (e) {
+                } catch (_e) {
                   // user abort
                 }
               }
               if (fileRef.current) {
                 try {
                   await saveGeppettoFile(fileRef.current, file);
-                } catch (e) {
+                } catch (_e) {
                   // user abort
                 }
               }
@@ -199,7 +198,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                   const [filename, image] = await loadTextureImage(file);
                   setTextureFileName(filename);
                   setTextureFile(image);
-                } catch (e) {
+                } catch (_e) {
                   // user abort
                 }
               } else {

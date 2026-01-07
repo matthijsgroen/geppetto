@@ -1,4 +1,4 @@
-import type { ComponentProps, FC, PropsWithChildren } from "react";
+import type { ComponentProps, FC } from "react";
 
 import { type Vec2 } from "@/shared/types/global";
 

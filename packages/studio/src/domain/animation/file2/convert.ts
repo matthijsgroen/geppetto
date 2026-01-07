@@ -210,7 +210,7 @@ const convertKeyframeToTracks = (
 
 const convertEvents = (
   keyframes: ImageDefinition["animations"][0]["keyframes"],
-  target: GeppettoImage
+  _target: GeppettoImage
 ): FrameEvent[] => {
   const events: FrameEvent[] = [];
   for (const keyframe of keyframes) {

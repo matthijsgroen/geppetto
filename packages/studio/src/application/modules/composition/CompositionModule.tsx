@@ -43,11 +43,7 @@ import {
   type GeppettoImage,
   type MutationVector,
 } from "@/dtos/animation-file2.dto";
-import {
-  type AppSection,
-  type Size,
-  type UseState,
-} from "@/dtos/application.dto";
+import { type AppSection, type Size } from "@/dtos/application.dto";
 import { maxZoomFactor } from "@/infrastructure/webgl/lib/canvas";
 import {
   imageToPixels,

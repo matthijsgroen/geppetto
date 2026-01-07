@@ -19,7 +19,7 @@ import {
   movePoint,
 } from "@/domain/animation/file2/shapes";
 import { type Layer } from "@/dtos/animation-file2.dto";
-import { type AppSection, type UseState } from "@/dtos/application.dto";
+import { type AppSection } from "@/dtos/application.dto";
 import {
   getInitialScale,
   maxZoomFactor,
