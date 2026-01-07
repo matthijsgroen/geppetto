@@ -1,5 +1,4 @@
 import preview from "@sb/preview";
-import { T } from "node_modules/vitest/dist/chunks/traces.d.402V_yFI";
 
 import {
   storyTreeItems,
