@@ -31,5 +31,8 @@
   },
   "engines": {
     "node": ">=18"
+  },
+  "resolutions": {
+    "chokidar": "3.5.2"
   }
 }
