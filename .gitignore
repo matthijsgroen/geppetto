@@ -1,0 +1,6 @@
+/node_modules
+/dist
+/tsconfig.tsbuildinfo
+/.parcel-cache
+/yarn-error.log
+/typedocs.json
