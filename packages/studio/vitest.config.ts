@@ -16,6 +16,7 @@ export default defineConfig({
       "@": path.resolve(dirname, "./src"),
       "@sb": path.resolve(dirname, "./.storybook"),
     },
+    dedupe: ["react", "react-dom"],
   },
   test: {
     globals: true,

@@ -11,6 +11,7 @@
     "storybook": "turbo run storybook --filter=@geppetto/studio",
     "build-player": "turbo run build --filter=geppetto-player",
     "website-dev": "turbo run dev --filter=@geppetto/website",
+    "test-storybook": "turbo run test-storybook --filter=@geppetto/studio",
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
