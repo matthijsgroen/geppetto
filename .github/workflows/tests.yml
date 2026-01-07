@@ -44,7 +44,7 @@ jobs:
         run: yarn turbo run test:coverage
 
       - name: Install Playwright browsers
-        run: yarn workspace @geppetto/studio playwright install
+        run: yarn workspace @geppetto/studio playwright install --with-deps chromium
 
       - name: Run Storybook tests
         run: yarn test-storybook
