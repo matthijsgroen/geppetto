@@ -46,9 +46,7 @@ jobs:
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          token: ${{ secrets.DEPLOY_KEY }}
           folder: packages/website/build
-          repository-name: matthijsgroen/geppetto
           target-folder: docs
           clean-exclude: |
             app
