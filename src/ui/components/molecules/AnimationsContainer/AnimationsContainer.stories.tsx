@@ -1,6 +1,6 @@
 import preview from "@sb/preview";
 
-import { TimeBar, TimePin } from "@/ui/components";
+import { TimeBar, TimeLineEndHandle, TimePin } from "@/ui/components";
 import { AnimationTrack } from "@/ui/components/molecules/AnimationTrack/AnimationTrack";
 
 import { AnimationsContainer as AnimationsContainerComponent } from "./AnimationsContainer";
@@ -22,6 +22,7 @@ const meta = preview.meta({
     children: (
       <>
         <AnimationTrack
+          length={28}
           name="Track 1"
           selected={false}
           trackNames={["Control 1", "Control 2", "Control 3"]}
@@ -34,8 +35,12 @@ const meta = preview.meta({
           <TimePin location={3} />
           <TimePin location={10} />
           <TimePin location={25} />
+          <TimeLineEndHandle location={28} loop={false} trackIndex={0} />
+          <TimeLineEndHandle location={28} loop={false} trackIndex={1} />
+          <TimeLineEndHandle location={28} loop={false} trackIndex={2} />
         </AnimationTrack>
         <AnimationTrack
+          length={28}
           name="Track 2"
           selected={true}
           trackNames={["Control 1", "Control 2", "Control 3"]}
@@ -48,6 +53,10 @@ const meta = preview.meta({
           <TimePin location={3} />
           <TimePin location={10} />
           <TimePin location={25} />
+
+          <TimeLineEndHandle location={28} loop={false} trackIndex={0} />
+          <TimeLineEndHandle location={28} loop={false} trackIndex={1} />
+          <TimeLineEndHandle location={28} loop={false} trackIndex={2} />
         </AnimationTrack>
       </>
     ),

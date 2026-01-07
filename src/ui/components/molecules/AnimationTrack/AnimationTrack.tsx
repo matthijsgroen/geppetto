@@ -37,12 +37,9 @@ export const AnimationTrack: FC<
       >
         <Column>
           <div
-            className={clsx(
-              "box-content h-5 px-2 text-base text-text transition-all",
-              {
-                "pb-1": selected,
-              }
-            )}
+            className={clsx("box-content h-5 px-2 text-base text-text", {
+              "pb-1": selected,
+            })}
           >
             {name}
           </div>
@@ -74,7 +71,7 @@ export const AnimationTrack: FC<
           <div className="flex w-min bg-panel/50">
             <div
               className={clsx(
-                "box-content bg-panel ps-2 transition-all group-hover:bg-control-highlight group-focus:bg-control-highlight",
+                "box-content bg-panel ps-2 group-hover:bg-control-highlight group-focus:bg-control-highlight",
                 {
                   "h-5 py-0.5": selected,
                   "h-full": !selected,
@@ -83,7 +80,7 @@ export const AnimationTrack: FC<
               style={{ width: `${length}em` }}
             >
               <div
-                className={clsx("rounded-sm bg-toolbar transition-all", {
+                className={clsx("rounded-sm bg-toolbar", {
                   "h-4": selected,
                   "h-0": !selected,
                 })}

@@ -5,7 +5,7 @@ import { AnimationsContainer, AnimationTrack } from "@/ui/components";
 import { TimePin as TimePinComponent } from "./TimePin";
 
 const meta = preview.meta({
-  title: "Atoms/TimePin",
+  title: "Atoms/Time/TimePin",
   component: TimePinComponent,
   args: {
     location: 3.5,
@@ -14,8 +14,9 @@ const meta = preview.meta({
   },
   decorators: [
     (Story, { args }) => (
-      <AnimationsContainer duration={30} zoom={1}>
+      <AnimationsContainer duration={30} title="Timeline" zoom={2}>
         <AnimationTrack
+          length={20}
           name={`Track 1`}
           selected={args.activeTrack}
           trackNames={["Control 1", "Control 2"]}
@@ -23,6 +24,7 @@ const meta = preview.meta({
           <Story />
         </AnimationTrack>
         <AnimationTrack
+          length={20}
           name={`ShadowTrack 1`}
           selected={false}
           trackNames={["Control 1"]}

@@ -17,7 +17,7 @@ export const TimePin: FC<{
     <div
       aria-label={`${label ? label + " " : ""}${location}s`}
       className="absolute top-0.5 bottom-0.5 z-20 w-0 border-x border-dashed border-control-interaction"
-      style={{ left: `${location}em` }}
+      style={{ left: `calc(${location}em + 2 * var(--spacing))` }}
     >
       <div
         className={clsx(

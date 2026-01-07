@@ -41,6 +41,7 @@ export const TimeBar: FC<{
         !selected && "border-control-edge bg-toolbar"
       )}
       onClick={activeVariant === "default" ? onClick : undefined}
+      role={activeVariant === "default" ? "button" : "presentation"}
       style={{
         left: `calc(${start}em + 2 * var(--spacing))`,
         width: `${duration}em`,
