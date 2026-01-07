@@ -32,8 +32,7 @@ jobs:
         run: yarn install
 
       - name: Install Playwright browsers
-        working-directory: packages/studio
-        run: yarn playwright install
+        run: yarn workspace @geppetto/studio playwright install
 
       - name: Run tests
         run: yarn test-storybook
