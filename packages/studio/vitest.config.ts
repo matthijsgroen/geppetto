@@ -80,6 +80,10 @@ export default defineConfig({
               },
             ],
           },
+          coverage: {
+            enabled: true,
+            reportsDirectory: "./coverage",
+          },
           setupFiles: [".storybook/vitest.setup.ts"],
         },
       },
