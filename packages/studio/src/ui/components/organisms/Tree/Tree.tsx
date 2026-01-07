@@ -9,7 +9,7 @@ import {
 } from "react-complex-tree";
 
 import { type GeppettoImage } from "@/dtos/animation-file2.dto";
-import { Icon } from "@/ui/components";
+import { Icon } from "@/ui/components/atoms/Icon/Icon";
 export type { TreeItem, TreeItemIndex } from "react-complex-tree";
 
 export type TreeData<Type extends string> = {

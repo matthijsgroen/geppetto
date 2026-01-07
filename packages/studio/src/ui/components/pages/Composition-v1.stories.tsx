@@ -1,11 +1,6 @@
 import preview from "@sb/preview";
 
 import {
-  storyTreeItems,
-  type ToolsProvider,
-} from "@/ui/components/organisms/Tree/storybookTreeDataProvider";
-
-import {
   Column,
   Control,
   ControlPanel,
@@ -35,7 +30,11 @@ import {
   ToolTab,
   Tree,
   TreeEnvironment,
-} from "..";
+} from "@/ui/components";
+import {
+  storyTreeItems,
+  type ToolsProvider,
+} from "@/ui/components/organisms/Tree/storybookTreeDataProvider";
 
 const meta = preview.meta({
   title: "Pages/Composition",
