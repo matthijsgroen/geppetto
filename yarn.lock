@@ -3388,10 +3388,10 @@ __metadata:
   dependencies:
     "@eslint/eslintrc": "npm:^3.3.3"
     "@eslint/js": "npm:^9.39.2"
-    "@storybook/addon-docs": "npm:^10.1.6"
-    "@storybook/addon-themes": "npm:^10.1.5"
-    "@storybook/addon-vitest": "npm:^10.1.5"
-    "@storybook/react-vite": "npm:^10.1.5"
+    "@storybook/addon-docs": "npm:^10.1.11"
+    "@storybook/addon-themes": "npm:^10.1.11"
+    "@storybook/addon-vitest": "npm:^10.1.11"
+    "@storybook/react-vite": "npm:^10.1.11"
     "@szhsin/react-menu": "npm:^4.5.1"
     "@tailwindcss/vite": "npm:^4.1.17"
     "@testing-library/dom": "npm:^10.4.1"
@@ -3432,7 +3432,7 @@ __metadata:
     react-dom: "npm:^19.2.1"
     react-draggable: "npm:^4.4.5"
     sass-embedded: "npm:^1.96.0"
-    storybook: "npm:^10.1.5"
+    storybook: "npm:^10.1.11"
     typescript: "npm:^5.9.3"
     typescript-eslint: "npm:^8.50.0"
     vite: "npm:^7.2.7"
@@ -5936,7 +5936,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-docs@npm:^10.1.6":
+"@storybook/addon-docs@npm:^10.1.11":
   version: 10.1.11
   resolution: "@storybook/addon-docs@npm:10.1.11"
   dependencies:
@@ -5953,7 +5953,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-themes@npm:^10.1.5":
+"@storybook/addon-themes@npm:^10.1.11":
   version: 10.1.11
   resolution: "@storybook/addon-themes@npm:10.1.11"
   dependencies:
@@ -5964,7 +5964,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addon-vitest@npm:^10.1.5":
+"@storybook/addon-vitest@npm:^10.1.11":
   version: 10.1.11
   resolution: "@storybook/addon-vitest@npm:10.1.11"
   dependencies:
@@ -6055,7 +6055,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/react-vite@npm:^10.1.5":
+"@storybook/react-vite@npm:^10.1.11":
   version: 10.1.11
   resolution: "@storybook/react-vite@npm:10.1.11"
   dependencies:
@@ -11756,8 +11756,13 @@ __metadata:
     "@parcel/packager-ts": "npm:2.16.3"
     "@parcel/transformer-glsl": "npm:2.16.3"
     "@parcel/transformer-typescript-types": "npm:2.16.3"
+    "@storybook/react-vite": "npm:^10.1.11"
+    react: "npm:^19.0.0"
+    react-dom: "npm:^19.0.0"
+    storybook: "npm:^10.1.11"
     turbo: "npm:^2.7.3"
     typescript: "npm:>=3.0.0"
+    vite: "npm:^7.0.0"
   languageName: unknown
   linkType: soft
 
@@ -17986,7 +17991,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^19.2.1":
+"react-dom@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react-dom@npm:^19.0.0, react-dom@npm:^19.2.1":
   version: 19.2.3
   resolution: "react-dom@npm:19.2.3"
   dependencies:
@@ -18170,7 +18175,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react@npm:^19.2.1":
+"react@npm:^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0, react@npm:^19.0.0, react@npm:^19.2.1":
   version: 19.2.3
   resolution: "react@npm:19.2.3"
   checksum: 10c0/094220b3ba3a76c1b668f972ace1dd15509b157aead1b40391d1c8e657e720c201d9719537375eff08f5e0514748c0319063392a6f000e31303aafc4471f1436
@@ -19826,7 +19831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"storybook@npm:^10.1.5":
+"storybook@npm:^10.1.11":
   version: 10.1.11
   resolution: "storybook@npm:10.1.11"
   dependencies:
@@ -21379,7 +21384,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^6.0.0 || ^7.0.0, vite@npm:^7.2.7":
+"vite@npm:^6.0.0 || ^7.0.0, vite@npm:^7.0.0, vite@npm:^7.2.7":
   version: 7.3.1
   resolution: "vite@npm:7.3.1"
   dependencies:
