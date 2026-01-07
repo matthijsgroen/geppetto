@@ -32,7 +32,7 @@
     "test": "vitest --project=unit",
     "test:ui": "vitest --ui --project=unit",
     "test:run": "vitest run --project=unit",
-    "test:coverage": "vitest run --coverage --project=unit",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

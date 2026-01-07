@@ -10,7 +10,7 @@ on:
     branches: ["next"]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,20 +38,17 @@ jobs:
       - name: Check linting rules
         run: yarn turbo run lint
 
-      - name: Run unit tests
-        run: yarn turbo run test:coverage
-
-      - name: Install Playwright browsers
-        run: yarn workspace @geppetto/studio playwright install --with-deps chromium
-
-      - name: Run Storybook tests
-        run: yarn test-storybook
-
       - name: Check types
         run: yarn turbo run types:check
 
       - name: Check formatting
         run: yarn turbo run format:check
+
+      - name: Install Playwright browsers
+        run: yarn workspace @geppetto/studio playwright install --with-deps chromium
+
+      - name: Run tests
+        run: yarn turbo run test:coverage
 
       - name: Report coverage
         if: github.event_name == 'pull_request'
