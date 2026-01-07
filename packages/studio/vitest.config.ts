@@ -34,6 +34,12 @@ export default defineConfig({
         "**/mockData",
         "**/*.stories.*",
       ],
+      thresholds: {
+        lines: 77,
+        branches: 65,
+        functions: 66,
+        statements: 78,
+      },
     },
     projects: [
       {
