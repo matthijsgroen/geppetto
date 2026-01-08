@@ -339,7 +339,7 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
         </ResizePanel>
         <Panel center workspace>
           {texture === null ? (
-            <StartupScreen file={file} screen="layers" texture={texture} />
+            <StartupScreen file={file} texture={texture} />
           ) : (
             <LayerMouseControl
               hoverCursor={hoverCursor}

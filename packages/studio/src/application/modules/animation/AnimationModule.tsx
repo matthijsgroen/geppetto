@@ -53,7 +53,9 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
         />
       </ToolBar>
       <Panel center workspace>
-        <StartupScreen file={file} screen="animation" texture={texture} />
+        {(!texture || !hasControls(file)) && (
+          <StartupScreen file={file} texture={texture} />
+        )}
         {activeFrame && isControlFrame(activeFrame) && (
           <ControlFrameEdit
             actionIndex={activeFrame.actionIndex}
