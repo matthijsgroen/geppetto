@@ -1,48 +1,186 @@
-import {
-  MutationVector,
-  ShapeMutationVector,
-  ColorMutationVector,
-  ShapeDefinition,
+import type {
+  Hierarchy,
+  TreeNode,
 } from "./types";
 
-interface ItemWithType {
-  type: string;
-}
-
-export const isShapeDefinition = (
-  item: ItemWithType
-): item is ShapeDefinition => item.type === "folder" || item.type === "sprite";
-
-export const isMutationVector = (item: ItemWithType): item is MutationVector =>
-  isShapeVector(item) || isColorVector(item);
-
-const isShapeVector = (item: ItemWithType): item is ShapeMutationVector =>
-  item.type === "deform" ||
-  item.type === "rotate" ||
-  item.type === "translate" ||
-  item.type === "stretch" ||
-  item.type === "opacity";
-
-const isColorVector = (item: ItemWithType): item is ColorMutationVector =>
-  item.type === "lightness" ||
-  item.type === "saturation" ||
-  item.type === "colorize";
-
-export const visitShapes = (
-  shapes: ShapeDefinition[],
+/**
+ * Visit all nodes in a hierarchy tree, calling the visitor function for each node.
+ * 
+ * @param hierarchy - The hierarchy tree to traverse
+ * @param layers - Record of layer definitions by ID
+ * @param mutations - Record of mutation definitions by ID
+ * @param visitor - Callback function receiving nodeId and array of parent IDs
+ */
+export const visitHierarchy = (
+  hierarchy: Hierarchy<"layerFolder" | "layer" | "mutation">,
   visitor: (
-    item: ShapeDefinition | MutationVector,
-    parents: (ShapeDefinition | MutationVector)[]
-  ) => void,
-  parents: (ShapeDefinition | MutationVector)[] = []
+    nodeId: string,
+    node: TreeNode<"layerFolder" | "layer" | "mutation">,
+    parentIds: string[]
+  ) => void
 ): void => {
-  for (const shape of shapes) {
-    visitor(shape, parents);
-    for (const mutator of shape.mutationVectors) {
-      visitor(mutator, [...parents, shape]);
+  const root = hierarchy["root"];
+  if (!root || !root.children) return;
+
+  const traverse = (nodeId: string, parentIds: string[]): void => {
+    const node = hierarchy[nodeId];
+    if (!node || node.type === "root") return;
+
+    visitor(nodeId, node, parentIds);
+
+    if (node.children) {
+      for (const childId of node.children) {
+        traverse(childId, [...parentIds, nodeId]);
+      }
     }
-    if (shape.type === "folder") {
-      visitShapes(shape.items, visitor, [...parents, shape]);
-    }
+  };
+
+  for (const childId of root.children) {
+    traverse(childId, []);
   }
+};
+
+/**
+ * Extract the mutation chain for a given node by traversing up the hierarchy.
+ * Returns an array of mutation IDs from root to the node.
+ * 
+ * @param nodeId - The node to get the mutation chain for
+ * @param hierarchy - The hierarchy tree
+ * @returns Array of mutation IDs in the chain from root to node
+ */
+export const getMutationChain = (
+  nodeId: string,
+  hierarchy: Hierarchy<"layerFolder" | "layer" | "mutation">
+): string[] => {
+  const mutationChain: string[] = [];
+  let currentId = nodeId;
+
+  while (currentId && currentId !== "root") {
+    const node = hierarchy[currentId];
+    if (!node || node.type === "root") break;
+
+    if (node.type === "mutation") {
+      mutationChain.unshift(currentId);
+    }
+
+    currentId = node.parentId;
+  }
+
+  return mutationChain;
+};
+
+/**
+ * Build a mapping of mutation ID to its parent mutation ID (or -1 if no parent).
+ * This creates an array where index corresponds to mutation array position.
+ * 
+ * @param mutationIds - Ordered array of mutation IDs
+ * @param hierarchy - The hierarchy tree
+ * @returns Int32Array where each index points to parent mutation index (-1 if none)
+ */
+export const buildMutationParentMap = (
+  mutationIds: string[],
+  hierarchy: Hierarchy<"layerFolder" | "layer" | "mutation">
+): Int32Array => {
+  const mutationIndexMap = new Map<string, number>(
+    mutationIds.map((id, index) => [id, index])
+  );
+
+  const parentMap = new Int32Array(mutationIds.length);
+
+  mutationIds.forEach((id, index) => {
+    const node = hierarchy[id];
+    if (!node || node.type === "root") {
+      parentMap[index] = -1;
+      return;
+    }
+
+    // Find the nearest parent that is a mutation
+    let parentId = node.parentId;
+    while (parentId && parentId !== "root") {
+      const parentNode = hierarchy[parentId];
+      if (!parentNode || parentNode.type === "root") break;
+
+      if (parentNode.type === "mutation") {
+        const parentIndex = mutationIndexMap.get(parentId);
+        parentMap[index] = parentIndex !== undefined ? parentIndex : -1;
+        return;
+      }
+
+      parentId = parentNode.parentId;
+    }
+
+    parentMap[index] = -1;
+  });
+
+  return parentMap;
+};
+
+/**
+ * Get all mutation IDs from the hierarchy in depth-first order.
+ * 
+ * @param hierarchy - The hierarchy tree
+ * @returns Ordered array of mutation IDs
+ */
+export const getAllMutationIds = (
+  hierarchy: Hierarchy<"layerFolder" | "layer" | "mutation">
+): string[] => {
+  const mutationIds: string[] = [];
+  const root = hierarchy["root"];
+  if (!root || !root.children) return mutationIds;
+
+  const traverse = (nodeId: string): void => {
+    const node = hierarchy[nodeId];
+    if (!node || node.type === "root") return;
+
+    if (node.type === "mutation") {
+      mutationIds.push(nodeId);
+    }
+
+    if (node.children) {
+      for (const childId of node.children) {
+        traverse(childId);
+      }
+    }
+  };
+
+  for (const childId of root.children) {
+    traverse(childId);
+  }
+
+  return mutationIds;
+};
+
+/**
+ * Get all layer IDs from the hierarchy in depth-first order.
+ * 
+ * @param hierarchy - The hierarchy tree
+ * @returns Ordered array of layer IDs
+ */
+export const getAllLayerIds = (
+  hierarchy: Hierarchy<"layerFolder" | "layer" | "mutation">
+): string[] => {
+  const layerIds: string[] = [];
+  const root = hierarchy["root"];
+  if (!root || !root.children) return layerIds;
+
+  const traverse = (nodeId: string): void => {
+    const node = hierarchy[nodeId];
+    if (!node || node.type === "root") return;
+
+    if (node.type === "layer") {
+      layerIds.push(nodeId);
+    }
+
+    if (node.children) {
+      for (const childId of node.children) {
+        traverse(childId);
+      }
+    }
+  };
+
+  for (const childId of root.children) {
+    traverse(childId);
+  }
+
+  return layerIds;
 };

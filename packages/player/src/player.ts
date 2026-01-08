@@ -1,5 +1,5 @@
-import { PreparedFloatBuffer, PreparedIntBuffer } from "./buffer";
-import { MixMode, PreparedImageDefinition } from "./prepareAnimation";
+import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition } from "./types";
+import { MixMode as MixModeEnum } from "./types";
 import animationFragmentShader from "./shaders/fragmentShader-min.frag";
 import { animationVertexShader } from "./shaders/vertexShader";
 import { interpolateFloat, mixHue } from "./vertices";
@@ -170,13 +170,6 @@ export interface AnimationOptions {
    */
   zIndex: number;
 }
-
-const DEFAULT_OPTIONS: AnimationOptions = {
-  zoom: 1.0,
-  panX: 0.0,
-  panY: 0.0,
-  zIndex: 0,
-};
 
 type PlayStatus = {
   name: string;
@@ -357,6 +350,15 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
     },
     addAnimation: (animation, image, textureUnit, options) => {
       const id = ++animId;
+      
+      // Use metadata from animation as defaults, merged with provided options
+      const animationDefaults: AnimationOptions = {
+        zoom: animation.metadata.zoom,
+        panX: animation.metadata.pan[0],
+        panY: animation.metadata.pan[1],
+        zIndex: 0,
+      };
+      
       const unit = [
         gl.TEXTURE0,
         gl.TEXTURE1,
@@ -427,13 +429,11 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       let cWidth = 0,
         cHeight = 0;
 
-      let { zoom, panX, panY, zIndex } = { ...DEFAULT_OPTIONS, ...options };
+      let { zoom, panX, panY, zIndex } = { ...animationDefaults, ...options };
       let basePosition = [0, 0];
       let scale = 1.0;
 
       const playingAnimations: PlayStatus[] = [];
-      const trackNames = animation.animations.map((a) => a.name);
-      const controlNames = animation.controls.map((a) => a.name);
       const looping: boolean[] = animation.animations.map((a) => a.looping);
 
       const stopAnimation = (track: string): void => {
@@ -469,20 +469,20 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       };
 
       const nameToControlIndex = (controlName: string): number => {
-        const controlIndex = controlNames.indexOf(controlName);
-        if (controlIndex === -1) {
+        const controlIndex = animation.controlNames.get(controlName);
+        if (controlIndex === undefined) {
           throw new Error(
-            `Control ${controlName} does not exist in ${controlNames.join(",")}`
+            `Control ${controlName} does not exist in ${Array.from(animation.controlNames.keys()).join(",")}`
           );
         }
         return controlIndex;
       };
 
       const nameToTrackIndex = (trackName: string): number => {
-        const trackIndex = trackNames.indexOf(trackName);
-        if (trackIndex === -1) {
+        const trackIndex = animation.animationNames.get(trackName);
+        if (trackIndex === undefined) {
           throw new Error(
-            `Track ${trackName} does not exist in ${trackNames.join(",")}`
+            `Track ${trackName} does not exist in ${Array.from(animation.animationNames.keys()).join(",")}`
           );
         }
         return trackIndex;
@@ -508,7 +508,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               ([controlNr]) => controlNr === controlIndex
             )
           ) {
-            stopAnimation(trackNames[playing.index]);
+            stopAnimation(playingAnimation.name);
           }
         }
 
@@ -544,7 +544,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                 animationControls.includes(controlNr)
               )
             ) {
-              stopAnimation(trackNames[playing.index]);
+              stopAnimation(playingAnimation.name);
             }
           }
 
@@ -664,6 +664,20 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               );
               renderControlValues[controlIndex] = value;
             }
+
+            // Process visibility tracks - update visibility state based on animation time
+            for (const [layerIndex, visibilityActions] of playingAnimation.visibilityTracks) {
+              // Find the last visibility action that occurred before or at current time
+              let currentVisibility = animation.layers[layerIndex]?.visible ?? true;
+              for (const [actionTime, visible] of visibilityActions) {
+                if (actionTime <= playPosition) {
+                  currentVisibility = visible;
+                } else {
+                  break; // Actions are ordered by time, so we can stop here
+                }
+              }
+              animation.visibilityState[layerIndex] = currentVisibility ? 1 : 0;
+            }
           }
           const updatedMutationValues = Float32Array.from(
             animation.mutationValues.data
@@ -672,10 +686,10 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             const ctrlValue = renderControlValues[data.control];
             const xValue = interpolateFloat(data.trackX, ctrlValue);
             const yValue = interpolateFloat(data.trackY, ctrlValue);
-            if (data.mixMode === MixMode.MULTIPLY) {
+            if (data.mixMode === MixModeEnum.MULTIPLY) {
               updatedMutationValues[data.mutation * 2] *= xValue;
               updatedMutationValues[data.mutation * 2 + 1] *= yValue;
-            } else if (data.mixMode === MixMode.ADD) {
+            } else if (data.mixMode === MixModeEnum.ADD) {
               updatedMutationValues[data.mutation * 2] += xValue;
               updatedMutationValues[data.mutation * 2 + 1] += yValue;
             } else {
@@ -688,14 +702,19 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
           gl.uniform1fv(uControlValues, renderControlValues);
 
-          for (const shape of animation.shapes) {
-            gl.uniform3f(uTranslate, shape.x, shape.y, shape.z);
-            gl.uniform1f(uMutation, shape.mutator);
+          for (let i = 0; i < animation.layers.length; i++) {
+            const layer = animation.layers[i];
+            // Check visibility state - skip invisible layers
+            if (animation.visibilityState[i] === 0) {
+              continue;
+            }
+            gl.uniform3f(uTranslate, layer.x, layer.y, layer.z);
+            gl.uniform1f(uMutation, layer.mutator);
             gl.drawElements(
               gl.TRIANGLES,
-              shape.amount,
+              layer.amount,
               gl.UNSIGNED_SHORT,
-              shape.start
+              layer.start
             );
           }
         },

@@ -1,92 +1,45 @@
-export type Vec2 = [number, number];
-export type Vec3 = [number, number, number];
-export type Vec4 = [number, number, number, number];
+// Import types from @geppetto/types v2.x for internal use
+import type {
+  Vec2,
+  Vec3,
+  Vec4,
+  MutationVector,
+  Layer,
+  GeppettoImage,
+  Animation,
+  AnimationTrack,
+  AnimationControlTrack,
+  AnimationVisibilityTrack,
+  FrameControlAction,
+  FrameLayerVisibilityAction,
+  FrameEvent,
+  ControlDefinition,
+  EasingFunction,
+  Hierarchy,
+  TreeNode,
+  RootNode,
+} from "@geppetto/types";
 
-export type TranslationVector = {
-  name: string;
-  type: "translate";
-  origin: Vec2;
-  radius: number;
-};
-
-export type DeformationVector = {
-  name: string;
-  type: "deform";
-  origin: Vec2;
-  radius: number;
-};
-
-export type StretchVector = {
-  name: string;
-  type: "stretch";
-  origin: Vec2;
-};
-
-export type RotationVector = {
-  name: string;
-  type: "rotate";
-  origin: Vec2;
-};
-
-export type OpacityVector = {
-  name: string;
-  type: "opacity";
-  origin: Vec2;
-};
-
-export type Lightness = {
-  name: string;
-  type: "lightness";
-  origin: Vec2;
-};
-
-export type Saturation = {
-  name: string;
-  type: "saturation";
-  origin: Vec2;
-};
-
-export type Colorize = {
-  name: string;
-  type: "colorize";
-  origin: Vec2;
-};
-
-export type MutationVector = ShapeMutationVector | ColorMutationVector;
-export type MutationVectorTypes = MutationVector["type"];
-
-export type ShapeMutationVector =
-  | TranslationVector
-  | DeformationVector
-  | StretchVector
-  | RotationVector
-  | OpacityVector;
-
-export type ColorMutationVector = Lightness | Colorize | Saturation;
-
-export type SpriteDefinition = {
-  name: string;
-  type: "sprite";
-  points: Vec2[];
-  mutationVectors: MutationVector[];
-  translate: Vec2;
-};
-
-export type FolderDefinition = {
-  name: string;
-  type: "folder";
-  mutationVectors: MutationVector[];
-  items: ShapeDefinition[];
-};
-
-export type ShapeDefinition = FolderDefinition | SpriteDefinition;
-
-export type Keyframe = Record<string, Vec2>;
-
-export type ControlDefinition = {
-  name: string;
-  type: "slider";
-  steps: Keyframe[];
+// Export for external use
+export type {
+  Vec2,
+  Vec3,
+  Vec4,
+  MutationVector,
+  Layer,
+  GeppettoImage,
+  Animation,
+  AnimationTrack,
+  AnimationControlTrack,
+  AnimationVisibilityTrack,
+  FrameControlAction,
+  FrameLayerVisibilityAction,
+  FrameEvent,
+  ControlDefinition,
+  EasingFunction,
+  Hierarchy,
+  TreeNode,
+  RootNode,
 };
 
 export type PlayStatus = Record<
@@ -98,30 +51,105 @@ export type PlayStatus = Record<
   }
 >;
 
-export type ControlValues = {
-  [key: string]: number;
+// Prepared buffer types for WebGL
+export type PreparedFloatBuffer = {
+  data: Float32Array;
+  length: number;
+  stride: number;
 };
 
-export type AnimationFrame = {
-  controlValues: ControlValues;
-  event?: string;
-  time: number;
+export type PreparedIntBuffer = {
+  data: Int32Array;
+  length: number;
+  stride: number;
 };
 
-export type Animation = {
+export enum MixMode {
+  MULTIPLY,
+  ADD,
+  HUE,
+}
+
+export type DirectControl = {
+  mutation: number;
+  control: number;
+  stepType: number;
+  mixMode: MixMode;
+  trackX: Float32Array;
+  trackY: Float32Array;
+};
+
+export type PreparedControl = {
   name: string;
+  steps: number;
+};
+
+export type PreparedLayer = {
+  name: string;
+  start: number;
+  amount: number;
+  mutator: number;
+  x: number;
+  y: number;
+  z: number;
+  visible: boolean;
+};
+
+export type PreparedAnimation = {
+  name: string;
+  duration: number;
   looping: boolean;
-  keyframes: AnimationFrame[];
+  tracks: [number, Float32Array][];
+  visibilityTracks: Map<number, [number, boolean][]>;
+  events: [number, string][];
+};
+
+export type CanvasMetadata = {
+  width: number;
+  height: number;
+  zoom: number;
+  pan: Vec2;
 };
 
 /**
- * File format from Geppetto
+ * Optimized structure for WebGL rendering
  */
-export type ImageDefinition = {
-  animations: Animation[];
-  controlValues: ControlValues;
-  controls: ControlDefinition[];
-  defaultFrame: Keyframe;
-  shapes: ShapeDefinition[];
-  version: string;
+export type PreparedImageDefinition = {
+  // Direct single-control mutations for fast GPU-free updates
+  directControls: DirectControl[];
+  
+  // Mutation data as TypedArrays for WebGL
+  mutators: PreparedFloatBuffer;
+  mutatorParents: PreparedIntBuffer;
+  mutationValues: PreparedFloatBuffer;
+  
+  // Complex multi-control mutation data
+  controlMutationValues: PreparedFloatBuffer;
+  mutationValueIndices: PreparedFloatBuffer;
+  controlMutationIndices: PreparedFloatBuffer;
+  
+  // Geometry data
+  shapeVertices: PreparedFloatBuffer;
+  shapeIndices: Uint16Array;
+  
+  // Layer/shape list (sorted by z-index)
+  layers: PreparedLayer[];
+  
+  // Visibility state (1 byte per layer)
+  visibilityState: Uint8Array;
+  
+  // Control data
+  controls: PreparedControl[];
+  defaultControlValues: Float32Array;
+  
+  // Name lookup maps for string-based API
+  controlNames: Map<string, number>;
+  animationNames: Map<string, number>;
+  layerNames: Map<string, number>;
+  
+  // Animation data
+  animations: PreparedAnimation[];
+  
+  // Canvas metadata
+  metadata: CanvasMetadata;
 };

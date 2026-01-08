@@ -36,5 +36,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["src/**/*.spec.ts", "bin/*.ts"]
+  "exclude": ["src/**/*.spec.ts", "bin/*.ts", "vitest.config.ts"]
 }

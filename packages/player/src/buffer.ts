@@ -1,4 +1,4 @@
-import { Vec2, Vec3, Vec4 } from "src/types";
+import type { Vec2, Vec3, Vec4, PreparedFloatBuffer } from "./types";
 
 export const flatten = (vectors: Vec2[] | Vec3[] | Vec4[]): number[] =>
   ((vectors as unknown) as number[][]).reduce<number[]>(
@@ -6,17 +6,7 @@ export const flatten = (vectors: Vec2[] | Vec3[] | Vec4[]): number[] =>
     []
   );
 
-export type PreparedFloatBuffer = {
-  data: Float32Array;
-  length: number;
-  stride: number;
-};
-
-export type PreparedIntBuffer = {
-  data: Int32Array;
-  length: number;
-  stride: number;
-};
+export type { PreparedFloatBuffer, PreparedIntBuffer } from "./types";
 
 export const vectorArrayToPreparedFloatBuffer = (
   array: Vec2[] | Vec3[] | Vec4[]

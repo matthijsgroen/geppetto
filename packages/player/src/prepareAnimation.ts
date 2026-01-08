@@ -1,27 +1,37 @@
 import Delaunator from "delaunator";
+import { vectorArrayToPreparedFloatBuffer } from "./buffer";
 import {
-  flatten,
-  PreparedFloatBuffer,
-  PreparedIntBuffer,
-  vectorArrayToPreparedFloatBuffer,
-} from "./buffer";
-import { isMutationVector, isShapeDefinition, visitShapes } from "./traverse";
-import {
-  ImageDefinition,
+  getMutationChain,
+  buildMutationParentMap,
+  getAllMutationIds,
+  getAllLayerIds,
+} from "./traverse";
+import type {
+  GeppettoImage,
   MutationVector,
-  ShapeDefinition,
-  SpriteDefinition,
+  Layer,
   Vec2,
   Vec3,
   Vec4,
+  AnimationControlTrack,
+  AnimationVisibilityTrack,
 } from "./types";
+import type {
+  PreparedImageDefinition,
+  PreparedLayer,
+  PreparedAnimation,
+  PreparedControl,
+  DirectControl,
+  MixMode,
+} from "./types";
+import { MixMode as MixModeEnum } from "./types";
 
-const getAnchor = (sprite: SpriteDefinition): Vec2 => {
+const getAnchor = (layer: Layer): Vec2 => {
   let minX = Infinity;
   let maxX = -Infinity;
   let minY = Infinity;
   let maxY = -Infinity;
-  sprite.points.forEach(([x, y]) => {
+  layer.points.forEach(([x, y]) => {
     minX = x < minX ? x : minX;
     maxX = x > maxX ? x : maxX;
     minY = y < minY ? y : minY;
@@ -31,7 +41,7 @@ const getAnchor = (sprite: SpriteDefinition): Vec2 => {
   return [(minX + maxX) / 2, (minY + maxY) / 2];
 };
 
-export const filteredTriangles = (points: number[][]): number[] =>
+const filteredTriangles = (points: number[][]): number[] =>
   Delaunator.from(points).triangles;
 
 const vectorTypeMapping: { [key in MutationVector["type"]]: number } = {
@@ -54,253 +64,96 @@ const mutatorToVec4 = (mutator: MutationVector): Vec4 => [
     : -1,
 ];
 
-const getParentMutation = (
-  parents: (ShapeDefinition | MutationVector)[],
-  self?: MutationVector
-): MutationVector | null => {
-  const parentShape = parents[parents.length - 1];
-  if (isShapeDefinition(parentShape)) {
-    const mutatorIndex = self ? parentShape.mutationVectors.indexOf(self) : -1;
-    if (mutatorIndex > 0) {
-      return parentShape.mutationVectors[mutatorIndex - 1];
-    }
-    for (let i = parents.length - (self ? 2 : 1); i >= 0; i--) {
-      const shape = parents[i];
-      if (
-        shape &&
-        isShapeDefinition(shape) &&
-        shape.mutationVectors.length > 0
-      ) {
-        return shape.mutationVectors[shape.mutationVectors.length - 1];
-      }
-    }
-  }
-  return null;
-};
-
-export const createMutationList = (
-  shapes: ShapeDefinition[]
-): {
-  parentList: Int32Array;
-  vectorSettings: Vec4[];
-  shapeMutatorMapping: Record<string, number>;
-  mutatorMapping: Record<string, number>;
-} => {
-  const mutatorIndices: { name: string; index: number; parent: number }[] = [];
-  const mutators: Vec4[] = [];
-
-  const mutatorMapping: Record<string, number> = {};
-
-  visitShapes(shapes, (item, parents) => {
-    if (isMutationVector(item)) {
-      const value = mutatorToVec4(item);
-      const index = mutators.length;
-      mutators.push(value);
-
-      const parentMutation = getParentMutation(parents, item);
-      const mutatorIndex =
-        parentMutation === null
-          ? -1
-          : mutatorIndices.findIndex((e) => e.name === parentMutation.name);
-      mutatorIndices.push({ name: item.name, index, parent: mutatorIndex });
-      mutatorMapping[item.name] = mutatorIndex;
-    }
-  });
-
-  const shapeMutatorMapping: Record<string, number> = {};
-  visitShapes(shapes, (item, parents) => {
-    if (isShapeDefinition(item)) {
-      const parentMutation = getParentMutation(parents.concat(item));
-      const mutatorIndex =
-        parentMutation === null
-          ? -1
-          : mutatorIndices.findIndex((e) => e.name === parentMutation.name);
-
-      shapeMutatorMapping[item.name] = mutatorIndex;
-    }
-  });
-
-  const parentList = new Int32Array(mutators.length);
-  mutatorIndices.forEach((item, index) => {
-    parentList[index] = item.parent;
-  });
-
-  return {
-    mutatorMapping,
-    parentList,
-    vectorSettings: mutators,
-    shapeMutatorMapping,
-  };
-};
-
-const convertAnimations = (
-  imageDefinition: ImageDefinition
-): PreparedAnimation[] => {
-  const controlNames = imageDefinition.controls.map((c) => c.name);
-  return imageDefinition.animations.map<PreparedAnimation>((a) => {
-    const tracks: [number, Float32Array][] = [];
-    const events: [number, string][] = [];
-
-    const trackControls = a.keyframes
-      .reduce<string[]>((result, frame) => {
-        if (frame.event) {
-          events.push([frame.time, frame.event]);
-        }
-        return result.concat(Object.keys(frame.controlValues));
-      }, [])
-      .filter((v, i, l) => l.indexOf(v) === i);
-
-    trackControls.forEach((controlName) => {
-      const frames: Vec2[] = [];
-      a.keyframes.forEach((frame) => {
-        const value = frame.controlValues[controlName];
-        if (value !== undefined) {
-          frames.push([frame.time, value]);
-        }
-      });
-      tracks.push([
-        controlNames.indexOf(controlName),
-        new Float32Array(flatten(frames)),
-      ]);
-    });
-
-    return {
-      name: a.name,
-      duration:
-        a.keyframes.length === 0 ? 0 : a.keyframes[a.keyframes.length - 1].time,
-      looping: a.looping,
-      tracks,
-      events,
-    };
-  });
-};
-
-export type PreparedControl = {
-  name: string;
-  steps: number;
-};
-
-export type PreparedShape = {
-  name: string;
-  start: number;
-  amount: number;
-  mutator: number;
-  x: number;
-  y: number;
-  z: number;
-};
-
-export type PreparedAnimation = {
-  name: string;
-  duration: number;
-  looping: boolean;
-  tracks: [number, Float32Array][];
-  events: [number, string][];
-};
-
-export enum MixMode {
-  MULTIPLY,
-  ADD,
-  HUE,
-}
-
-type DirectControl = {
-  mutation: number;
-  control: number;
-  stepType: number;
-  mixMode: MixMode;
-  trackX: Float32Array;
-  trackY: Float32Array;
-};
-
-export type PreparedImageDefinition = {
-  directControls: DirectControl[];
-  mutators: PreparedFloatBuffer;
-  mutatorParents: PreparedIntBuffer;
-  mutationValues: PreparedFloatBuffer;
-  controlMutationValues: PreparedFloatBuffer;
-  mutationValueIndices: PreparedFloatBuffer;
-  controlMutationIndices: PreparedFloatBuffer;
-  shapeVertices: PreparedFloatBuffer;
-  shapeIndices: Uint16Array;
-  shapes: PreparedShape[];
-  maxIteration: number;
-  controls: PreparedControl[];
-  defaultControlValues: Float32Array;
-  animations: PreparedAnimation[];
-};
-
 const getMixMode = (mutType: number): MixMode =>
   mutType === vectorTypeMapping.stretch ||
   mutType === vectorTypeMapping.lightness ||
   mutType === vectorTypeMapping.saturation ||
   mutType === vectorTypeMapping.opacity
-    ? MixMode.MULTIPLY
+    ? MixModeEnum.MULTIPLY
     : mutType === vectorTypeMapping.colorize
-    ? MixMode.HUE
-    : MixMode.ADD;
-
-const SUPPORTED_VERSIONS = ["1.0", "1.1"];
+    ? MixModeEnum.HUE
+    : MixModeEnum.ADD;
 
 /**
- * Convert the JSON based input animation file into a preprocessed list of buffers to place into WebGL
+ * Convert the GeppettoImage format 2.x into a preprocessed structure optimized for WebGL rendering
  *
- * @param imageDefinition
- * @returns PreparedAnimation
+ * @param image - GeppettoImage in format 2.x
+ * @returns PreparedImageDefinition optimized for WebGL
  */
 export const prepareAnimation = (
-  imageDefinition: ImageDefinition
+  image: GeppettoImage
 ): PreparedImageDefinition => {
-  if (!SUPPORTED_VERSIONS.includes(imageDefinition.version)) {
-    throw new Error(
-      `Version ${imageDefinition.version} files are not supported`
-    );
-  }
-
-  const elements: PreparedShape[] = [];
+  // Step 1: Get all mutation IDs in hierarchy order and build parent map
+  const mutationIds = getAllMutationIds(image.layerHierarchy);
+  const mutatorParents = buildMutationParentMap(mutationIds, image.layerHierarchy);
+  
+  // Step 2: Convert mutations to Vec4 array using ID-based lookups (O(1))
+  const mutators: Vec4[] = mutationIds.map((id) => {
+    const mutation = image.mutations[id];
+    return mutatorToVec4(mutation);
+  });
+  
+  // Step 3: Build mutation ID to index map for O(1) lookup
+  const mutationIndexMap = new Map<string, number>(
+    mutationIds.map((id, index) => [id, index])
+  );
+  
+  // Step 4: Process layers and build geometry
+  const layerIds = getAllLayerIds(image.layerHierarchy);
+  const layers: PreparedLayer[] = [];
   const vertices: Vec4[] = [];
   const indices: number[] = [];
-
-  visitShapes(imageDefinition.shapes, (shape) => {
-    if (shape.type !== "sprite") return;
-
-    const anchor = getAnchor(shape);
-    const shapeIndices = filteredTriangles(shape.points);
-    const itemOffset = [...shape.translate, elements.length * 0.1];
+  const layerNames = new Map<string, number>();
+  
+  layerIds.forEach((layerId, layerIndex) => {
+    const layer = image.layers[layerId];
+    layerNames.set(layer.name, layerIndex);
+    
+    const anchor = getAnchor(layer);
+    const shapeIndices = filteredTriangles(layer.points);
+    const itemOffset = [...layer.translate, layerIndex * 0.1];
     const offset = vertices.length;
-
-    elements.push({
-      name: shape.name,
+    
+    // Get last mutation in chain for this layer
+    const mutationChain = getMutationChain(layerId, image.layerHierarchy);
+    const lastMutationId = mutationChain[mutationChain.length - 1];
+    const mutatorIndex = lastMutationId ? mutationIndexMap.get(lastMutationId) ?? -1 : -1;
+    
+    layers.push({
+      name: layer.name,
       start: indices.length * 2,
       amount: shapeIndices.length,
-      mutator: 0,
+      mutator: mutatorIndex,
       x: itemOffset[0],
       y: itemOffset[1],
       z: -0.9 + itemOffset[2] * 0.0001,
+      visible: layer.visible,
     });
-
-    shape.points.forEach(([x, y]) => {
+    
+    layer.points.forEach(([x, y]) => {
       vertices.push([x - anchor[0], y - anchor[1], x, y]);
     });
-
+    
     shapeIndices.forEach((index) => {
       indices.push(index + offset);
     });
   });
-
-  const mutatorInfo = createMutationList(imageDefinition.shapes);
-  const mutatorCount = mutatorInfo.parentList.length;
-  const mutators = Object.keys(mutatorInfo.mutatorMapping);
-  const controls: PreparedControl[] = [];
-
-  const mutationValues = new Float32Array(mutatorCount * 2);
-  Object.entries(imageDefinition.defaultFrame).forEach(([key, value]) => {
-    const index = mutators.indexOf(key);
-    if (index === -1) return;
-    mutationValues[index * 2] = value[0];
-    mutationValues[index * 2 + 1] = value[1];
+  
+  // Step 5: Sort layers by z-index for correct rendering order
+  layers.sort((a, b) => (b.z || 0) - (a.z || 0));
+  
+  // Step 6: Initialize visibility state buffer
+  const visibilityState = new Uint8Array(layers.length);
+  layers.forEach((layer, index) => {
+    visibilityState[index] = layer.visible ? 1 : 0;
   });
-
+  
+  // Step 7: Process controls
+  const controlIds = Object.keys(image.controls);
+  const controlNames = new Map<string, number>();
+  const controls: PreparedControl[] = [];
+  const defaultControlValues = new Float32Array(controlIds.length);
+  
   type ControlData = {
     name: string;
     controlIndex: number;
@@ -308,87 +161,87 @@ export const prepareAnimation = (
     values: Vec2[];
     stepType: number;
   };
-
+  
   type MutationControl = {
-    [key: number]: ControlData[];
+    [mutationIndex: number]: ControlData[];
   };
-
+  
   const controlMutationValueList: Vec2[] = [];
   const mutationValueIndicesList: Vec3[] = [];
   const controlMutationIndicesList: Vec2[] = [];
-
-  elements.forEach((element) => {
-    element.mutator = mutatorInfo.shapeMutatorMapping[element.name];
-  });
-  elements.sort((a, b) => (b.z || 0) - (a.z || 0));
-
-  const controlValues = new Float32Array(imageDefinition.controls.length);
-  const mutationControlData: MutationControl =
-    imageDefinition.controls.reduce<MutationControl>(
-      (result, control, index) => {
-        const controlMutations = control.steps.reduce<string[]>(
-          (result, frame) =>
-            result.concat(
-              Object.keys(frame).filter((name) => !result.includes(name))
-            ),
-          []
-        );
-        controls.push({
-          name: control.name,
-          steps: control.steps.length,
-        });
-        controlValues[index] = imageDefinition.controlValues[control.name];
-        controlMutations.forEach((mutation) => {
-          const index = mutators.indexOf(mutation);
-          const values: Vec2[] = control.steps.map((k) => k[mutation]);
-          const controlIndex =
-            imageDefinition?.controls.findIndex(
-              (c) => c.name === control.name
-            ) || 0;
-
-          const controlData: ControlData = {
-            name: control.name,
-            controlIndex,
-            valueStartIndex: 0,
-            values,
-            stepType: 0,
-          };
-
-          result = {
-            ...result,
-            [index]: (result[index] || []).concat(controlData),
-          };
-        });
-        return result;
-      },
-      {}
-    );
-
-  controlMutationIndicesList.length = mutatorInfo.vectorSettings.length;
-  controlMutationIndicesList.fill([0, 0]);
-
-  let maxIteration = 0;
   const directControls: DirectControl[] = [];
-
-  Object.entries(mutationControlData).forEach(([keyAsString, controls]) => {
-    const key = parseInt(keyAsString, 10);
-    if (controls.length === 1) {
-      const control = controls[0];
-      const mutType = mutatorInfo.vectorSettings[key][0];
-
+  
+  controlIds.forEach((controlId, controlIndex) => {
+    const control = image.controls[controlId];
+    controlNames.set(control.name, controlIndex);
+    controls.push({
+      name: control.name,
+      steps: control.steps.length,
+    });
+    defaultControlValues[controlIndex] = image.controlValues?.[controlId] ?? 0;
+  });
+  
+  // Step 8: Build mutation-control relationships
+  const mutationControlData: MutationControl = {};
+  
+  controlIds.forEach((controlId, controlIndex) => {
+    const control = image.controls[controlId];
+    const affectedMutations = new Set<string>();
+    
+    // Collect all mutations affected by this control
+    control.steps.forEach((step) => {
+      Object.keys(step).forEach((mutationId) => {
+        affectedMutations.add(mutationId);
+      });
+    });
+    
+    // For each affected mutation, store control data
+    affectedMutations.forEach((mutationId) => {
+      const mutationIndex = mutationIndexMap.get(mutationId);
+      if (mutationIndex === undefined) return;
+      
+      const values: Vec2[] = control.steps.map((step) => step[mutationId] || [0, 0]);
+      
+      const controlData: ControlData = {
+        name: control.name,
+        controlIndex,
+        valueStartIndex: 0,
+        values,
+        stepType: 0,
+      };
+      
+      if (!mutationControlData[mutationIndex]) {
+        mutationControlData[mutationIndex] = [];
+      }
+      mutationControlData[mutationIndex].push(controlData);
+    });
+  });
+  
+  // Step 9: Build control mutation buffers (separate single-control "direct" from multi-control "complex")
+  controlMutationIndicesList.length = mutators.length;
+  controlMutationIndicesList.fill([0, 0]);
+  
+  Object.entries(mutationControlData).forEach(([keyAsString, controlsForMutation]) => {
+    const mutationIndex = parseInt(keyAsString, 10);
+    
+    // Single control optimization - GPU-free direct updates
+    if (controlsForMutation.length === 1) {
+      const controlData = controlsForMutation[0];
+      const mutType = mutators[mutationIndex][0];
+      
       directControls.push({
-        mutation: key,
+        mutation: mutationIndex,
         mixMode: getMixMode(mutType),
-        control: control.controlIndex,
-        stepType: control.stepType,
+        control: controlData.controlIndex,
+        stepType: controlData.stepType,
         trackX: new Float32Array(
-          control.values.reduce<number[]>(
+          controlData.values.reduce<number[]>(
             (result, element, index) => result.concat(index, element[0]),
             []
           )
         ),
         trackY: new Float32Array(
-          control.values.reduce<number[]>(
+          controlData.values.reduce<number[]>(
             (result, element, index) => result.concat(index, element[1]),
             []
           )
@@ -396,56 +249,131 @@ export const prepareAnimation = (
       });
       return;
     }
-    if (controls.length === 0) {
-      return;
+    
+    if (controlsForMutation.length === 0) return;
+    
+    // Multi-control - needs shader iteration
+    for (const controlData of controlsForMutation) {
+      controlData.valueStartIndex = controlMutationValueList.length;
+      controlMutationValueList.push(...controlData.values);
     }
-    for (const control of controls) {
-      control.valueStartIndex = controlMutationValueList.length;
-      controlMutationValueList.push(...control.values);
-    }
-
-    const items: Vec3[] = controls.map<Vec3>((d) => [
+    
+    const items: Vec3[] = controlsForMutation.map<Vec3>((d) => [
       d.valueStartIndex,
       d.controlIndex,
       d.stepType,
     ]);
-
-    controlMutationIndicesList[key] = [
+    
+    controlMutationIndicesList[mutationIndex] = [
       mutationValueIndicesList.length,
       items.length,
     ];
-    maxIteration = Math.max(maxIteration, items.length);
     mutationValueIndicesList.push(...items);
   });
-
+  
+  // Step 10: Initialize mutation values from defaults
+  const mutationValues = new Float32Array(mutators.length * 2);
+  if (image.defaultFrame) {
+    Object.entries(image.defaultFrame).forEach(([mutationId, value]) => {
+      const index = mutationIndexMap.get(mutationId);
+      if (index === undefined) return;
+      mutationValues[index * 2] = value[0];
+      mutationValues[index * 2 + 1] = value[1];
+    });
+  }
+  
+  // Step 11: Convert animations (track-based format 2.x)
+  const animationIds = Object.keys(image.animations);
+  const animationNames = new Map<string, number>();
+  const animations: PreparedAnimation[] = [];
+  
+  animationIds.forEach((animationId, animationIndex) => {
+    const animation = image.animations[animationId];
+    animationNames.set(animation.name, animationIndex);
+    
+    const tracks: [number, Float32Array][] = [];
+    const visibilityTracks = new Map<number, [number, boolean][]>();
+    const events: [number, string][] = [];
+    
+    // Process animation tracks
+    animation.tracks.forEach((track) => {
+      if (track.type === "control") {
+        const controlTrack = track as AnimationControlTrack;
+        const controlIndex = controlNames.get(image.controls[controlTrack.controlId]?.name);
+        if (controlIndex === undefined) return;
+        
+        // Convert actions to time-value pairs
+        const timeValues: number[] = [];
+        controlTrack.actions.forEach((action) => {
+          timeValues.push(action.start, action.controlStartValue ?? 0);
+          if (action.duration > 0) {
+            timeValues.push(action.start + action.duration, action.controlEndValue);
+          }
+        });
+        
+        tracks.push([controlIndex, new Float32Array(timeValues)]);
+      } else if (track.type === "visibility") {
+        const visTrack = track as AnimationVisibilityTrack;
+        const layerIndex = layerNames.get(image.layers[visTrack.layerId]?.name);
+        if (layerIndex === undefined) return;
+        
+        const actions: [number, boolean][] = visTrack.actions.map((action) => [
+          action.start,
+          action.visible,
+        ]);
+        visibilityTracks.set(layerIndex, actions);
+      }
+    });
+    
+    // Process events
+    animation.events?.forEach((event) => {
+      events.push([event.start, event.eventName]);
+    });
+    
+    animations.push({
+      name: animation.name,
+      duration: animation.tracks.reduce((max, track) => Math.max(max, track.length), 0),
+      looping: animation.looping,
+      tracks,
+      visibilityTracks,
+      events,
+    });
+  });
+  
+  // Step 12: Extract canvas metadata
+  const metadata = {
+    width: image.metadata?.width ?? 1024,
+    height: image.metadata?.height ?? 1024,
+    zoom: image.metadata?.zoom ?? 1,
+    pan: (image.metadata?.pan ?? [0, 0]) as Vec2,
+  };
+  
   return {
     directControls,
-    mutators: vectorArrayToPreparedFloatBuffer(mutatorInfo.vectorSettings),
+    mutators: vectorArrayToPreparedFloatBuffer(mutators),
     mutatorParents: {
-      data: mutatorInfo.parentList,
-      length: mutatorInfo.parentList.length,
+      data: mutatorParents,
+      length: mutatorParents.length,
       stride: 1,
     },
     mutationValues: {
       data: mutationValues,
-      length: mutatorInfo.parentList.length,
+      length: mutators.length,
       stride: 2,
     },
-    controlMutationValues: vectorArrayToPreparedFloatBuffer(
-      controlMutationValueList
-    ),
-    mutationValueIndices: vectorArrayToPreparedFloatBuffer(
-      mutationValueIndicesList
-    ),
-    controlMutationIndices: vectorArrayToPreparedFloatBuffer(
-      controlMutationIndicesList
-    ),
-    defaultControlValues: controlValues,
+    controlMutationValues: vectorArrayToPreparedFloatBuffer(controlMutationValueList),
+    mutationValueIndices: vectorArrayToPreparedFloatBuffer(mutationValueIndicesList),
+    controlMutationIndices: vectorArrayToPreparedFloatBuffer(controlMutationIndicesList),
     shapeVertices: vectorArrayToPreparedFloatBuffer(vertices),
     shapeIndices: new Uint16Array(indices),
-    shapes: elements,
+    layers,
+    visibilityState,
     controls,
-    maxIteration,
-    animations: convertAnimations(imageDefinition),
+    defaultControlValues,
+    controlNames,
+    animationNames,
+    layerNames,
+    animations,
+    metadata,
   };
 };
