@@ -1,6 +1,5 @@
 # Geppetto player 🌱
 
-[![npm type definitions](https://img.shields.io/npm/types/geppetto-player)](https://matthijsgroen.github.io/geppetto-player)
 [![License](https://img.shields.io/npm/l/geppetto-player)](https://github.com/matthijsgroen/geppetto-player/blob/main/LICENSE)
 [![Version](https://img.shields.io/npm/v/geppetto-player)](https://www.npmjs.com/package/geppetto-player)
 
@@ -18,7 +17,9 @@ Library for playing Geppetto animations. For the Desktop application to create t
 
 # Install
 
-```
+```sh
+npm install geppetto-player
+# or
 yarn add geppetto-player
 ```
 
@@ -82,4 +83,4 @@ Check out: https://babeljs.io/docs/en/babel-plugin-proposal-optional-chaining
 
 # License
 
-[MIT](./LICENSE) (c) [Matthijs Groen](https://twitter.com/matthijsgroen)
+[MIT](./LICENSE) (c) [Matthijs Groen](https://bsky.app/profile/matthijsgroen.bsky.social)

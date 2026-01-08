@@ -82,8 +82,8 @@ const config = {
             title: "Contact",
             items: [
               {
-                label: "Twitter",
-                href: "https://twitter.com/matthijsgroen",
+                label: "Bluesky",
+                href: "https://bsky.app/profile/matthijsgroen.bsky.social",
               },
               {
                 label: "Keybase chat",
@@ -116,12 +116,8 @@ const config = {
                 href: "https://www.npmjs.com/package/geppetto-player",
               },
               {
-                label: "Studio sourcecode",
+                label: "Sourcecode",
                 href: "https://github.com/matthijsgroen/geppetto",
-              },
-              {
-                label: "Player sourcecode",
-                href: "https://github.com/matthijsgroen/geppetto-player",
               },
             ],
           },

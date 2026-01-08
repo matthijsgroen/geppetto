@@ -7,10 +7,12 @@ import { type Vec2 } from "@/shared/types/global";
 import { addControl } from "./controls";
 import { addMutation, updateMutationValue } from "./mutation";
 import { newFile } from "./new";
-import { addFolder, addShape } from "./shapes";
+import type { AddShapeDetails } from "./shapes";
+import { addFolder, addPoint, addShape } from "./shapes";
 
 export const fileBuilder = () => {
   let file = newFile();
+  let lastShapeId: null | string = null;
 
   const builder = {
     addFolder: (name: string, parentName?: string) => {
@@ -34,13 +36,26 @@ export const fileBuilder = () => {
           ([, f]) => f.name === parentName
         );
         if (parentId) {
-          file = addShape(name, { parent: parentId[0] })(file);
+          const result = {} as AddShapeDetails;
+          file = addShape(name, { parent: parentId[0] }, result)(file);
+          lastShapeId = result.id;
 
           return builder;
         }
       }
-      file = addShape(name)(file);
+      const result = {} as AddShapeDetails;
+      file = addShape(name, undefined, result)(file);
+      lastShapeId = result.id;
 
+      return builder;
+    },
+    addPoints: (points: Vec2[]) => {
+      if (lastShapeId === null) {
+        return builder;
+      }
+      for (const point of points) {
+        file = addPoint(file, lastShapeId, point);
+      }
       return builder;
     },
     addMutation: <MutationType extends MutationVector["type"]>(

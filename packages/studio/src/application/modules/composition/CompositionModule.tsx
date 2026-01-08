@@ -483,8 +483,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
           </Column>
         </ResizePanel>
         <Panel center workspace>
-          <StartupScreen file={file} screen="composition" texture={texture} />
-          {texture && hasPoints(file) && (
+          {texture && hasPoints(file) ? (
             <LayerMouseControl
               handleDrag={handleDrag}
               hoverCursor={hoverCursor}
@@ -546,6 +545,8 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 )}
               </CompositionCanvas>
             </LayerMouseControl>
+          ) : (
+            <StartupScreen file={file} texture={texture} />
           )}
         </Panel>
         {showItemDetails && (

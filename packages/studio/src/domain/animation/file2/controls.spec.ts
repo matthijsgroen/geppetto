@@ -6,6 +6,7 @@ import {
   type AddControlDetails,
   addMutationToControl,
   hasControls,
+  hasControlsWithStepsAndSettings,
   insertControlStep,
   isMutationUnderControl,
   removeControls,
@@ -49,6 +50,39 @@ describe("hasControls", () => {
     const file = newFile();
     const image = addControl("New Control", undefined, {})(file);
     expect(hasControls(image)).toBe(true);
+  });
+});
+
+describe("hasControlsWithStepsAndSettings", () => {
+  it("returns false for files without controls", () => {
+    const file = newFile();
+    expect(hasControlsWithStepsAndSettings(file)).toBe(false);
+  });
+
+  it("returns false for files with controls without steps", () => {
+    const file = newFile();
+    const image = addControl("New Control", undefined, {})(file);
+    expect(hasControlsWithStepsAndSettings(image)).toBe(false);
+  });
+
+  it("returns false for files with controls with empty steps", () => {
+    const file = newFile();
+    let image = addControl("New Control", undefined, {})(file);
+    const controlId = getControlIdByName(image, "New Control");
+    image = produce(image, (draft) => {
+      draft.controls[controlId].steps = [{}, {}];
+    });
+    expect(hasControlsWithStepsAndSettings(image)).toBe(false);
+  });
+
+  it("returns true for files with controls with steps with settings", () => {
+    const file = newFile();
+    let image = addControl("New Control", undefined, {})(file);
+    const controlId = getControlIdByName(image, "New Control");
+    image = produce(image, (draft) => {
+      draft.controls[controlId].steps = [{ MutationId: [1, 2] }, {}];
+    });
+    expect(hasControlsWithStepsAndSettings(image)).toBe(true);
   });
 });
 
