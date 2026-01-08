@@ -28,15 +28,9 @@ These animations (the created .json file and your texture .png) can then be load
 
 Yarn scripts to get started with this repo:
 
-- `yarn start` Starts the web app in develoment mode
+- `yarn studio-dev` Starts the studio app in development mode
 - `yarn test` Running tests
 - `yarn build` Create production builds
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## Special thanks
 

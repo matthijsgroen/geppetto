@@ -10,7 +10,7 @@ on:
     branches: ["next"]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,16 +36,24 @@ jobs:
         run: yarn install
 
       - name: Check linting rules
-        run: yarn lint
-
-      - name: Run unit tests
-        run: yarn test --coverage
+        run: yarn turbo run lint
 
       - name: Check types
-        run: yarn types:check
+        run: yarn turbo run types:check
 
       - name: Check formatting
-        run: yarn format:check
+        run: yarn turbo run format:check
+
+      - name: Install Playwright browsers
+        run: yarn workspace @geppetto/studio playwright install --with-deps chromium
+
+      - name: Run tests
+        run: yarn turbo run test:coverage
 
       - name: Report coverage
-        uses: codecov/codecov-action@v3
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: packages/studio
+          name: "Studio"
+          threshold-icons: "{0: '🔴', 60: '🟠', 80: '🟢'}"
