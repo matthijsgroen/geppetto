@@ -11,6 +11,8 @@ import {
   addShape,
   type AddShapeDetails,
   deletePoint,
+  hasLayers,
+  hasPoints,
   movePoint,
   removeShape,
   rename,
@@ -366,6 +368,50 @@ describe("removeMutation", () => {
       expect(result.layerHierarchy[mutationId]).toBeUndefined();
       expect(result.mutations[mutationId]).toBeUndefined();
       expect(result.defaultFrame[mutationId]).toBeUndefined();
+    });
+  });
+
+  describe("hasLaers", () => {
+    it("returns true if file has layers", () => {
+      const file = fileBuilder().addShape("shape1").build();
+      expect(hasLayers(file)).toBe(true);
+    });
+
+    it("returns false if file has no layers", () => {
+      const file = fileBuilder().build();
+      expect(hasLayers(file)).toBe(false);
+    });
+  });
+
+  describe("hasPoints", () => {
+    it("returns true if file has more than 2 points", () => {
+      const file = fileBuilder()
+        .addShape("shape1")
+        .addPoints([
+          [10, 10],
+          [20, 20],
+          [30, 30],
+        ])
+        .build();
+      expect(hasPoints(file)).toBe(true);
+    });
+
+    it("returns false if file has no more than 2 points", () => {
+      const file = fileBuilder()
+        .addShape("shape1")
+        .addPoints([
+          [10, 10],
+          [20, 20],
+        ])
+        .addShape("shape2")
+        .addPoints([[10, 10]])
+        .build();
+      expect(hasPoints(file)).toBe(false);
+    });
+
+    it("returns false if file has no points", () => {
+      const file = fileBuilder().addShape("shape1").build();
+      expect(hasPoints(file)).toBe(false);
     });
   });
 });

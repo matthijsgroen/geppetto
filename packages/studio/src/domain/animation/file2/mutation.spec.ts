@@ -3,6 +3,7 @@ import { type MutationVector } from "@/dtos/animation-file2.dto";
 import {
   addMutation,
   type AddMutationDetails,
+  hasMutations,
   hasRadius,
   isShapeMutationVector,
   updateMutationValue,
@@ -165,5 +166,20 @@ describe("isShapeMutationVector", () => {
     },
   ])("returns $result for a $vector.name", ({ result, vector }) => {
     expect(isShapeMutationVector(vector)).toEqual(result);
+  });
+});
+
+describe("hasMutations", () => {
+  it("returns false for files without mutations", () => {
+    const file = fileBuilder().build();
+    expect(hasMutations(file)).toBe(false);
+  });
+
+  it("returns true for files with mutations", () => {
+    const file = fileBuilder()
+      .addShape("shape1")
+      .addMutation("mutation1", "translate", { radius: -1 }, "shape1")
+      .build();
+    expect(hasMutations(file)).toBe(true);
   });
 });
