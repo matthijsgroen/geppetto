@@ -2,6 +2,9 @@
 
 ![Geppetto logo](./packages/studio/public/logo192.png)
 
+[![License](https://img.shields.io/npm/l/geppetto-player)](https://github.com/matthijsgroen/geppetto-player/blob/main/LICENSE)
+[![Version](https://img.shields.io/npm/v/geppetto-player)](https://www.npmjs.com/package/geppetto-player)
+
 Geppetto is a free and open animation tool to create and embed webGL animations in a web site. This is the repository for the browser app to create the animations.
 
 - [Geppetto website](https://geppetto.js.org/)
