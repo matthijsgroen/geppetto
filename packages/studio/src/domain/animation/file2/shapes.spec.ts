@@ -1,7 +1,5 @@
+import type { GeppettoImage, Vec2 } from "@geppetto/types";
 import { describe, expect, it } from "vitest";
-
-import type { GeppettoImage } from "@/dtos/animation-file2.dto";
-import type { Vec2 } from "@/shared/types/global";
 
 import { newFile } from "./new";
 import {

@@ -31,7 +31,7 @@ const getAnchor = (sprite: SpriteDefinition): Vec2 => {
   return [(minX + maxX) / 2, (minY + maxY) / 2];
 };
 
-export const fileredTriangles = (points: number[][]): number[] =>
+export const filteredTriangles = (points: number[][]): number[] =>
   Delaunator.from(points).triangles;
 
 const vectorTypeMapping: { [key in MutationVector["type"]]: number } = {
@@ -265,7 +265,7 @@ export const prepareAnimation = (
     if (shape.type !== "sprite") return;
 
     const anchor = getAnchor(shape);
-    const shapeIndices = fileredTriangles(shape.points);
+    const shapeIndices = filteredTriangles(shape.points);
     const itemOffset = [...shape.translate, elements.length * 0.1];
     const offset = vertices.length;
 

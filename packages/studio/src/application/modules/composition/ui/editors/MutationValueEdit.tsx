@@ -1,9 +1,9 @@
+import type { Vec2 } from "@geppetto/types";
 import React, { Fragment } from "react";
 
 import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl";
 import { useFile } from "@/application/state/FileContext";
 import { type MutationVectorTypes } from "@/dtos/animation-file1.dto";
-import { type Vec2 } from "@/shared/types/global";
 import { ColorPreview, Control, TextButton } from "@/ui/components";
 
 import { ValueSlider } from "./ValueSlider";

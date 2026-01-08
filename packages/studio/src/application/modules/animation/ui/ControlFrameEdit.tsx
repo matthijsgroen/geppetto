@@ -1,11 +1,11 @@
+import type {
+  AnimationControlTrack,
+  FrameControlAction,
+} from "@geppetto/types";
 import type { FC } from "react";
 
 import { ToggleControl } from "@/application/modules/composition/ui/controls";
 import { useFile } from "@/application/state/FileContext";
-import type {
-  AnimationControlTrack,
-  FrameControlAction,
-} from "@/dtos/animation-file2.dto";
 import {
   Column,
   Control,

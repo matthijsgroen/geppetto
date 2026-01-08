@@ -1,6 +1,7 @@
 import "react-complex-tree/lib/style.css";
 import "./Tree.css";
 
+import type { GeppettoImage } from "@geppetto/types";
 import clsx from "clsx";
 import {
   Tree as ComplexTree,
@@ -8,7 +9,6 @@ import {
   type TreeRenderProps,
 } from "react-complex-tree";
 
-import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import { Icon } from "@/ui/components/atoms/Icon/Icon";
 export type { TreeItem, TreeItemIndex } from "react-complex-tree";
 

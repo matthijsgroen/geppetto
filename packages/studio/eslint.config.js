@@ -87,7 +87,14 @@ export default [
       "react-hooks/refs": "warn",
 
       // TypeScript
-      "@typescript-eslint/no-unused-vars": "off", // Handled by unused-imports plugin
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
       "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/consistent-type-definitions": ["warn", "type"],
       "@typescript-eslint/consistent-type-imports": [

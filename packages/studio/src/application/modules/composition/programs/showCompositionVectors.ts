@@ -1,13 +1,13 @@
-import { type TranslationVector } from "geppetto-player";
-
-import { collectChildIds, visit } from "@/domain/animation/file2/hierarchy";
-import { isShapeMutationVector } from "@/domain/animation/file2/mutation";
 import {
   type DeformationVector,
   type GeppettoImage,
+  isShapeMutationVector,
   type Keyframe,
   type MutationVector,
-} from "@/dtos/animation-file2.dto";
+} from "@geppetto/types";
+import { type TranslationVector } from "geppetto-player";
+
+import { collectChildIds, visit } from "@/domain/animation/file2/hierarchy";
 import { type ScreenTranslation } from "@/dtos/application.dto";
 import { flatten } from "@/infrastructure/webgl/lib/vertices";
 import {

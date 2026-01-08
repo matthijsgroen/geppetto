@@ -1,8 +1,7 @@
+import type { GeppettoImage, Vec2 } from "@geppetto/types";
 import { produce } from "immer";
 
-import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import { vecAdd } from "@/infrastructure/webgl/lib/vertices";
-import { type Vec2 } from "@/shared/types/global";
 
 import { collectChildIds } from "./hierarchy";
 

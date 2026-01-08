@@ -1,3 +1,4 @@
+import { type GeppettoImage } from "@geppetto/types";
 import React, { useCallback, useContext, useEffect, useRef } from "react";
 
 import { useLightModePreference } from "@/application/modules/application-menu/hooks/useLightModePreference";
@@ -15,7 +16,6 @@ import { ActionMenuItem } from "@/application/ui/ActionMenuItem";
 import sceneryDemoImg from "@/demos/scenery.json";
 import sceneryDemoImage from "@/demos/scenery.png";
 import { verifyFile as verifyVersion2 } from "@/domain/animation/file2/verifyFile";
-import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import { type UseState } from "@/dtos/application.dto";
 import { loadGeppettoFile, saveGeppettoFile } from "@/dtos/geppetto-file";
 import {

@@ -1,10 +1,12 @@
+import type {
+  GeppettoImage,
+  Layer,
+  MutationVector,
+  Vec2,
+  Vec4,
+} from "@geppetto/types";
+
 import { getPreviousOfType, visit } from "@/domain/animation/file2/hierarchy";
-import {
-  type GeppettoImage,
-  type Layer,
-  type MutationVector,
-} from "@/dtos/animation-file2.dto";
-import { type Vec2, type Vec4 } from "@/shared/types/global";
 
 export const MAX_MUTATION_VECTORS = 60;
 

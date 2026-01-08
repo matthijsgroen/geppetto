@@ -1,3 +1,4 @@
+import type { GeppettoImage, NodeType } from "@geppetto/types";
 import { produce } from "immer";
 import { useMemo, useState } from "react";
 import { type DraggingPosition } from "react-complex-tree";
@@ -15,7 +16,6 @@ import {
   visit,
 } from "@/domain/animation/file2/hierarchy";
 import { rename, toggleVisibility } from "@/domain/animation/file2/shapes";
-import { type GeppettoImage, type NodeType } from "@/dtos/animation-file2.dto";
 import { type UseState } from "@/dtos/application.dto";
 import {
   type TreeData,

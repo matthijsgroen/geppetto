@@ -1,7 +1,8 @@
+import type { GeppettoImage } from "@geppetto/types";
+
 import { verifyFile as verifyVersion1 } from "@/domain/animation/file1/verifyFile";
 import { convertFromV1 } from "@/domain/animation/file2/convert";
 import { verifyFile as verifyVersion2 } from "@/domain/animation/file2/verifyFile";
-import type { GeppettoImage } from "@/dtos/animation-file2.dto";
 
 export const loadGeppettoFile = async (
   file: FileSystemFileHandle

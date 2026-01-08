@@ -1,3 +1,5 @@
+import type { MutationVector } from "@geppetto/types";
+
 import { LayerTreeEnvironment } from "@/application/modules/layers/ui/LayerTreeEnvironment";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
@@ -15,7 +17,6 @@ import {
   mutationLabels,
 } from "@/domain/animation/file2/mutation";
 import { addFolder, removeShape } from "@/domain/animation/file2/shapes";
-import { type MutationVector } from "@/dtos/animation-file2.dto";
 import type { AppSection } from "@/dtos/application.dto";
 import { type UseState } from "@/dtos/application.dto";
 import {

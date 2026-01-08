@@ -1,6 +1,5 @@
+import type { Vec2 } from "@geppetto/types";
 import type { ComponentProps, FC } from "react";
-
-import { type Vec2 } from "@/shared/types/global";
 
 const Point: FC<ComponentProps<"div">> = ({ children, ...props }) => (
   <div

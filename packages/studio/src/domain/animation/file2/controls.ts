@@ -1,9 +1,5 @@
+import { type ControlDefinition, type GeppettoImage } from "@geppetto/types";
 import { produce } from "immer";
-
-import {
-  type ControlDefinition,
-  type GeppettoImage,
-} from "@/dtos/animation-file2.dto";
 
 import {
   addInHierarchy,

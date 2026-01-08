@@ -50,10 +50,26 @@ jobs:
       - name: Run tests
         run: yarn turbo run test:coverage
 
-      - name: Report coverage
+      - name: Report studio coverage
         if: github.event_name == 'pull_request'
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           working-directory: packages/studio
           name: "Studio"
+          threshold-icons: "{0: '🔴', 60: '🟠', 80: '🟢'}"
+
+      - name: Report player coverage
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: packages/player
+          name: "Player"
+          threshold-icons: "{0: '🔴', 60: '🟠', 80: '🟢'}"
+
+      - name: Report types coverage
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: packages/geppetto-types
+          name: "Types"
           threshold-icons: "{0: '🔴', 60: '🟠', 80: '🟢'}"

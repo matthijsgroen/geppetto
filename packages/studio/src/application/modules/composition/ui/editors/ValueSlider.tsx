@@ -1,7 +1,7 @@
+import type { Vec2 } from "@geppetto/types";
 import { produce } from "immer";
 import { type ChangeEvent, useCallback } from "react";
 
-import { type Vec2 } from "@/shared/types/global";
 import { Column, Control, RangeInput, RangeValue } from "@/ui/components";
 
 const defaultFormatter = (value: number) => `${value}`;

@@ -1,9 +1,6 @@
+import type { GeppettoImage, MutationVector, Vec2 } from "@geppetto/types";
+
 import { getPreviousOfType } from "@/domain/animation/file2/hierarchy";
-import {
-  type GeppettoImage,
-  type MutationVector,
-} from "@/dtos/animation-file2.dto";
-import { type Vec2 } from "@/shared/types/global";
 
 import {
   distance,

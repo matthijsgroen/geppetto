@@ -1,4 +1,4 @@
-import type { GeppettoImage } from "@/dtos/animation-file2.dto";
+import type { GeppettoImage } from "@geppetto/types";
 
 export const hasAnimations = (file: GeppettoImage) =>
   Object.keys(file.animations).length > 0;

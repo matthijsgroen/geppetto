@@ -1,7 +1,7 @@
+import type { GeppettoImage } from "@geppetto/types";
 import { type RefObject, useMemo, useRef } from "react";
 
 import { newFile } from "@/domain/animation/file2/new";
-import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import {
   type TreeData,
   type TreeItem,

@@ -1,10 +1,10 @@
-import { type Layer } from "@/dtos/animation-file2.dto";
+import type { Layer, Vec2 } from "@geppetto/types";
+
 import { type ScreenTranslation } from "@/dtos/application.dto";
 import {
   createProgram,
   type WebGLRenderer,
 } from "@/infrastructure/webgl/lib/webgl";
-import { type Vec2 } from "@/shared/types/global";
 import { isInDarkMode } from "@/shared/utils/darkMode";
 
 import layerPointsFragmentShader from "./showLayerPoints.frag";

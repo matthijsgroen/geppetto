@@ -1,3 +1,4 @@
+import type { GeppettoImage } from "@geppetto/types";
 import {
   createContext,
   type FC,
@@ -7,8 +8,6 @@ import {
   useContext,
   useRef,
 } from "react";
-
-import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 
 import useEvent from "./hooks/useEvent";
 

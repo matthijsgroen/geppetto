@@ -1,13 +1,13 @@
-import { type Vec2 } from "geppetto-player";
+import type {
+  DeformationVector,
+  GeppettoImage,
+  MutationVector,
+  ShapeMutationVector,
+  TranslationVector,
+  Vec2,
+} from "@geppetto/types";
 import { produce } from "immer";
 
-import {
-  type DeformationVector,
-  type GeppettoImage,
-  type MutationVector,
-  type ShapeMutationVector,
-  type TranslationVector,
-} from "@/dtos/animation-file2.dto";
 import { defaultValueForVector } from "@/infrastructure/webgl/lib/vertices";
 
 import { addInHierarchy, type PlacementInfo } from "./hierarchy";

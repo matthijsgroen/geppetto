@@ -1,18 +1,17 @@
+import type {
+  Animation,
+  AnimationControlTrack,
+  FrameControlAction,
+  FrameEvent,
+  GeppettoImage,
+  Hierarchy,
+  NodeType,
+} from "@geppetto/types";
+
 import {
   type ImageDefinition,
   type MutationVector,
 } from "@/dtos/animation-file1.dto";
-import type {
-  AnimationControlTrack,
-  FrameControlAction,
-  FrameEvent,
-} from "@/dtos/animation-file2.dto";
-import {
-  type Animation,
-  type GeppettoImage,
-  type Hierarchy,
-  type NodeType,
-} from "@/dtos/animation-file2.dto";
 
 import { newFile } from "./new";
 
@@ -279,8 +278,14 @@ export const convertFromV1 = (imageDef: ImageDefinition): GeppettoImage => {
     result.defaultFrame[id] = value;
   }
 
-  id = 0;
-  result.animations = populateAnimations(imageDef.animations, result, createId);
+  if (imageDef.animations) {
+    id = 0;
+    result.animations = populateAnimations(
+      imageDef.animations,
+      result,
+      createId
+    );
+  }
 
   return result;
 };

@@ -1,3 +1,4 @@
+import type { Vec2 } from "@geppetto/types";
 import { produce } from "immer";
 import { useEffect, useState, useTransition } from "react";
 
@@ -19,7 +20,6 @@ import {
   updateMutationValue,
 } from "@/domain/animation/file2/mutation";
 import { toggleVisibility } from "@/domain/animation/file2/shapes";
-import { type Vec2 } from "@/shared/types/global";
 import {
   Control,
   ControlPanel,

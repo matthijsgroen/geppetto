@@ -1,7 +1,6 @@
+import type { EasingFunction } from "@geppetto/types";
 import clsx from "clsx";
 import type { FC } from "react";
-
-import type { EasingFunction } from "@/dtos/animation-file2.dto";
 
 export const TimeCurve: FC<{
   size?: "flex" | "option";

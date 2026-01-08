@@ -1,4 +1,4 @@
-import { type Vec2 } from "@/shared/types/global";
+import type { Vec2 } from "@geppetto/types";
 
 const FOCUS_BORDER = 2;
 export const mouseToTextureCoordinate = (

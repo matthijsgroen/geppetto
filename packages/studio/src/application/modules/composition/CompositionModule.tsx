@@ -1,3 +1,4 @@
+import type { GeppettoImage, MutationVector, Vec2 } from "@geppetto/types";
 import {
   type RefObject,
   type SetStateAction,
@@ -39,10 +40,6 @@ import {
   type MutationSettings,
 } from "@/domain/animation/file2/mutation";
 import { hasPoints } from "@/domain/animation/file2/shapes";
-import {
-  type GeppettoImage,
-  type MutationVector,
-} from "@/dtos/animation-file2.dto";
 import { type AppSection, type Size } from "@/dtos/application.dto";
 import { maxZoomFactor } from "@/infrastructure/webgl/lib/canvas";
 import {
@@ -53,7 +50,6 @@ import {
   calculateVectorValues,
   vectorPositions,
 } from "@/infrastructure/webgl/lib/vectorPositions";
-import { type Vec2 } from "@/shared/types/global";
 import {
   Column,
   ControlledMenu,

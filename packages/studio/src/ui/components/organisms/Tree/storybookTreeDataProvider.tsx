@@ -1,7 +1,6 @@
+import { type NodeType } from "@geppetto/types";
 import type React from "react";
 import { type TreeItem, type TreeItemIndex } from "react-complex-tree";
-
-import { type NodeType } from "@/dtos/animation-file2.dto";
 
 import { type TreeData } from "./Tree";
 
