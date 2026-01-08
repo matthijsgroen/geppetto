@@ -1,3 +1,6 @@
+// vim: ts=2:sw=2
+// Ported from studio's showComposition.frag
+
 precision mediump float;
 
 varying mediump vec2 vTextureCoord;

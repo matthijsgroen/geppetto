@@ -1,8 +1,7 @@
 import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition } from "./types";
-import { MixMode as MixModeEnum } from "./types";
-import animationFragmentShader from "./shaders/fragmentShader-min.frag";
+import animationFragmentShader from "./shaders/fragmentShader.frag";
 import { animationVertexShader } from "./shaders/vertexShader";
-import { interpolateFloat, mixHue } from "./vertices";
+import { interpolateFloat } from "./vertices";
 
 /**
  * Function to call for unsubscribing to an event listener
@@ -349,7 +348,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       gl.viewport(0, 0, element.width, element.height);
       
       // Render all animations sorted by zIndex
-      const sortedAnimations = animations.slice().sort((a, b) => {
+      const sortedAnimations = animations.slice().sort((_a, _b) => {
         // Access zIndex from the animation's options
         return 0; // For now, render in order they were added
       });
@@ -386,27 +385,20 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       gl.useProgram(program);
       const texture = setupTexture(gl, program, image);
 
-      // 4. Set Uniforms
-      const parentLocation = gl.getUniformLocation(program, "uMutParent");
-      gl.uniform1iv(parentLocation, animation.mutatorParents.data);
-
+      // 4. Set Uniforms (simplified - matching studio approach)
+      // Upload mutation vectors and parent chain once at initialization
       const setBuffer = setProgramBuffer(gl, program);
-      const mutationValuesLocation = setBuffer(
-        "uMutValues",
-        animation.mutationValues
-      );
-      setBuffer("uMutVectors", animation.mutators);
-      setBuffer("uControlMutValues", animation.controlMutationValues);
-      setBuffer("uMutValueIndices", animation.mutationValueIndices);
-      setBuffer("uControlMutIndices", animation.controlMutationIndices);
-
-      const uControlValues = gl.getUniformLocation(program, "uControlValues");
-      gl.uniform1fv(uControlValues, animation.defaultControlValues);
-
+      setBuffer("uMutationVectors", animation.mutators);
+      
+      const parentLocation = gl.getUniformLocation(program, "uMutationParent");
+      gl.uniform1iv(parentLocation, animation.mutatorParents.data);
+      
+      // Mutation values will be uploaded before each render
+      const mutationValuesLocation = gl.getUniformLocation(program, "uMutationValues");
+      
+      // Initialize control values
       const controlValues = new Float32Array(animation.defaultControlValues);
-      const renderControlValues = new Float32Array(
-        animation.defaultControlValues
-      );
+      const renderControlValues = new Float32Array(animation.defaultControlValues);
 
       // 5. Set shape buffers
       const vertexBuffer = gl.createBuffer();
@@ -675,49 +667,16 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               renderControlValues[controlIndex] = value;
             }
 
-            // Process visibility tracks - update visibility state based on animation time
-            for (const [layerIndex, visibilityActions] of playingAnimation.visibilityTracks) {
-              // Find the last visibility action that occurred before or at current time
-              let currentVisibility = animation.layers[layerIndex]?.visible ?? true;
-              for (const [actionTime, visible] of visibilityActions) {
-                if (actionTime <= playPosition) {
-                  currentVisibility = visible;
-                } else {
-                  break; // Actions are ordered by time, so we can stop here
-                }
-              }
-              animation.visibilityState[layerIndex] = currentVisibility ? 1 : 0;
-            }
+            // TODO: Process visibility tracks in Phase 2
           }
-          const updatedMutationValues = Float32Array.from(
-            animation.mutationValues.data
-          );
-          for (const data of animation.directControls) {
-            const ctrlValue = renderControlValues[data.control];
-            const xValue = interpolateFloat(data.trackX, ctrlValue);
-            const yValue = interpolateFloat(data.trackY, ctrlValue);
-            if (data.mixMode === MixModeEnum.MULTIPLY) {
-              updatedMutationValues[data.mutation * 2] *= xValue;
-              updatedMutationValues[data.mutation * 2 + 1] *= yValue;
-            } else if (data.mixMode === MixModeEnum.ADD) {
-              updatedMutationValues[data.mutation * 2] += xValue;
-              updatedMutationValues[data.mutation * 2 + 1] += yValue;
-            } else {
-              const hue = interpolateFloat(data.trackX, ctrlValue, 0, mixHue);
-              updatedMutationValues[data.mutation * 2] = hue;
-              updatedMutationValues[data.mutation * 2 + 1] *= yValue;
-            }
-          }
-          gl.uniform2fv(mutationValuesLocation, updatedMutationValues);
-
-          gl.uniform1fv(uControlValues, renderControlValues);
+          
+          // Upload mutation values to GPU (simplified - matching studio approach)
+          // In Phase 2, we'll update mutation values based on control values here
+          gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
 
           for (let i = 0; i < animation.layers.length; i++) {
             const layer = animation.layers[i];
-            // Check visibility state - skip invisible layers
-            if (animation.visibilityState[i] === 0) {
-              continue;
-            }
+            // TODO: Check visibility in Phase 2
             gl.uniform3f(uTranslate, layer.x, layer.y, layer.z);
             gl.uniform1f(uMutation, layer.mutator);
             gl.drawElements(
