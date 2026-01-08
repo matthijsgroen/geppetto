@@ -1,9 +1,9 @@
+import type { Vec2 } from "@geppetto/types";
 import clsx from "clsx";
 import type { ComponentProps, FC } from "react";
 import { type PropsWithChildren, useEffect, useRef, useState } from "react";
 
 import useEvent from "@/application/state/hooks/useEvent";
-import { type Vec2 } from "@/shared/types/global";
 
 export enum MouseMode {
   Normal,

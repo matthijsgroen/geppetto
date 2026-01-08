@@ -1,3 +1,4 @@
+import type { GeppettoImage } from "@geppetto/types";
 import { type FC, use } from "react";
 
 import { ApplicationContext } from "@/application/state/ApplicationContext";
@@ -11,7 +12,6 @@ import {
 } from "@/domain/animation/file2/controls";
 import { hasMutations } from "@/domain/animation/file2/mutation";
 import { hasLayers, hasPoints } from "@/domain/animation/file2/shapes";
-import type { GeppettoImage } from "@/dtos/animation-file2.dto";
 import { Kbd, TodoItem, TodoList, ToolButton } from "@/ui/components";
 
 type TodoProps = {

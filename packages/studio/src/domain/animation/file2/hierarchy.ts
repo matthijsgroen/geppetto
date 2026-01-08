@@ -1,8 +1,4 @@
-import {
-  type Hierarchy,
-  type RootNode,
-  type TreeNode,
-} from "@/dtos/animation-file2.dto";
+import { type Hierarchy, type RootNode, type TreeNode } from "@geppetto/types";
 
 export type PlacementInfo =
   | { after: string }

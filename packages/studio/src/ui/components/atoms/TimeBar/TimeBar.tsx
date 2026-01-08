@@ -1,7 +1,7 @@
+import type { EasingFunction } from "@geppetto/types";
 import clsx from "clsx";
 import { type FC, use } from "react";
 
-import type { EasingFunction } from "@/dtos/animation-file2.dto";
 import { TimeCurve } from "@/ui/components/atoms/TimeCurve/TimeCurve";
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { AnimationTrackContext } from "@/ui/components/molecules/AnimationTrack/AnimationTrackContext";

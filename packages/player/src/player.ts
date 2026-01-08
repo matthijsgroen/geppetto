@@ -43,29 +43,29 @@ export type AnimationControls = {
    * The default value is based on how the animation is build.
    *
    * @param loop true for looping, false to stop looping.
-   * @param trackName the name of the animation track to adjust.
+   * @param animationName the name of the animation track to adjust.
    * @throws an error if the provided trackName does not exist
    */
-  setLooping(loop: boolean, trackName: string): void;
+  setLooping(loop: boolean, animationName: string): void;
 
   /**
    * Start an animation. Conflicting animations will be automatically stopped.
    *
-   * @param trackName the name of the animation track to start.
+   * @param animationName the name of the animation track to start.
    * If the name is not valid, an exception will be thrown
    * indicating what animation names are available.
    * @throws an error if the provided trackName does not exist
    */
-  startTrack(trackName: string, options?: PlayOptions): void;
+  startAnimation(animationName: string, options?: PlayOptions): void;
 
   /**
    * Stop an animation.
    *
-   * @param trackName the name of the animation track to start.
+   * @param animationName the name of the animation track to start.
    * If the name is not valid, an exception will be thrown
    * indicating what animation names are available.
    */
-  stopTrack(trackName: string): void;
+  stopAnimation(animationName: string): void;
 
   /**
    * Manipulates a control. Will stop animations that are using this control as well.
@@ -78,7 +78,7 @@ export type AnimationControls = {
   setControlValue(controlName: string, value: number): void;
 
   /**
-   * Retreives current value of a control. This value will not update for each frame
+   * Retrieves current value of a control. This value will not update for each frame
    * of an animation. It will only update at the end of each play iteration of an animation.
    *
    * @param controlName name of the control to get value from
@@ -189,7 +189,7 @@ type PlayStatus = {
 };
 
 /**
- * A player to add Gepetto animations to.
+ * A player to add Geppetto animations to.
  */
 export type GeppettoPlayer = {
   /**
@@ -436,7 +436,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       const controlNames = animation.controls.map((a) => a.name);
       const looping: boolean[] = animation.animations.map((a) => a.looping);
 
-      const stopTrack = (track: string): void => {
+      const stopAnimation = (track: string): void => {
         // Remove from playing list
         const playingIndex = playingAnimations.findIndex(
           (e) => e.name === track
@@ -508,7 +508,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               ([controlNr]) => controlNr === controlIndex
             )
           ) {
-            stopTrack(trackNames[playing.index]);
+            stopAnimation(trackNames[playing.index]);
           }
         }
 
@@ -530,8 +530,8 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           const trackIndex = nameToTrackIndex(track);
           looping[trackIndex] = loop;
         },
-        startTrack(track, { startAt = 0, speed = 1 } = {}) {
-          const trackIndex = nameToTrackIndex(track);
+        startAnimation(animationName, { startAt = 0, speed = 1 } = {}) {
+          const trackIndex = nameToTrackIndex(animationName);
           const animationControls = animation.animations[trackIndex].tracks.map(
             ([controlNr]) => controlNr
           );
@@ -544,12 +544,12 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                 animationControls.includes(controlNr)
               )
             ) {
-              stopTrack(trackNames[playing.index]);
+              stopAnimation(trackNames[playing.index]);
             }
           }
 
           playingAnimations.push({
-            name: track,
+            name: animationName,
             index: trackIndex,
             startAt,
             speed,
@@ -558,7 +558,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             lastRender: 0,
           });
         },
-        stopTrack,
+        stopAnimation,
         setControlValue,
         getControlValue: (controlName) =>
           controlValues[nameToControlIndex(controlName)],
@@ -635,7 +635,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
             if (playingAnimation.duration < playTime) {
               if (!looping[playing.index]) {
-                stopTrack(playingAnimation.name);
+                stopAnimation(playingAnimation.name);
                 continue;
               }
               playing.iterationStartedAt = now - playPosition;

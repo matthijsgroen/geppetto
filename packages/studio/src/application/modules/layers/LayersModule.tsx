@@ -1,3 +1,4 @@
+import type { Layer, Vec2 } from "@geppetto/types";
 import React, { useCallback, useMemo, useState } from "react";
 
 import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
@@ -18,14 +19,12 @@ import {
   deletePoint,
   movePoint,
 } from "@/domain/animation/file2/shapes";
-import { type Layer } from "@/dtos/animation-file2.dto";
 import { type AppSection } from "@/dtos/application.dto";
 import {
   getInitialScale,
   maxZoomFactor,
   mouseToTextureCoordinate,
 } from "@/infrastructure/webgl/lib/canvas";
-import { type Vec2 } from "@/shared/types/global";
 import {
   Column,
   Icon,

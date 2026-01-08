@@ -1,4 +1,4 @@
-import { type Vec2 } from "@/shared/types/global";
+import type { Vec2 } from "@geppetto/types";
 
 export type TranslationVector = {
   name: string;

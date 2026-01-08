@@ -1,9 +1,9 @@
+import { type GeppettoImage } from "@geppetto/types";
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
 import { useContext } from "react";
 
 import { AnimationTodo } from "@/application/modules/application-menu/ui/AnimationTodo";
 import { ApplicationContext } from "@/application/state/ApplicationContext";
-import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import { Icon, Kbd, Logo, Paragraph, Title, ToolButton } from "@/ui/components";
 import { versionInfo } from "@/versionInfo";
 

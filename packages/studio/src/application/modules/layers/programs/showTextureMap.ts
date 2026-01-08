@@ -1,4 +1,5 @@
-import { type Layer } from "@/dtos/animation-file2.dto";
+import { type Layer } from "@geppetto/types";
+
 import { type ScreenTranslation } from "@/dtos/application.dto";
 import { verticesFromPoints } from "@/infrastructure/webgl/lib/vertices";
 import {

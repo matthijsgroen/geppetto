@@ -1,12 +1,11 @@
+import type {
+  GeppettoImage,
+  Layer,
+  LayerFolder,
+  NodeType,
+  Vec2,
+} from "@geppetto/types";
 import { produce } from "immer";
-
-import {
-  type GeppettoImage,
-  type Layer,
-  type LayerFolder,
-  type NodeType,
-} from "@/dtos/animation-file2.dto";
-import { type Vec2 } from "@/shared/types/global";
 
 import {
   addInHierarchy,

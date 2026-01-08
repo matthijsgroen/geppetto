@@ -1,8 +1,8 @@
+import type { GeppettoImage, NodeType } from "@geppetto/types";
 import { type RefObject, useMemo, useRef } from "react";
 
 import { iconMapping } from "@/domain/animation/file2/mutation";
 import { newFile } from "@/domain/animation/file2/new";
-import { type GeppettoImage, type NodeType } from "@/dtos/animation-file2.dto";
 import {
   Icon,
   ToolButton,

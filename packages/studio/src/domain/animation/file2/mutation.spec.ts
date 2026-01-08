@@ -1,4 +1,4 @@
-import { type MutationVector } from "@/dtos/animation-file2.dto";
+import { type MutationVector } from "@geppetto/types";
 
 import {
   addMutation,

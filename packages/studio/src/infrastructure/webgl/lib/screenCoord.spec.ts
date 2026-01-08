@@ -1,5 +1,6 @@
+import type { Vec2 } from "@geppetto/types";
+
 import { type ScreenTranslation, type Size } from "@/dtos/application.dto";
-import { type Vec2 } from "@/shared/types/global";
 
 import { imageToPixels, pixelsToImage } from "./screenCoord";
 

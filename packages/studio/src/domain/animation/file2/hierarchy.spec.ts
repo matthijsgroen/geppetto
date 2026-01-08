@@ -1,4 +1,4 @@
-import { type Hierarchy } from "@/dtos/animation-file2.dto";
+import { type Hierarchy } from "@geppetto/types";
 
 import {
   ABORT_TRAVERSE,

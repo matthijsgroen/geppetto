@@ -1,3 +1,11 @@
+import type {
+  Animation,
+  FrameAction,
+  FrameControlAction,
+  GeppettoImage,
+  Hierarchy,
+} from "@geppetto/types";
+
 import { updateVersionNumber } from "@/domain/versioning/updateVersionNumber";
 import {
   type AnimationFrame,
@@ -5,13 +13,6 @@ import {
   type Keyframe,
   type MutationVector,
 } from "@/dtos/animation-file1.dto";
-import type { Animation } from "@/dtos/animation-file2.dto";
-import {
-  type FrameAction,
-  type FrameControlAction,
-  type GeppettoImage,
-  type Hierarchy,
-} from "@/dtos/animation-file2.dto";
 
 import { newFile } from "./new";
 

@@ -62,6 +62,7 @@
     "dist/"
   ],
   "dependencies": {
+    "@geppetto/types": "workspace:*",
     "delaunator": "^4.0.1"
   },
   "browserslist": [

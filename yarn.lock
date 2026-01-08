@@ -3388,6 +3388,7 @@ __metadata:
   dependencies:
     "@eslint/eslintrc": "npm:^3.3.3"
     "@eslint/js": "npm:^9.39.2"
+    "@geppetto/types": "workspace:*"
     "@storybook/addon-docs": "npm:10.1.6"
     "@storybook/addon-themes": "npm:10.1.6"
     "@storybook/addon-vitest": "npm:10.1.6"
@@ -3444,6 +3445,17 @@ __metadata:
     wait-on: "npm:^6.0.1"
     web-vitals: "npm:^5.1.0"
     workbox-window: "npm:^7.4.0"
+  languageName: unknown
+  linkType: soft
+
+"@geppetto/types@workspace:*, @geppetto/types@workspace:packages/geppetto-types":
+  version: 0.0.0-use.local
+  resolution: "@geppetto/types@workspace:packages/geppetto-types"
+  dependencies:
+    "@typescript-eslint/eslint-plugin": "npm:^8.52.0"
+    "@typescript-eslint/parser": "npm:^8.52.0"
+    eslint: "npm:^9.39.0"
+    typescript: "npm:^5.9.3"
   languageName: unknown
   linkType: soft
 
@@ -11750,6 +11762,7 @@ __metadata:
   resolution: "geppetto-player@workspace:packages/player"
   dependencies:
     "@eslint/js": "npm:^9.39.0"
+    "@geppetto/types": "workspace:*"
     "@parcel/packager-ts": "npm:2.16.0"
     "@parcel/transformer-glsl": "npm:2.16.0"
     "@parcel/transformer-typescript-types": "npm:2.16.0"

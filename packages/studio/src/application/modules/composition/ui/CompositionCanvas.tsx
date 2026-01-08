@@ -1,3 +1,4 @@
+import type { GeppettoImage } from "@geppetto/types";
 import {
   type FC,
   type PropsWithChildren,
@@ -15,7 +16,6 @@ import {
 } from "@/application/state/ImageControlContext";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { newFile } from "@/domain/animation/file2/new";
-import { type GeppettoImage } from "@/dtos/animation-file2.dto";
 import { calculateVectorValues } from "@/infrastructure/webgl/lib/vectorPositions";
 import WebGLCanvas from "@/infrastructure/webgl/WebGLCanvas";
 

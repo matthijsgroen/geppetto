@@ -1,12 +1,12 @@
-import type { FC } from "react";
-
 import type {
   AnimationControlTrack,
   AnimationVisibilityTrack,
   FrameControlAction,
   FrameLayerVisibilityAction,
   GeppettoImage,
-} from "@/dtos/animation-file2.dto";
+} from "@geppetto/types";
+import type { FC } from "react";
+
 import {
   AnimationTrack as AnimationTrackComponent,
   TimeBar,

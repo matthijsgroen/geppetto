@@ -1,8 +1,8 @@
+import type { Vec2 } from "@geppetto/types";
 import React, { useEffect, useMemo } from "react";
 
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import WebGLCanvas from "@/infrastructure/webgl/WebGLCanvas";
-import { type Vec2 } from "@/shared/types/global";
 
 import { showGrid } from "../programs/showGrid";
 import { type IDLayer, showLayerPoints } from "../programs/showLayerPoints";
