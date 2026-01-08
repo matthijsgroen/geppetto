@@ -11112,7 +11112,6 @@ __metadata:
   resolution: "geppetto-player@workspace:packages/player"
   dependencies:
     "@eslint/js": "npm:^9.39.0"
-    "@geppetto/types": "workspace:*"
     "@parcel/packager-ts": "npm:2.16.0"
     "@parcel/transformer-glsl": "npm:2.16.0"
     "@parcel/transformer-typescript-types": "npm:2.16.0"

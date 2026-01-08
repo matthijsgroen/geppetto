@@ -184,3 +184,43 @@ export const getAllLayerIds = (
 
   return layerIds;
 };
+
+/**
+ * Find the previous sibling of a specific type in the hierarchy.
+ * Looks up the parent chain to find previous siblings of the given type.
+ * 
+ * @param hierarchy - The hierarchy tree
+ * @param type - The type to search for
+ * @param startId - The node ID to start from
+ * @returns The ID of the previous node of the given type, or null if not found
+ */
+export const getPreviousOfType = <T extends string>(
+  hierarchy: Hierarchy<T>,
+  type: T,
+  startId: string
+): string | null => {
+  const nodeId = startId;
+  let activeParent = hierarchy[nodeId];
+  while (activeParent && activeParent.type !== "root") {
+    if (activeParent.type === "root" || !("parentId" in activeParent)) break;
+    activeParent = hierarchy[activeParent.parentId];
+    if (!activeParent || activeParent.type === "root") {
+      if (!activeParent || !activeParent.children) break;
+    }
+    
+    let lastOfType: string | null = null;
+
+    const children = activeParent.children || [];
+    for (const childId of children) {
+      if (childId === nodeId) break;
+      if (hierarchy[childId].type === type) {
+        lastOfType = childId;
+      }
+    }
+    if (lastOfType) {
+      return lastOfType;
+    }
+  }
+
+  return null;
+};

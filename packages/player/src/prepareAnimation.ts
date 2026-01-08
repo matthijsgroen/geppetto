@@ -1,17 +1,14 @@
 import Delaunator from "delaunator";
 import { vectorArrayToPreparedFloatBuffer } from "./buffer";
 import {
-  getMutationChain,
-  buildMutationParentMap,
-  getAllMutationIds,
-  getAllLayerIds,
+  visitHierarchy,
+  getPreviousOfType,
 } from "./traverse";
 import type {
   GeppettoImage,
   MutationVector,
   Layer,
   Vec2,
-  Vec3,
   Vec4,
   AnimationControlTrack,
   AnimationVisibilityTrack,
@@ -21,10 +18,7 @@ import type {
   PreparedLayer,
   PreparedAnimation,
   PreparedControl,
-  DirectControl,
-  MixMode,
 } from "./types";
-import { MixMode as MixModeEnum } from "./types";
 
 const getAnchor = (layer: Layer): Vec2 => {
   let minX = Infinity;
@@ -53,6 +47,7 @@ const vectorTypeMapping: { [key in MutationVector["type"]]: number } = {
   lightness: 6,
   colorize: 7,
   saturation: 8,
+  hue: 9,
 };
 
 const mutatorToVec4 = (mutator: MutationVector): Vec4 => [
@@ -64,16 +59,6 @@ const mutatorToVec4 = (mutator: MutationVector): Vec4 => [
     : -1,
 ];
 
-const getMixMode = (mutType: number): MixMode =>
-  mutType === vectorTypeMapping.stretch ||
-  mutType === vectorTypeMapping.lightness ||
-  mutType === vectorTypeMapping.saturation ||
-  mutType === vectorTypeMapping.opacity
-    ? MixModeEnum.MULTIPLY
-    : mutType === vectorTypeMapping.colorize
-    ? MixModeEnum.HUE
-    : MixModeEnum.ADD;
-
 /**
  * Convert the GeppettoImage format 2.x into a preprocessed structure optimized for WebGL rendering
  *
@@ -83,41 +68,84 @@ const getMixMode = (mutType: number): MixMode =>
 export const prepareAnimation = (
   image: GeppettoImage
 ): PreparedImageDefinition => {
-  // Step 1: Get all mutation IDs in hierarchy order and build parent map
-  const mutationIds = getAllMutationIds(image.layerHierarchy);
-  const mutatorParents = buildMutationParentMap(mutationIds, image.layerHierarchy);
+  // Step 1: Collect all mutations in hierarchy order (matching studio's createShapeMutationList)
+  const mutatorIndices: { id: string; parent: number }[] = [];
+  const mutators: Vec4[] = [];
+  const mutatorMapping: Record<string, number> = {};
   
-  // Step 2: Convert mutations to Vec4 array using ID-based lookups (O(1))
-  const mutators: Vec4[] = mutationIds.map((id) => {
-    const mutation = image.mutations[id];
-    return mutatorToVec4(mutation);
+  visitHierarchy(image.layerHierarchy, (nodeId, node) => {
+    if (node.type === "mutation") {
+      const mutation = image.mutations[nodeId];
+      const value = mutatorToVec4(mutation);
+      const index = mutators.length;
+      mutators.push(value);
+
+      const parentMutation = getPreviousOfType(
+        image.layerHierarchy,
+        "mutation",
+        nodeId
+      );
+      const mutatorIndex =
+        parentMutation === null
+          ? -1
+          : mutatorIndices.findIndex((e) => e.id === parentMutation);
+      mutatorIndices.push({ id: nodeId, parent: mutatorIndex });
+      mutatorMapping[nodeId] = index;
+    }
   });
   
-  // Step 3: Build mutation ID to index map for O(1) lookup
-  const mutationIndexMap = new Map<string, number>(
-    mutationIds.map((id, index) => [id, index])
-  );
+  // Step 2: Build shape-to-mutator mapping
+  const shapeMutatorMapping: Record<string, number> = {};
+  visitHierarchy(image.layerHierarchy, (nodeId, node) => {
+    if (node.type === "layer") {
+      const parentMutation = node.children
+        ? node.children.slice(-1)[0]
+        : getPreviousOfType(image.layerHierarchy, "mutation", nodeId);
+      
+      const mutatorIndex =
+        parentMutation === null
+          ? -1
+          : mutatorIndices.findIndex((e) => e.id === parentMutation);
+      shapeMutatorMapping[nodeId] = mutatorIndex;
+    }
+  });
   
-  // Step 4: Process layers and build geometry
-  const layerIds = getAllLayerIds(image.layerHierarchy);
+  // Build parent array (using Float32Array like studio)
+  const mutatorParents = new Float32Array(mutators.length);
+  mutatorIndices.forEach((item, index) => {
+    mutatorParents[index] = item.parent;
+  });
+  
+  // Step 3: Process layers and build geometry
   const layers: PreparedLayer[] = [];
   const vertices: Vec4[] = [];
   const indices: number[] = [];
   const layerNames = new Map<string, number>();
+  let layerIndex = 0;
   
-  layerIds.forEach((layerId, layerIndex) => {
-    const layer = image.layers[layerId];
-    layerNames.set(layer.name, layerIndex);
+  visitHierarchy(image.layerHierarchy, (nodeId, node) => {
+    if (node.type === "layerFolder") {
+      const folder = image.layerFolders[nodeId];
+      if (!folder.visible) {
+        return; // Skip this folder and its children
+      }
+    }
+    if (node.type !== "layer") {
+      return;
+    }
+    
+    const layer = image.layers[nodeId];
+    if (!layer.visible) return;
+    
+    const currentLayerIndex = layerIndex++;
+    layerNames.set(layer.name, currentLayerIndex);
     
     const anchor = getAnchor(layer);
     const shapeIndices = filteredTriangles(layer.points);
-    const itemOffset = [...layer.translate, layerIndex * 0.1];
+    const itemOffset = [...layer.translate, currentLayerIndex * 0.1];
     const offset = vertices.length;
     
-    // Get last mutation in chain for this layer
-    const mutationChain = getMutationChain(layerId, image.layerHierarchy);
-    const lastMutationId = mutationChain[mutationChain.length - 1];
-    const mutatorIndex = lastMutationId ? mutationIndexMap.get(lastMutationId) ?? -1 : -1;
+    const mutatorIndex = shapeMutatorMapping[nodeId] ?? -1;
     
     layers.push({
       name: layer.name,
@@ -126,7 +154,7 @@ export const prepareAnimation = (
       mutator: mutatorIndex,
       x: itemOffset[0],
       y: itemOffset[1],
-      z: -0.9 + itemOffset[2] * 0.0001,
+      z: -0.5 + itemOffset[2] * 0.001,
       visible: layer.visible,
     });
     
@@ -139,37 +167,14 @@ export const prepareAnimation = (
     });
   });
   
-  // Step 5: Sort layers by z-index for correct rendering order
+  // Step 4: Sort layers by z-index for correct rendering order
   layers.sort((a, b) => (b.z || 0) - (a.z || 0));
   
-  // Step 6: Initialize visibility state buffer
-  const visibilityState = new Uint8Array(layers.length);
-  layers.forEach((layer, index) => {
-    visibilityState[index] = layer.visible ? 1 : 0;
-  });
-  
-  // Step 7: Process controls
+  // Step 5: Process controls (simplified - no shader optimization)
   const controlIds = Object.keys(image.controls);
   const controlNames = new Map<string, number>();
   const controls: PreparedControl[] = [];
   const defaultControlValues = new Float32Array(controlIds.length);
-  
-  type ControlData = {
-    name: string;
-    controlIndex: number;
-    valueStartIndex: number;
-    values: Vec2[];
-    stepType: number;
-  };
-  
-  type MutationControl = {
-    [mutationIndex: number]: ControlData[];
-  };
-  
-  const controlMutationValueList: Vec2[] = [];
-  const mutationValueIndicesList: Vec3[] = [];
-  const controlMutationIndicesList: Vec2[] = [];
-  const directControls: DirectControl[] = [];
   
   controlIds.forEach((controlId, controlIndex) => {
     const control = image.controls[controlId];
@@ -181,108 +186,19 @@ export const prepareAnimation = (
     defaultControlValues[controlIndex] = image.controlValues?.[controlId] ?? 0;
   });
   
-  // Step 8: Build mutation-control relationships
-  const mutationControlData: MutationControl = {};
-  
-  controlIds.forEach((controlId, controlIndex) => {
-    const control = image.controls[controlId];
-    const affectedMutations = new Set<string>();
-    
-    // Collect all mutations affected by this control
-    control.steps.forEach((step) => {
-      Object.keys(step).forEach((mutationId) => {
-        affectedMutations.add(mutationId);
-      });
-    });
-    
-    // For each affected mutation, store control data
-    affectedMutations.forEach((mutationId) => {
-      const mutationIndex = mutationIndexMap.get(mutationId);
-      if (mutationIndex === undefined) return;
-      
-      const values: Vec2[] = control.steps.map((step) => step[mutationId] || [0, 0]);
-      
-      const controlData: ControlData = {
-        name: control.name,
-        controlIndex,
-        valueStartIndex: 0,
-        values,
-        stepType: 0,
-      };
-      
-      if (!mutationControlData[mutationIndex]) {
-        mutationControlData[mutationIndex] = [];
-      }
-      mutationControlData[mutationIndex].push(controlData);
-    });
-  });
-  
-  // Step 9: Build control mutation buffers (separate single-control "direct" from multi-control "complex")
-  controlMutationIndicesList.length = mutators.length;
-  controlMutationIndicesList.fill([0, 0]);
-  
-  Object.entries(mutationControlData).forEach(([keyAsString, controlsForMutation]) => {
-    const mutationIndex = parseInt(keyAsString, 10);
-    
-    // Single control optimization - GPU-free direct updates
-    if (controlsForMutation.length === 1) {
-      const controlData = controlsForMutation[0];
-      const mutType = mutators[mutationIndex][0];
-      
-      directControls.push({
-        mutation: mutationIndex,
-        mixMode: getMixMode(mutType),
-        control: controlData.controlIndex,
-        stepType: controlData.stepType,
-        trackX: new Float32Array(
-          controlData.values.reduce<number[]>(
-            (result, element, index) => result.concat(index, element[0]),
-            []
-          )
-        ),
-        trackY: new Float32Array(
-          controlData.values.reduce<number[]>(
-            (result, element, index) => result.concat(index, element[1]),
-            []
-          )
-        ),
-      });
-      return;
-    }
-    
-    if (controlsForMutation.length === 0) return;
-    
-    // Multi-control - needs shader iteration
-    for (const controlData of controlsForMutation) {
-      controlData.valueStartIndex = controlMutationValueList.length;
-      controlMutationValueList.push(...controlData.values);
-    }
-    
-    const items: Vec3[] = controlsForMutation.map<Vec3>((d) => [
-      d.valueStartIndex,
-      d.controlIndex,
-      d.stepType,
-    ]);
-    
-    controlMutationIndicesList[mutationIndex] = [
-      mutationValueIndicesList.length,
-      items.length,
-    ];
-    mutationValueIndicesList.push(...items);
-  });
-  
-  // Step 10: Initialize mutation values from defaults
+  // Step 6: Initialize mutation values from defaults
   const mutationValues = new Float32Array(mutators.length * 2);
   if (image.defaultFrame) {
     Object.entries(image.defaultFrame).forEach(([mutationId, value]) => {
-      const index = mutationIndexMap.get(mutationId);
-      if (index === undefined) return;
-      mutationValues[index * 2] = value[0];
-      mutationValues[index * 2 + 1] = value[1];
+      const index = mutatorMapping[mutationId];
+      if (index !== undefined) {
+        mutationValues[index * 2] = value[0];
+        mutationValues[index * 2 + 1] = value[1];
+      }
     });
   }
   
-  // Step 11: Convert animations (track-based format 2.x)
+  // Step 7: Process animations (track-based format 2.x)
   const animationIds = Object.keys(image.animations);
   const animationNames = new Map<string, number>();
   const animations: PreparedAnimation[] = [];
@@ -340,7 +256,7 @@ export const prepareAnimation = (
     });
   });
   
-  // Step 12: Extract canvas metadata
+  // Step 8: Extract canvas metadata
   const metadata = {
     width: image.metadata?.width ?? 1024,
     height: image.metadata?.height ?? 1024,
@@ -349,7 +265,7 @@ export const prepareAnimation = (
   };
   
   return {
-    directControls,
+    // Mutation data (matching studio's structure)
     mutators: vectorArrayToPreparedFloatBuffer(mutators),
     mutatorParents: {
       data: mutatorParents,
@@ -361,19 +277,24 @@ export const prepareAnimation = (
       length: mutators.length,
       stride: 2,
     },
-    controlMutationValues: vectorArrayToPreparedFloatBuffer(controlMutationValueList),
-    mutationValueIndices: vectorArrayToPreparedFloatBuffer(mutationValueIndicesList),
-    controlMutationIndices: vectorArrayToPreparedFloatBuffer(controlMutationIndicesList),
+    mutatorMapping, // For updating mutation values from controls/animations
+    
+    // Geometry data
     shapeVertices: vectorArrayToPreparedFloatBuffer(vertices),
     shapeIndices: new Uint16Array(indices),
     layers,
-    visibilityState,
+    
+    // Control data (simplified - no shader optimization)
     controls,
     defaultControlValues,
     controlNames,
+    
+    // Animation data
+    animations,
     animationNames,
     layerNames,
-    animations,
+    
+    // Canvas metadata
     metadata,
   };
 };

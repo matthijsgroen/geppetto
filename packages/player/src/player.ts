@@ -347,6 +347,16 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
     render: () => {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.viewport(0, 0, element.width, element.height);
+      
+      // Render all animations sorted by zIndex
+      const sortedAnimations = animations.slice().sort((a, b) => {
+        // Access zIndex from the animation's options
+        return 0; // For now, render in order they were added
+      });
+      
+      for (const animation of sortedAnimations) {
+        animation.render();
+      }
     },
     addAnimation: (animation, image, textureUnit, options) => {
       const id = ++animId;
