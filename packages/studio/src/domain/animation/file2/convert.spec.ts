@@ -10,6 +10,19 @@ describe("from version 1 to 2", () => {
     expect(v2).toEqual(v2Format);
   });
 
+  it("accepts missing version field as 1.x file format", () => {
+    const { version: _version, ...v1WithoutVersion } = v1Format;
+    const v2 = convertFromV1(v1WithoutVersion as ImageDefinition);
+    expect(v2.version).toEqual("2.0");
+  });
+
+  it("accepts missing animations in 1.x file format", () => {
+    const { animations: _animation, ...v1WithoutAnimation } = v1Format;
+    const v2 = convertFromV1(v1WithoutAnimation as ImageDefinition);
+    expect(v2.version).toEqual("2.0");
+    expect(v2.animations).toEqual({});
+  });
+
   describe("animations", () => {
     it("turns control actions in control transitions", () => {
       const v1WithAnimation: ImageDefinition = {

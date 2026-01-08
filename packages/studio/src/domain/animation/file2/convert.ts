@@ -278,8 +278,14 @@ export const convertFromV1 = (imageDef: ImageDefinition): GeppettoImage => {
     result.defaultFrame[id] = value;
   }
 
-  id = 0;
-  result.animations = populateAnimations(imageDef.animations, result, createId);
+  if (imageDef.animations) {
+    id = 0;
+    result.animations = populateAnimations(
+      imageDef.animations,
+      result,
+      createId
+    );
+  }
 
   return result;
 };
