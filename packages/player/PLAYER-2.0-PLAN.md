@@ -353,11 +353,44 @@ Update with:
 - Performance characteristics
 - Migration guide from old player (if needed)
 
+#### 5.5 Switch to Vite Build System
+
+**Files**: New `vite.config.ts`, `package.json`, demo files
+
+Migrate from Parcel to Vite for consistency with studio and modern best practices:
+
+**Library build** (Vite library mode using Rollup):
+
+- Create `vite.config.ts` with library mode configuration
+- Configure entry point (`src/index.ts`)
+- Set up output formats: ESM and CommonJS
+- Configure external dependencies
+- Generate TypeScript declarations
+
+**Demo page** (Vite dev server):
+
+- Move demo to use Vite dev server for HMR
+- Update demo HTML/JS to work with Vite
+- Configure dev server settings
+
+**Benefits**:
+
+- Same tooling as studio (easier maintenance)
+- Vite library mode uses Rollup (industry standard for libraries)
+- Fast dev server with HMR for demo development
+- Better tree-shaking and optimization
+- Modern build pipeline
+
+Reference studio's `vite.config.ts` for configuration patterns.
+
 ### Validation Criteria
 
 - [ ] API is self-documenting via TypeScript + JSDoc
 - [ ] README has complete usage example
 - [ ] No unused exports
+- [ ] Types match implementation
+- [ ] Vite builds library successfully (ESM + CJS)
+- [ ] Demo page runs with Vite dev server
 - [ ] Types match implementation
 
 ---
