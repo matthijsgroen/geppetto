@@ -1,0 +1,143 @@
+name: "Deploy to GitHub Pages"
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [next]
+  push:
+    branches: ["next"]
+    paths:
+      - packages/website/**
+      - packages/player/**
+      - packages/studio/.storybook/**
+      - packages/studio/package.json
+      - packages/studio/src/**
+      - .github/workflows/deploy.yml
+  workflow_dispatch:
+
+jobs:
+  deploy-website:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'push' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build website
+        run: yarn turbo run build --filter=@geppetto/website
+
+      - name: Deploy Website 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: packages/website/build
+          target-folder: docs
+          clean-exclude: |
+            app
+            storybook
+
+  deploy-app:
+    needs: deploy-website
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')) }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Create version file
+        run: yarn workspace @geppetto/studio set-version
+
+      - name: Build application
+        run: yarn turbo run build --filter=@geppetto/studio
+
+      - name: Deploy App 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: packages/studio/dist
+          target-folder: docs/app
+
+  deploy-storybook:
+    needs: deploy-app
+    if: ${{ !cancelled() && (github.event_name == 'workflow_dispatch' || (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')) }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build storybook
+        run: yarn turbo run build-storybook --filter=@geppetto/studio
+
+      - name: Deploy Storybook 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: packages/studio/storybook-static
+          target-folder: docs/storybook
