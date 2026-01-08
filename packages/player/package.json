@@ -24,6 +24,7 @@
     "postbuild-docs": "size-limit",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint src/",
     "size": "size-limit"
   },

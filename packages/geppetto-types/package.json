@@ -16,7 +16,8 @@
     "lint": "eslint src/",
     "types:check": "tsc --noEmit",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.52.0",
