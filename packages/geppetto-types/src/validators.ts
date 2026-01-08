@@ -1,3 +1,4 @@
+import { geppettoImageSchema } from "./schemas";
 import { type GeppettoImage } from "./image";
 import {
   type MutationVector,
@@ -12,13 +13,11 @@ import {
 } from "./animations";
 
 /**
- * Type guard to check if a file is format 2.x
+ * Type guard to check if a file is format 2.x using Zod validation
  */
 export const isFormat2File = (file: unknown): file is GeppettoImage => {
-  if (typeof file !== "object") return false;
-  if (!file) return false;
-
-  return (file as GeppettoImage).version?.startsWith("2.");
+  const result = geppettoImageSchema.safeParse(file);
+  return result.success;
 };
 
 /**

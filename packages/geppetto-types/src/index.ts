@@ -19,5 +19,8 @@ export * from "./animations";
 // Image format
 export * from "./image";
 
+// Schemas
+export * from "./schemas";
+
 // Validators
 export * from "./validators";
