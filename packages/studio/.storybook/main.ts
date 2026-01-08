@@ -1,3 +1,4 @@
+import path from "node:path";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,6 +9,9 @@ const getAbsolutePath = (packageName: string) =>
     fileURLToPath(import.meta.resolve(join(packageName, "package.json")))
   );
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export default defineMain({
   stories: ["../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
@@ -16,12 +20,4 @@ export default defineMain({
     getAbsolutePath("@storybook/addon-vitest"),
   ],
   framework: { name: getAbsolutePath("@storybook/react-vite"), options: {} },
-  core: {
-    builder: {
-      name: "@storybook/builder-vite",
-      options: {
-        viteConfigPath: "viteStorybook.config.ts",
-      },
-    },
-  },
 });

@@ -28,7 +28,7 @@
   "scripts": {
     "set-version": "bin/writeVersion.js",
     "dev": "vite",
-    "build": "vite build",
+    "build": "PWA=1 vite build",
     "preview": "vite preview",
     "test": "vitest --project=unit",
     "test:ui": "vitest --ui --project=unit",

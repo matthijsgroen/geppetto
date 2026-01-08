@@ -210,7 +210,7 @@ export const animationSchema = z.object({
 /**
  * Zod schema for GeppettoImage file format 2.x
  */
-export const geppettoImageSchema = z.object({
+export const geppettoImageSchema = z.strictObject({
   version: z.string().refine((v) => v.startsWith("2."), {
     message: "Version must be 2.x",
   }),
