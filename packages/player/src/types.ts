@@ -1,273 +1,48 @@
-// Type definitions copied from @geppetto/types v2.x to avoid runtime dependencies
+// Re-export types from @geppetto/types
+export type {
+  Vec2,
+  Vec3,
+  Vec4,
+  EasingFunction,
+  CanvasMetadata,
+  MutationVector,
+  TranslationVector,
+  DeformationVector as DeformVector,
+  StretchVector,
+  RotationVector,
+  OpacityVector,
+  Lightness as LightnessVector,
+  Saturation as SaturationVector,
+  Colorize as ColorTintVector,
+  Colorize as HueVector, // Alias
+  ControlDefinition,
+  Keyframe as ControlStep,
+  Hierarchy,
+  TreeNode,
+  RootNode,
+  Layer,
+  FrameControlAction as PreparedControlAction, // Alias for player
+  FrameLayerVisibilityAction,
+  FrameEvent,
+  AnimationControlTrack,
+  AnimationVisibilityTrack,
+  AnimationTrack,
+  Animation,
+  GeppettoImage,
+  GeppettoImage as ImageDefinition, // Alias for backwards compatibility
+  LayerFolder,
+  Folder,
+} from "@geppetto/types";
 
-/**
- * A 2D vector represented as [x, y]
- */
-export type Vec2 = [x: number, y: number];
+// Import types needed for local type definitions
+import type {
+  CanvasMetadata,
+  ControlDefinition,
+  MutationVector,
+  FrameControlAction as PreparedControlAction,
+} from "@geppetto/types";
 
-/**
- * A 3D vector represented as [x, y, z]
- */
-export type Vec3 = [x: number, y: number, z: number];
-
-/**
- * A 4D vector represented as [x, y, z, w]
- */
-export type Vec4 = [x: number, y: number, z: number, w: number];
-
-/**
- * Types of easing functions for animation interpolation
- */
-export type EasingFunction = "linear" | "easeIn" | "easeOut" | "easeInOut";
-
-/**
- * Base properties for all mutation vectors
- */
-type BaseMutationVector = {
-  name: string;
-  origin: Vec2;
-};
-
-/**
- * Translation mutation vector
- */
-export type TranslationVector = BaseMutationVector & {
-  type: "translate";
-  radius: number;
-};
-
-/**
- * Rotation mutation vector  
- */
-export type RotationVector = BaseMutationVector & {
-  type: "rotate";
-};
-
-/**
- * Deform mutation vector
- */
-export type DeformVector = BaseMutationVector & {
-  type: "deform";
-  radius: number;
-};
-
-/**
- * Stretch mutation vector
- */
-export type StretchVector = BaseMutationVector & {
-  type: "stretch";
-};
-
-/**
- * Opacity mutation vector
- */
-export type OpacityVector = BaseMutationVector & {
-  type: "opacity";
-};
-
-/**
- * Lightness mutation vector
- */
-export type LightnessVector = BaseMutationVector & {
-  type: "lightness";
-};
-
-/**
- * Saturation mutation vector
- */
-export type SaturationVector = BaseMutationVector & {
-  type: "saturation";
-};
-
-/**
- * Hue mutation vector  
- */
-export type HueVector = BaseMutationVector & {
-  type: "hue";
-};
-
-/**
- * Color Tint mutation vector
- */
-export type ColorTintVector = BaseMutationVector & {
-  type: "colorize";
-};
-
-/**
- * Union type of all mutation vectors
- */
-export type MutationVector =
-  | TranslationVector
-  | RotationVector
-  | DeformVector
-  | StretchVector
-  | OpacityVector
-  | LightnessVector
-  | SaturationVector
-  | HueVector
-  | ColorTintVector;
-
-/**
- * Control step definition (keyframe data for mutations)
- */
-export type ControlStep = Record<string, Vec2>;
-
-/**
- * Control definition
- */
-export type ControlDefinition = {
-  name: string;
-  type: "slider";
-  steps: ControlStep[];
-};
-
-/**
- * Tree node types
- */
-export type TreeNode<T extends string> = {
-  type: T;
-  parentId: string;
-  children?: string[];
-};
-
-export type RootNode = {
-  type: "root";
-  children: string[];
-};
-
-/**
- * Hierarchy structure
- */
-export type Hierarchy<T extends string> = Record<string, TreeNode<T> | RootNode>;
-
-/**
- * Layer definition
- */
-export type Layer = {
-  name: string;
-  visible: boolean;
-  points: Vec2[];
-  translate: Vec2;
-};
-
-/**
- * Frame control action
- */
-export type FrameControlAction = {
-  start: number;
-  easingFunction: EasingFunction;
-  controlEndValue: number;
-  controlStartValue?: number;
-  duration: number;
-};
-
-/**
- * Frame layer visibility action
- */
-export type FrameLayerVisibilityAction = {
-  start: number;
-  visible: boolean;
-};
-
-/**
- * Frame event
- */
-export type FrameEvent = {
-  start: number;
-  eventName: string;
-};
-
-/**
- * Animation control track
- */
-export type AnimationControlTrack = {
-  type: "control";
-  controlId: string;
-  actions: FrameControlAction[];
-  length: number;
-};
-
-/**
- * Animation visibility track
- */
-export type AnimationVisibilityTrack = {
-  type: "visibility";
-  layerId: string;
-  actions: FrameLayerVisibilityAction[];
-  length: number;
-};
-
-/**
- * Animation event track
- */
-export type AnimationEventTrack = {
-  type: "event";
-  keyframes: Record<number, FrameEvent>;
-  length: number;
-};
-
-/**
- * Union of animation track types
- */
-export type AnimationTrack =
-  | AnimationControlTrack
-  | AnimationVisibilityTrack
-  | AnimationEventTrack;
-
-/**
- * Animation definition
- */
-export type Animation = {
-  name: string;
-  looping: boolean;
-  tracks: AnimationTrack[];
-  events: FrameEvent[];
-};
-
-/**
- * Canvas metadata
- */
-export type CanvasMetadata = {
-  width: number;
-  height: number;
-  zoom: number;
-  pan: Vec2;
-};
-
-/**
- * Layer folder definition
- */
-export type LayerFolder = {
-  name: string;
-  visible: boolean;
-  collapsed: boolean;
-};
-
-/**
- * Folder definition
- */
-export type Folder = {
-  name: string;
-  collapsed: boolean;
-};
-
-/**
- * Complete Geppetto image definition
- */
-export type GeppettoImage = {
-  version: string;
-  metadata: CanvasMetadata;
-  layerHierarchy: Hierarchy<"layer" | "layerFolder" | "mutation">;
-  layers: Record<string, Layer>;
-  layerFolders: Record<string, LayerFolder>;
-  mutations: Record<string, MutationVector>;
-  defaultFrame: Record<string, Vec2>;
-  controlHierarchy: Hierarchy<"control" | "folder">;
-  controlFolders: Record<string, Folder>;
-  controls: Record<string, ControlDefinition>;
-  controlValues: Record<string, number>;
-  animations: Record<string, Animation>;
-};
+// Player-specific types
 
 export type PlayStatus = Record<
   string,
@@ -278,7 +53,7 @@ export type PlayStatus = Record<
   }
 >;
 
-// Prepared buffer types for WebGL
+// Prepared buffer types for WebGL rendering
 export type PreparedFloatBuffer = {
   data: Float32Array;
   length: number;
@@ -320,14 +95,6 @@ export type PreparedLayer = {
   y: number;
   z: number;
   visible: boolean;
-};
-
-export type PreparedControlAction = {
-  start: number;
-  duration: number;
-  easingFunction: EasingFunction;
-  controlEndValue: number;
-  controlStartValue?: number; // If undefined, use current control value
 };
 
 export type PreparedControlTrack = {

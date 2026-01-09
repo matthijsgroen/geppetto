@@ -1,6 +1,6 @@
 import { setupWebGL, prepareAnimation } from '../src/index';
 import sceneryData from './scenery.json';
-import sceneryImageUrl from 'url:./scenery.png';
+import sceneryImageUrl from './scenery.png';
 
 document.addEventListener('DOMContentLoaded', async () => {
   let player;

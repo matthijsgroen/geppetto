@@ -410,6 +410,73 @@ After all tracks update `renderControlValues`:
 
 ---
 
+## Phase 2.5: Refactor for Testability ✅ COMPLETE
+
+### Goal
+
+Extract complex animation logic into testable pure functions before continuing with Phase 3 validation.
+
+**Status**: Complete - Mutation calculation module extracted with comprehensive tests + Canvas settings API implemented
+
+### Tasks
+
+#### 2.5.1 Extract Mutation Calculation Module (Part A) ✅
+
+**Files**: `src/lib/mutation-calculation.ts`, `src/lib/mutation-calculation.spec.ts`
+
+Extracted pure functions:
+
+- `mergeMutationValue()` - Type-specific value merging (multiply/add/first-wins)
+- `interpolateControlStep()` - Control step interpolation with hue wrapping
+- `recalculateMutationValues()` - Full mutation recalculation from defaults + controls
+
+**Test Coverage**: 36 comprehensive test cases covering:
+
+- All mutation types (multiplicative, additive, first-wins)
+- Edge cases (zero values, defaults, missing mutations)
+- Hue wrapping for colorize mutations
+- Integer and fractional step interpolation
+- Multiple control interactions
+- Mutation merge order verification
+
+**Benefits**:
+
+- Logic can be tested independently of WebGL/DOM
+- Tests survive future refactoring/optimization
+- Clear function contracts and behavior documentation
+
+#### 2.5.2 Canvas Settings API (Part B) ✅
+
+**Files**: `src/player.ts`, `demo/main.js`
+
+Added canvas rendering controls:
+
+- `pixelDensity?: number` - Retina/high-DPI support (default: `window.devicePixelRatio`)
+- `fitMode?: 'contain' | 'cover' | 'none'` - Auto-scaling behavior (default: `'contain'`)
+- `getCanvasDimensions()` - Returns metadata width/height
+- `resetViewport()` - Resets zoom/pan to metadata defaults
+- `getViewport()` - Returns current zoom/pan state
+
+**Implementation Details**:
+
+- Auto-fit scaling based on fitMode (contain/cover/none)
+- Center-based zooming (recalculates basePosition on zoom change)
+- Viewport clipping via scissor test (clips to metadata bounds)
+- Proper pan tracking in clip space coordinates
+- Retina support through canvas physical size adjustment
+
+**Validation**:
+
+- ✅ Image scales to fit canvas automatically
+- ✅ Sharp rendering on retina displays
+- ✅ Zoom scales from center point
+- ✅ Elements clipped to metadata bounds (smoke/clouds stay within image area)
+- ✅ Scissor rectangle follows pan/zoom correctly
+
+**Build Size**: 58.82 kB
+
+---
+
 ## Phase 3: Validate Format 2.0 Input ⏭️ NEXT PHASE
 
 ### Goal

@@ -826,7 +826,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           // Always recalculate basePosition with current zoom (for center-based zooming)
           const combinedScale = scale * zoom;
           const pixelDensity = animationOptions.pixelDensity || 1;
-          basePosition = [element.width / pixelDensity / 2 / combinedScale, element.height / animationOptions.pixelDensity / 2 / combinedScale];
+          basePosition = [element.width / pixelDensity / 2 / combinedScale, element.height / pixelDensity / 2 / combinedScale];
           
           // Calculate scissor rectangle based on metadata bounds (clip to logical image area)
           const canvasWidth = element.width / pixelDensity;

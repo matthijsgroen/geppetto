@@ -47,7 +47,6 @@ const vectorTypeMapping: { [key in MutationVector["type"]]: number } = {
   lightness: 6,
   colorize: 7,
   saturation: 8,
-  hue: 9,
 };
 
 const mutatorToVec4 = (mutator: MutationVector): Vec4 => [

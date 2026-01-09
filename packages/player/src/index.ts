@@ -22,7 +22,6 @@ export type {
   AnimationTrack,
   AnimationControlTrack,
   AnimationVisibilityTrack,
-  FrameControlAction,
   FrameLayerVisibilityAction,
   FrameEvent,
   ControlDefinition,

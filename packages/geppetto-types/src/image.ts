@@ -6,6 +6,16 @@ import { type MutationVector } from "./mutations";
 import { type Vec2 } from "./common";
 
 /**
+ * Canvas metadata
+ */
+export type CanvasMetadata = {
+  width: number;
+  height: number;
+  zoom: number;
+  pan: Vec2;
+};
+
+/**
  * Geppetto Image file format 2.x
  *
  * This is the main type definition for the Geppetto animation format version 2.
@@ -17,12 +27,7 @@ export type GeppettoImage = {
   version: `2.${number}`;
 
   /** Canvas metadata */
-  metadata: {
-    width: number;
-    height: number;
-    zoom: number;
-    pan: [number, number];
-  };
+  metadata: CanvasMetadata;
 
   /** Layer hierarchy tree */
   layerHierarchy: Hierarchy<"layerFolder" | "layer" | "mutation">;

@@ -9,19 +9,27 @@
     "animation",
     "interaction"
   ],
-  "main": "dist/index.js",
+  "main": "dist/index.mjs",
+  "module": "dist/index.mjs",
   "source": "src/index.ts",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs"
+    }
+  },
   "repository": "git@github.com:matthijsgroen/geppetto-player.git",
   "author": "Matthijs Groen <matthijs.groen@gmail.com> (https://github.com/matthijsgroen)",
   "homepage": "https://geppetto.js.org",
   "license": "MIT",
   "scripts": {
     "build-shaders": "bin/minifyShader.ts src/shaders/fragmentShader.frag && bin/minifyShader.ts src/shaders/vertexShader.vert",
-    "build": "yarn build-shaders && parcel build",
+    "build": "yarn build-shaders && vite build",
     "postbuild": "yarn build-docs",
     "build-docs": "typedoc src/index.ts --includeVersion --name 'Geppetto Player' --json typedocs.json --logLevel Error",
     "postbuild-docs": "size-limit",
+    "dev": "vite",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -52,6 +60,9 @@
     "typedoc": "^0.28.6",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.52.0",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-glsl": "^1.5.5",
     "vitest": "^4.0.16",
     "webpack-glsl-minify": "^1.4.2"
   },
@@ -59,6 +70,7 @@
     "dist/"
   ],
   "dependencies": {
+    "@geppetto/types": "workspace:^",
     "delaunator": "^4.0.1"
   },
   "browserslist": [
