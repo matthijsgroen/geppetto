@@ -138,9 +138,18 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
       // Update each control value in the player
       Object.entries(controlValues).forEach(([controlId, value]) => {
         try {
-          const controlName = file.controls[controlId]?.name;
+          const control = file.controls[controlId];
+          const controlName = control?.name;
           if (controlName) {
-            animationControlsRef.current?.setControlValue(controlName, value);
+            const maxSteps = control.steps.length - 1;
+            const normalizedValue = Math.min(
+              1,
+              Math.max(0, maxSteps > 0 ? value / maxSteps : 0)
+            );
+            animationControlsRef.current?.setControlValue(
+              controlName,
+              normalizedValue
+            );
           }
         } catch (error) {
           // Control might not exist in this animation
