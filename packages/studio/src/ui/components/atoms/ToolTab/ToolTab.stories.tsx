@@ -1,5 +1,5 @@
 import preview from "@sb/preview";
-import { expect, userEvent, waitFor, within } from "storybook/test";
+import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 
 import { Icon } from "@/ui/components/atoms/Icon/Icon";
 
@@ -26,6 +26,7 @@ const meta = preview.meta({
     label: "",
     size: "default",
     tooltip: "Tool Tab",
+    onClick: fn(),
   },
 });
 export default meta;
