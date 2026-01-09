@@ -278,6 +278,7 @@ export const prepareAnimation = (
       stride: 2,
     },
     mutatorMapping, // For updating mutation values from controls/animations
+    rawMutations: image.mutations, // Raw mutation definitions for interpolation
     
     // Geometry data
     shapeVertices: vectorArrayToPreparedFloatBuffer(vertices),
@@ -288,6 +289,7 @@ export const prepareAnimation = (
     controls,
     defaultControlValues,
     controlNames,
+    rawControls: image.controls, // Raw control definitions with steps for interpolation
     
     // Animation data
     animations,

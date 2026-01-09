@@ -1,7 +1,41 @@
-import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition } from "./types";
+import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, Vec2 } from "./types";
 import animationFragmentShader from "./shaders/fragmentShader.frag";
 import { animationVertexShader } from "./shaders/vertexShader";
-import { interpolateFloat } from "./vertices";
+
+// Simple linear interpolation for numbers
+const mix = (a: number, b: number, t: number): number => a + (b - a) * t;
+
+// Helper to interpolate between control steps
+const interpolateControlStep = (
+  rawControls: PreparedImageDefinition["rawControls"],
+  controlIds: string[],
+  controlIndex: number,
+  controlValue: number
+): Record<string, Vec2> => {
+  const controlId = controlIds[controlIndex];
+  const control = rawControls[controlId];
+  if (!control) return {};
+  
+  const minStep = Math.floor(controlValue);
+  const maxStep = Math.ceil(controlValue);
+  const stepLimit = control.steps.length - 1;
+  
+  const minValue = control.steps[Math.min(minStep, stepLimit)];
+  const maxValue = control.steps[Math.min(maxStep, stepLimit)];
+  
+  const mixValue = controlValue - minStep;
+  
+  const result: Record<string, Vec2> = {};
+  for (const [mutationId, mutationValue] of Object.entries(minValue)) {
+    const endValue = maxValue[mutationId] || mutationValue;
+    result[mutationId] = [
+      mix(mutationValue[0], endValue[0], mixValue),
+      mix(mutationValue[1], endValue[1], mixValue),
+    ];
+  }
+  
+  return result;
+};
 
 /**
  * Function to call for unsubscribing to an event listener
@@ -499,7 +533,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         const maxValue = animation.controls[controlIndex].steps - 1;
         if (value < 0 || value > maxValue) {
           throw new Error(
-            `Control ${control} value shoulde be between 0 and ${maxValue}. ${value} is out of bounds.`
+            `Control ${control} value should be between 0 and ${maxValue}. ${value} is out of bounds.`
           );
         }
         // stop all conflicting tracks
@@ -516,6 +550,28 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
         controlValues[controlIndex] = value;
         renderControlValues[controlIndex] = value;
+        
+        // Calculate mutation values from control steps (like studio's calculateVectorValues)
+        const controlIds = Object.keys(animation.rawControls);
+        const mutationUpdates = interpolateControlStep(
+          animation.rawControls,
+          controlIds,
+          controlIndex,
+          value
+        );
+        
+        // Update mutation values
+        for (const [mutationId, mutationValue] of Object.entries(mutationUpdates)) {
+          const mutationIndex = animation.mutatorMapping[mutationId];
+          if (mutationIndex !== undefined) {
+            animation.mutationValues.data[mutationIndex * 2] = mutationValue[0];
+            animation.mutationValues.data[mutationIndex * 2 + 1] = mutationValue[1];
+          }
+        }
+        
+        // Upload to GPU immediately
+        gl.useProgram(program);
+        gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
       };
 
       const newAnimation: AnimationControls = {

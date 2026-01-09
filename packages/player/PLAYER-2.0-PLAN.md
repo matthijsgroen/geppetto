@@ -16,11 +16,13 @@ The player currently has a broken implementation attempting to support format 2.
 
 ---
 
-## Phase 1: Port Studio Composition Rendering (Correctness First)
+## Phase 1: Port Studio Composition Rendering ✅ COMPLETE
 
 ### Goal
 
 Replace broken player rendering with studio's proven approach from `showComposition.ts`.
+
+**Status**: Complete - Demo renders correctly with all mutations applied
 
 ### Tasks
 
@@ -81,18 +83,22 @@ Remove complex control interpolation from shaders:
 
 ### Validation Criteria
 
-- [ ] Demo renders visible layers (no black screen)
-- [ ] Mutation chains apply correctly (waterwheel tilt, sky gradient visible)
-- [ ] Z-ordering works (layers render in correct order)
-- [ ] No WebGL errors in console
+- [x] Demo renders visible layers (no black screen)
+- [x] Mutation chains apply correctly (waterwheel tilt, sky gradient visible)
+- [x] Z-ordering works (layers render in correct order)
+- [x] No WebGL errors in console
+
+**Result**: All validation criteria met. Demo at http://localhost:8181 shows correct rendering.
 
 ---
 
-## Phase 2: Implement Animation Playback
+## Phase 2: Implement Animation Playback ⏭️ NEXT ⏭️ NEXT
 
 ### Goal
 
 Add animation playback system to update mutation values over time.
+
+**Status**: Ready to start
 
 ### Tasks
 
@@ -480,11 +486,14 @@ Consider adding:
 
 ## Success Criteria
 
-### Phase 1 Complete
+### Phase 1 Complete ✅
 
-- Demo renders correctly (matches studio output)
-- No WebGL errors
-- Mutation chains working
+- ✅ Demo renders correctly (matches studio output)
+- ✅ No WebGL errors
+- ✅ Mutation chains working
+- ✅ Sky gradient visible (not black)
+- ✅ Z-ordering correct
+- ✅ All layers visible
 
 ### Phase 2 Complete
 
@@ -523,13 +532,25 @@ Player 2.0 correctly renders format 2.0 files with smooth animation playback, va
 
 ## Current Status
 
-**Phase**: 1 - Port Studio Composition Rendering (In Progress)
+**Phase**: 1 ✅ Complete | Phase 2 ⏭️ Next
 **Last Updated**: January 8, 2026
 **Current Branch**: `feature/player-2.0`
 
-### Next Steps
+### Completed Work (Phase 1)
 
-1. Begin Phase 1, Task 1.1: Port mutation chain algorithm from studio
+1. ✅ Ported mutation chain algorithm from studio (`createShapeMutationList`)
+2. ✅ Simplified uniform structure (removed complex control processing)
+3. ✅ Ported studio vertex and fragment shaders (mutatePoint/mutateOnce)
+4. ✅ Updated WebGL uniform uploads in player.ts
+5. ✅ Validated demo rendering - all criteria met
+
+### Next Steps (Phase 2)
+
+1. Implement animation state management (PlayStatus tracking)
+2. Add mutation value updates from animation tracks
+3. Implement keyframe interpolation with easing functions
+4. Update control API (startAnimation, stopAnimation, setControlValue)
+5. Validate animation playback with demo animations
 
 ---
 
