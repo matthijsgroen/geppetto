@@ -214,74 +214,160 @@ Add animation playback system to update mutation values over time.
 
 ### Tasks
 
-#### 2.1 Animation State Management
+#### 2.1 Understanding Format 2.x Animation System
+
+**Key Concepts:**
+
+Format 2.x animations differ significantly from 1.x:
+
+1. **Animation Structure**: An animation is a **collection of independent tracks**, not a single timeline
+2. **Track Types**:
+   - `AnimationControlTrack` - Controls a specific control value over time
+   - `AnimationVisibilityTrack` - Controls layer visibility over time
+3. **Per-Track Looping**: Each track has its own `length` property and **loops independently**
+   - Example: Wheel blades (short loop: 500ms) + Full wheel rotation (long loop: 3000ms)
+   - This creates complex layered animations without duplicating keyframes
+4. **Animation Duration**: The animation object has an overall duration, but each track loops at its own length
+5. **Frame Actions**: Each track contains `actions` array:
+   - `FrameControlAction`: `{start, duration, easingFunction, controlEndValue, controlStartValue?}`
+   - `FrameLayerVisibilityAction`: `{start, visible}`
+6. **Start Value Handling**:
+   - If `controlStartValue` is defined: interpolate from **start value → end value**
+   - If `controlStartValue` is undefined: interpolate from **current control value → end value**
+   - This allows smooth transitions when animations start mid-control-state
+7. **Events**: `FrameEvent[]` can trigger at specific times for synchronization (e.g., sound effects)
+
+**Data Structure** (from geppetto-types):
+
+```typescript
+type Animation = {
+  name: string;
+  looping: boolean;           // Animation-level loop setting
+  tracks: AnimationTrack[];   // Independent tracks (control + visibility)
+  events: FrameEvent[];       // Timed events for synchronization
+};
+
+type AnimationControlTrack = {
+  type: "control";
+  controlId: string;
+  actions: FrameControlAction[];  // Keyframes with start/end values
+  length: number;                 // Track loops at this duration
+};
+
+type FrameControlAction = {
+  start: number;              // Start time in ms
+  duration: number;           // Action duration
+  easingFunction: EasingFunction;
+  controlEndValue: number;
+  controlStartValue?: number; // If undefined, use current control value
+};
+```
+
+#### 2.2 Track Playback System
 
 **Files**: `src/player.ts`
 
-Add to `AnimationControls`:
+Implement per-track playback:
+
+- For each playing animation:
+  - Track animation start time and overall playback position
+  - For each track in the animation:
+    - Calculate track position: `playPosition % track.length` (independent looping)
+    - Find active action(s) at current track position
+    - Interpolate control value based on action's easing and start/end values
+    - Handle `controlStartValue` vs current control value
+- Update `renderControlValues` array with interpolated values
+- Call `interpolateControlStep()` to convert control values → mutation values
+
+**Track Position Calculation:**
 
 ```typescript
-{
-  playingAnimations: PlayStatus[],  // Track active animations
-  looping: boolean[],                // Per-animation loop settings
-  animationNames: Map<string, number> // Name to index lookup
+// Animation plays from startTime
+const animationTime = (now - animation.startedAt) * speed;
+
+// Each track loops independently
+for (const track of animation.tracks) {
+  const trackPosition = animationTime % track.length;
+
+  // Find active action at trackPosition
+  const action = findActiveAction(track.actions, trackPosition);
+
+  if (action) {
+    const actionProgress = (trackPosition - action.start) / action.duration;
+    const easedProgress = applyEasing(actionProgress, action.easingFunction);
+
+    // Determine start value
+    const startValue = action.controlStartValue ?? currentControlValue;
+    const interpolatedValue = mix(startValue, action.controlEndValue, easedProgress);
+
+    renderControlValues[controlIndex] = interpolatedValue;
+  }
 }
 ```
 
-#### 2.2 Mutation Value Updates
+#### 2.3 Event System
 
 **Files**: `src/player.ts`
 
-Create `updateMutationValues()`:
+Process animation events:
 
-- For each playing animation:
-  - Calculate current playback position from `now - startedAt`
-  - For each track in animation:
-    - Find current keyframe segment
-    - Interpolate between keyframes using easing function
-    - Update corresponding mutation value in `uMutValues` array
-- Handle multiple animations with conflict detection (warn if same mutation modified)
+- Track last render time per animation
+- For each event in animation.events:
+  - Check if event time falls between lastRender and now
+  - Trigger `onEvent` callbacks with `(eventName, animationName, eventTime)`
+- Used for synchronizing sound effects, game logic, etc.
 
-#### 2.3 Keyframe Interpolation
+#### 2.4 Control Start Value Handling
 
-**Files**: `src/player.ts` or new `src/animation.ts`
+#### 2.4 Control Start Value Handling
 
-Port from studio:
+**Files**: `src/player.ts`
 
-- Parse animation tracks: `[controlIndex, duration, easing, keyframes[]]`
-- Implement easing functions: linear, easeInOut, easeIn, easeOut, etc.
-- Interpolate `Vec2` values between keyframes
-
-**Track format** (from format 2.0):
+Implement proper start value logic:
 
 ```typescript
-type AnimationControlTrack = [
-  controlIndex: number,
-  duration: number,
-  easingFunction: EasingFunction,
-  ...keyframes: Vec2[]  // [time, value] pairs
-]
+// When action starts
+if (action.controlStartValue !== undefined) {
+  // Explicit start value - interpolate from start to end
+  startValue = action.controlStartValue;
+} else {
+  // No start value - interpolate from current control value
+  // This allows smooth transitions when animation starts mid-state
+  startValue = controlValues[controlIndex]; // Value at animation start
+}
+
+const interpolatedValue = mix(startValue, action.controlEndValue, easedProgress);
 ```
 
-#### 2.4 Control API
+**Example Use Case:**
+
+- User tweens Light control to 0.5 (daytime)
+- Animation starts that animates Light from undefined → 1.0 (night)
+- Animation smoothly transitions from current 0.5 → 1.0 (no jump)
+
+#### 2.5 Mutation Value Updates
 
 **Files**: `src/player.ts`
 
-Update `AnimationControls`:
+After all tracks update `renderControlValues`:
 
-- `startAnimation(name, { startAt?, speed? })` - Start animation track
-- `stopAnimation(name)` - Stop animation track
-- `setControlValue(name, value)` - Set mutation value directly (stop conflicting animations)
-- `onTrackStopped(callback)` - Event when animation completes
-- `onEvent(callback)` - Custom animation events
+- For each control that changed:
+  - Call `interpolateControlStep()` to calculate mutation values
+  - Update `animation.mutationValues.data` array
+- Upload to GPU with `gl.uniform2fv(mutationValuesLocation, ...)`
+
+(Already implemented in render loop - verify it works correctly with animations)
 
 ### Validation Criteria
 
 - [ ] Animations play smoothly (60fps)
-- [ ] Keyframe interpolation looks correct (no jumps)
-- [ ] Looping works correctly
+- [ ] Per-track looping works correctly (different track lengths loop independently)
+- [ ] Control start values work: undefined uses current value, defined uses explicit value
+- [ ] Frame actions interpolate correctly with easing functions
+- [ ] Events trigger at correct times
 - [ ] Multiple animations can play simultaneously
-- [ ] Manual control values work (set via `setControlValue`)
+- [ ] Manual control values work (via `setControlValue` and `tweenControlTo`)
+- [ ] Animations stop conflicting manual controls/tweens
 
 ---
 
