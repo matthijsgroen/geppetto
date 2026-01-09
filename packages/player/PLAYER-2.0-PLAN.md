@@ -708,43 +708,138 @@ _recalculateMutationValues_:
 - ✓ Validation is optional/tree-shakable
 - ✓ No functionality regressions
 
-#### 4.3 Runtime Performance Optimization
+#### 4.3 Runtime Performance Optimization ⏭️ NEXT
+
+**Current Performance** (measured with `player.bench.ts`):
+
+**Mutation Recalculation Per Frame**:
+
+- Small scene (5 layers, 10 mutations, 3 controls): **501,717 ops/sec** (0.002ms avg)
+- Medium scene (20 layers, 80 mutations, 10 controls): **127,839 ops/sec** (0.0078ms avg)
+- Large scene (50 layers, 250 mutations, 20 controls): **58,906 ops/sec** (0.017ms avg)
+
+**Analysis**:
+
+- ✅ Current performance is **excellent** - even large scenes recalculate in <0.02ms
+- ✅ Leaves **plenty of headroom** for 60 FPS (16.67ms budget per frame)
+- 🎯 **Main opportunity**: Currently recalculating ALL mutations every frame, even when controls don't change
+- 🎯 **Secondary opportunity**: Animation time interpolation happens every frame regardless of time change
 
 **Target**: Consistent 60 FPS (16.67ms per frame) for complex scenes
 
 **High Priority Tasks**:
 
-1. **Optimize Mutation Updates**
-   - Currently recalculates all mutations every frame
-   - Change: Only update mutations for controls that changed
-   - Track "dirty" controls and recalculate only affected mutations
-   - **Expected Impact**: 30-50% reduction in mutation overhead
+1. **Implement Dirty Tracking for Control Values** ⏭️ NEXT TASK
 
-2. **Cache Control Interpolation**
-   - Avoid re-interpolating controls with same time value
-   - Cache last interpolation results per control
-   - Invalidate cache when animation time jumps significantly
+   **Problem**: Currently recalculates all mutations every frame in render loop, even when:
+   - No animations are playing
+   - Controls haven't changed via UI
+   - Animation is paused
 
-3. **Batch WebGL Uniform Updates**
-   - Group uniform updates to minimize state changes
-   - Review if any uniforms can be updated less frequently
+   **Solution**: Track which controls changed and only recalculate affected mutations
+
+   **Implementation Plan**:
+
+   ```typescript
+   // In player.ts, add dirty tracking state:
+   private controlChangeFlags: Uint8Array; // One byte per control
+   private lastControlValues: Float32Array; // Previous frame's values
+
+   // In setControlValue():
+   setControlValue(controlId: string, value: number) {
+     const controlIndex = this.controlNames.get(controlId);
+     if (controlIndex !== undefined) {
+       if (this.controlValues[controlIndex] !== value) {
+         this.controlValues[controlIndex] = value;
+         this.controlChangeFlags[controlIndex] = 1; // Mark dirty
+       }
+     }
+   }
+
+   // In render():
+   render() {
+     // Check if ANY controls changed
+     let anyChanged = false;
+     for (let i = 0; i < this.controlChangeFlags.length; i++) {
+       if (this.controlChangeFlags[i]) {
+         anyChanged = true;
+         break;
+       }
+     }
+
+     // Only recalculate if controls changed
+     if (anyChanged) {
+       recalculateMutationValues(
+         this.mutationValues.data,
+         this.controlValues,
+         // ... other params
+       );
+
+       // Clear flags
+       this.controlChangeFlags.fill(0);
+     }
+
+     // ... rest of render logic
+   }
+   ```
+
+   **Expected Impact**:
+   - **Idle scenes**: 99% reduction (no recalculation when nothing changes)
+   - **Playing animations**: 30-50% reduction (only recalc when time advances)
+   - **Interactive controls**: Minimal overhead (1-2 controls changing vs all)
+
+2. **Cache Animation Time Interpolation**
+
+   **Problem**: Animation control interpolation happens every frame even when time doesn't change
+
+   **Solution**: Cache interpolated values and only recalculate when time advances
+
+   **Implementation**:
+
+   ```typescript
+   private lastAnimationTime: Map<string, number> = new Map();
+
+   updateAnimation(name: string, time: number) {
+     const lastTime = this.lastAnimationTime.get(name);
+     if (lastTime === time) {
+       return; // Skip if time unchanged
+     }
+     this.lastAnimationTime.set(name, time);
+
+     // Proceed with interpolation...
+   }
+   ```
+
+   **Expected Impact**: Eliminates redundant interpolation when animation is paused
+
+3. **Optimize WebGL State Changes**
+
+   **Current**: May be setting uniforms unnecessarily
+
+   **Actions**:
+   - Audit uniform updates in render loop
+   - Only update mutation uniforms if mutations changed (use dirty flag)
+   - Group uniform updates to minimize WebGL calls
 
 **Medium Priority Tasks**:
 
-4. **Optimize Layer Traversal**
-   - Profile current hierarchy traversal
-   - Consider caching flattened layer order
-   - Optimize visibility checks
+4. **Optimize Layer Rendering Order**
+   - Profile current layer traversal
+   - Consider pre-sorting layers by z-index during preparation
+   - Batch draw calls for layers with same material properties
 
-5. **Improve Tween Performance**
+5. **Improve Easing Performance**
    - Profile easing function overhead
-   - Consider lookup tables for expensive easing curves
+   - Consider pre-calculated lookup tables for expensive curves (not linear)
+   - Optimize most-used easing functions (easeInOut, etc.)
 
 **Success Criteria**:
 
-- ✓ 60 FPS maintained with 100+ layer scenes
-- ✓ Frame time <16ms in Chrome DevTools
-- ✓ No visual regressions
+- ✅ 60 FPS maintained with 100+ layer scenes
+- ✅ Frame time <16ms in Chrome DevTools
+- ✅ Idle scenes use <0.1ms per frame (no unnecessary work)
+- ✅ No visual regressions
+- ✅ Benchmark shows >90% reduction in idle scene overhead
 
 #### 4.4 Memory Optimization
 
