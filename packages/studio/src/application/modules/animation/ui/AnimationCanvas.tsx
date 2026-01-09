@@ -186,6 +186,10 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
           scale: newScale,
         }));
       }
+
+      // Render immediately after resizing to prevent flashing
+      // (canvas.width/height assignment clears the drawing buffer)
+      playerRef.current?.render();
     };
 
     updateCanvasSize();
