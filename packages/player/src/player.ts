@@ -1,7 +1,7 @@
-import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, Vec2 } from "./types";
+import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, Vec2, EasingFunction } from "./types";
 import animationFragmentShader from "./shaders/fragmentShader.frag";
 import { animationVertexShader } from "./shaders/vertexShader";
-import { interpolateFloat } from "./vertices";
+import { interpolateFloat, applyEasing } from "./vertices";
 
 // Simple linear interpolation for numbers
 const mix = (a: number, b: number, t: number): number => a + (b - a) * t;
@@ -136,11 +136,30 @@ export type AnimationControls = {
    * Manipulates a control. Will stop animations that are using this control as well.
    *
    * @param controlName name of the control to change
-   * @param value value to set for control. Take into account that each control can have different
-   * value limits, depending on the amount of step a control has.
+   * @param value value to set for control (0-1 range)
    * @throws an error if the provided controlName does not exist
    */
   setControlValue(controlName: string, value: number): void;
+
+  /**
+   * Smoothly animates a control from its current value to a target value over time.
+   * Will stop any animations or existing tweens using this control.
+   *
+   * @param controlName name of the control to animate
+   * @param targetValue target value for control (0-1 range)
+   * @param duration duration in milliseconds
+   * @param options optional easing function and completion callback
+   * @throws an error if the provided controlName does not exist
+   */
+  tweenControlTo(
+    controlName: string,
+    targetValue: number,
+    duration: number,
+    options?: {
+      easing?: EasingFunction;
+      onComplete?: () => void;
+    }
+  ): void;
 
   /**
    * Retrieves current value of a control. This value will not update for each frame
@@ -466,6 +485,18 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       const controlValues = new Float32Array(animation.defaultControlValues);
       const renderControlValues = new Float32Array(animation.defaultControlValues);
 
+      // Control tween state
+      type ControlTween = {
+        controlIndex: number;
+        startValue: number;
+        targetValue: number;
+        startTime: number;
+        duration: number;
+        easing: EasingFunction;
+        onComplete?: () => void;
+      };
+      const controlTweens: ControlTween[] = [];
+
       // 5. Set shape buffers
       const vertexBuffer = gl.createBuffer();
       const indexBuffer = gl.createBuffer();
@@ -612,6 +643,59 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
       };
 
+      const tweenControlTo: AnimationControls["tweenControlTo"] = (
+        control,
+        targetValue,
+        duration,
+        { easing = "linear", onComplete } = {}
+      ) => {
+        const controlIndex = nameToControlIndex(control);
+
+        if (targetValue < 0 || targetValue > 1) {
+          throw new Error(
+            `Control ${control} target value should be between 0 and 1. ${targetValue} is out of bounds.`
+          );
+        }
+
+        const controlIds = Object.keys(animation.rawControls);
+        const controlId = controlIds[controlIndex];
+        const maxSteps = animation.rawControls[controlId].steps.length - 1;
+        
+        // Scale 0-1 target to actual step range
+        const scaledTarget = targetValue * maxSteps;
+        
+        // Stop all conflicting animations
+        for (const playing of playingAnimations) {
+          const playingAnimation = animation.animations[playing.index];
+          if (
+            playingAnimation.tracks.some(
+              ([controlNr]) => controlNr === controlIndex
+            )
+          ) {
+            stopAnimation(playingAnimation.name);
+          }
+        }
+
+        // Stop any existing tween for this control
+        const existingTweenIndex = controlTweens.findIndex(
+          (t) => t.controlIndex === controlIndex
+        );
+        if (existingTweenIndex !== -1) {
+          controlTweens.splice(existingTweenIndex, 1);
+        }
+
+        // Create new tween
+        controlTweens.push({
+          controlIndex,
+          startValue: controlValues[controlIndex],
+          targetValue: scaledTarget,
+          startTime: performance.now(),
+          duration,
+          easing,
+          onComplete,
+        });
+      };
+
       const newAnimation: AnimationControls = {
         destroy() {
           gl.deleteShader(vs);
@@ -656,6 +740,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         },
         stopAnimation,
         setControlValue,
+        tweenControlTo,
         getControlValue: (controlName) =>
           controlValues[nameToControlIndex(controlName)],
         setPanning(newPanX, newPanY) {
@@ -723,6 +808,60 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           );
 
           const now = +new Date();
+          
+          // Process control tweens
+          const completedTweens: number[] = [];
+          for (let i = 0; i < controlTweens.length; i++) {
+            const tween = controlTweens[i];
+            const elapsed = performance.now() - tween.startTime;
+            const progress = Math.min(elapsed / tween.duration, 1);
+            
+            if (progress >= 1) {
+              // Tween complete
+              controlValues[tween.controlIndex] = tween.targetValue;
+              renderControlValues[tween.controlIndex] = tween.targetValue;
+              completedTweens.push(i);
+              
+              // Trigger completion callback if provided
+              if (tween.onComplete) {
+                tween.onComplete();
+              }
+            } else {
+              // Apply easing and interpolate
+              const easedProgress = applyEasing(progress, tween.easing);
+              const currentValue = mix(tween.startValue, tween.targetValue, easedProgress);
+              controlValues[tween.controlIndex] = currentValue;
+              renderControlValues[tween.controlIndex] = currentValue;
+            }
+          }
+          
+          // Remove completed tweens (reverse order to maintain indices)
+          for (let i = completedTweens.length - 1; i >= 0; i--) {
+            controlTweens.splice(completedTweens[i], 1);
+          }
+          
+          // Update mutations for any controls changed by tweens
+          if (controlTweens.length > 0) {
+            const controlIds = Object.keys(animation.rawControls);
+            for (const tween of controlTweens) {
+              const mutationUpdates = interpolateControlStep(
+                animation.rawControls,
+                animation.rawMutations,
+                controlIds,
+                tween.controlIndex,
+                renderControlValues[tween.controlIndex]
+              );
+              
+              for (const [mutationId, mutationValue] of Object.entries(mutationUpdates)) {
+                const mutationIndex = animation.mutatorMapping[mutationId];
+                if (mutationIndex !== undefined) {
+                  animation.mutationValues.data[mutationIndex * 2] = mutationValue[0];
+                  animation.mutationValues.data[mutationIndex * 2 + 1] = mutationValue[1];
+                }
+              }
+            }
+          }
+          
           for (const playing of playingAnimations) {
             const playTime = (now - playing.iterationStartedAt) * playing.speed;
             const playingAnimation = animation.animations[playing.index];

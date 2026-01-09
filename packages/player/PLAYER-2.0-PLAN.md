@@ -92,13 +92,123 @@ Remove complex control interpolation from shaders:
 
 ---
 
-## Phase 2: Implement Animation Playback ⏭️ NEXT ⏭️ NEXT
+## Phase 1.5: Control Tweening ⏭️ CURRENT PHASE
+
+### Goal
+
+Add ability to animate control values from current to target over time with easing functions. This establishes the easing/timing infrastructure needed for full animation playback.
+
+**Status**: In Progress
+
+### Tasks
+
+#### 1.5.1 Add Easing Function Support
+
+**Files**: `src/vertices.ts` (already has easing infrastructure)
+
+Use existing easing functions:
+
+- `linear` - No easing
+- `easeIn` - Quadratic ease in
+- `easeOut` - Quadratic ease out
+- `easeInOut` - Quadratic ease in and out
+
+#### 1.5.2 Add Control Tween State Management
+
+**Files**: `src/player.ts`
+
+Track ongoing control tweens per animation:
+
+```typescript
+type ControlTween = {
+  controlIndex: number;
+  startValue: number;
+  targetValue: number;
+  startTime: number;
+  duration: number;
+  easing: EasingFunction;
+  onComplete?: () => void;
+};
+```
+
+#### 1.5.3 Implement tweenControlTo API
+
+**Files**: `src/player.ts`, `src/types.ts`
+
+Add to `AnimationControls` type:
+
+```typescript
+tweenControlTo(
+  controlName: string,
+  targetValue: number,
+  duration: number,
+  options?: {
+    easing?: EasingFunction;
+    onComplete?: () => void;
+  }
+): void;
+```
+
+Implementation:
+
+- Validate control name and target value (0-1 range)
+- Stop any conflicting animations
+- Stop any existing tween for this control
+- Create new tween entry with start time = `performance.now()`
+
+#### 1.5.4 Update Control Values Each Frame
+
+**Files**: `src/player.ts`
+
+In `render()` function:
+
+- Get current time with `performance.now()`
+- For each active tween:
+  - Calculate elapsed = (now - startTime) / duration
+  - If elapsed >= 1: set to target, remove tween, trigger callback
+  - Else: apply easing to elapsed, interpolate value, update control
+- Use internal mutation update logic to apply changes
+
+#### 1.5.5 Update Demo UI
+
+**Files**: `demo/index.html`, `demo/main.js`
+
+Add tween test UI:
+
+- Add "Tween to Day" and "Tween to Night" buttons for Light control
+- Add easing function selector (linear, easeIn, easeOut, easeInOut)
+- Add duration input (default 1000ms)
+- Show "Tweening..." indicator when active
+- Display completion status when tween finishes
+
+```javascript
+tweenToDayBtn.addEventListener('click', () => {
+  animationControls.tweenControlTo('Light', 0, duration, {
+    easing: selectedEasing,
+    onComplete: () => console.log('Tween to day complete')
+  });
+});
+```
+
+### Validation Criteria
+
+- [ ] Easing functions work correctly (visual smoothness)
+- [ ] Controls tween smoothly to target values
+- [ ] Multiple simultaneous tweens work without conflicts
+- [ ] Tweens can be interrupted by new tweens or animations
+- [ ] Completion callbacks fire at correct time
+- [ ] Demo UI allows testing all easing functions
+- [ ] Completion indicator shows when tween finishes
+
+---
+
+## Phase 2: Implement Animation Playback
 
 ### Goal
 
 Add animation playback system to update mutation values over time.
 
-**Status**: Ready to start
+**Status**: Not Started
 
 ### Tasks
 

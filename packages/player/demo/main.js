@@ -128,6 +128,41 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
     }
     
+    // Tween controls
+    const tweenToDayBtn = document.getElementById('tweenToDayBtn');
+    const tweenToNightBtn = document.getElementById('tweenToNightBtn');
+    const easingSelect = document.getElementById('easingSelect');
+    const durationInput = document.getElementById('durationInput');
+    const tweenStatus = document.getElementById('tweenStatus');
+    
+    if (tweenToDayBtn && tweenToNightBtn) {
+      tweenToDayBtn.addEventListener('click', () => {
+        const easing = easingSelect.value;
+        const duration = parseInt(durationInput.value);
+        tweenStatus.textContent = 'Tweening to day...';
+        animationControls.tweenControlTo('DayNight', 0, duration, {
+          easing,
+          onComplete: () => {
+            tweenStatus.textContent = '✓ Day tween complete';
+            setTimeout(() => tweenStatus.textContent = '', 2000);
+          }
+        });
+      });
+      
+      tweenToNightBtn.addEventListener('click', () => {
+        const easing = easingSelect.value;
+        const duration = parseInt(durationInput.value);
+        tweenStatus.textContent = 'Tweening to night...';
+        animationControls.tweenControlTo('DayNight', 0.5, duration, {
+          easing,
+          onComplete: () => {
+            tweenStatus.textContent = '✓ Night tween complete';
+            setTimeout(() => tweenStatus.textContent = '', 2000);
+          }
+        });
+      });
+    }
+    
     // Zoom control
     const zoomSlider = document.getElementById('zoomSlider');
     const zoomValue = document.getElementById('zoomValue');
