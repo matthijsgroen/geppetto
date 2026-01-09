@@ -605,99 +605,227 @@ export const prepareAnimation = (
 
 ### Goal
 
-Optimize rendering performance and reduce bundle size.
+Optimize bundle size and runtime performance to ensure smooth 60 FPS animations with minimal memory overhead.
 
-### Tasks
+### Strategy
 
-#### 4.1 Benchmark Current Performance
+Performance optimization should be data-driven. Establish baselines first, then target the highest-impact improvements identified through profiling and benchmarking.
 
-```typescript
-// After Zod validation passes...
+### Sub-phases
 
-// 1. Validate hierarchy has no circular references
-const visitedNodes = new Set<string>();
-const validateHierarchy = (nodeId: string, ancestors: Set<string>) => {
-  if (ancestors.has(nodeId)) {
-    throw new Error(
-      `Circular reference in hierarchy: ${[...ancestors, nodeId].join(" -> ")}`
-    );
-  }
-  if (visitedNodes.has(nodeId)) return;
-  visitedNodes.add(nodeId);
+#### 4.1 Establish Performance Baselines
 
-  const node = image.layerHierarchy[nodeId];
-  if (node.children) {
-    const newAncestors = new Set([...ancestors, nodeId]);
-    node.children.forEach((childId) => validateHierarchy(childId, newAncestors));
-  }
-};
-validateHierarchy("root", new Set());
+**Purpose**: Understand current performance characteristics before optimization
 
-// 2. Validate animation track references
-for (const [animId, animation] of Object.entries(image.animations)) {
-  for (const track of animation.tracks) {
-    if (track.type === "control") {
-      if (!image.controls[track.controlId]) {
-        throw new Error(
-          `Animation "${animation.name}" references non-existent control ID: ${track.controlId}`
-        );
-      }
-    } else if (track.type === "visibility") {
-      if (!image.layers[track.layerId]) {
-        throw new Error(
-          `Animation "${animation.name}" references non-existent layer ID: ${track.layerId}`
-        );
-      }
-    }
-  }
-}
-```
+**Tasks**:
 
-#### 3.3 Make Validation Optional (Production Build)
+1. **Create Benchmark Suite**
+   - Add `src/prepareAnimation.bench.ts` for preparation benchmarks
+   - Add `src/player.bench.ts` for runtime benchmarks
+   - Benchmark mutation calculation (already extracted)
+   - Benchmark animation playback with various scene complexities
 
-**Files**: `src/prepareAnimation.ts`
+2. **Document Current Metrics**
+   - Bundle sizes (ES, UMD, gzipped)
+   - Preparation time for various image sizes
+   - FPS during complex animations
+   - Memory usage over time
+   - Mutation recalculation performance
 
-Allow skipping validation in production for performance:
+3. **Identify Bottlenecks**
+   - Use Chrome DevTools Performance profiler
+   - Identify hot paths in render loop
+   - Measure mutation update overhead
+   - Profile control interpolation
 
-```typescript
-const SKIP_VALIDATION = process.env.NODE_ENV === "production";
+**Success Criteria**:
 
-if (!SKIP_VALIDATION) {
-  const validationResult = geppettoImageSchema.safeParse(image);
-  if (!validationResult.success) {
-    // ... throw error with details
-  }
-  // ... custom validation
-}
-```
+- ✓ Baseline metrics documented
+- ✓ Benchmarks run consistently
+- ✓ Hot paths identified
 
-**Benefits:**
+#### 4.2 Bundle Size Optimization
 
-- Development: Full validation with helpful error messages
-- Production: Skip validation overhead (assume files are pre-validated)
+**Current**: ES 28.08 kB (8.58 kB gzipped), UMD 19.99 kB (7.57 kB gzipped)  
+**Target**: ES <22 kB (<7 kB gzipped), UMD <16 kB (<6 kB gzipped)  
+**Impact**: ~20-30% reduction
+
+**High Priority Tasks**:
+
+1. **Make Zod a Peer Dependency** (Biggest Win)
+   - Move `zod` from dependencies to peerDependencies
+   - Allow users to opt-out of validation in production bundles
+   - Add validation as optional feature in docs
+   - **Expected Savings**: ~4-6 kB (Zod is ~5.8 kB gzipped)
+
+2. **Improve Tree-Shaking**
+   - Mark pure functions with `/*#__PURE__*/` annotations
+   - Ensure side-effect-free imports
+   - Review exports and remove unused code paths
+
+3. **Consider Code Splitting**
+   - Split validation into separate entry point
+   - Split demo-only code from library code
+   - Analyze if shader minification can be improved
+
+**Medium Priority Tasks**:
+
+4. **Optimize Type Imports**
+   - Use `import type` where possible
+   - Remove runtime type imports
+
+5. **Review External Dependencies**
+   - Audit `delaunator` usage (currently ~2.7 kB)
+   - Consider if any functionality can be inlined
+
+**Success Criteria**:
+
+- ✓ ES bundle <22 kB (gzipped <7 kB)
+- ✓ UMD bundle <16 kB (gzipped <6 kB)
+- ✓ Validation is optional/tree-shakable
+- ✓ No functionality regressions
+
+#### 4.3 Runtime Performance Optimization
+
+**Target**: Consistent 60 FPS (16.67ms per frame) for complex scenes
+
+**High Priority Tasks**:
+
+1. **Optimize Mutation Updates**
+   - Currently recalculates all mutations every frame
+   - Change: Only update mutations for controls that changed
+   - Track "dirty" controls and recalculate only affected mutations
+   - **Expected Impact**: 30-50% reduction in mutation overhead
+
+2. **Cache Control Interpolation**
+   - Avoid re-interpolating controls with same time value
+   - Cache last interpolation results per control
+   - Invalidate cache when animation time jumps significantly
+
+3. **Batch WebGL Uniform Updates**
+   - Group uniform updates to minimize state changes
+   - Review if any uniforms can be updated less frequently
+
+**Medium Priority Tasks**:
+
+4. **Optimize Layer Traversal**
+   - Profile current hierarchy traversal
+   - Consider caching flattened layer order
+   - Optimize visibility checks
+
+5. **Improve Tween Performance**
+   - Profile easing function overhead
+   - Consider lookup tables for expensive easing curves
+
+**Success Criteria**:
+
+- ✓ 60 FPS maintained with 100+ layer scenes
+- ✓ Frame time <16ms in Chrome DevTools
+- ✓ No visual regressions
+
+#### 4.4 Memory Optimization
+
+**Goal**: Stable memory usage over time, minimal allocations per frame
+
+**High Priority Tasks**:
+
+1. **Reduce Render Loop Allocations**
+   - Profile allocations in render loop
+   - Reuse arrays/objects where possible
+   - Avoid creating temporary objects per frame
+
+2. **Object Pooling for Temporary Values**
+   - Pool Vec2 instances for calculations
+   - Pool mutation value objects
+   - Implement simple pool for frequently allocated types
+
+3. **Validate Cleanup**
+   - Ensure animations properly clean up
+   - Test memory usage over long-running sessions
+   - Fix any memory leaks
+
+**Success Criteria**:
+
+- ✓ Memory stable over 10+ minute sessions
+- ✓ <100 allocations per frame in steady state
+- ✓ No memory leaks detected
+
+#### 4.5 Animation-Specific Optimizations
+
+**Based on profiling results, consider**:
+
+**Medium Priority**:
+
+1. **Binary Search for Animation Actions**
+   - Currently linear search through actions
+   - Use binary search for time-based lookups
+   - Pre-sort actions by time during preparation
+
+2. **Optimize Visibility Track Updates**
+   - Cache visibility state changes
+   - Avoid redundant layer visibility updates
+
+3. **Improve Control Action Indexing**
+   - Build index of control actions by time range
+   - Skip irrelevant actions for current time
+
+**Low Priority**:
+
+4. **Consider Advanced Data Structures**
+   - Interval trees for time-based queries
+   - Spatial indexing if implementing culling
+
+### Priority Matrix
+
+| Optimization              | Impact | Effort | Priority   |
+| ------------------------- | ------ | ------ | ---------- |
+| Zod peer dependency       | High   | Low    | **HIGH**   |
+| Mutation dirty tracking   | High   | Medium | **HIGH**   |
+| Reduce allocations        | Medium | Medium | **HIGH**   |
+| Tree-shaking improvements | Medium | Low    | **MEDIUM** |
+| Control caching           | Medium | Medium | **MEDIUM** |
+| Binary search actions     | Low    | Low    | **MEDIUM** |
+| Object pooling            | Medium | High   | **LOW**    |
+| Advanced indexing         | Low    | High   | **LOW**    |
+
+### Success Metrics
+
+**Bundle Size**:
+
+- ✓ ES bundle <22 kB (was 28.08 kB) - 21% reduction
+- ✓ Gzipped ES <7 kB (was 8.58 kB) - 18% reduction
+- ✓ Validation optional/removable
+
+**Runtime Performance**:
+
+- ✓ 60 FPS with 100+ layer scenes
+- ✓ <16ms frame time (Chrome DevTools)
+- ✓ <100ms preparation time for complex images
+
+**Memory**:
+
+- ✓ Stable memory over 10+ minute sessions
+- ✓ <100 allocations/frame in steady state
+- ✓ No memory leaks
+
+**Quality**:
+
+- ✓ All existing tests pass
+- ✓ No visual regressions in demo
+- ✓ Benchmarks show measurable improvements
 
 ### Validation Criteria
 
-- [ ] Invalid files throw clear Zod error messages with paths
-- [ ] Circular references in hierarchy are detected
-- [ ] Animation track controlId/layerId references are validated
-- [ ] Valid files pass without errors
-- [ ] Validation can be skipped in production builds
-- [ ] Error messages help developers debug format issues
+- [ ] Baseline benchmarks created and run
+- [ ] Bundle size reduced by >20%
+- [ ] 60 FPS maintained in profiling tests
+- [ ] Memory stable over time
+- [ ] All existing tests pass
+- [ ] Performance improvements documented
 
 ---
 
-## Phase 4: Optimize Performance
-
-### Goal
-
-Improve rendering performance through profiling-driven optimizations.
-
-### Tasks
-
-#### 4.1 Profile Current Implementation
-
-**Tools**: Chrome DevTools Performance tab, WebGL Inspector
+## Phase 5: API Cleanup & Documentation
 
 Measure:
 
