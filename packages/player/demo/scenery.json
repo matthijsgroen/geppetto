@@ -2587,6 +2587,140 @@
         }
       ],
       "events": []
+    },
+    "14": {
+      "name": "WheelComplete",
+      "looping": true,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "19",
+          "length": 19200,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 19200,
+              "easingFunction": "linear",
+              "controlEndValue": 0,
+              "controlStartValue": 1
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "5",
+          "length": 1600,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "2",
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9,
+              "controlStartValue": 0.3
+            },
+            {
+              "start": 1600,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6
+            },
+            {
+              "start": 3200,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 3600,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "3",
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6,
+              "controlStartValue": 0.9
+            },
+            {
+              "start": 1600,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2
+            },
+            {
+              "start": 2000,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            },
+            {
+              "start": 3200,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "4",
+          "length": 4800,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 2,
+              "controlStartValue": 1.6
+            },
+            {
+              "start": 400,
+              "duration": 1200,
+              "easingFunction": "linear",
+              "controlEndValue": 0.3,
+              "controlStartValue": 0
+            },
+            {
+              "start": 1600,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9
+            },
+            {
+              "start": 3200,
+              "duration": 1600,
+              "easingFunction": "linear",
+              "controlEndValue": 1.6
+            }
+          ]
+        }
+      ],
+      "events": []
     }
   }
 }

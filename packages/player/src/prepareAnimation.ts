@@ -12,12 +12,12 @@ import type {
   Vec4,
   AnimationControlTrack,
   AnimationVisibilityTrack,
-} from "./types";
-import type {
   PreparedImageDefinition,
   PreparedLayer,
   PreparedAnimation,
   PreparedControl,
+  PreparedControlTrack,
+  PreparedControlAction,
 } from "./types";
 
 const getAnchor = (layer: Layer): Vec2 => {
@@ -207,7 +207,7 @@ export const prepareAnimation = (
     const animation = image.animations[animationId];
     animationNames.set(animation.name, animationIndex);
     
-    const tracks: [number, Float32Array][] = [];
+    const tracks: PreparedControlTrack[] = [];
     const visibilityTracks = new Map<number, [number, boolean][]>();
     const events: [number, string][] = [];
     
@@ -218,16 +218,20 @@ export const prepareAnimation = (
         const controlIndex = controlNames.get(image.controls[controlTrack.controlId]?.name);
         if (controlIndex === undefined) return;
         
-        // Convert actions to time-value pairs
-        const timeValues: number[] = [];
-        controlTrack.actions.forEach((action) => {
-          timeValues.push(action.start, action.controlStartValue ?? 0);
-          if (action.duration > 0) {
-            timeValues.push(action.start + action.duration, action.controlEndValue);
-          }
-        });
+        // Convert to prepared format, preserving easing and start values
+        const preparedActions: PreparedControlAction[] = controlTrack.actions.map((action) => ({
+          start: action.start,
+          duration: action.duration,
+          easingFunction: action.easingFunction,
+          controlEndValue: action.controlEndValue,
+          controlStartValue: action.controlStartValue, // undefined means use current value
+        }));
         
-        tracks.push([controlIndex, new Float32Array(timeValues)]);
+        tracks.push({
+          controlIndex,
+          actions: preparedActions,
+          length: controlTrack.length,
+        });
       } else if (track.type === "visibility") {
         const visTrack = track as AnimationVisibilityTrack;
         const layerIndex = layerNames.get(image.layers[visTrack.layerId]?.name);
@@ -246,9 +250,12 @@ export const prepareAnimation = (
       events.push([event.start, event.eventName]);
     });
     
+    // Calculate animation duration from track lengths
+    const animationDuration = animation.tracks.reduce((max, track) => Math.max(max, track.length), 0);
+    
     animations.push({
       name: animation.name,
-      duration: animation.tracks.reduce((max, track) => Math.max(max, track.length), 0),
+      duration: animationDuration,
       looping: animation.looping,
       tracks,
       visibilityTracks,

@@ -65,29 +65,35 @@ document.addEventListener('DOMContentLoaded', async () => {
     const stopBtn = document.getElementById('stopBtn');
     
     const animations = Array.from(imageDefinition.animationNames.keys());
-    let currentAnimation = null;
+    let currentAnimations = [];
     
     if (startBtn && animations.length > 0) {
       startBtn.textContent = `▶ Start ${animations[0]}`;
       startBtn.addEventListener('click', () => {
-        if (currentAnimation === null && animations.length > 0) {
-          currentAnimation = animations[0];
-          animationControls.startAnimation(currentAnimation);
+        if (currentAnimations.length === 0 && animations.length > 0) {
+          currentAnimations = ["WheelComplete"]
+          currentAnimations.forEach(anim => {
+            animationControls.startAnimation(anim);
+            console.log('Started animation:', anim);
+          });
           startBtn.disabled = true;
           stopBtn.disabled = false;
-          console.log('Started animation:', currentAnimation);
+          console.log('Started animations:', currentAnimations);
         }
       });
     }
     
     if (stopBtn) {
       stopBtn.addEventListener('click', () => {
-        if (currentAnimation !== null) {
-          animationControls.stopAnimation(currentAnimation);
+        if (currentAnimations.length > 0) {
+          currentAnimations.forEach(anim => {
+            animationControls.stopAnimation(anim);
+            console.log('Stopped animation:', anim);
+          });
           startBtn.disabled = false;
           stopBtn.disabled = true;
-          currentAnimation = null;
-          console.log('Stopped animation');
+          currentAnimations = [];
+          console.log('Stopped animations');
         }
       });
     }
@@ -95,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Control sliders
     const controlSliders = document.getElementById('controlSliders');
     if (controlSliders) {
-      const controls = Array.from(imageDefinition.controlNames.entries()).slice(0, 5);
+      const controls = Array.from(imageDefinition.controlNames.entries()).slice(0, 7);
       
       controls.forEach(([name, index]) => {
         const container = document.createElement('div');

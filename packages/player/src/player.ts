@@ -1,7 +1,7 @@
-import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, Vec2, EasingFunction } from "./types";
+import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, Vec2, EasingFunction, PreparedControlAction } from "./types";
 import animationFragmentShader from "./shaders/fragmentShader.frag";
 import { animationVertexShader } from "./shaders/vertexShader";
-import { interpolateFloat, applyEasing } from "./vertices";
+import { applyEasing } from "./vertices";
 
 // Simple linear interpolation for numbers
 const mix = (a: number, b: number, t: number): number => a + (b - a) * t;
@@ -24,6 +24,25 @@ const mixHue = (a: number, b: number, factor: number): number => {
   
   const [aa, ba] = circularDistance(a, b);
   return mix(aa, ba, factor) % 1.0;
+};
+
+// Helper to merge mutation values (matching studio's mergeMutationValue)
+const mergeMutationValue = (
+  a: Vec2,
+  b: Vec2,
+  mutationType: string
+): Vec2 => {
+  // Multiplicative mutations: stretch, lightness, opacity, saturation
+  if (mutationType === "stretch" || mutationType === "lightness" || 
+      mutationType === "opacity" || mutationType === "saturation") {
+    return [a[0] * b[0], a[1] * b[1]];
+  }
+  // Colorize: take one or the other (first wins)
+  if (mutationType === "colorize") {
+    return a;
+  }
+  // Additive mutations: translate, rotate, deform
+  return [a[0] + b[0], a[1] + b[1]];
 };
 
 // Helper to interpolate between control steps
@@ -67,6 +86,51 @@ const interpolateControlStep = (
   }
   
   return result;
+};
+
+// Helper to recalculate all mutation values from defaultFrame + all control values
+// This matches studio's calculateVectorValues function
+const recalculateMutationValues = (
+  mutationValues: Float32Array,
+  controlValues: Float32Array,
+  rawControls: PreparedImageDefinition["rawControls"],
+  rawMutations: PreparedImageDefinition["rawMutations"],
+  mutatorMapping: Record<string, number>,
+  defaultFrame: Float32Array
+): void => {
+  // Start with defaultFrame values
+  for (let i = 0; i < mutationValues.length; i++) {
+    mutationValues[i] = defaultFrame[i];
+  }
+  
+  // Apply each control's modifications
+  const controlIds = Object.keys(rawControls);
+  for (let controlIndex = 0; controlIndex < controlValues.length; controlIndex++) {
+    const controlValue = controlValues[controlIndex];
+    
+    const mutationUpdates = interpolateControlStep(
+      rawControls,
+      rawMutations,
+      controlIds,
+      controlIndex,
+      controlValue
+    );
+    
+    // Merge control mutations with existing mutation values
+    for (const [mutationId, mutationValue] of Object.entries(mutationUpdates)) {
+      const mutationIndex = mutatorMapping[mutationId];
+      const mutationType = rawMutations[mutationId]?.type;
+      if (mutationIndex !== undefined && mutationType) {
+        const currentValue: Vec2 = [
+          mutationValues[mutationIndex * 2],
+          mutationValues[mutationIndex * 2 + 1]
+        ];
+        const merged = mergeMutationValue(mutationValue, currentValue, mutationType);
+        mutationValues[mutationIndex * 2] = merged[0];
+        mutationValues[mutationIndex * 2 + 1] = merged[1];
+      }
+    }
+  }
 };
 
 /**
@@ -166,8 +230,7 @@ export type AnimationControls = {
    * of an animation. It will only update at the end of each play iteration of an animation.
    *
    * @param controlName name of the control to get value from
-   * @return value of the control. Take into account that each control can have different
-   * value limits, depending on the amount of step a control has.
+   * @return value of the control in 0-1 range
    */
   getControlValue(controlName: string): number;
 
@@ -481,9 +544,22 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       // Mutation values will be uploaded before each render
       const mutationValuesLocation = gl.getUniformLocation(program, "uMutationValues");
       
+      // Save a copy of defaultFrame values for recalculation
+      const defaultFrameValues = new Float32Array(animation.mutationValues.data);
+      
       // Initialize control values
       const controlValues = new Float32Array(animation.defaultControlValues);
       const renderControlValues = new Float32Array(animation.defaultControlValues);
+
+      // Calculate initial mutation values from defaultFrame + control values
+      recalculateMutationValues(
+        animation.mutationValues.data,
+        controlValues,
+        animation.rawControls,
+        animation.rawMutations,
+        animation.mutatorMapping,
+        defaultFrameValues
+      );
 
       // Control tween state
       type ControlTween = {
@@ -534,6 +610,9 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
       const playingAnimations: PlayStatus[] = [];
       const looping: boolean[] = animation.animations.map((a) => a.looping);
+      
+      // Track layer visibility (all visible by default)
+      const layerVisibility: boolean[] = animation.layers.map(() => true);
 
       const stopAnimation = (track: string): void => {
         // Remove from playing list
@@ -543,23 +622,13 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         if (playingIndex === -1) return;
         const playing = playingAnimations[playingIndex];
 
-        const now = +new Date();
-        let playTime = now - playing.startedAt + playing.startAt;
-
         const playingAnimation = animation.animations[playing.index];
-        if (looping[playing.index]) {
-          playTime %= playingAnimation.duration;
-        }
         playingAnimations.splice(playingIndex, 1);
 
-        // place current active control values in control values list
-        for (const [controlIndex, track] of playingAnimation.tracks) {
-          const value = interpolateFloat(
-            track,
-            playTime,
-            controlValues[controlIndex]
-          );
-          controlValues[controlIndex] = value;
+        // Place current active control values in control values list
+        // (preserve values when animation stops)
+        for (const track of playingAnimation.tracks) {
+          controlValues[track.controlIndex] = renderControlValues[track.controlIndex];
         }
 
         for (const listener of onTrackStoppedListeners) {
@@ -605,38 +674,39 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         
         // Scale 0-1 input to actual step range (0 to steps.length-1)
         const scaledValue = value * maxSteps;
-        // stop all conflicting tracks
+        
+        // Stop all conflicting animations
         for (const playing of playingAnimations) {
           const playingAnimation = animation.animations[playing.index];
           if (
             playingAnimation.tracks.some(
-              ([controlNr]) => controlNr === controlIndex
+              (track) => track.controlIndex === controlIndex
             )
           ) {
             stopAnimation(playingAnimation.name);
           }
         }
+        
+        // Stop any existing tween for this control
+        const existingTweenIndex = controlTweens.findIndex(
+          (t) => t.controlIndex === controlIndex
+        );
+        if (existingTweenIndex !== -1) {
+          controlTweens.splice(existingTweenIndex, 1);
+        }
 
         controlValues[controlIndex] = scaledValue;
         renderControlValues[controlIndex] = scaledValue;
         
-        // Calculate mutation values from control steps (like studio's calculateVectorValues)
-        const mutationUpdates = interpolateControlStep(
+        // Recalculate all mutation values from defaultFrame + all control values
+        recalculateMutationValues(
+          animation.mutationValues.data,
+          renderControlValues,
           animation.rawControls,
           animation.rawMutations,
-          controlIds,
-          controlIndex,
-          scaledValue
+          animation.mutatorMapping,
+          defaultFrameValues
         );
-        
-        // Update mutation values
-        for (const [mutationId, mutationValue] of Object.entries(mutationUpdates)) {
-          const mutationIndex = animation.mutatorMapping[mutationId];
-          if (mutationIndex !== undefined) {
-            animation.mutationValues.data[mutationIndex * 2] = mutationValue[0];
-            animation.mutationValues.data[mutationIndex * 2 + 1] = mutationValue[1];
-          }
-        }
         
         // Upload to GPU immediately
         gl.useProgram(program);
@@ -669,7 +739,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           const playingAnimation = animation.animations[playing.index];
           if (
             playingAnimation.tracks.some(
-              ([controlNr]) => controlNr === controlIndex
+              (track) => track.controlIndex === controlIndex
             )
           ) {
             stopAnimation(playingAnimation.name);
@@ -713,18 +783,28 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         startAnimation(animationName, { startAt = 0, speed = 1 } = {}) {
           const trackIndex = nameToTrackIndex(animationName);
           const animationControls = animation.animations[trackIndex].tracks.map(
-            ([controlNr]) => controlNr
+            (track) => track.controlIndex
           );
 
-          // stop all conflicting tracks
+          // Stop all conflicting animations and tweens
           for (const playing of playingAnimations) {
             const playingAnimation = animation.animations[playing.index];
             if (
-              playingAnimation.tracks.some(([controlNr]) =>
-                animationControls.includes(controlNr)
+              playingAnimation.tracks.some((track) =>
+                animationControls.includes(track.controlIndex)
               )
             ) {
               stopAnimation(playingAnimation.name);
+            }
+          }
+          
+          // Stop any conflicting tweens
+          for (const controlIndex of animationControls) {
+            const existingTweenIndex = controlTweens.findIndex(
+              (t) => t.controlIndex === controlIndex
+            );
+            if (existingTweenIndex !== -1) {
+              controlTweens.splice(existingTweenIndex, 1);
             }
           }
 
@@ -741,8 +821,14 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         stopAnimation,
         setControlValue,
         tweenControlTo,
-        getControlValue: (controlName) =>
-          controlValues[nameToControlIndex(controlName)],
+        getControlValue: (controlName) => {
+          const controlIndex = nameToControlIndex(controlName);
+          const controlIds = Object.keys(animation.rawControls);
+          const controlId = controlIds[controlIndex];
+          const maxSteps = animation.rawControls[controlId].steps.length - 1;
+          // Return value in 0-1 range (scale from step range)
+          return controlValues[controlIndex] / maxSteps;
+        },
         setPanning(newPanX, newPanY) {
           panX = newPanX;
           panY = newPanY;
@@ -863,24 +949,25 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           }
           
           for (const playing of playingAnimations) {
-            const playTime = (now - playing.iterationStartedAt) * playing.speed;
+            const animationTime = (now - playing.iterationStartedAt) * playing.speed;
             const playingAnimation = animation.animations[playing.index];
 
-            const playPosition = playTime % playingAnimation.duration;
-
-            if (playingAnimation.duration < playTime) {
+            // Check if animation should stop (non-looping and reached end)
+            if (playingAnimation.duration < animationTime) {
               if (!looping[playing.index]) {
                 stopAnimation(playingAnimation.name);
                 continue;
               }
-              playing.iterationStartedAt = now - playPosition;
+              // Reset iteration start time for next loop
+              playing.iterationStartedAt = now;
 
-              // Store current value as start value of next iteration
-              for (const [controlIndex] of playingAnimation.tracks) {
-                controlValues[controlIndex] = renderControlValues[controlIndex];
+              // Store current values as start values for next iteration
+              for (const track of playingAnimation.tracks) {
+                controlValues[track.controlIndex] = renderControlValues[track.controlIndex];
               }
             }
 
+            // Process events
             for (const [time, event] of playingAnimation.events) {
               const absTime = playing.iterationStartedAt + time / playing.speed;
               if (absTime < now && absTime > playing.lastRender) {
@@ -891,25 +978,100 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             }
             playing.lastRender = now;
 
-            for (const [controlIndex, track] of playingAnimation.tracks) {
-              const value = interpolateFloat(
-                track,
-                playPosition,
-                controlValues[controlIndex]
-              );
-              renderControlValues[controlIndex] = value;
+            // Process each track (each track loops independently)
+            for (const track of playingAnimation.tracks) {
+              // Track position wraps at track.length (independent per-track looping)
+              const trackPosition = animationTime % track.length;
+              
+              // Find active action at current track position
+              let activeAction: PreparedControlAction | null = null;
+              let lastCompletedAction: PreparedControlAction | null = null;
+              
+              for (const action of track.actions) {
+                if (trackPosition >= action.start && trackPosition < action.start + action.duration) {
+                  activeAction = action;
+                  break;
+                }
+                // Track the most recent completed action
+                if (trackPosition >= action.start + action.duration) {
+                  lastCompletedAction = action;
+                }
+              }
+              
+              if (activeAction) {
+                // Calculate progress within this action
+                const actionProgress = (trackPosition - activeAction.start) / activeAction.duration;
+                const easedProgress = applyEasing(actionProgress, activeAction.easingFunction);
+                
+                // Determine start value
+                // If controlStartValue is defined, use it. Otherwise, find what value to use:
+                // - If we're at the very start of the action, use the previous action's end value
+                // - Otherwise use the control value from the previous frame (stored in controlValues)
+                let startValue: number;
+                if (activeAction.controlStartValue !== undefined) {
+                  startValue = activeAction.controlStartValue;
+                } else {
+                  // Find the previous action's end value
+                  let previousActionEndValue: number | undefined;
+                  for (const action of track.actions) {
+                    if (action.start + action.duration === activeAction.start) {
+                      previousActionEndValue = action.controlEndValue;
+                      break;
+                    }
+                  }
+                  // If we found a previous action, use its end value, otherwise use current control value
+                  startValue = previousActionEndValue !== undefined 
+                    ? previousActionEndValue 
+                    : controlValues[track.controlIndex];
+                }
+                
+                // Interpolate from start to end
+                const interpolatedValue = mix(startValue, activeAction.controlEndValue, easedProgress);
+                renderControlValues[track.controlIndex] = interpolatedValue;
+              } else if (lastCompletedAction) {
+                // No active action - hold at the end value of the last completed action
+                renderControlValues[track.controlIndex] = lastCompletedAction.controlEndValue;
+              }
+              // If no actions at all, keep the control at its current value
             }
 
-            // TODO: Process visibility tracks in Phase 2
+            // Process visibility tracks
+            for (const [layerIndex, actions] of playingAnimation.visibilityTracks.entries()) {
+              // Find the most recent visibility action at current animation time
+              let currentVisibility: boolean | undefined;
+              for (const [time, visible] of actions) {
+                if (animationTime >= time) {
+                  currentVisibility = visible;
+                } else {
+                  break; // Actions are ordered by time
+                }
+              }
+              if (currentVisibility !== undefined) {
+                layerVisibility[layerIndex] = currentVisibility;
+              }
+            }
           }
           
-          // Upload mutation values to GPU (simplified - matching studio approach)
-          // In Phase 2, we'll update mutation values based on control values here
+          // Update mutation values if any controls changed (animations or tweens)
+          if (playingAnimations.length > 0 || controlTweens.length > 0) {
+            recalculateMutationValues(
+              animation.mutationValues.data,
+              renderControlValues,
+              animation.rawControls,
+              animation.rawMutations,
+              animation.mutatorMapping,
+              defaultFrameValues
+            );
+          }
+          
+          // Upload mutation values to GPU
           gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
 
           for (let i = 0; i < animation.layers.length; i++) {
             const layer = animation.layers[i];
-            // TODO: Check visibility in Phase 2
+            // Skip invisible layers
+            if (!layerVisibility[i]) continue;
+            
             gl.uniform3f(uTranslate, layer.x, layer.y, layer.z);
             gl.uniform1f(uMutation, layer.mutator);
             gl.drawElements(

@@ -322,11 +322,25 @@ export type PreparedLayer = {
   visible: boolean;
 };
 
+export type PreparedControlAction = {
+  start: number;
+  duration: number;
+  easingFunction: EasingFunction;
+  controlEndValue: number;
+  controlStartValue?: number; // If undefined, use current control value
+};
+
+export type PreparedControlTrack = {
+  controlIndex: number;
+  actions: PreparedControlAction[];
+  length: number; // Track loops at this duration
+};
+
 export type PreparedAnimation = {
   name: string;
-  duration: number;
+  duration: number; // Overall animation duration
   looping: boolean;
-  tracks: [number, Float32Array][];
+  tracks: PreparedControlTrack[];
   visibilityTracks: Map<number, [number, boolean][]>;
   events: [number, string][];
 };
