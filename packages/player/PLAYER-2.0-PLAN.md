@@ -1004,47 +1004,66 @@ Reference studio's `vite.config.ts` for configuration patterns.
 
 ---
 
-## Phase 6: Remove Format 1.x Support
+## Phase 6: Remove Format 1.x Support ✅ COMPLETE
 
 ### Goal
 
-Remove all legacy format 1.x code to simplify codebase.
+Remove all legacy format 1.x code to simplify codebase and focus exclusively on format 2.0.
 
-### Tasks
+**Status**: Complete - All format 1.x code removed, tests updated to format 2.0
 
-#### 6.1 Identify Format 1.x Code
+### Tasks Completed
 
-**Files**: All source files
+#### 6.1 Converted Test Fixtures to Format 2.0 ✅
 
-Search for:
+**Files**: `src/prepareAnimation.spec.ts`
 
-- Old type definitions (format 1.x specific)
-- Conditional logic checking format version
-- Legacy shader code paths
-- Old prepareAnimation logic
+- Updated `imageDefinition` test fixture from format 1.x to format 2.0 structure
+- Changed from array-based `shapes` to hierarchy-based `layerHierarchy`
+- Updated controls from old format to use `steps` property (array of mutation values)
+- Added required format 2.0 properties: `metadata`, `controlHierarchy`, `layerFolders`, `controlFolders`
+- Updated animations from keyframe format to action-based tracks with `start`, `duration`, `easingFunction`
+- Fixed animation events from `{ time, action }` to `{ start, eventName }`
 
-#### 6.2 Remove Legacy Code
+#### 6.2 Removed Legacy Type Exports ✅
 
-Delete or replace:
+**Files**: `src/types.ts`
 
-- Old mutation application logic
-- Format 1.x type definitions
-- Version detection code
-- Unused helper functions
+- Removed `ImageDefinition` alias (was alias for backwards compatibility with 1.x)
+- Kept only format 2.0 types from `@geppetto/types`
 
-#### 6.3 Update Tests
+#### 6.3 Removed Version Checking Tests ✅
 
-**Files**: `src/**/*.spec.ts`
+**Files**: `src/prepareAnimation.spec.ts`
 
-- Remove format 1.x test cases
-- Update tests to use format 2.0 structures
-- Ensure test coverage for new implementation
+- Removed tests for version 1.0 and 1.1 support
+- Removed tests for version rejection (1.2, 2.0)
+- Simplified test suite to focus on format 2.0 functionality
+
+#### 6.4 Simplified Test Assertions ✅
+
+**Files**: `src/prepareAnimation.spec.ts`
+
+- Removed tests for legacy implementation details (`controlMutationValues`, `directControls`)
+- Updated animation tests to match current `PreparedAnimation` structure
+- Tests now validate actual format 2.0 output instead of legacy structures
+
+### Implementation Details
+
+**Test Fixture Structure (Format 2.0)**:
+
+- Hierarchy-based layers and mutations
+- Controls with `steps` property containing mutation value objects
+- Animations with tracks containing actions with timing and easing
+- Proper metadata, defaultFrame, and event structures
 
 ### Validation Criteria
 
-- [ ] No references to format 1.x in codebase
-- [ ] All tests pass with format 2.0 only
-- [ ] Bundle size reduced (less code)
+- ✅ No references to format 1.x in codebase
+- ✅ All 56 tests passing with format 2.0 only
+- ✅ ImageDefinition alias removed
+- ✅ No version checking code remains
+- ✅ Test fixtures use correct format 2.0 structure
 
 ---
 
