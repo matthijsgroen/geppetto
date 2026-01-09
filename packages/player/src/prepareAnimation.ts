@@ -197,6 +197,7 @@ export const prepareAnimation = (
   controlIds.forEach((controlId, controlIndex) => {
     const control = image.controls[controlId];
     controlNames.set(control.name, controlIndex);
+    
     controls.push({
       name: control.name,
       steps: control.steps.length,

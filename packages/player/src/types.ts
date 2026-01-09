@@ -29,7 +29,6 @@ export type {
   AnimationTrack,
   Animation,
   GeppettoImage,
-  GeppettoImage as ImageDefinition, // Alias for backwards compatibility
   LayerFolder,
   Folder,
 } from "@geppetto/types";

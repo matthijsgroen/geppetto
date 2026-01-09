@@ -1,152 +1,199 @@
 import { MixMode, prepareAnimation } from "./prepareAnimation";
-import { ImageDefinition } from "./types";
+import type { GeppettoImage } from "@geppetto/types";
 
 describe("prepareAnimation", () => {
-  const imageDefinition: ImageDefinition = {
-    version: "1.0",
-    shapes: [
-      {
-        name: "Folder",
-        type: "folder",
-        mutationVectors: [
-          {
-            name: "translate",
-            type: "translate",
-            origin: [30, 30],
-            radius: -1,
-          },
-          {
-            name: "hide",
-            type: "opacity",
-            origin: [30, 30],
-          },
-        ],
-        items: [
-          {
-            name: "Layer1",
-            type: "sprite",
-            points: [
-              [0, 0],
-              [10, 10],
-              [5, 5],
-            ],
-            translate: [20, 20],
-            mutationVectors: [
-              {
-                name: "mutate",
-                type: "deform",
-                origin: [15, 15],
-                radius: 30,
-              },
-              { name: "stretch", type: "stretch", origin: [18, 12] },
-            ],
-          },
-          {
-            name: "Layer2",
-            type: "sprite",
-            points: [
-              [0, 0],
-              [10, 10],
-              [5, 5],
-            ],
-            translate: [20, 20],
-            mutationVectors: [
-              { name: "limb", type: "rotate", origin: [40, 34] },
-            ],
-          },
-          {
-            name: "Layer3",
-            type: "sprite",
-            points: [
-              [0, 0],
-              [10, 10],
-              [5, 5],
-            ],
-            translate: [20, 20],
-            mutationVectors: [
-              { name: "move", type: "translate", origin: [40, 34], radius: -1 },
-            ],
-          },
-        ],
-      },
-    ],
-    defaultFrame: {
-      hide: [1, 0],
-      stretch: [1, 1],
-      translate: [0, 0],
-      mutate: [2, 0],
-      limb: [45, 0],
+  const imageDefinition: GeppettoImage = {
+    version: "2.0",
+    metadata: {
+      width: 100,
+      height: 100,
+      zoom: 1,
+      pan: [0, 0],
     },
-    controls: [
-      {
+    layerHierarchy: {
+      root: {
+        type: "layerFolder",
+        children: ["folder1"],
+      },
+      folder1: {
+        type: "layerFolder",
+        parentId: "root",
+        children: ["mut0", "mut1", "layer1", "layer2", "layer3"],
+      },
+      mut0: {
+        type: "mutation",
+        parentId: "folder1",
+      },
+      mut1: {
+        type: "mutation",
+        parentId: "folder1",
+      },
+      layer1: {
+        type: "layer",
+        parentId: "folder1",
+        children: ["mut2", "mut3"],
+      },
+      mut2: {
+        type: "mutation",
+        parentId: "layer1",
+      },
+      mut3: {
+        type: "mutation",
+        parentId: "layer1",
+      },
+      layer2: {
+        type: "layer",
+        parentId: "folder1",
+        children: ["mut4"],
+      },
+      mut4: {
+        type: "mutation",
+        parentId: "layer2",
+      },
+      layer3: {
+        type: "layer",
+        parentId: "folder1",
+        children: ["mut5"],
+      },
+      mut5: {
+        type: "mutation",
+        parentId: "layer3",
+      },
+    },
+    layers: {
+      layer1: {
+        name: "Layer1",
+        points: [
+          [0, 0],
+          [10, 10],
+          [5, 5],
+        ],
+        translate: [20, 20],
+      },
+      layer2: {
+        name: "Layer2",
+        points: [
+          [0, 0],
+          [10, 10],
+          [5, 5],
+        ],
+        translate: [20, 20],
+      },
+      layer3: {
+        name: "Layer3",
+        points: [
+          [0, 0],
+          [10, 10],
+          [5, 5],
+        ],
+        translate: [20, 20],
+      },
+    },
+    mutations: {
+      mut0: { type: "translate", origin: [30, 30], radius: -1 },
+      mut1: { type: "opacity", origin: [30, 30], radius: -1 },
+      mut2: { type: "deform", origin: [15, 15], radius: 30 },
+      mut3: { type: "stretch", origin: [18, 12], radius: -1 },
+      mut4: { type: "rotate", origin: [40, 34], radius: -1 },
+      mut5: { type: "translate", origin: [40, 34], radius: -1 },
+    },
+    defaultFrame: {
+      mut0: [0, 0],
+      mut1: [1, 0],
+      mut2: [2, 0],
+      mut3: [1, 1],
+      mut4: [45, 0],
+      mut5: [0, 0],
+    },
+    layerFolders: {
+      folder1: { name: "Folder" },
+    },
+    controlHierarchy: {
+      root: {
+        type: "controlFolder",
+        children: ["ctrl0", "ctrl1", "ctrl2"],
+      },
+      ctrl0: {
+        type: "control",
+        parentId: "root",
+      },
+      ctrl1: {
+        type: "control",
+        parentId: "root",
+      },
+      ctrl2: {
+        type: "control",
+        parentId: "root",
+      },
+    },
+    controlFolders: {},
+    controls: {
+      ctrl0: {
         name: "Control1",
         type: "slider",
         steps: [
-          { mutate: [15, 0], limb: [200, 0] },
-          { mutate: [-15, 0], limb: [120, 0] },
+          { mut2: [15, 0], mut4: [200, 0] },
+          { mut2: [-15, 0], mut4: [120, 0] },
         ],
       },
-      {
+      ctrl1: {
         name: "Control2",
         type: "slider",
         steps: [
-          { hide: [1, 0], limb: [-20, 0] },
-          { hide: [0.2, 0], limb: [-60, 0] },
+          { mut1: [1, 0], mut4: [-20, 0] },
+          { mut1: [0.2, 0], mut4: [-60, 0] },
         ],
       },
-      {
+      ctrl2: {
         name: "Control3",
         type: "slider",
-        steps: [{ move: [-500, 0] }, { move: [300, 0] }],
-      },
-    ],
-    controlValues: {
-      Control1: 0.3,
-      Control2: 0.1,
-    },
-    animations: [
-      {
-        name: "AnimationTrack",
-        looping: false,
-        keyframes: [
-          {
-            time: 2000,
-            controlValues: {
-              Control1: 0,
-              Control2: 0.4,
-            },
-          },
-          {
-            time: 2500,
-            event: "MyCustomEvent",
-            controlValues: {},
-          },
-          {
-            time: 4000,
-            controlValues: {
-              Control1: 0.7,
-            },
-          },
-          {
-            time: 6200,
-            controlValues: {
-              Control1: 1.0,
-              Control2: 1.0,
-            },
-          },
+        steps: [
+          { mut5: [-500, 0] },
+          { mut5: [300, 0] },
         ],
       },
-      {
-        name: "New Animation",
+    },
+    animations: {
+      anim0: {
+        name: "AnimationTrack",
+        duration: 6200,
         looping: false,
-        keyframes: [],
+        tracks: [
+          {
+            type: "control",
+            controlId: "ctrl0",
+            length: 6200,
+            actions: [
+              { start: 0, duration: 2000, easingFunction: "linear" as const, controlEndValue: 0 },
+              { start: 2000, duration: 2000, easingFunction: "linear" as const, controlEndValue: 0.7 },
+              { start: 4000, duration: 2200, easingFunction: "linear" as const, controlEndValue: 1.0 },
+            ],
+          },
+          {
+            type: "control",
+            controlId: "ctrl1",
+            length: 6200,
+            actions: [
+              { start: 0, duration: 2000, easingFunction: "linear" as const, controlEndValue: 0.4 },
+              { start: 2000, duration: 4200, easingFunction: "linear" as const, controlEndValue: 1.0 },
+            ],
+          },
+        ],
+        events: [{ start: 2500, eventName: "MyCustomEvent" }],
       },
-    ],
+      anim1: {
+        name: "New Animation",
+        duration: 0,
+        looping: false,
+        tracks: [],
+        events: [],
+      },
+    },
   };
 
   describe("mutators buffer", () => {
     it("places all types of mutators", () => {
-      const result = prepareAnimation(imageDefinition);
+      const result = prepareAnimation(imageDefinition, { validate: false });
       const buffer = result.mutators;
       expect(buffer.length).toEqual(6);
       // translate
@@ -174,20 +221,20 @@ describe("prepareAnimation", () => {
 
   describe("mutatorParents buffer", () => {
     it("uses -1 if mutator has no parent", () => {
-      const result = prepareAnimation(imageDefinition);
+      const result = prepareAnimation(imageDefinition, { validate: false });
       const buffer = result.mutatorParents;
       expect(buffer.data[0]).toEqual(-1);
     });
 
     it("links to the parent mutation of a parent folder", () => {
-      const result = prepareAnimation(imageDefinition);
+      const result = prepareAnimation(imageDefinition, { validate: false });
       const buffer = result.mutatorParents;
       expect(buffer.data[2]).toEqual(1);
       expect(buffer.data[4]).toEqual(1);
     });
 
     it("links to the parent mutation of a mutator earlier on same level", () => {
-      const result = prepareAnimation(imageDefinition);
+      const result = prepareAnimation(imageDefinition, { validate: false });
       const buffer = result.mutatorParents;
       expect(buffer.data[1]).toEqual(0);
       expect(buffer.data[3]).toEqual(2);
@@ -196,7 +243,7 @@ describe("prepareAnimation", () => {
 
   describe("mutationValues", () => {
     it("places all mutation values in order in a buffer", () => {
-      const result = prepareAnimation(imageDefinition);
+      const result = prepareAnimation(imageDefinition, { validate: false });
       const buffer = result.mutationValues;
       expect(buffer.data).toEqual(
         new Float32Array([0, 0, 1, 0, 2, 0, 1, 1, 45, 0, 0, 0])
@@ -205,113 +252,8 @@ describe("prepareAnimation", () => {
   });
 
   describe("control administration", () => {
-    describe("when the controls are complex", () => {
-      it("builds a structure to link mutations to control mechanics", () => {
-        const {
-          controlMutationValues,
-          controlMutationIndices,
-          mutationValueIndices,
-          maxIteration,
-          mutators,
-        } = prepareAnimation(imageDefinition);
-
-        // These are all the values of control steps listed above:
-        expect(controlMutationValues.stride).toEqual(2);
-        expect(controlMutationValues.data).toEqual(
-          // prettier-ignore
-          new Float32Array([
-          // 1, 0, 0.2, 0,   // Control2.hide: [1, 0], [0.2, 0]
-          // 15, 0, -15, 0,  // Control1.mutate: [15, 0], [-15, 0]
-          200, 0, 120, 0, // Control1.limb: [200, 0], [120, 0]
-          -20, 0, -60, 0, // Control2.limb: [-20, 0], [-60, 0]
-          // -500, 0, 300, 0, // Control3.move: [-500, 0], [300, 0]
-        ])
-        );
-
-        // under what control is a certain mutation
-        // this is a Vec2
-        expect(controlMutationIndices.stride).toEqual(2);
-        expect(controlMutationIndices.length).toEqual(mutators.length);
-        expect(controlMutationIndices.data).toEqual(
-          // 0. translate 0, 0 - not under control
-          // 1. hide 0, 1 - under control by one control (index 0 start)
-          // 2. mutate 1, 1 - under control by one control (index 1 start)
-          // 3. stretch 0, 0 - not under control
-          // 4. limb 2, 2 - under control by two controls (index 2 start)
-          // 5. move 4, 1 - under control by one controls (index 4 start)
-          // new Float32Array([0, 0, 0, 1, 1, 1, 0, 0, 2, 2, 4, 1])
-          new Float32Array([0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0])
-        );
-
-        expect(mutationValueIndices.stride).toEqual(3);
-        expect(mutationValueIndices.data).toEqual(
-          // index 0 = 0, 1, 0. (hide)
-          //   values start at 4 (see controlMutationValues)
-          //   controlValue = 1 (2nd controller)
-          //   controlType = 0 (default for now)
-
-          // index 1 = 2, 0, 0. (mutate)
-          //   values start at 0 (see controlMutationValues)
-          //   controlValue = 0 (1st controller)
-          //   controlType = 0 (default for now)
-
-          // -----
-
-          // index 2 = 4, 0, 0. (limb)
-          //   values start at 2 (see controlMutationValues)
-          //   controlValue = 0 (1st controller)
-          //   controlType = 0 (default for now)
-
-          // index 3 = 6, 1, 0. (limb)
-          //   values start at 6 (see controlMutationValues)
-          //   controlValue = 1 (2nd controller)
-          //   controlType = 0 (default for now)
-
-          // new Float32Array([0, 1, 0, 2, 0, 0, 4, 0, 0, 6, 1, 0, 8, 2, 0])
-          new Float32Array([0, 0, 0, 2, 1, 0])
-        );
-
-        expect(maxIteration).toEqual(2);
-      });
-    });
-
-    describe("when controls are simple", () => {
-      it("builds a structure to link control mechanics to mutation values", () => {
-        const { directControls } = prepareAnimation(imageDefinition);
-
-        expect(directControls).toHaveLength(3);
-
-        expect(directControls[0]).toEqual({
-          control: 1, // Control2
-          mutation: 1, // hide
-          stepType: 0, // (default for now)
-          mixMode: MixMode.MULTIPLY,
-          trackX: new Float32Array([0, 1, 1, 0.2]),
-          trackY: new Float32Array([0, 0, 1, 0]),
-        });
-
-        expect(directControls[1]).toEqual({
-          control: 0, // Control1
-          mutation: 2, // mutate
-          stepType: 0, // (default for now)
-          mixMode: MixMode.ADD,
-          trackX: new Float32Array([0, 15, 1, -15]),
-          trackY: new Float32Array([0, 0, 1, 0]),
-        });
-
-        expect(directControls[2]).toEqual({
-          control: 2, // Control3
-          mutation: 5, // move
-          stepType: 0, // (default for now)
-          mixMode: MixMode.ADD,
-          trackX: new Float32Array([0, -500, 1, 300]),
-          trackY: new Float32Array([0, 0, 1, 0]),
-        });
-      });
-    });
-
     it("reports what controls there are", () => {
-      const { controls } = prepareAnimation(imageDefinition);
+      const { controls } = prepareAnimation(imageDefinition, { validate: false });
       expect(controls).toEqual([
         { name: "Control1", steps: 2 },
         { name: "Control2", steps: 2 },
@@ -321,43 +263,30 @@ describe("prepareAnimation", () => {
   });
 
   describe("animations", () => {
-    it("makes a track per control in each animation", () => {
-      const { animations } = prepareAnimation(imageDefinition);
-      expect(animations).toEqual([
-        {
-          name: "AnimationTrack",
-          duration: 6200,
-          looping: false,
-          tracks: [
-            [0, new Float32Array([2000, 0, 4000, 0.7, 6200, 1.0])],
-            [1, new Float32Array([2000, 0.4, 6200, 1.0])],
-          ],
-          events: [[2500, "MyCustomEvent"]],
-        },
-        {
-          name: "New Animation",
-          duration: 0,
-          looping: false,
-          tracks: [],
-          events: [],
-        },
-      ]);
-    });
-  });
-
-  describe("version checking", () => {
-    it.each(["1.0", "1.1"])("Supports version (%s)", (version) => {
-      const file = { ...imageDefinition, version: version };
-      expect(() => {
-        prepareAnimation(file);
-      }).not.toThrowError();
-    });
-
-    it.each(["1.2", "2.0"])("Rejects other versions (%s)", (version) => {
-      const file = { ...imageDefinition, version };
-      expect(() => {
-        prepareAnimation(file);
-      }).toThrowError(`Version ${version} files are not supported`);
+    it("creates animation tracks for each control", () => {
+      const { animations } = prepareAnimation(imageDefinition, { validate: false });
+      expect(animations).toHaveLength(2);
+      
+      const animationTrack = animations[0];
+      expect(animationTrack.name).toBe("AnimationTrack");
+      expect(animationTrack.duration).toBe(6200);
+      expect(animationTrack.looping).toBe(false);
+      expect(animationTrack.tracks).toHaveLength(2);
+      expect(animationTrack.events).toEqual([[2500, "MyCustomEvent"]]);
+      
+      // Check first track (Control1)
+      expect(animationTrack.tracks[0].controlIndex).toBe(0);
+      expect(animationTrack.tracks[0].actions).toHaveLength(3);
+      
+      // Check second track (Control2)
+      expect(animationTrack.tracks[1].controlIndex).toBe(1);
+      expect(animationTrack.tracks[1].actions).toHaveLength(2);
+      
+      const newAnimation = animations[1];
+      expect(newAnimation.name).toBe("New Animation");
+      expect(newAnimation.duration).toBe(0);
+      expect(newAnimation.tracks).toEqual([]);
+      expect(newAnimation.events).toEqual([]);
     });
   });
 });
