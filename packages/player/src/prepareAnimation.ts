@@ -110,8 +110,8 @@ export const prepareAnimation = (
     }
   });
   
-  // Build parent array (using Float32Array like studio)
-  const mutatorParents = new Float32Array(mutators.length);
+  // Build parent array (Int32Array for parent indices)
+  const mutatorParents = new Int32Array(mutators.length);
   mutatorIndices.forEach((item, index) => {
     mutatorParents[index] = item.parent;
   });

@@ -107,16 +107,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const slider = document.createElement('input');
         slider.type = 'range';
         slider.min = '0';
-        slider.max = '100';
+        slider.max = '100'; // 0-100 for smooth sliding
         slider.value = '0';
         slider.id = `control-${index}`;
         
         const valueDisplay = document.createElement('span');
         valueDisplay.className = 'value-display';
-        valueDisplay.textContent = '0';
+        valueDisplay.textContent = '0.00';
         
         slider.addEventListener('input', (e) => {
-          const value = parseFloat(e.target.value) / 100;
+          const value = parseFloat(e.target.value) / 100; // Convert to 0-1 range
           valueDisplay.textContent = value.toFixed(2);
           animationControls.setControlValue(name, value);
         });

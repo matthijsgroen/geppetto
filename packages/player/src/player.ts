@@ -1,13 +1,35 @@
 import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, Vec2 } from "./types";
 import animationFragmentShader from "./shaders/fragmentShader.frag";
 import { animationVertexShader } from "./shaders/vertexShader";
+import { interpolateFloat } from "./vertices";
 
 // Simple linear interpolation for numbers
 const mix = (a: number, b: number, t: number): number => a + (b - a) * t;
 
+// Circular interpolation for hue values (0-1 range, wrapping)
+const mixHue = (a: number, b: number, factor: number): number => {
+  const circularDistance = (a: number, b: number): [number, number] => {
+    const d = Math.abs(a - b);
+    let aa = a;
+    let ba = b;
+
+    if (a < b && Math.abs(a + 1 - b) < d) {
+      aa += 1;
+    }
+    if (a > b && Math.abs(b - a + 1) < d) {
+      ba += 1;
+    }
+    return [aa, ba];
+  };
+  
+  const [aa, ba] = circularDistance(a, b);
+  return mix(aa, ba, factor) % 1.0;
+};
+
 // Helper to interpolate between control steps
 const interpolateControlStep = (
   rawControls: PreparedImageDefinition["rawControls"],
+  rawMutations: PreparedImageDefinition["rawMutations"],
   controlIds: string[],
   controlIndex: number,
   controlValue: number
@@ -28,10 +50,20 @@ const interpolateControlStep = (
   const result: Record<string, Vec2> = {};
   for (const [mutationId, mutationValue] of Object.entries(minValue)) {
     const endValue = maxValue[mutationId] || mutationValue;
-    result[mutationId] = [
-      mix(mutationValue[0], endValue[0], mixValue),
-      mix(mutationValue[1], endValue[1], mixValue),
-    ];
+    const mutationInfo = rawMutations[mutationId];
+    
+    // Use circular interpolation for colorize mutations (hue is circular)
+    if (mutationInfo?.type === "colorize") {
+      result[mutationId] = [
+        mixHue(mutationValue[0], endValue[0], mixValue),
+        mix(mutationValue[1], endValue[1], mixValue),
+      ];
+    } else {
+      result[mutationId] = [
+        mix(mutationValue[0], endValue[0], mixValue),
+        mix(mutationValue[1], endValue[1], mixValue),
+      ];
+    }
   }
   
   return result;
@@ -382,7 +414,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       gl.viewport(0, 0, element.width, element.height);
       
       // Render all animations sorted by zIndex
-      const sortedAnimations = animations.slice().sort((_a, _b) => {
+      const sortedAnimations = animations.slice().sort(() => {
         // Access zIndex from the animation's options
         return 0; // For now, render in order they were added
       });
@@ -530,12 +562,18 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       ) => {
         const controlIndex = nameToControlIndex(control);
 
-        const maxValue = animation.controls[controlIndex].steps - 1;
-        if (value < 0 || value > maxValue) {
+        if (value < 0 || value > 1) {
           throw new Error(
-            `Control ${control} value should be between 0 and ${maxValue}. ${value} is out of bounds.`
+            `Control ${control} value should be between 0 and 1. ${value} is out of bounds.`
           );
         }
+        
+        const controlIds = Object.keys(animation.rawControls);
+        const controlId = controlIds[controlIndex];
+        const maxSteps = animation.rawControls[controlId].steps.length - 1;
+        
+        // Scale 0-1 input to actual step range (0 to steps.length-1)
+        const scaledValue = value * maxSteps;
         // stop all conflicting tracks
         for (const playing of playingAnimations) {
           const playingAnimation = animation.animations[playing.index];
@@ -548,16 +586,16 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           }
         }
 
-        controlValues[controlIndex] = value;
-        renderControlValues[controlIndex] = value;
+        controlValues[controlIndex] = scaledValue;
+        renderControlValues[controlIndex] = scaledValue;
         
         // Calculate mutation values from control steps (like studio's calculateVectorValues)
-        const controlIds = Object.keys(animation.rawControls);
         const mutationUpdates = interpolateControlStep(
           animation.rawControls,
+          animation.rawMutations,
           controlIds,
           controlIndex,
-          value
+          scaledValue
         );
         
         // Update mutation values
