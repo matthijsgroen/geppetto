@@ -470,6 +470,12 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       const controlValues = new Float32Array(animation.defaultControlValues);
       const renderControlValues = new Float32Array(animation.defaultControlValues);
 
+      // Dirty tracking for performance optimization
+      // Track which controls have changed to avoid unnecessary recalculation
+      const controlChangeFlags = new Uint8Array(controlValues.length); // 0 = unchanged, 1 = changed
+      const lastControlValues = new Float32Array(controlValues.length);
+      lastControlValues.set(controlValues); // Initialize with current values
+
       // Calculate initial mutation values from defaultFrame + control values
       recalculateMutationValues(
         animation.mutationValues.data,
@@ -618,6 +624,9 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         controlValues[controlIndex] = scaledValue;
         renderControlValues[controlIndex] = scaledValue;
         
+        // Mark control as dirty for recalculation
+        controlChangeFlags[controlIndex] = 1;
+        
         // Recalculate all mutation values from defaultFrame + all control values
         recalculateMutationValues(
           animation.mutationValues.data,
@@ -627,6 +636,10 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           animation.mutatorMapping,
           defaultFrameValues
         );
+        
+        // Clear dirty flags after recalculation
+        controlChangeFlags.fill(0);
+        lastControlValues.set(renderControlValues);
         
         // Upload to GPU immediately
         gl.useProgram(program);
@@ -1040,8 +1053,17 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             }
           }
           
-          // Update mutation values if any controls changed (animations or tweens)
-          if (playingAnimations.length > 0 || controlTweens.length > 0) {
+          // Check if any controls have changed since last render
+          let hasChanges = false;
+          for (let i = 0; i < renderControlValues.length; i++) {
+            if (renderControlValues[i] !== lastControlValues[i]) {
+              controlChangeFlags[i] = 1;
+              hasChanges = true;
+            }
+          }
+          
+          // Update mutation values only if any controls changed (animations or tweens)
+          if (hasChanges) {
             recalculateMutationValues(
               animation.mutationValues.data,
               renderControlValues,
@@ -1050,6 +1072,10 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               animation.mutatorMapping,
               defaultFrameValues
             );
+            
+            // Clear dirty flags and update last values
+            controlChangeFlags.fill(0);
+            lastControlValues.set(renderControlValues);
           }
           
           // Upload mutation values to GPU

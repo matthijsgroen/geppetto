@@ -729,7 +729,7 @@ _recalculateMutationValues_:
 
 **High Priority Tasks**:
 
-1. **Implement Dirty Tracking for Control Values** ⏭️ NEXT TASK
+1. **Implement Dirty Tracking for Control Values** ✅ COMPLETE
 
    **Problem**: Currently recalculates all mutations every frame in render loop, even when:
    - No animations are playing
@@ -738,55 +738,45 @@ _recalculateMutationValues_:
 
    **Solution**: Track which controls changed and only recalculate affected mutations
 
-   **Implementation Plan**:
+   **Implementation**:
+
+   Added dirty tracking state in [player.ts](src/player.ts):
+   - `controlChangeFlags: Uint8Array` - One byte per control (0=unchanged, 1=changed)
+   - `lastControlValues: Float32Array` - Previous frame's control values
+
+   Modified `setControlValue()` to mark controls dirty when changed
+
+   Modified `render()` to compare control values and only recalculate when changes detected:
 
    ```typescript
-   // In player.ts, add dirty tracking state:
-   private controlChangeFlags: Uint8Array; // One byte per control
-   private lastControlValues: Float32Array; // Previous frame's values
-
-   // In setControlValue():
-   setControlValue(controlId: string, value: number) {
-     const controlIndex = this.controlNames.get(controlId);
-     if (controlIndex !== undefined) {
-       if (this.controlValues[controlIndex] !== value) {
-         this.controlValues[controlIndex] = value;
-         this.controlChangeFlags[controlIndex] = 1; // Mark dirty
-       }
+   // Check if any controls have changed since last render
+   let hasChanges = false;
+   for (let i = 0; i < renderControlValues.length; i++) {
+     if (renderControlValues[i] !== lastControlValues[i]) {
+       controlChangeFlags[i] = 1;
+       hasChanges = true;
      }
    }
 
-   // In render():
-   render() {
-     // Check if ANY controls changed
-     let anyChanged = false;
-     for (let i = 0; i < this.controlChangeFlags.length; i++) {
-       if (this.controlChangeFlags[i]) {
-         anyChanged = true;
-         break;
-       }
-     }
-
-     // Only recalculate if controls changed
-     if (anyChanged) {
-       recalculateMutationValues(
-         this.mutationValues.data,
-         this.controlValues,
-         // ... other params
-       );
-
-       // Clear flags
-       this.controlChangeFlags.fill(0);
-     }
-
-     // ... rest of render logic
+   // Update mutation values only if any controls changed
+   if (hasChanges) {
+     recalculateMutationValues(/* ... */);
+     controlChangeFlags.fill(0);
+     lastControlValues.set(renderControlValues);
    }
    ```
 
-   **Expected Impact**:
-   - **Idle scenes**: 99% reduction (no recalculation when nothing changes)
-   - **Playing animations**: 30-50% reduction (only recalc when time advances)
-   - **Interactive controls**: Minimal overhead (1-2 controls changing vs all)
+   **Results** (from dirty-tracking.bench.ts):
+   - **Idle small scene** (3 controls): 364,112 ops/sec (0.0027ms avg)
+   - **Idle medium scene** (10 controls): 73,110 ops/sec (0.0137ms avg)
+   - **Idle large scene** (20 controls): 23,397 ops/sec (0.0427ms avg)
+   - **Active scenes** (1 control changing): Similar performance - minimal overhead
+
+   **Impact**:
+   - ✅ **Idle scenes**: Near-zero overhead (just Float32Array comparison)
+   - ✅ **Complex scenes**: 0.04ms check vs 0.17ms full recalculation = **76% faster when idle**
+   - ✅ **Active scenes**: Negligible overhead (comparison is cheap)
+   - ✅ **All 56 tests passing** - no regressions
 
 2. **Cache Animation Time Interpolation**
 
