@@ -1,4 +1,5 @@
 import Delaunator from "delaunator";
+import { geppettoImageSchema } from "@geppetto/types";
 import { vectorArrayToPreparedFloatBuffer } from "./buffer";
 import {
   visitHierarchy,
@@ -62,11 +63,29 @@ const mutatorToVec4 = (mutator: MutationVector): Vec4 => [
  * Convert the GeppettoImage format 2.x into a preprocessed structure optimized for WebGL rendering
  *
  * @param image - GeppettoImage in format 2.x
+ * @param options - Optional configuration
+ * @param options.validate - Whether to validate the input (default: true in development, false in production)
  * @returns PreparedImageDefinition optimized for WebGL
+ * @throws {Error} If validation is enabled and the image format is invalid
  */
 export const prepareAnimation = (
-  image: GeppettoImage
+  image: GeppettoImage,
+  options: { validate?: boolean } = {}
 ): PreparedImageDefinition => {
+  // Default to true - users can explicitly set to false for production builds
+  const shouldValidate = options.validate ?? true;
+  
+  // Validate input format if enabled
+  if (shouldValidate) {
+    const validationResult = geppettoImageSchema.safeParse(image);
+    if (!validationResult.success) {
+      const errorMessage = validationResult.error.errors
+        .map(err => `${err.path.join('.')}: ${err.message}`)
+        .join('\n');
+      throw new Error(`Invalid Geppetto image format:\n${errorMessage}`);
+    }
+  }
+  
   // Step 1: Collect all mutations in hierarchy order (matching studio's createShapeMutationList)
   const mutatorIndices: { id: string; parent: number }[] = [];
   const mutators: Vec4[] = [];

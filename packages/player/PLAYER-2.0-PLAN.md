@@ -477,6 +477,58 @@ Added canvas rendering controls:
 
 ---
 
+## Phase 2.6: Migrate to Vite ✅ COMPLETE
+
+### Goal
+
+Replace Parcel bundler with Vite for better performance and type handling.
+
+**Status**: Complete - Vite build working, demo functional
+
+### Tasks Completed
+
+#### 2.6.1 Setup Vite Configuration
+
+**Files**: `vite.config.ts`, `package.json`
+
+- Created Vite config with library mode
+- Configured build outputs (ES + UMD)
+- Set up proper externals (no bundling dependencies)
+- Updated package.json scripts (dev, build, preview)
+
+#### 2.6.2 Fix Type Re-exports
+
+**Files**: `packages/geppetto-types/src/image.ts`, `packages/player/src/types.ts`
+
+- Added `CanvasMetadata` export to @geppetto/types
+- Fixed type re-exports to avoid duplication
+- Aliased `FrameControlAction` as `PreparedControlAction`
+- Removed duplicate type definitions
+
+#### 2.6.3 Fix Import Issues
+
+**Files**: `demo/main.js`, `shaders.d.ts`
+
+- Removed Parcel-specific `url:` import prefix
+- Created TypeScript declarations for shader imports
+- Fixed mutation type mapping
+
+**Validation**:
+
+- ✅ Vite dev server running successfully
+- ✅ Build produces clean ES modules
+- ✅ Demo renders correctly with all features
+- ✅ No TypeScript errors
+- ✅ Hot module replacement working
+
+**Build Outputs**:
+
+- `dist/index.js` - ES module
+- `dist/index.umd.cjs` - UMD module
+- `dist/index.d.ts` - TypeScript declarations
+
+---
+
 ## Phase 3: Validate Format 2.0 Input ⏭️ NEXT PHASE
 
 ### Goal
