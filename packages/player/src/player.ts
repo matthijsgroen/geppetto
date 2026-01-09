@@ -159,6 +159,25 @@ export type AnimationControls = {
   onEvent(callback: CustomEventCallback): Unsubscribe;
 
   /**
+   * Get the logical canvas dimensions (accounting for pixel density).
+   *
+   * @returns object with width and height of the image canvas dimensions
+   */
+  getCanvasDimensions(): { width: number; height: number };
+
+  /**
+   * Reset viewport to default values (zoom and panning).
+   */
+  resetViewport(): void;
+
+  /**
+   * Get current viewport state.
+   *
+   * @returns object with current zoom, panX, and panY values
+   */
+  getViewport(): { zoom: number; panX: number; panY: number };
+
+  /**
    * Clears all memory associated to this animation.
    */
   destroy(): void;
@@ -168,6 +187,20 @@ export type AnimationControls = {
  * Options to set directly when adding an animation.
  */
 export interface AnimationOptions {
+  /**
+   * Pixel density for high-DPI displays.
+   * @default window.devicePixelRatio || 1
+   */
+  pixelDensity?: number;
+  
+  /**
+   * How to scale the image to fit the canvas.
+   * - 'contain': letterbox/pillarbox to fit entirely (default)
+   * - 'cover': fill canvas, cropping if needed
+   * - 'none': no automatic scaling
+   * @default 'contain'
+   */
+  fitMode?: 'contain' | 'cover' | 'none';
   /**
    * Horizontal position of image in canvas. `0` = center, `-1` = left, `1` = right.
    *
@@ -385,12 +418,21 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
     addAnimation: (animation, image, textureUnit, options) => {
       const id = ++animId;
       
+      // Calculate pixelDensity (default to devicePixelRatio)
+      const pixelDensity = options?.pixelDensity ?? (typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
+      
+      // Get fitMode (default to 'contain')
+      const fitMode = options?.fitMode ?? 'contain';
+      
       // Use metadata from animation as defaults, merged with provided options
+      // For zoom: if fitMode is 'none', use metadata zoom; otherwise start at 1 (auto-fit will handle scaling)
       const animationDefaults: AnimationOptions = {
-        zoom: animation.metadata.zoom,
+        zoom: fitMode === 'none' ? animation.metadata.zoom : 1,
         panX: animation.metadata.pan[0],
         panY: animation.metadata.pan[1],
         zIndex: 0,
+        pixelDensity,
+        fitMode,
       };
       
       const unit = [
@@ -481,7 +523,8 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       let cWidth = 0,
         cHeight = 0;
 
-      let { zoom, panX, panY, zIndex } = { ...animationDefaults, ...options };
+      const animationOptions = { ...animationDefaults, ...options };
+      let { zoom, panX, panY, zIndex } = animationOptions;
       let basePosition = [0, 0];
       let scale = 1.0;
 
@@ -709,12 +752,19 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         setPanning(newPanX, newPanY) {
           panX = newPanX;
           panY = newPanY;
+          animationOptions.panX = newPanX;
+          animationOptions.panY = newPanY;
         },
         setZoom(newZoom) {
           zoom = newZoom;
+          animationOptions.zoom = newZoom;
+          // Force recalculation of basePosition on next render
+          cWidth = 0;
+          cHeight = 0;
         },
         setZIndex(newZIndex) {
           zIndex = newZIndex;
+          animationOptions.zIndex = newZIndex;
         },
         render() {
           gl.useProgram(program);
@@ -741,23 +791,84 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           gl.enableVertexAttribArray(aTexCoord);
 
           if (element.width !== cWidth || element.height !== cHeight) {
-            const canvasWidth = element.width;
-            const canvasHeight = element.height;
-            const landscape =
-              image.width / canvasWidth > image.height / canvasHeight;
-
-            scale = landscape
-              ? canvasWidth / image.width
-              : canvasHeight / image.height;
+            const pixelDensity = animationOptions.pixelDensity || 1;
+            const fitMode = animationOptions.fitMode || 'contain';
+            
+            // Calculate logical canvas dimensions (accounting for pixel density)
+            const canvasWidth = element.width / pixelDensity;
+            const canvasHeight = element.height / pixelDensity;
+            
+            // Use metadata dimensions for image size (not texture dimensions)
+            const imageWidth = animation.metadata.width;
+            const imageHeight = animation.metadata.height;
+            
+            // Calculate scale based on fitMode
+            const scaleX = canvasWidth / imageWidth;
+            const scaleY = canvasHeight / imageHeight;
+            
+            if (fitMode === 'contain') {
+              // Letterbox/pillarbox - use smaller scale to fit entirely
+              scale = Math.min(scaleX, scaleY);
+            } else if (fitMode === 'cover') {
+              // Fill canvas - use larger scale, may crop
+              scale = Math.max(scaleX, scaleY);
+            } else {
+              // 'none' - no auto-scaling
+              scale = 1;
+            }
 
             gl.uniform2f(uViewport, canvasWidth, canvasHeight);
 
-            basePosition = [canvasWidth / 2 / scale, canvasHeight / 2 / scale];
             cWidth = element.width;
             cHeight = element.height;
           }
 
-          gl.uniform4f(uScale, scale, zoom, panX, panY);
+          // Always recalculate basePosition with current zoom (for center-based zooming)
+          const combinedScale = scale * zoom;
+          basePosition = [element.width / animationOptions.pixelDensity / 2 / combinedScale, element.height / animationOptions.pixelDensity / 2 / combinedScale];
+          
+          // Calculate scissor rectangle based on metadata bounds (clip to logical image area)
+          const pixelDensity = animationOptions.pixelDensity || 1;
+          const canvasWidth = element.width / pixelDensity;
+          const canvasHeight = element.height / pixelDensity;
+          
+          // Image dimensions in logical space
+          const imageWidth = animation.metadata.width;
+          const imageHeight = animation.metadata.height;
+          
+          // Calculate rendered image dimensions in canvas pixels
+          const renderedWidth = imageWidth * combinedScale * pixelDensity;
+          const renderedHeight = imageHeight * combinedScale * pixelDensity;
+          
+          // Calculate position accounting for pan (pan is in clip space: -1 to +1 represents full viewport)
+          // panX/panY are added in clip space, where ±1 = full viewport width/height
+          const centerX = (canvasWidth / 2 + panX * canvasWidth / 2) * pixelDensity;
+          const centerY = (canvasHeight / 2 - panY * canvasHeight / 2) * pixelDensity;
+          
+          // Scissor rectangle (x, y from bottom-left corner in GL coordinates)
+          let scissorX = Math.round(centerX - renderedWidth / 2);
+          let scissorY = Math.round(element.height - centerY - renderedHeight / 2);
+          let scissorWidth = Math.round(renderedWidth);
+          let scissorHeight = Math.round(renderedHeight);
+          
+          // Clamp scissor to canvas bounds (gl.scissor doesn't auto-clip negative values)
+          if (scissorX < 0) {
+            scissorWidth += scissorX;
+            scissorX = 0;
+          }
+          if (scissorY < 0) {
+            scissorHeight += scissorY;
+            scissorY = 0;
+          }
+          scissorWidth = Math.min(scissorWidth, element.width - scissorX);
+          scissorHeight = Math.min(scissorHeight, element.height - scissorY);
+          
+          // Apply scissor test to clip to image bounds
+          gl.enable(gl.SCISSOR_TEST);
+          gl.scissor(scissorX, scissorY, scissorWidth, scissorHeight);
+          
+          // Apply auto-fit scale and user zoom together
+          gl.uniform4f(uScale, combinedScale, 1.0, panX, panY);
 
           gl.activeTexture(unit);
           gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -958,6 +1069,9 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               layer.start
             );
           }
+          
+          // Disable scissor test after rendering
+          gl.disable(gl.SCISSOR_TEST);
         },
         onTrackStopped(callback) {
           onTrackStoppedListeners = onTrackStoppedListeners.concat({
@@ -976,6 +1090,24 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             onCustomEventListeners = onCustomEventListeners.filter(
               (item) => item !== callback
             );
+          };
+        },
+        getCanvasDimensions() {
+          return {
+            width: animation.metadata.width,
+            height: animation.metadata.height,
+          };
+        },
+        resetViewport() {
+          animationOptions.zoom = animation.metadata.zoom;
+          animationOptions.panX = animation.metadata.pan[0];
+          animationOptions.panY = animation.metadata.pan[1];
+        },
+        getViewport() {
+          return {
+            zoom: animationOptions.zoom,
+            panX: animationOptions.panX,
+            panY: animationOptions.panY,
           };
         },
       };

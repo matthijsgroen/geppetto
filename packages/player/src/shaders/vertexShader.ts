@@ -130,7 +130,7 @@ void main() {
   vec3 deformEffect = deform[2];
 
   vec4 pos = viewportScale * vec4((deformPos.xy + basePosition.xy) * scale.x, translate.z, 1.0);
-  gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z, 1.0);
+  gl_Position = vec4(pos.xy + scale.ba, pos.z, 1.0);
   vTextureCoord = aTextureCoord.xy;
 
   vOpacity = deformPos.z;

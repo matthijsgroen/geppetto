@@ -7,6 +7,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   let imageDefinition;
   let animationControls;
 
+  // Setup canvas for retina displays
+  function setupCanvas(canvas, pixelDensity = window.devicePixelRatio || 1) {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * pixelDensity;
+    canvas.height = rect.height * pixelDensity;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    return pixelDensity;
+  }
+
   async function loadImage() {
     try {
       const data = sceneryData;
@@ -29,14 +39,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         throw new Error('Canvas element not found');
       }
       
+      const pixelDensity = setupCanvas(canvas);
+      
       player = setupWebGL(canvas);
       
       // Add the animation to the player
       animationControls = player.addAnimation(imageDefinition, texture, 0, {
-        zoom: 0.5,
-        panX: 0,
-        panY: 0,
-        zIndex: 0
+        pixelDensity,
+        fitMode: 'contain'
       });
       
       // Setup UI controls
