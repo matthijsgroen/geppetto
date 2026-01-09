@@ -1,7 +1,19 @@
 import { type FC, useState } from "react";
 
 import { useFile } from "@/application/state/FileContext";
-import { AnimationsContainer } from "@/ui/components";
+import {
+  AnimationsContainer,
+  Icon,
+  Menu,
+  MenuHeader,
+  MenuItem,
+  MenuRadioGroup,
+  Panel,
+  PanelTitle,
+  ToolBar,
+  ToolButton,
+  ToolSpacer,
+} from "@/ui/components";
 
 import type { AnimationFrame } from "./AnimationTimeline";
 import { AnimationTimeline } from "./AnimationTimeline";
@@ -9,14 +21,14 @@ import { AnimationTimeline } from "./AnimationTimeline";
 const EXTRA_TIME = 2000; // milliseconds
 
 export const AnimationTimelines: FC<{
-  zoom?: number;
   onFrameSelect?: (frame: AnimationFrame | null) => void;
   selectedFrame?: AnimationFrame | null;
-}> = ({ zoom = 2, onFrameSelect, selectedFrame }) => {
+}> = ({ onFrameSelect, selectedFrame }) => {
   const [file] = useFile();
   const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
     null
   );
+  const [zoom, setZoom] = useState(2);
 
   const maxTime = Object.values(file.animations).reduce((max, animation) => {
     const animationMax = Math.max(
@@ -27,27 +39,87 @@ export const AnimationTimelines: FC<{
   }, 0);
 
   return (
-    <AnimationsContainer
-      duration={(maxTime + EXTRA_TIME) / 1000}
-      title="Timeline"
-      zoom={zoom}
-    >
-      {Object.keys(file.animations).map((animationId) => (
-        <AnimationTimeline
-          animationId={animationId}
-          file={file}
-          key={animationId}
-          onFrameSelect={onFrameSelect}
-          onSelect={() => {
-            setSelectedAnimation(animationId);
-            if (animationId !== selectedFrame?.animationId) {
-              onFrameSelect?.(null);
-            }
-          }}
-          selected={selectedAnimation === animationId}
-          selectedTimeBar={selectedFrame}
+    <Panel padding="sm">
+      <ToolBar>
+        <PanelTitle>Animations</PanelTitle>
+        {/* <ToolButton disabled icon={<Icon>⏮️</Icon>} tooltip="Go to start" />
+        <ToolButton disabled icon={<Icon>▶️</Icon>} tooltip="Play/Pause" />
+        <ToolButton disabled icon={<Icon>⏭️</Icon>} tooltip="Go to end" />
+        <ToolSeparator />
+        <ToolButton
+          disabled
+          icon={<Icon>➕</Icon>}
+          label="Animation"
+          tooltip="Add Animation track"
         />
-      ))}
-    </AnimationsContainer>
+        <ToolButton
+          disabled
+          icon={<Icon>➕</Icon>}
+          label="Event"
+          tooltip="Add Event"
+        />
+        <ToolButton
+          disabled
+          icon={<Icon>➕</Icon>}
+          label="Control"
+          tooltip="Add Control layer"
+        />*/}
+        <Menu
+          align="center"
+          arrow
+          direction="bottom"
+          menuButton={({ open }) => (
+            <ToolButton
+              active={open}
+              icon={<Icon>🔎</Icon>}
+              label={`${zoom}×`}
+              tooltip="Zoom level"
+            />
+          )}
+          portal
+          transition
+        >
+          <MenuHeader>Grid size</MenuHeader>
+          <MenuRadioGroup value={zoom}>
+            {[0.25, 0.5, 1, 2, 4].map((zoomLevel) => (
+              <MenuItem
+                key={`zoom${zoomLevel}`}
+                onClick={() => {
+                  setZoom(zoomLevel);
+                }}
+                type="radio"
+                value={zoomLevel}
+              >
+                {zoomLevel}×
+              </MenuItem>
+            ))}
+          </MenuRadioGroup>
+        </Menu>
+        <ToolSpacer />
+        <ToolButton disabled icon={<Icon>?</Icon>} tooltip="Help" />
+      </ToolBar>
+      <AnimationsContainer
+        duration={(maxTime + EXTRA_TIME) / 1000}
+        title="Timeline"
+        zoom={zoom}
+      >
+        {Object.keys(file.animations).map((animationId) => (
+          <AnimationTimeline
+            animationId={animationId}
+            file={file}
+            key={animationId}
+            onFrameSelect={onFrameSelect}
+            onSelect={() => {
+              setSelectedAnimation(animationId);
+              if (animationId !== selectedFrame?.animationId) {
+                onFrameSelect?.(null);
+              }
+            }}
+            selected={selectedAnimation === animationId}
+            selectedTimeBar={selectedFrame}
+          />
+        ))}
+      </AnimationsContainer>
+    </Panel>
   );
 };
