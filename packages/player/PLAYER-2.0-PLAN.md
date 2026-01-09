@@ -204,13 +204,13 @@ tweenToDayBtn.addEventListener('click', () => {
 
 ---
 
-## Phase 2: Implement Animation Playback ⏭️ CURRENT PHASE
+## Phase 2: Implement Animation Playback ✅ COMPLETE
 
 ### Goal
 
 Add animation playback system to update mutation values over time.
 
-**Status**: In Progress
+**Status**: Complete - All format 2.x animation features working correctly
 
 ### Tasks
 
@@ -360,53 +360,179 @@ After all tracks update `renderControlValues`:
 
 ### Validation Criteria
 
-- [ ] Animations play smoothly (60fps)
-- [ ] Per-track looping works correctly (different track lengths loop independently)
-- [ ] Control start values work: undefined uses current value, defined uses explicit value
-- [ ] Frame actions interpolate correctly with easing functions
-- [ ] Events trigger at correct times
-- [ ] Multiple animations can play simultaneously
-- [ ] Manual control values work (via `setControlValue` and `tweenControlTo`)
-- [ ] Animations stop conflicting manual controls/tweens
+- [x] Animations play smoothly (60fps)
+- [x] Per-track looping works correctly (different track lengths loop independently)
+- [x] Control start values work: undefined uses current value, defined uses explicit value
+- [x] Frame actions interpolate correctly with easing functions
+- [x] Action chaining works smoothly (no feedback loops)
+- [x] Events trigger at correct times
+- [x] Multiple animations can play simultaneously
+- [x] Manual control values work (via `setControlValue` and `tweenControlTo`)
+- [x] Animations stop conflicting manual controls/tweens
+- [x] Visibility tracks control layer rendering
+- [x] Mutation values recalculate correctly (matches studio algorithm)
+- [x] User API normalized to 0-1 range, internal uses step scale
+
+**Result**: All validation criteria met. Animation playback works correctly with:
+
+- Per-track independent looping (e.g., wheel blades at 500ms, full wheel at 3000ms)
+- Proper action chaining using previous action's end value when controlStartValue is undefined
+- Smooth transitions with all easing functions
+- Correct mutation value calculation matching studio's full recalculation approach
+- Three water bubbles moving continuously in perfect loops
+
+**Implementation Details:**
+
+1. **Type System Updates** (`types.ts`):
+   - Added `PreparedControlAction` with full action details
+   - Added `PreparedControlTrack` with track-specific looping
+   - Updated `PreparedAnimation` structure
+
+2. **Animation Preparation** (`prepareAnimation.ts`):
+   - Preserves format 2.x action structure (no conversion to Float32Array)
+   - Maintains track.length for independent looping
+   - Captures events from animation data
+
+3. **Player Updates** (`player.ts`):
+   - Added `mergeMutationValue()` - Type-specific merge logic (multiply/add/first-wins)
+   - Added `recalculateMutationValues()` - Full recalculation from defaultFrame + controls
+   - Updated animation playback with per-track looping
+   - Fixed action chaining to use previous action's end value
+   - Added visibility track processing
+   - Updated `setControlValue`, `tweenControlTo`, `getControlValue` to use 0-1 user API
+   - Internal values remain in step scale for animation compatibility
+
+4. **Key Bug Fixes**:
+   - Mutation calculation changed from incremental to full recalculation (matches studio)
+   - Fixed merge logic argument order and skip conditions
+   - Fixed action chaining to prevent feedback loops
+   - Normalized user API to 0-1 range while keeping internal step scale
 
 ---
 
-## Phase 3: Validate Format 2.0 Input
+## Phase 3: Validate Format 2.0 Input ⏭️ NEXT PHASE
 
 ### Goal
 
-Add validation to catch malformed format 2.0 files early.
+Add validation to catch malformed format 2.0 files early using Zod schemas from `@geppetto/types`.
 
 ### Tasks
 
-#### 3.1 Add Validation Function
-
-**Files**: New `src/validation.ts` or in `src/prepareAnimation.ts`
-
-Validate `GeppettoImage` structure:
-
-- Required fields exist: `layerHierarchy`, `layers`, `mutations`, `controls`, `animations`
-- Hierarchy references valid layer/mutation/folder IDs
-- Layer points are valid: `Vec2[]`
-- Mutation types are recognized
-- Animation tracks reference valid controls
-- No circular references in hierarchy
-
-#### 3.2 Error Reporting
+#### 3.1 Use Existing Zod Schema
 
 **Files**: `src/prepareAnimation.ts`
 
-Throw descriptive errors:
+The `@geppetto/types` package already provides comprehensive Zod validation via `geppettoImageSchema`:
 
 ```typescript
-throw new Error(`Invalid layer hierarchy: node "${nodeId}" references missing parent "${parentId}"`);
+import { geppettoImageSchema } from "@geppetto/types";
+
+export const prepareAnimation = (image: GeppettoImage, ...): PreparedImageDefinition => {
+  // Validate input at entry point
+  const validationResult = geppettoImageSchema.safeParse(image);
+
+  if (!validationResult.success) {
+    throw new Error(
+      `Invalid GeppettoImage format:\n${validationResult.error.issues
+        .map((issue) => `  - ${issue.path.join(".")}: ${issue.message}`)
+        .join("\n")}`
+    );
+  }
+
+  // Continue with preparation...
+};
 ```
+
+**What Zod validates automatically:**
+
+- ✓ Version is 2.x format
+- ✓ Required fields exist (`layerHierarchy`, `layers`, `mutations`, `controls`, `animations`, etc.)
+- ✓ Mutation types are valid (translate, deform, stretch, rotate, opacity, lightness, saturation, colorize)
+- ✓ Animation tracks have correct structure
+- ✓ Easing functions are valid (`linear`, `easeIn`, `easeOut`, `easeInOut`)
+- ✓ Layer points are `Vec2[]` arrays
+- ✓ Control steps are keyframes
+- ✓ Events have required fields
+
+#### 3.2 Add Custom Validation
+
+**Files**: `src/prepareAnimation.ts`
+
+Add checks for relationships that Zod can't validate:
+
+```typescript
+// After Zod validation passes...
+
+// 1. Validate hierarchy has no circular references
+const visitedNodes = new Set<string>();
+const validateHierarchy = (nodeId: string, ancestors: Set<string>) => {
+  if (ancestors.has(nodeId)) {
+    throw new Error(
+      `Circular reference in hierarchy: ${[...ancestors, nodeId].join(" -> ")}`
+    );
+  }
+  if (visitedNodes.has(nodeId)) return;
+  visitedNodes.add(nodeId);
+
+  const node = image.layerHierarchy[nodeId];
+  if (node.children) {
+    const newAncestors = new Set([...ancestors, nodeId]);
+    node.children.forEach((childId) => validateHierarchy(childId, newAncestors));
+  }
+};
+validateHierarchy("root", new Set());
+
+// 2. Validate animation track references
+for (const [animId, animation] of Object.entries(image.animations)) {
+  for (const track of animation.tracks) {
+    if (track.type === "control") {
+      if (!image.controls[track.controlId]) {
+        throw new Error(
+          `Animation "${animation.name}" references non-existent control ID: ${track.controlId}`
+        );
+      }
+    } else if (track.type === "visibility") {
+      if (!image.layers[track.layerId]) {
+        throw new Error(
+          `Animation "${animation.name}" references non-existent layer ID: ${track.layerId}`
+        );
+      }
+    }
+  }
+}
+```
+
+#### 3.3 Make Validation Optional (Production Build)
+
+**Files**: `src/prepareAnimation.ts`
+
+Allow skipping validation in production for performance:
+
+```typescript
+const SKIP_VALIDATION = process.env.NODE_ENV === "production";
+
+if (!SKIP_VALIDATION) {
+  const validationResult = geppettoImageSchema.safeParse(image);
+  if (!validationResult.success) {
+    // ... throw error with details
+  }
+  // ... custom validation
+}
+```
+
+**Benefits:**
+
+- Development: Full validation with helpful error messages
+- Production: Skip validation overhead (assume files are pre-validated)
 
 ### Validation Criteria
 
-- [ ] Invalid files throw clear error messages
-- [ ] Valid files pass without overhead
-- [ ] Error messages help debug format issues
+- [ ] Invalid files throw clear Zod error messages with paths
+- [ ] Circular references in hierarchy are detected
+- [ ] Animation track controlId/layerId references are validated
+- [ ] Valid files pass without errors
+- [ ] Validation can be skipped in production builds
+- [ ] Error messages help developers debug format issues
 
 ---
 
