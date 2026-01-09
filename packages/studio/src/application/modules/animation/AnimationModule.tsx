@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
 import type {
   AnimationControlFrame,
   AnimationFrame,
@@ -53,16 +54,20 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
         />
       </ToolBar>
       <Panel center workspace>
+        {texture && hasControls(file) && (
+          <AnimationCanvas file={file} image={texture}>
+            {activeFrame && isControlFrame(activeFrame) && (
+              <ControlFrameEdit
+                actionIndex={activeFrame.actionIndex}
+                animationId={activeFrame.animationId}
+                frame={activeFrame.frame}
+                track={activeFrame.track}
+              />
+            )}
+          </AnimationCanvas>
+        )}
         {(!texture || !hasControls(file)) && (
           <StartupScreen file={file} texture={texture} />
-        )}
-        {activeFrame && isControlFrame(activeFrame) && (
-          <ControlFrameEdit
-            actionIndex={activeFrame.actionIndex}
-            animationId={activeFrame.animationId}
-            frame={activeFrame.frame}
-            track={activeFrame.track}
-          />
         )}
       </Panel>
       {texture && hasControls(file) && (
