@@ -4,12 +4,14 @@ import type { FC, PropsWithChildren } from "react";
 import { TimeStretchHandle } from "@/ui/components/atoms/TimeBar/TimeStretchHandle";
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { Column } from "@/ui/components/molecules/Column/Column";
+import { Row } from "@/ui/components/molecules/Row/Row";
 
 import { AnimationTrackContext } from "./AnimationTrackContext";
 
 export const AnimationTrack: FC<
   PropsWithChildren<{
     name: string;
+    extraContent?: React.ReactNode;
     length?: TimeStamp;
     trackNames?: string[];
     selected?: boolean;
@@ -24,6 +26,7 @@ export const AnimationTrack: FC<
   trackNames = [],
   selected = false,
   onSelect,
+  extraContent,
 }) => {
   const Element = selected ? "div" : "button";
   return (
@@ -31,18 +34,21 @@ export const AnimationTrack: FC<
       <div
         className={clsx(
           "sticky left-0 z-30 border-b border-control-edge text-right whitespace-nowrap backdrop-blur-md",
-          selected && "bg-control-active/80 pb-1",
-          !selected && "bg-toolbar/80 py-1"
+          selected ? "bg-control-active/80 pb-1" : "bg-toolbar/80 py-1"
         )}
       >
         <Column>
-          <div
-            className={clsx("box-content h-5 px-2 text-base text-text", {
-              "pb-1": selected,
-            })}
-          >
-            {name}
-          </div>
+          <Row>
+            <div
+              className={clsx(
+                "box-content h-5 flex-1 px-2 text-base text-text",
+                selected && "pb-1"
+              )}
+            >
+              {name}
+            </div>
+            {extraContent}
+          </Row>
           {selected &&
             trackNames.map((trackName) => (
               <div
@@ -57,10 +63,8 @@ export const AnimationTrack: FC<
       <Element
         className={clsx(
           "items-center border-b border-control-edge/50 bg-workspace last:rounded-b-control nth-[4]:rounded-t-control",
-          {
-            "group cursor-pointer hover:bg-control-highlight focus:bg-control-highlight focus-visible:outline-1 focus-visible:outline-control-focus":
-              !selected,
-          }
+          !selected &&
+            "group cursor-pointer hover:bg-control-highlight focus:z-10 focus:bg-control-highlight focus:outline-1 focus:outline-control-focus"
         )}
         onClick={() => {
           if (selected) return;
@@ -72,27 +76,21 @@ export const AnimationTrack: FC<
             <div
               className={clsx(
                 "box-content bg-panel ps-2 group-hover:bg-control-highlight group-focus:bg-control-highlight",
-                {
-                  "h-5 py-0.5": selected,
-                  "h-full": !selected,
-                }
+                selected ? "h-5 py-0.5" : "h-full"
               )}
               style={{ width: `${length}em` }}
             >
               <div
-                className={clsx("rounded-sm bg-toolbar", {
-                  "h-4": selected,
-                  "h-0": !selected,
-                })}
+                className={clsx(
+                  "rounded-sm bg-toolbar",
+                  selected ? "h-4" : "h-0"
+                )}
               ></div>
             </div>
             <div
               className={clsx(
                 "flex w-2 items-start justify-end rounded-e-sm bg-panel pt-0.5 group-hover:bg-control-highlight group-focus:bg-control-highlight",
-                {
-                  "h-6": selected,
-                  "h-full": !selected,
-                }
+                selected ? "h-6" : "h-full"
               )}
             >
               {selected && <TimeStretchHandle />}

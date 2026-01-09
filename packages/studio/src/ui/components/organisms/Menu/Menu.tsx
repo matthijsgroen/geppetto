@@ -21,10 +21,15 @@ export {
   useMenuState,
 } from "@szhsin/react-menu";
 
-type Props = { shortcut?: Shortcut } & MenuItemProps;
+type Props = { shortcut?: Shortcut; dangerous?: boolean } & MenuItemProps;
 
-export const MenuItem: React.FC<Props> = ({ shortcut, children, ...props }) => (
-  <ReactMenuItem {...props}>
+export const MenuItem: React.FC<Props> = ({
+  shortcut,
+  dangerous = false,
+  children,
+  ...props
+}) => (
+  <ReactMenuItem {...props} className={dangerous ? "text-red-400" : undefined}>
     {shortcut
       ? (state) => {
           const node =

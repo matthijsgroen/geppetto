@@ -11,8 +11,12 @@ export const ToolSeparator: FC = () => {
   return (
     <span
       className={clsx("inline-block border-control-edge text-[0px]", {
-        "h-7 border-r": !toolbarProps.vertical,
-        "w-7 border-b pt-0.5": toolbarProps.vertical,
+        "border-r": !toolbarProps.vertical,
+        "h-7": !toolbarProps.vertical && toolbarProps.size !== "minimal",
+        "h-5": !toolbarProps.vertical && toolbarProps.size === "minimal",
+        "border-b pt-0.5": toolbarProps.vertical,
+        "w-7": toolbarProps.vertical && toolbarProps.size !== "minimal",
+        "w-5": toolbarProps.vertical && toolbarProps.size === "minimal",
       })}
     >
       |

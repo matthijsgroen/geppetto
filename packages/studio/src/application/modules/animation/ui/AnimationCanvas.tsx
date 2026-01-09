@@ -220,7 +220,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
   }, [subscribeScreenTranslation]);
 
   // Mouse event handlers for panning
-  const handleMouseDown = useEvent((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseDown = useEvent((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (e.button !== 0) return; // Only left mouse button
     if (!containerRef.current || !animationControlsRef.current) return;
 
@@ -233,7 +233,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     mouseDeltaRef.current = { x: 0, y: 0 };
   });
 
-  const handleMouseMove = useEvent((e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = useEvent((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (
       !isDraggingRef.current ||
       !lastMousePosRef.current ||
@@ -286,7 +286,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     mouseDeltaRef.current = { x: 0, y: 0 };
   });
 
-  const handleWheel = useEvent((e: React.WheelEvent<HTMLDivElement>) => {
+  const handleWheel = useEvent((e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
     if (!animationControlsRef.current || !containerRef.current) return;
 
@@ -340,7 +340,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     if (!container) return;
 
     const wheelHandler = (e: WheelEvent) => {
-      handleWheel(e as unknown as React.WheelEvent<HTMLDivElement>);
+      handleWheel(e as unknown as React.WheelEvent<HTMLCanvasElement>);
     };
 
     container.addEventListener("wheel", wheelHandler, { passive: false });
@@ -350,15 +350,15 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
   return (
     <div
       className="relative size-full cursor-grab active:cursor-grabbing"
-      onMouseDown={handleMouseDown}
-      onMouseLeave={handleMouseUp}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
       ref={containerRef}
     >
       <div className="relative size-full overflow-hidden" ref={ref}>
         <canvas
-          className="pointer-events-none absolute inset-0 size-full"
+          className="absolute inset-0 size-full"
+          onMouseDown={handleMouseDown}
+          onMouseLeave={handleMouseUp}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
           ref={canvasRef}
         />
       </div>

@@ -27,7 +27,7 @@ export const Label: FC<LabelProps> = ({
       ["py-1 font-caption"]: true,
       ["text-text"]: !active,
       ["text-active"]: active,
-      ["text-xs"]: size === "small",
+      ["text-xs"]: size === "small" || size === "minimal",
       ["text-vertical"]: vertical,
       ["select-text"]: selectable,
     })}

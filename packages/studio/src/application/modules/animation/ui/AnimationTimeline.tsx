@@ -9,9 +9,14 @@ import type { FC } from "react";
 
 import {
   AnimationTrack as AnimationTrackComponent,
+  Icon,
+  Menu,
+  MenuItem,
   TimeBar,
   TimeLineEndHandle,
   TimePin,
+  ToolBar,
+  ToolButton,
 } from "@/ui/components";
 
 export type AnimationControlFrame = {
@@ -64,6 +69,39 @@ export const AnimationTimeline: FC<{
 
   return (
     <AnimationTrackComponent
+      extraContent={
+        <ToolBar size="minimal" transparent>
+          <ToolButton
+            icon={<Icon colorize>▶</Icon>}
+            onClick={onSelect}
+            tooltip="Play"
+          />
+          <Menu
+            arrow
+            direction="right"
+            menuButton={({ open }) => (
+              <ToolButton
+                active={open}
+                icon={<Icon colorize>⋯</Icon>}
+                tooltip="Options"
+              />
+            )}
+            menuStyle={{ fontSize: "1rem" }}
+            portal
+            position="auto"
+          >
+            <MenuItem onClick={() => {}} type="checkbox">
+              Rename
+            </MenuItem>
+            <MenuItem checked onClick={() => {}} type="checkbox">
+              Loop animation
+            </MenuItem>
+            <MenuItem dangerous onClick={() => {}} type="checkbox">
+              Delete
+            </MenuItem>
+          </Menu>
+        </ToolBar>
+      }
       key={animationId}
       length={animationLength / 1000}
       loop={animation.looping}
