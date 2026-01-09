@@ -1,137 +1,14 @@
-import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, Vec2, EasingFunction, PreparedControlAction } from "./types";
+import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, EasingFunction, PreparedControlAction } from "./types";
 import animationFragmentShader from "./shaders/fragmentShader.frag";
 import { animationVertexShader } from "./shaders/vertexShader";
 import { applyEasing } from "./vertices";
+import {
+  interpolateControlStep,
+  recalculateMutationValues,
+} from "./lib/mutation-calculation";
 
 // Simple linear interpolation for numbers
 const mix = (a: number, b: number, t: number): number => a + (b - a) * t;
-
-// Circular interpolation for hue values (0-1 range, wrapping)
-const mixHue = (a: number, b: number, factor: number): number => {
-  const circularDistance = (a: number, b: number): [number, number] => {
-    const d = Math.abs(a - b);
-    let aa = a;
-    let ba = b;
-
-    if (a < b && Math.abs(a + 1 - b) < d) {
-      aa += 1;
-    }
-    if (a > b && Math.abs(b - a + 1) < d) {
-      ba += 1;
-    }
-    return [aa, ba];
-  };
-  
-  const [aa, ba] = circularDistance(a, b);
-  return mix(aa, ba, factor) % 1.0;
-};
-
-// Helper to merge mutation values (matching studio's mergeMutationValue)
-const mergeMutationValue = (
-  a: Vec2,
-  b: Vec2,
-  mutationType: string
-): Vec2 => {
-  // Multiplicative mutations: stretch, lightness, opacity, saturation
-  if (mutationType === "stretch" || mutationType === "lightness" || 
-      mutationType === "opacity" || mutationType === "saturation") {
-    return [a[0] * b[0], a[1] * b[1]];
-  }
-  // Colorize: take one or the other (first wins)
-  if (mutationType === "colorize") {
-    return a;
-  }
-  // Additive mutations: translate, rotate, deform
-  return [a[0] + b[0], a[1] + b[1]];
-};
-
-// Helper to interpolate between control steps
-const interpolateControlStep = (
-  rawControls: PreparedImageDefinition["rawControls"],
-  rawMutations: PreparedImageDefinition["rawMutations"],
-  controlIds: string[],
-  controlIndex: number,
-  controlValue: number
-): Record<string, Vec2> => {
-  const controlId = controlIds[controlIndex];
-  const control = rawControls[controlId];
-  if (!control) return {};
-  
-  const minStep = Math.floor(controlValue);
-  const maxStep = Math.ceil(controlValue);
-  const stepLimit = control.steps.length - 1;
-  
-  const minValue = control.steps[Math.min(minStep, stepLimit)];
-  const maxValue = control.steps[Math.min(maxStep, stepLimit)];
-  
-  const mixValue = controlValue - minStep;
-  
-  const result: Record<string, Vec2> = {};
-  for (const [mutationId, mutationValue] of Object.entries(minValue)) {
-    const endValue = maxValue[mutationId] || mutationValue;
-    const mutationInfo = rawMutations[mutationId];
-    
-    // Use circular interpolation for colorize mutations (hue is circular)
-    if (mutationInfo?.type === "colorize") {
-      result[mutationId] = [
-        mixHue(mutationValue[0], endValue[0], mixValue),
-        mix(mutationValue[1], endValue[1], mixValue),
-      ];
-    } else {
-      result[mutationId] = [
-        mix(mutationValue[0], endValue[0], mixValue),
-        mix(mutationValue[1], endValue[1], mixValue),
-      ];
-    }
-  }
-  
-  return result;
-};
-
-// Helper to recalculate all mutation values from defaultFrame + all control values
-// This matches studio's calculateVectorValues function
-const recalculateMutationValues = (
-  mutationValues: Float32Array,
-  controlValues: Float32Array,
-  rawControls: PreparedImageDefinition["rawControls"],
-  rawMutations: PreparedImageDefinition["rawMutations"],
-  mutatorMapping: Record<string, number>,
-  defaultFrame: Float32Array
-): void => {
-  // Start with defaultFrame values
-  for (let i = 0; i < mutationValues.length; i++) {
-    mutationValues[i] = defaultFrame[i];
-  }
-  
-  // Apply each control's modifications
-  const controlIds = Object.keys(rawControls);
-  for (let controlIndex = 0; controlIndex < controlValues.length; controlIndex++) {
-    const controlValue = controlValues[controlIndex];
-    
-    const mutationUpdates = interpolateControlStep(
-      rawControls,
-      rawMutations,
-      controlIds,
-      controlIndex,
-      controlValue
-    );
-    
-    // Merge control mutations with existing mutation values
-    for (const [mutationId, mutationValue] of Object.entries(mutationUpdates)) {
-      const mutationIndex = mutatorMapping[mutationId];
-      const mutationType = rawMutations[mutationId]?.type;
-      if (mutationIndex !== undefined && mutationType) {
-        const currentValue: Vec2 = [
-          mutationValues[mutationIndex * 2],
-          mutationValues[mutationIndex * 2 + 1]
-        ];
-        const merged = mergeMutationValue(mutationValue, currentValue, mutationType);
-        mutationValues[mutationIndex * 2] = merged[0];
-        mutationValues[mutationIndex * 2 + 1] = merged[1];
-      }
-    }
-  }
-};
 
 /**
  * Function to call for unsubscribing to an event listener
