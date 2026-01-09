@@ -1,5 +1,6 @@
-import { MixMode, prepareAnimation } from "./prepareAnimation";
+import {  prepareAnimation } from "./prepareAnimation";
 import type { GeppettoImage } from "@geppetto/types";
+import { describe, it, expect } from "vitest";
 
 describe("prepareAnimation", () => {
   const imageDefinition: GeppettoImage = {
@@ -12,7 +13,7 @@ describe("prepareAnimation", () => {
     },
     layerHierarchy: {
       root: {
-        type: "layerFolder",
+        type: "root",
         children: ["folder1"],
       },
       folder1: {
@@ -69,6 +70,7 @@ describe("prepareAnimation", () => {
           [5, 5],
         ],
         translate: [20, 20],
+        visible: true,
       },
       layer2: {
         name: "Layer2",
@@ -78,6 +80,7 @@ describe("prepareAnimation", () => {
           [5, 5],
         ],
         translate: [20, 20],
+        visible: true,
       },
       layer3: {
         name: "Layer3",
@@ -87,15 +90,16 @@ describe("prepareAnimation", () => {
           [5, 5],
         ],
         translate: [20, 20],
+        visible: true,
       },
     },
     mutations: {
-      mut0: { type: "translate", origin: [30, 30], radius: -1 },
-      mut1: { type: "opacity", origin: [30, 30], radius: -1 },
-      mut2: { type: "deform", origin: [15, 15], radius: 30 },
-      mut3: { type: "stretch", origin: [18, 12], radius: -1 },
-      mut4: { type: "rotate", origin: [40, 34], radius: -1 },
-      mut5: { type: "translate", origin: [40, 34], radius: -1 },
+      mut0: { name: "Mutation1",  type: "translate", origin: [30, 30], radius: -1 },
+      mut1: { name: "Mutation2", type: "opacity", origin: [30, 30], },
+      mut2: { name: "Mutation3", type: "deform", origin: [15, 15], radius: 30 },
+      mut3: { name: "Mutation4", type: "stretch", origin: [18, 12] },
+      mut4: { name: "Mutation5", type: "rotate", origin: [40, 34] },
+      mut5: { name: "Mutation6", type: "translate", origin: [40, 34], radius: -1 },
     },
     defaultFrame: {
       mut0: [0, 0],
@@ -106,11 +110,11 @@ describe("prepareAnimation", () => {
       mut5: [0, 0],
     },
     layerFolders: {
-      folder1: { name: "Folder" },
+      folder1: { name: "Folder", collapsed: false, visible: true },
     },
     controlHierarchy: {
       root: {
-        type: "controlFolder",
+        type: "root",
         children: ["ctrl0", "ctrl1", "ctrl2"],
       },
       ctrl0: {
@@ -153,10 +157,14 @@ describe("prepareAnimation", () => {
         ],
       },
     },
+    controlValues: {
+      ctrl0: 0.5,
+      ctrl1: 0.75,
+      ctrl2: 0.25,
+    },
     animations: {
       anim0: {
         name: "AnimationTrack",
-        duration: 6200,
         looping: false,
         tracks: [
           {
@@ -183,7 +191,6 @@ describe("prepareAnimation", () => {
       },
       anim1: {
         name: "New Animation",
-        duration: 0,
         looping: false,
         tracks: [],
         events: [],
