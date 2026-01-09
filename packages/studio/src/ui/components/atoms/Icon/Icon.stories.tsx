@@ -5,11 +5,17 @@ import { Icon as IconElement } from "./Icon";
 const meta = preview.meta({
   title: "Atoms/Icon",
   component: IconElement,
+  args: {
+    children: "️💡",
+    colorize: false,
+  },
 });
 export default meta;
 
-export const Icon = meta.story({
+export const Icon = meta.story();
+
+export const ColorizedIcon = meta.story({
   args: {
-    children: "️💡",
+    colorize: true,
   },
 });
