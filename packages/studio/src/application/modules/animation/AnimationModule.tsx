@@ -9,15 +9,18 @@ import { AnimationTimelines } from "@/application/modules/animation/ui/Animation
 import { ControlFrameEdit } from "@/application/modules/animation/ui/ControlFrameEdit";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFile } from "@/application/state/FileContext";
+import { useUpdateScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { SectionSelector } from "@/application/ui/SectionSelector";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import {
   Column,
+  Icon,
   Panel,
   ResizeDirection,
   ResizePanel,
   ToolBar,
+  ToolButton,
   ToolSeparator,
 } from "@/ui/components";
 
@@ -38,6 +41,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
 }) => {
   const [file] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
+  const resetZoom = useUpdateScreenTranslation();
 
   return (
     <Column>
@@ -47,6 +51,20 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
         <SectionSelector
           activeSection="animation"
           onSectionChange={onSectionChange}
+        />
+        <ToolSeparator />
+        <ToolButton
+          icon={<Icon colorize>⛶</Icon>}
+          label="Fit"
+          onClick={() => {
+            resetZoom(() => ({
+              zoom: 1.0,
+              scale: 1.0,
+              panX: 0,
+              panY: 0,
+            }));
+          }}
+          tooltip="Fit to screen"
         />
       </ToolBar>
       <Panel center workspace>

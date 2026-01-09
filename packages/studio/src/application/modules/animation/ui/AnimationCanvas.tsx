@@ -16,6 +16,7 @@ import {
   useMutationValues,
 } from "@/application/state/ImageControlContext";
 import {
+  useScreenSubscription,
   useScreenTranslation,
   useUpdateScreenTranslation,
 } from "@/application/state/ScreenTranslationContext";
@@ -44,16 +45,13 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
   const isDraggingRef = useRef(false);
   const lastMousePosRef = useRef<{ x: number; y: number } | null>(null);
   const mouseDeltaRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const imageScaleRef = useRef(1.0);
 
   const translation = useScreenTranslation();
   const updateScreenTranslation = useUpdateScreenTranslation();
+  const subscribeScreenTranslation = useScreenSubscription();
   const controlValuesRef = useControlValues();
   const mutationValuesRef = useMutationValues();
   const subscribe = useControlValueSubscription();
-
-  // Keep initial translation values for player setup
-  const initialTranslationRef = useRef(translation);
 
   // Initialize WebGL player
   useEffect(() => {
@@ -71,9 +69,9 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
       // Add animation to player
       const controls = player.addAnimation(preparedAnimation, image, 0, {
         fitMode: "contain",
-        zoom: initialTranslationRef.current.zoom,
-        panX: initialTranslationRef.current.panX,
-        panY: initialTranslationRef.current.panY,
+        zoom: translation.zoom,
+        panX: translation.panX,
+        panY: translation.panY,
         pixelDensity:
           typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1,
       });
@@ -118,7 +116,6 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
       [rect.width, rect.height],
       [image.width, image.height]
     );
-    imageScaleRef.current = scale;
 
     // Update scale in translation context
     updateScreenTranslation((trans) => ({
@@ -189,7 +186,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
           [width, height],
           [image.width, image.height]
         );
-        imageScaleRef.current = newScale;
+        // imageScaleRef removed; use translation.scale from context
         updateScreenTranslation((trans) => ({
           ...trans,
           scale: newScale,
@@ -211,13 +208,16 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     };
   }, [image, updateScreenTranslation]);
 
-  // Update zoom/pan when translation changes
+  // Subscribe to translation changes and update player viewport
   useEffect(() => {
-    if (!animationControlsRef.current) return;
-
-    animationControlsRef.current.setZoom(translation.zoom);
-    animationControlsRef.current.setPanning(translation.panX, translation.panY);
-  }, [translation.zoom, translation.panX, translation.panY]);
+    const unsubscribe = subscribeScreenTranslation((trans) => {
+      if (!animationControlsRef.current) return;
+      animationControlsRef.current.setZoom(trans.zoom);
+      animationControlsRef.current.setPanning(trans.panX, trans.panY);
+      // If the player needs to react to scale, add logic here
+    });
+    return unsubscribe;
+  }, [subscribeScreenTranslation]);
 
   // Mouse event handlers for panning
   const handleMouseDown = useEvent((e: React.MouseEvent<HTMLDivElement>) => {
