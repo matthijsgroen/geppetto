@@ -1,4 +1,15 @@
-import type { GeppettoImage, MutationVector, Vec2 } from "@geppetto/types";
+import type {
+  EasingFunction,
+  GeppettoImage,
+  MutationVector,
+  Vec2,
+} from "@geppetto/types";
+
+import {
+  addAnimation,
+  addControlFrameToAnimation,
+} from "@/domain/animation/file2/animations";
+import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 
 import { addControl } from "./controls";
 import { addMutation, updateMutationValue } from "./mutation";
@@ -9,6 +20,7 @@ import { addFolder, addPoint, addShape } from "./shapes";
 export const fileBuilder = () => {
   let file = newFile();
   let lastShapeId: null | string = null;
+  let lastAnimationId: null | string = null;
 
   const builder = {
     addFolder: (name: string, parentName?: string) => {
@@ -105,6 +117,39 @@ export const fileBuilder = () => {
     setMutationValue: (name: string, value: Vec2) => {
       const mutId = getMutationIdByName(file, name);
       file = updateMutationValue(mutId, value)(file);
+
+      return builder;
+    },
+    addAnimation: (name: string) => {
+      file = addAnimation(name)(file);
+
+      const animationId = Object.entries(file.animations).find(
+        ([, a]) => a.name === name
+      );
+      if (animationId) {
+        lastAnimationId = animationId[0];
+      }
+      return builder;
+    },
+    addControlFrame: (
+      controlName: string,
+      start: TimeStamp,
+      duration: TimeStamp,
+      endValue: number,
+      easing?: EasingFunction
+    ) => {
+      if (lastAnimationId === null) {
+        return builder;
+      }
+      const controlId = getControlIdByName(file, controlName);
+      file = addControlFrameToAnimation(
+        lastAnimationId,
+        controlId,
+        start,
+        duration,
+        endValue,
+        easing
+      )(file);
 
       return builder;
     },
