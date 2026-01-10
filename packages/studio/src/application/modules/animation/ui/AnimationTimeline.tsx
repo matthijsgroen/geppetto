@@ -111,7 +111,11 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
             <MenuItem onClick={() => {}} type="checkbox">
               Rename
             </MenuItem>
-            <MenuItem checked onClick={() => {}} type="checkbox">
+            <MenuItem
+              checked={animation.looping}
+              onClick={() => {}}
+              type="checkbox"
+            >
               Loop animation
             </MenuItem>
             <MenuItem dangerous onClick={() => {}} type="checkbox">
