@@ -11,7 +11,7 @@ import { maxZoomFactor } from "@/infrastructure/webgl/lib/canvas";
 
 export const usePanningAndZoom = (
   animationControlsRef: RefObject<AnimationControls | null>,
-  containerRef: RefObject<HTMLDivElement | null>,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
   image: HTMLImageElement | null
 ) => {
   const subscribeScreenTranslation = useScreenSubscription();
@@ -35,9 +35,9 @@ export const usePanningAndZoom = (
   // Mouse event handlers for panning
   const handleMouseDown = useEvent((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (e.button !== 0) return; // Only left mouse button
-    if (!containerRef.current || !animationControlsRef.current) return;
+    if (!canvasRef.current || !animationControlsRef.current) return;
 
-    const rect = containerRef.current.getBoundingClientRect();
+    const rect = canvasRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
@@ -51,11 +51,11 @@ export const usePanningAndZoom = (
       !isDraggingRef.current ||
       !lastMousePosRef.current ||
       !animationControlsRef.current ||
-      !containerRef.current
+      !canvasRef.current
     )
       return;
 
-    const rect = containerRef.current.getBoundingClientRect();
+    const rect = canvasRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
@@ -101,9 +101,9 @@ export const usePanningAndZoom = (
 
   const handleWheel = useEvent((e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault();
-    if (!animationControlsRef.current || !containerRef.current) return;
+    if (!animationControlsRef.current || !canvasRef.current) return;
 
-    const rect = containerRef.current.getBoundingClientRect();
+    const rect = canvasRef.current.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
@@ -149,7 +149,7 @@ export const usePanningAndZoom = (
 
   // Attach wheel event with passive: false to allow preventDefault
   useEffect(() => {
-    const container = containerRef.current;
+    const container = canvasRef.current;
     if (!container) return;
 
     const wheelHandler = (e: WheelEvent) => {
@@ -158,7 +158,7 @@ export const usePanningAndZoom = (
 
     container.addEventListener("wheel", wheelHandler, { passive: false });
     return () => container.removeEventListener("wheel", wheelHandler);
-  }, [handleWheel, containerRef]);
+  }, [handleWheel, canvasRef]);
 
   return {
     handleMouseDown,
