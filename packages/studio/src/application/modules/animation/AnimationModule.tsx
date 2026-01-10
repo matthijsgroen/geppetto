@@ -42,6 +42,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
   const [file] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
   const resetZoom = useUpdateScreenTranslation();
+  const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
 
   return (
     <Column>
@@ -69,7 +70,11 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
       </ToolBar>
       <Panel center workspace>
         {texture && hasControls(file) && (
-          <AnimationCanvas file={file} image={texture}>
+          <AnimationCanvas
+            animationsPlaying={animationsPlaying}
+            file={file}
+            image={texture}
+          >
             {activeFrame && isControlFrame(activeFrame) && (
               <ControlFrameEdit
                 actionIndex={activeFrame.actionIndex}
@@ -91,9 +96,18 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           minSize={50}
         >
           <AnimationTimelines
+            animationsPlaying={animationsPlaying}
             onFrameSelect={(frame) => {
               setActiveFrame(frame);
             }}
+            onStartAnimation={(id) =>
+              setAnimationsPlaying((prev) => [...prev, id])
+            }
+            onStopAnimation={(id) =>
+              setAnimationsPlaying((prev) =>
+                prev.filter((animId) => animId !== id)
+              )
+            }
             selectedFrame={activeFrame}
           />
         </ResizePanel>

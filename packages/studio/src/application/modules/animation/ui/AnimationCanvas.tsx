@@ -27,6 +27,7 @@ import {
 
 export type AnimationCanvasProps = {
   image: HTMLImageElement | null;
+  animationsPlaying?: string[];
   file: GeppettoImage;
   ref?: RefObject<HTMLDivElement | null>;
 };
@@ -36,6 +37,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
   file,
   children,
   ref,
+  animationsPlaying = [],
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -346,6 +348,34 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     container.addEventListener("wheel", wheelHandler, { passive: false });
     return () => container.removeEventListener("wheel", wheelHandler);
   }, [handleWheel]);
+
+  const animationsPlayingRef = useRef<string[]>([]);
+  useEffect(() => {
+    if (!animationControlsRef.current) return;
+    if (
+      JSON.stringify(animationsPlayingRef.current) ===
+      JSON.stringify(animationsPlaying)
+    )
+      return;
+
+    // Animations to start
+    const toStart = animationsPlaying
+      .filter((id) => !animationsPlayingRef.current.includes(id))
+      .map((id) => file.animations[id].name);
+
+    // Animations to stop
+    const toStop = animationsPlayingRef.current
+      .filter((id) => !animationsPlaying.includes(id))
+      .map((id) => file.animations[id].name);
+
+    toStart.forEach((animationName) => {
+      animationControlsRef.current?.startAnimation(animationName);
+    });
+    toStop.forEach((animationName) => {
+      animationControlsRef.current?.stopAnimation(animationName);
+    });
+    animationsPlayingRef.current = animationsPlaying;
+  }, [animationsPlaying, file.animations]);
 
   return (
     <div

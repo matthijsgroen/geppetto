@@ -20,10 +20,21 @@ import { AnimationTimeline } from "./AnimationTimeline";
 
 const EXTRA_TIME = 2000; // milliseconds
 
-export const AnimationTimelines: FC<{
+type AnimationTimelinesProps = {
   onFrameSelect?: (frame: AnimationFrame | null) => void;
   selectedFrame?: AnimationFrame | null;
-}> = ({ onFrameSelect, selectedFrame }) => {
+  onStartAnimation?: (animationId: string) => void;
+  onStopAnimation?: (animationId: string) => void;
+  animationsPlaying?: string[];
+};
+
+export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
+  onFrameSelect,
+  selectedFrame,
+  onStartAnimation,
+  onStopAnimation,
+  animationsPlaying = [],
+}) => {
   const [file] = useFile();
   const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
     null
@@ -107,13 +118,20 @@ export const AnimationTimelines: FC<{
           <AnimationTimeline
             animationId={animationId}
             file={file}
+            isPlaying={animationsPlaying.includes(animationId)}
             key={animationId}
             onFrameSelect={onFrameSelect}
+            onPlay={() => {
+              onStartAnimation?.(animationId);
+            }}
             onSelect={() => {
               setSelectedAnimation(animationId);
               if (animationId !== selectedFrame?.animationId) {
                 onFrameSelect?.(null);
               }
+            }}
+            onStop={() => {
+              onStopAnimation?.(animationId);
             }}
             selected={selectedAnimation === animationId}
             selectedTimeBar={selectedFrame}

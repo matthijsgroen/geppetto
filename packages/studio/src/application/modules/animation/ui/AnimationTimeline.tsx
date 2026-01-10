@@ -35,16 +35,26 @@ export type AnimationVisibilityFrame = {
 
 export type AnimationFrame = AnimationControlFrame | AnimationVisibilityFrame;
 
-export const AnimationTimeline: FC<{
+type AnimationTimelineProps = {
   animationId: string;
   file: GeppettoImage;
+  isPlaying?: boolean;
+
   onSelect: () => void;
+  onPlay?: () => void;
+  onStop?: () => void;
   onFrameSelect?: (frame: AnimationFrame) => void;
   selected: boolean;
   selectedTimeBar?: AnimationFrame | null;
-}> = ({
+};
+
+export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   animationId,
   file,
+  isPlaying = false,
+  onPlay,
+  onStop,
+
   onSelect,
   onFrameSelect,
   selected,
@@ -71,11 +81,19 @@ export const AnimationTimeline: FC<{
     <AnimationTrackComponent
       extraContent={
         <ToolBar size="minimal" transparent>
-          <ToolButton
-            icon={<Icon colorize>▶</Icon>}
-            onClick={onSelect}
-            tooltip="Play"
-          />
+          {isPlaying ? (
+            <ToolButton
+              icon={<Icon colorize>■</Icon>}
+              onClick={onStop}
+              tooltip="Stop"
+            />
+          ) : (
+            <ToolButton
+              icon={<Icon colorize>▶</Icon>}
+              onClick={onPlay}
+              tooltip="Play"
+            />
+          )}
           <Menu
             arrow
             direction="right"
