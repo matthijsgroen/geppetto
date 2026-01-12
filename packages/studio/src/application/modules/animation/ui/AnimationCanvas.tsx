@@ -2,6 +2,7 @@ import type { GeppettoImage } from "@geppetto/types";
 import { type FC, type PropsWithChildren, useEffect, useRef } from "react";
 
 import { useAnimationsPlaying } from "@/application/modules/animation/hooks/useAnimationsPlaying";
+import { useCanvasResize } from "@/application/modules/animation/hooks/useCanvasResize";
 import { useGeppettoPlayer } from "@/application/modules/animation/hooks/useGeppettoPlayer";
 import { usePanningAndZoom } from "@/application/modules/animation/hooks/usePanningAndZoom";
 import useEvent from "@/application/state/hooks/useEvent";
@@ -10,8 +11,6 @@ import {
   useControlValueSubscription,
   useMutationValues,
 } from "@/application/state/ImageControlContext";
-import { useUpdateScreenTranslation } from "@/application/state/ScreenTranslationContext";
-import { getInitialScale } from "@/infrastructure/webgl/lib/canvas";
 
 export type AnimationCanvasProps = {
   image: HTMLImageElement | null;
@@ -83,48 +82,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     animationControlsRef,
   ]);
 
-  const updateScreenTranslation = useUpdateScreenTranslation();
-  // Update canvas size on resize
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const updateCanvasSize = () => {
-      const { width, height } = canvas.getBoundingClientRect();
-      const pixelRatio =
-        typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
-
-      // Only set the buffer size, not the style (CSS handles the display size)
-      canvas.width = width * pixelRatio;
-      canvas.height = height * pixelRatio;
-
-      // Recalculate scale when canvas size changes
-      if (image) {
-        const newScale = getInitialScale(
-          [width, height],
-          [image.width, image.height]
-        );
-        // imageScaleRef removed; use translation.scale from context
-        updateScreenTranslation((trans) => ({
-          ...trans,
-          scale: newScale,
-        }));
-      }
-
-      // Render immediately after resizing to prevent flashing
-      // (canvas.width/height assignment clears the drawing buffer)
-      playerRef.current?.render();
-    };
-
-    updateCanvasSize();
-
-    const resizeObserver = new ResizeObserver(updateCanvasSize);
-    resizeObserver.observe(canvas);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [image, updateScreenTranslation, animationControlsRef, playerRef]);
+  useCanvasResize(image, canvasRef, playerRef);
 
   const { handleMouseDown, handleMouseMove, handleMouseUp } = usePanningAndZoom(
     animationControlsRef,
