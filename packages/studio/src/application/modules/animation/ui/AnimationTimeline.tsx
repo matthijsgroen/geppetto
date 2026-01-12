@@ -5,7 +5,7 @@ import type {
   FrameLayerVisibilityAction,
   GeppettoImage,
 } from "@geppetto/types";
-import type { FC } from "react";
+import { type FC, useEffect, useRef } from "react";
 
 import {
   AnimationTrack as AnimationTrackComponent,
@@ -77,6 +77,13 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
     ...animation.events.map((event) => event.start)
   );
 
+  const trackRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (selected && trackRef.current) {
+      trackRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [selected]);
+
   return (
     <AnimationTrackComponent
       extraContent={
@@ -129,6 +136,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
       loop={animation.looping}
       name={animation.name}
       onSelect={onSelect}
+      ref={trackRef}
       selected={selected}
       trackNames={trackNames}
     >

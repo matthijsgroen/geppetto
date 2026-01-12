@@ -5,10 +5,13 @@ import type {
   Vec2,
 } from "@geppetto/types";
 
+import type { AddAnimationDetails } from "@/domain/animation/file2/animations";
 import {
   addAnimation,
   addControlFrameToAnimation,
+  renameAnimation,
 } from "@/domain/animation/file2/animations";
+import { chain } from "@/shared/utils/chain";
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 
 import { addControl } from "./controls";
@@ -121,14 +124,13 @@ export const fileBuilder = () => {
       return builder;
     },
     addAnimation: (name: string) => {
-      file = addAnimation(name)(file);
+      const details: AddAnimationDetails | Record<string, never> = {};
+      file = chain(
+        () => addAnimation(details),
+        () => renameAnimation(details.id, name)
+      )(file);
 
-      const animationId = Object.entries(file.animations).find(
-        ([, a]) => a.name === name
-      );
-      if (animationId) {
-        lastAnimationId = animationId[0];
-      }
+      lastAnimationId = details.id;
       return builder;
     },
     addControlFrame: (

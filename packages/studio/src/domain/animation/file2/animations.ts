@@ -1,4 +1,5 @@
 import type {
+  Animation,
   AnimationControlTrack,
   EasingFunction,
   FrameControlAction,
@@ -22,20 +23,52 @@ export const getNextAnimationId = (file: GeppettoImage): string => {
   return `${id}`;
 };
 
+export const getAnimationName = (file: GeppettoImage) => {
+  let id = 1;
+  const names = Object.values(file.animations).map((a) => a.name);
+  while (names.includes(`animation ${id}`)) {
+    id++;
+  }
+  return `animation ${id}`;
+};
+
 export const updateLoopingAnimation = (animationID: string, looping: boolean) =>
   produce<GeppettoImage>((draft) => {
     draft.animations[animationID].looping = looping;
   });
 
-export const addAnimation = (animationName: string) =>
+export type AddAnimationDetails = {
+  id: string;
+  animation: Animation;
+};
+
+export const addAnimation = (
+  dataResult?: AddAnimationDetails | Record<string, never>
+) =>
   produce<GeppettoImage>((draft) => {
     const newAnimationId = getNextAnimationId(draft);
+    const newAnimationName = getAnimationName(draft);
+
     draft.animations[newAnimationId] = {
-      name: animationName,
+      name: newAnimationName,
       tracks: [],
       events: [],
       looping: false,
     };
+    if (dataResult) {
+      Object.assign(dataResult, {
+        id: newAnimationId,
+        animation: draft.animations[newAnimationId],
+      });
+    }
+  });
+
+export const renameAnimation = (animationId: string, newName: string) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (animation) {
+      animation.name = newName;
+    }
   });
 
 export const addControlFrameToAnimation = (

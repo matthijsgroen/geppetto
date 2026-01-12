@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import type { FC, PropsWithChildren } from "react";
+import type { FC, PropsWithChildren, Ref } from "react";
 
 import { TimeStretchHandle } from "@/ui/components/atoms/TimeBar/TimeStretchHandle";
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
@@ -8,25 +8,27 @@ import { Row } from "@/ui/components/molecules/Row/Row";
 
 import { AnimationTrackContext } from "./AnimationTrackContext";
 
-export const AnimationTrack: FC<
-  PropsWithChildren<{
-    name: string;
-    extraContent?: React.ReactNode;
-    length?: TimeStamp;
-    trackNames?: string[];
-    selected?: boolean;
-    loop?: boolean;
-    onSelect?: () => void;
-  }>
-> = ({
+type AnimationTrackProps = PropsWithChildren<{
+  extraContent?: React.ReactNode;
+  length?: TimeStamp;
+  loop?: boolean;
+  name: string;
+  onSelect?: () => void;
+  ref?: Ref<HTMLDivElement>;
+  selected?: boolean;
+  trackNames?: string[];
+}>;
+
+export const AnimationTrack: FC<AnimationTrackProps> = ({
   children,
-  name,
-  loop = false,
-  length = 0,
-  trackNames = [],
-  selected = false,
-  onSelect,
   extraContent,
+  length = 0,
+  loop = false,
+  name,
+  onSelect,
+  ref,
+  selected = false,
+  trackNames = [],
 }) => {
   const Element = selected ? "div" : "button";
   return (
@@ -36,6 +38,7 @@ export const AnimationTrack: FC<
           "sticky left-0 z-30 border-b border-control-edge text-right whitespace-nowrap backdrop-blur-md",
           selected ? "bg-control-active/80 pb-1" : "bg-toolbar/80 py-1"
         )}
+        ref={ref}
       >
         <Column>
           <Row>

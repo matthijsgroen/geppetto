@@ -1,6 +1,8 @@
 import { type FC, useState } from "react";
 
 import { useFile } from "@/application/state/FileContext";
+import type { AddAnimationDetails } from "@/domain/animation/file2/animations";
+import { addAnimation } from "@/domain/animation/file2/animations";
 import {
   AnimationsContainer,
   Icon,
@@ -12,6 +14,7 @@ import {
   PanelTitle,
   ToolBar,
   ToolButton,
+  ToolSeparator,
   ToolSpacer,
 } from "@/ui/components";
 
@@ -35,7 +38,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   onStopAnimation,
   animationsPlaying = [],
 }) => {
-  const [file] = useFile();
+  const [file, setFile] = useFile();
   const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
     null
   );
@@ -56,13 +59,19 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
         {/* <ToolButton disabled icon={<Icon>⏮️</Icon>} tooltip="Go to start" />
         <ToolButton disabled icon={<Icon>▶️</Icon>} tooltip="Play/Pause" />
         <ToolButton disabled icon={<Icon>⏭️</Icon>} tooltip="Go to end" />
+        */}
         <ToolSeparator />
         <ToolButton
-          disabled
           icon={<Icon>➕</Icon>}
           label="Animation"
-          tooltip="Add Animation track"
+          onClick={() => {
+            const addDetails: AddAnimationDetails | Record<string, never> = {};
+            setFile(addAnimation(addDetails));
+            setSelectedAnimation(addDetails.id);
+          }}
+          tooltip="Add Animation"
         />
+        {/*
         <ToolButton
           disabled
           icon={<Icon>➕</Icon>}

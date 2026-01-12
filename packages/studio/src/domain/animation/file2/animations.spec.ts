@@ -6,6 +6,7 @@ import {
   getNextAnimationId,
   hasAnimations,
   hasAnimationsWithData,
+  renameAnimation,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import { newFile } from "@/domain/animation/file2/new";
@@ -87,15 +88,26 @@ describe("addAnimation", () => {
   it("adds a new animation with the specified name", () => {
     const file = newFile();
 
-    const updatedFile = addAnimation("jump")(file);
+    const updatedFile = addAnimation()(file);
 
     expect(Object.keys(updatedFile.animations)).toHaveLength(1);
     const addedAnimation = updatedFile.animations["0"];
     expect(addedAnimation).toBeDefined();
-    expect(addedAnimation.name).toBe("jump");
+    expect(addedAnimation.name).toBe("animation 1");
     expect(addedAnimation.tracks).toEqual([]);
     expect(addedAnimation.events).toEqual([]);
     expect(addedAnimation.looping).toBe(false);
+  });
+});
+
+describe("renameAnimation", () => {
+  it("renames the specified animation", () => {
+    const file = fileBuilder().addAnimation("walk").build();
+
+    const updatedFile = renameAnimation("0", "run")(file);
+
+    expect(file.animations["0"].name).toBe("walk");
+    expect(updatedFile.animations["0"].name).toBe("run");
   });
 });
 
