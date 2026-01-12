@@ -2,7 +2,10 @@ import { type FC, useState } from "react";
 
 import { useFile } from "@/application/state/FileContext";
 import type { AddAnimationDetails } from "@/domain/animation/file2/animations";
-import { addAnimation } from "@/domain/animation/file2/animations";
+import {
+  addAnimation,
+  deleteAnimation,
+} from "@/domain/animation/file2/animations";
 import {
   AnimationsContainer,
   Icon,
@@ -129,6 +132,10 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
             file={file}
             isPlaying={animationsPlaying.includes(animationId)}
             key={animationId}
+            onDelete={() => {
+              setFile(deleteAnimation(animationId));
+              setSelectedAnimation(null);
+            }}
             onFrameSelect={onFrameSelect}
             onPlay={() => {
               onStartAnimation?.(animationId);

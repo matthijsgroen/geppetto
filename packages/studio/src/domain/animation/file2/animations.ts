@@ -121,3 +121,8 @@ export const addControlFrameToAnimation = (
 
     track.actions.push(action);
   });
+
+export const deleteAnimation = (animationId: string) =>
+  produce<GeppettoImage>((draft) => {
+    delete draft.animations[animationId];
+  });

@@ -3,6 +3,7 @@ import type { AnimationControlTrack } from "geppetto-player";
 import {
   addAnimation,
   addControlFrameToAnimation,
+  deleteAnimation,
   getNextAnimationId,
   hasAnimations,
   hasAnimationsWithData,
@@ -97,6 +98,17 @@ describe("addAnimation", () => {
     expect(addedAnimation.tracks).toEqual([]);
     expect(addedAnimation.events).toEqual([]);
     expect(addedAnimation.looping).toBe(false);
+  });
+});
+
+describe("deleteAnimation", () => {
+  it("deletes the specified animation", () => {
+    const file = fileBuilder().addAnimation("walk").build();
+
+    const updatedFile = deleteAnimation("0")(file);
+
+    expect(file.animations["0"]).toBeDefined();
+    expect(updatedFile.animations["0"]).toBeUndefined();
   });
 });
 

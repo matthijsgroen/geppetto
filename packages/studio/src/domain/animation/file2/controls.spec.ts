@@ -96,6 +96,19 @@ describe("removeControls", () => {
     expect(updatedFile.controlHierarchy).not.toHaveProperty(controlId);
     expect(updatedFile.controls).not.toHaveProperty(controlId);
   });
+
+  it("removes related track data from animations", () => {
+    const file = fileBuilder()
+      .addControl("Control")
+      .addAnimation("Animation")
+      .addControlFrame("Control", 0, 10, 1.0)
+      .build();
+    const controlId = getControlIdByName(file, "Control");
+
+    const updatedFile = removeControls([controlId])(file);
+    const animation = Object.values(updatedFile.animations)[0];
+    expect(animation.tracks).toHaveLength(0);
+  });
 });
 
 describe("insertControlStep", () => {

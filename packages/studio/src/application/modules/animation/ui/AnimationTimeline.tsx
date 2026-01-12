@@ -44,6 +44,7 @@ type AnimationTimelineProps = {
   onPlay?: () => void;
   onStop?: () => void;
   onFrameSelect?: (frame: AnimationFrame) => void;
+  onDelete?: () => void;
   selected: boolean;
   selectedTimeBar?: AnimationFrame | null;
 };
@@ -56,6 +57,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   onStop,
 
   onSelect,
+  onDelete,
   onFrameSelect,
   selected,
   selectedTimeBar,
@@ -125,9 +127,11 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
             >
               Loop animation
             </MenuItem>
-            <MenuItem dangerous onClick={() => {}} type="checkbox">
-              Delete
-            </MenuItem>
+            {onDelete && (
+              <MenuItem dangerous onClick={onDelete} type="checkbox">
+                Delete
+              </MenuItem>
+            )}
           </Menu>
         </ToolBar>
       }
