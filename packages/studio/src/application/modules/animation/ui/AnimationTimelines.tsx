@@ -104,7 +104,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
         >
           <MenuHeader>Grid size</MenuHeader>
           <MenuRadioGroup value={zoom}>
-            {[0.25, 0.5, 1, 2, 4].map((zoomLevel) => (
+            {[0.25, 0.5, 1, 2, 4, 8].map((zoomLevel) => (
               <MenuItem
                 key={`zoom${zoomLevel}`}
                 onClick={() => {
