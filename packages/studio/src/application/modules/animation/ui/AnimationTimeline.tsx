@@ -3,15 +3,20 @@ import type {
   AnimationVisibilityTrack,
   FrameControlAction,
   FrameLayerVisibilityAction,
-  GeppettoImage,
 } from "@geppetto/types";
 import { type FC, useEffect, useRef } from "react";
 
+import { useFile } from "@/application/state/FileContext";
+import {
+  renameAnimation,
+  updateLoopingAnimation,
+} from "@/domain/animation/file2/animations";
 import {
   AnimationTrack as AnimationTrackComponent,
   Icon,
   Menu,
   MenuItem,
+  RenameInput,
   TimeBar,
   TimeLineEndHandle,
   TimePin,
@@ -37,7 +42,6 @@ export type AnimationFrame = AnimationControlFrame | AnimationVisibilityFrame;
 
 type AnimationTimelineProps = {
   animationId: string;
-  file: GeppettoImage;
   isPlaying?: boolean;
 
   onSelect: () => void;
@@ -51,7 +55,6 @@ type AnimationTimelineProps = {
 
 export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   animationId,
-  file,
   isPlaying = false,
   onPlay,
   onStop,
@@ -62,6 +65,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   selected,
   selectedTimeBar,
 }) => {
+  const [file, setFile] = useFile();
   const animation = file.animations[animationId];
 
   const trackNames = animation.tracks.map((track) =>
@@ -117,12 +121,13 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
             portal
             position="auto"
           >
-            <MenuItem onClick={() => {}} type="checkbox">
-              Rename
-            </MenuItem>
             <MenuItem
               checked={animation.looping}
-              onClick={() => {}}
+              onClick={() => {
+                setFile(
+                  updateLoopingAnimation(animationId, !animation.looping)
+                );
+              }}
               type="checkbox"
             >
               Loop animation
@@ -138,7 +143,15 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
       key={animationId}
       length={animationLength / 1000}
       loop={animation.looping}
-      name={animation.name}
+      name={
+        <RenameInput
+          align="right"
+          onRename={(newName) => {
+            setFile(renameAnimation(animationId, newName));
+          }}
+          value={animation.name}
+        />
+      }
       onSelect={onSelect}
       ref={trackRef}
       selected={selected}

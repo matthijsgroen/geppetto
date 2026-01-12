@@ -12,7 +12,7 @@ type AnimationTrackProps = PropsWithChildren<{
   extraContent?: React.ReactNode;
   length?: TimeStamp;
   loop?: boolean;
-  name: string;
+  name: React.ReactNode;
   onSelect?: () => void;
   ref?: Ref<HTMLDivElement>;
   selected?: boolean;

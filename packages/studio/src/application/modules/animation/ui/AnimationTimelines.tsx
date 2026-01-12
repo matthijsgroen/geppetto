@@ -129,7 +129,6 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
         {Object.keys(file.animations).map((animationId) => (
           <AnimationTimeline
             animationId={animationId}
-            file={file}
             isPlaying={animationsPlaying.includes(animationId)}
             key={animationId}
             onDelete={() => {
@@ -150,7 +149,9 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
               onStopAnimation?.(animationId);
             }}
             selected={selectedAnimation === animationId}
-            selectedTimeBar={selectedFrame}
+            selectedTimeBar={
+              selectedAnimation === animationId ? selectedFrame : null
+            }
           />
         ))}
       </AnimationsContainer>

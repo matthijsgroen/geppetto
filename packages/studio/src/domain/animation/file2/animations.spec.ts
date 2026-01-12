@@ -121,6 +121,28 @@ describe("renameAnimation", () => {
     expect(file.animations["0"].name).toBe("walk");
     expect(updatedFile.animations["0"].name).toBe("run");
   });
+
+  it("adds a suffix if the name already exists", () => {
+    const file = fileBuilder().addAnimation("walk").addAnimation("run").build();
+
+    const updatedFile = renameAnimation("0", "run")(file);
+
+    expect(file.animations["0"].name).toBe("walk");
+    expect(updatedFile.animations["0"].name).toBe("run 2");
+  });
+
+  it("adds a suffix if the name already exists", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addAnimation("run")
+      .addAnimation("run 2")
+      .build();
+
+    const updatedFile = renameAnimation("0", "run")(file);
+
+    expect(file.animations["0"].name).toBe("walk");
+    expect(updatedFile.animations["0"].name).toBe("run 3");
+  });
 });
 
 describe("addControlFrameToAnimation", () => {

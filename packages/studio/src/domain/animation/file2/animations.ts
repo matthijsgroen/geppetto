@@ -32,9 +32,9 @@ export const getAnimationName = (file: GeppettoImage) => {
   return `animation ${id}`;
 };
 
-export const updateLoopingAnimation = (animationID: string, looping: boolean) =>
+export const updateLoopingAnimation = (animationId: string, looping: boolean) =>
   produce<GeppettoImage>((draft) => {
-    draft.animations[animationID].looping = looping;
+    draft.animations[animationId].looping = looping;
   });
 
 export type AddAnimationDetails = {
@@ -66,8 +66,19 @@ export const addAnimation = (
 export const renameAnimation = (animationId: string, newName: string) =>
   produce<GeppettoImage>((draft) => {
     const animation = draft.animations[animationId];
+    const existingNames = Object.entries(draft.animations)
+      .filter(([id]) => id !== animationId)
+      .map(([, a]) => a.name);
+
+    let uniqueName = newName;
+    let counter = 2;
+    while (existingNames.includes(uniqueName)) {
+      uniqueName = `${newName} ${counter}`;
+      counter++;
+    }
+
     if (animation) {
-      animation.name = newName;
+      animation.name = uniqueName;
     }
   });
 
