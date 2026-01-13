@@ -35,7 +35,7 @@ export const TimeBar: FC<{
       className={clsx(
         "absolute z-10 flex items-center justify-between gap-0.5 rounded-control-small border",
         activeVariant === "default" &&
-          "h-5 cursor-pointer shadow-sm hover:bg-control-highlight focus:outline-control-focus",
+          "h-5 cursor-pointer shadow-sm hover:bg-control-highlight focus:z-20 focus:outline-2 focus:outline-control-focus",
         activeVariant === "mini" && "h-0.5",
         selected && "border-control-focus bg-control-active",
         !selected && "border-control-edge bg-toolbar"

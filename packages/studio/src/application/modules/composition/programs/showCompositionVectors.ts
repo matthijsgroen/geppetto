@@ -4,8 +4,8 @@ import {
   isShapeMutationVector,
   type Keyframe,
   type MutationVector,
+  type TranslationVector,
 } from "@geppetto/types";
-import { type TranslationVector } from "geppetto-player";
 
 import { collectChildIds, visit } from "@/domain/animation/file2/hierarchy";
 import { type ScreenTranslation } from "@/dtos/application.dto";

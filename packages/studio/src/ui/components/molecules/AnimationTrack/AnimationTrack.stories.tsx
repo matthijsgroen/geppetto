@@ -2,9 +2,12 @@ import preview from "@sb/preview";
 
 import {
   AnimationsContainer,
+  Icon,
   TimeBar,
   TimeLineEndHandle,
   TimePin,
+  ToolBar,
+  ToolButton,
 } from "@/ui/components";
 
 import { AnimationTrack as AnimationTrackComponent } from "./AnimationTrack";
@@ -15,6 +18,7 @@ const meta = preview.meta({
   argTypes: {
     trackNames: { control: false },
     children: { control: false },
+    extraContent: { control: false },
     length: { control: { type: "number", min: 0, max: 30, step: 1 } },
   },
   args: {
@@ -51,3 +55,13 @@ const meta = preview.meta({
 export default meta;
 
 export const AnimationTrack = meta.story({});
+export const WithExtraContent = meta.story({
+  args: {
+    extraContent: (
+      <ToolBar size="minimal" transparent>
+        <ToolButton icon={<Icon>▶</Icon>} tooltip="Play" />
+        <ToolButton icon={<Icon>⋯</Icon>} tooltip="Menu" />
+      </ToolBar>
+    ),
+  },
+});

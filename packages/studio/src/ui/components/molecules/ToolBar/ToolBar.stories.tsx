@@ -13,12 +13,12 @@ const meta = preview.meta({
   component: ToolBar,
   argTypes: {
     children: { control: false },
-    size: { control: "radio", options: ["default", "small"] },
-    vertical: { control: "boolean" },
+    size: { control: "radio", options: ["default", "small", "minimal"] },
   },
   args: {
     size: "default",
     vertical: false,
+    transparent: false,
     children: [
       <ToolTab active key="tab0" label="Canvas" />,
       <ToolButton icon={<Icon>💡</Icon>} key={0} />,
@@ -39,6 +39,10 @@ export const Default = meta.story({
 
 export const Small = meta.story({
   args: { size: "small" },
+});
+
+export const Minimal = meta.story({
+  args: { size: "minimal" },
 });
 
 export const Narrow = meta.story({

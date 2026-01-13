@@ -56,7 +56,7 @@ export const ToolButton: FC<ToolButtonProps> = ({
           "bg-control-interaction text-text": !active && standAlone,
           "bg-control-active text-active": active,
           "h-6 min-w-6 justify-center rounded-control-small px-1 text-xs":
-            useSize === "small",
+            useSize === "small" || useSize === "minimal",
           "inline-block h-8 min-w-8 rounded-control px-2":
             useSize === "default",
           "before:absolute before:block before:size-2.5 before:rounded-full before:bg-notification before:text-transparent before:content-['.']":
@@ -64,7 +64,7 @@ export const ToolButton: FC<ToolButtonProps> = ({
           "before:-top-1 before:-right-1":
             notificationBadge && useSize === "default",
           "before:-top-0.5 before:-right-0.5":
-            notificationBadge && useSize === "small",
+            notificationBadge && (useSize === "small" || useSize === "minimal"),
           "shadow-md": standAlone,
         }
       )}

@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
 import type {
   AnimationControlFrame,
   AnimationFrame,
@@ -8,6 +9,7 @@ import { AnimationTimelines } from "@/application/modules/animation/ui/Animation
 import { ControlFrameEdit } from "@/application/modules/animation/ui/ControlFrameEdit";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFile } from "@/application/state/FileContext";
+import { useUpdateScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { SectionSelector } from "@/application/ui/SectionSelector";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
@@ -15,13 +17,11 @@ import {
   Column,
   Icon,
   Panel,
-  PanelTitle,
   ResizeDirection,
   ResizePanel,
   ToolBar,
   ToolButton,
   ToolSeparator,
-  ToolSpacer,
 } from "@/ui/components";
 
 type AnimationModuleProps = {
@@ -41,6 +41,8 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
 }) => {
   const [file] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
+  const resetZoom = useUpdateScreenTranslation();
+  const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
 
   return (
     <Column>
@@ -51,18 +53,40 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           activeSection="animation"
           onSectionChange={onSectionChange}
         />
+        <ToolSeparator />
+        <ToolButton
+          icon={<Icon colorize>⛶</Icon>}
+          label="Fit"
+          onClick={() => {
+            resetZoom(() => ({
+              zoom: 1.0,
+              scale: 1.0,
+              panX: 0,
+              panY: 0,
+            }));
+          }}
+          tooltip="Fit to screen"
+        />
       </ToolBar>
       <Panel center workspace>
+        {texture && hasControls(file) && (
+          <AnimationCanvas
+            animationsPlaying={animationsPlaying}
+            file={file}
+            image={texture}
+          >
+            {activeFrame && isControlFrame(activeFrame) && (
+              <ControlFrameEdit
+                actionIndex={activeFrame.actionIndex}
+                animationId={activeFrame.animationId}
+                frame={activeFrame.frame}
+                track={activeFrame.track}
+              />
+            )}
+          </AnimationCanvas>
+        )}
         {(!texture || !hasControls(file)) && (
           <StartupScreen file={file} texture={texture} />
-        )}
-        {activeFrame && isControlFrame(activeFrame) && (
-          <ControlFrameEdit
-            actionIndex={activeFrame.actionIndex}
-            animationId={activeFrame.animationId}
-            frame={activeFrame.frame}
-            track={activeFrame.track}
-          />
         )}
       </Panel>
       {texture && hasControls(file) && (
@@ -71,50 +95,21 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           direction={ResizeDirection.North}
           minSize={50}
         >
-          <Panel padding="sm">
-            <ToolBar>
-              <PanelTitle>Animations</PanelTitle>
-              <ToolButton
-                disabled
-                icon={<Icon>⏮️</Icon>}
-                tooltip="Go to start"
-              />
-              <ToolButton
-                disabled
-                icon={<Icon>▶️</Icon>}
-                tooltip="Play/Pause"
-              />
-              <ToolButton disabled icon={<Icon>⏭️</Icon>} tooltip="Go to end" />
-              <ToolSeparator />
-              <ToolButton
-                disabled
-                icon={<Icon>➕</Icon>}
-                label="Animation"
-                tooltip="Add Animation track"
-              />
-              <ToolButton
-                disabled
-                icon={<Icon>➕</Icon>}
-                label="Event"
-                tooltip="Add Event"
-              />
-              <ToolButton
-                disabled
-                icon={<Icon>➕</Icon>}
-                label="Control"
-                tooltip="Add Control layer"
-              />
-              <ToolSpacer />
-              <ToolButton disabled icon={<Icon>?</Icon>} tooltip="Help" />
-            </ToolBar>
-            <AnimationTimelines
-              onFrameSelect={(frame) => {
-                setActiveFrame(frame);
-              }}
-              selectedFrame={activeFrame}
-              zoom={2}
-            />
-          </Panel>
+          <AnimationTimelines
+            animationsPlaying={animationsPlaying}
+            onFrameSelect={(frame) => {
+              setActiveFrame(frame);
+            }}
+            onStartAnimation={(id) =>
+              setAnimationsPlaying((prev) => [...prev, id])
+            }
+            onStopAnimation={(id) =>
+              setAnimationsPlaying((prev) =>
+                prev.filter((animId) => animId !== id)
+              )
+            }
+            selectedFrame={activeFrame}
+          />
         </ResizePanel>
       )}
     </Column>

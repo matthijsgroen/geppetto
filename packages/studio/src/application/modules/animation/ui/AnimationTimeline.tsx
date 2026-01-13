@@ -3,15 +3,25 @@ import type {
   AnimationVisibilityTrack,
   FrameControlAction,
   FrameLayerVisibilityAction,
-  GeppettoImage,
 } from "@geppetto/types";
-import type { FC } from "react";
+import { type FC, useEffect, useRef } from "react";
 
+import { useFile } from "@/application/state/FileContext";
+import {
+  renameAnimation,
+  updateLoopingAnimation,
+} from "@/domain/animation/file2/animations";
 import {
   AnimationTrack as AnimationTrackComponent,
+  Icon,
+  Menu,
+  MenuItem,
+  RenameInput,
   TimeBar,
   TimeLineEndHandle,
   TimePin,
+  ToolBar,
+  ToolButton,
 } from "@/ui/components";
 
 export type AnimationControlFrame = {
@@ -30,21 +40,32 @@ export type AnimationVisibilityFrame = {
 
 export type AnimationFrame = AnimationControlFrame | AnimationVisibilityFrame;
 
-export const AnimationTimeline: FC<{
+type AnimationTimelineProps = {
   animationId: string;
-  file: GeppettoImage;
+  isPlaying?: boolean;
+
   onSelect: () => void;
+  onPlay?: () => void;
+  onStop?: () => void;
   onFrameSelect?: (frame: AnimationFrame) => void;
+  onDelete?: () => void;
   selected: boolean;
   selectedTimeBar?: AnimationFrame | null;
-}> = ({
+};
+
+export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   animationId,
-  file,
+  isPlaying = false,
+  onPlay,
+  onStop,
+
   onSelect,
+  onDelete,
   onFrameSelect,
   selected,
   selectedTimeBar,
 }) => {
+  const [file, setFile] = useFile();
   const animation = file.animations[animationId];
 
   const trackNames = animation.tracks.map((track) =>
@@ -62,13 +83,77 @@ export const AnimationTimeline: FC<{
     ...animation.events.map((event) => event.start)
   );
 
+  const trackRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (selected && trackRef.current) {
+      trackRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [selected]);
+
   return (
     <AnimationTrackComponent
+      extraContent={
+        <ToolBar size="minimal" transparent>
+          {isPlaying ? (
+            <ToolButton
+              icon={<Icon colorize>■</Icon>}
+              onClick={onStop}
+              tooltip="Stop"
+            />
+          ) : (
+            <ToolButton
+              icon={<Icon colorize>▶</Icon>}
+              onClick={onPlay}
+              tooltip="Play"
+            />
+          )}
+          <Menu
+            arrow
+            direction="right"
+            menuButton={({ open }) => (
+              <ToolButton
+                active={open}
+                icon={<Icon colorize>⋯</Icon>}
+                tooltip="Options"
+              />
+            )}
+            menuStyle={{ fontSize: "1rem" }}
+            portal
+            position="auto"
+          >
+            <MenuItem
+              checked={animation.looping}
+              onClick={() => {
+                setFile(
+                  updateLoopingAnimation(animationId, !animation.looping)
+                );
+              }}
+              type="checkbox"
+            >
+              Loop animation
+            </MenuItem>
+            {onDelete && (
+              <MenuItem dangerous onClick={onDelete} type="checkbox">
+                Delete
+              </MenuItem>
+            )}
+          </Menu>
+        </ToolBar>
+      }
       key={animationId}
       length={animationLength / 1000}
       loop={animation.looping}
-      name={animation.name}
+      name={
+        <RenameInput
+          align="right"
+          onRename={(newName) => {
+            setFile(renameAnimation(animationId, newName));
+          }}
+          value={animation.name}
+        />
+      }
       onSelect={onSelect}
+      ref={trackRef}
       selected={selected}
       trackNames={trackNames}
     >

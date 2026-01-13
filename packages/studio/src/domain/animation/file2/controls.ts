@@ -54,6 +54,11 @@ export const removeControls = (controlIds: string[]) =>
       const [result] = removeFromHierarchy(draft.controlHierarchy, controlId);
       draft.controlHierarchy = result;
       delete draft.controls[controlId];
+      for (const animation of Object.values(draft.animations)) {
+        animation.tracks = animation.tracks.filter(
+          (track) => track.type !== "control" || track.controlId !== controlId
+        );
+      }
     }
   });
 

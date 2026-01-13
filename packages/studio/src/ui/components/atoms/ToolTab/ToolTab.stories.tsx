@@ -10,12 +10,22 @@ const meta = preview.meta({
   component: ToolTabComponent,
   argTypes: {
     icon: { control: false },
+    ref: { control: false },
     label: { control: "text" },
+    size: { control: "radio", options: ["default", "small", "minimal"] },
+    active: { control: "boolean" },
+    disabled: { control: "boolean" },
+    vertical: { control: "boolean" },
+    onClick: { action: "clicked" },
+    onKeyDown: { action: "keyed down" },
   },
   args: {
     disabled: false,
     active: false,
     vertical: false,
+    label: "",
+    size: "default",
+    tooltip: "Tool Tab",
     onClick: fn(),
   },
 });
