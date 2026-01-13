@@ -168,13 +168,13 @@ const AnimationControls: FunctionComponent<Props> = ({
                   }
                   onClick={() => {
                     if (trackStates[a.name] === true) {
-                      controls.stopTrack(a.name);
+                      controls.stopAnimation (a.name);
                       setTrackStates((state) => ({
                         ...state,
                         [a.name]: false,
                       }));
                     } else {
-                      controls.startTrack(a.name);
+                      controls.startAnimation(a.name);
                       setTrackStates((state) => ({ ...state, [a.name]: true }));
                     }
                   }}

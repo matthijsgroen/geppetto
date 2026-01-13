@@ -140,7 +140,7 @@ export type AnimationControls = {
    *
    * - A control is used that is conflicting with an animation track.
    * - Another track is started that is conflicting with an animation track.
-   * - A track is stopped using `stopTrack`
+   * - A track is stopped using `stopAnimation `
    *
    * @param callback function to call when tracks are stopped.
    * The first argument will be the trackname.

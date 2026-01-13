@@ -54,13 +54,13 @@ const butterFly = async (scenery: AnimationControls) => {
   scenery.setControlValue("ButterflyY", current.y);
   scenery.setControlValue("ButterflyZoom", current.z);
 
-  scenery.startTrack("ButterflyWings", { speed: 0.2 });
+  scenery.startAnimation("ButterflyWings", { speed: 0.2 });
   await delayFrames("bfParked", 320);
   let isFlying = false;
 
   const flyTo = (x: number, y: number, z: number) => {
     if (!isFlying) {
-      scenery.startTrack("ButterflyWings");
+      scenery.startAnimation("ButterflyWings");
       isFlying = true;
     }
     if (x < current.x) {
@@ -106,14 +106,14 @@ const butterFly = async (scenery: AnimationControls) => {
     if (destination > 0.95) {
       await flyTo(REST_TOADSTOOL.x, REST_TOADSTOOL.y, REST_TOADSTOOL.z);
       if (isFlying) {
-        scenery.startTrack("ButterflyWings", { speed: 0.2 });
+        scenery.startAnimation("ButterflyWings", { speed: 0.2 });
         isFlying = false;
       }
       await delayFrames("bfParked", 320);
     } else if (destination < 0.05) {
       await flyTo(REST_STUMP.x, REST_STUMP.y, REST_STUMP.z);
       if (isFlying) {
-        scenery.startTrack("ButterflyWings", { speed: 0.2 });
+        scenery.startAnimation("ButterflyWings", { speed: 0.2 });
         isFlying = false;
       }
       await delayFrames("bfParked", 320);
@@ -172,8 +172,8 @@ const playDialog = async (
 };
 
 const Demo: React.VFC = () => {
-  const animationRef = useRef<AnimationControls>();
-  const characterRef = useRef<AnimationControls>();
+  const animationRef = useRef<AnimationControls>(null);
+  const characterRef = useRef<AnimationControls>(null);
   const [dialogText, setDialogText] = useState<string | null>(null);
 
   const dialogDoneRef = useRef(() => {});
@@ -185,9 +185,9 @@ const Demo: React.VFC = () => {
   const getInnkeeperControls = useCallback(
     (animationControl: AnimationControls) => {
       characterRef.current = animationControl;
-      animationControl.startTrack("Eye blink");
-      animationControl.startTrack("HeadTilt");
-      animationControl.startTrack("Sweeping");
+      animationControl.startAnimation("Eye blink");
+      animationControl.startAnimation("HeadTilt");
+      animationControl.startAnimation("Sweeping");
     },
     []
   );
@@ -196,29 +196,29 @@ const Demo: React.VFC = () => {
     (animationControl: AnimationControls) => {
       animationRef.current = animationControl;
 
-      animationControl.startTrack("Wheel");
-      animationControl.startTrack("WheelBlades");
-      animationControl.startTrack("Tree");
-      animationControl.startTrack("Bird");
-      animationControl.startTrack("Cloud1", { speed: 0.15 });
-      animationControl.startTrack("Cloud2", { speed: 0.1 });
-      animationControl.startTrack("Cloud3", { speed: 0.15 });
-      animationControl.startTrack("Day night", { speed: 0.125 });
-      animationControl.startTrack("Eyes");
-      animationControl.startTrack("Smoke");
-      animationControl.startTrack("Water");
+      animationControl.startAnimation("Wheel");
+      animationControl.startAnimation("WheelBlades");
+      animationControl.startAnimation("Tree");
+      animationControl.startAnimation("Bird");
+      animationControl.startAnimation("Cloud1", { speed: 0.15 });
+      animationControl.startAnimation("Cloud2", { speed: 0.1 });
+      animationControl.startAnimation("Cloud3", { speed: 0.15 });
+      animationControl.startAnimation("Day night", { speed: 0.125 });
+      animationControl.startAnimation("Eyes");
+      animationControl.startAnimation("Smoke");
+      animationControl.startAnimation("Water");
       butterFly(animationControl);
 
       animationControl.onEvent((eventName) => {
         if (eventName === "evening") {
-          animationControl.startTrack("LightFlicker");
-          animationControl.stopTrack("Bird");
+          animationControl.startAnimation("LightFlicker");
+          animationControl.stopAnimation ("Bird");
         }
         if (eventName === "endNight") {
-          animationControl.startTrack("LightOff");
+          animationControl.startAnimation("LightOff");
         }
         if (eventName === "morning") {
-          animationControl.startTrack("Bird");
+          animationControl.startAnimation("Bird");
         }
       });
     },
@@ -246,18 +246,18 @@ const Demo: React.VFC = () => {
                   innKeeperClose.panY
                 );
                 await delayFrames("startTalking", 60);
-                characterRef.current.startTrack("PauseSweeping");
+                characterRef.current.startAnimation("PauseSweeping");
 
                 const say = async (text: string) => {
-                  characterRef.current.startTrack("Talking", { startAt: 800 });
-                  characterRef.current.startTrack("Eyebrows");
+                  characterRef.current.startAnimation("Talking", { startAt: 800 });
+                  characterRef.current.startAnimation("Eyebrows");
                   await new Promise<void>((resolve) => {
                     dialogDoneRef.current = resolve;
                     setDialogText(text);
                   });
                   setDialogText(null);
-                  characterRef.current.startTrack("StopTalking");
-                  characterRef.current.startTrack("EyebrowReset");
+                  characterRef.current.startAnimation("StopTalking");
+                  characterRef.current.startAnimation("EyebrowReset");
                 };
 
                 await playDialog(dialogTree, say);
@@ -268,7 +268,7 @@ const Demo: React.VFC = () => {
                   innKeeperDistance.panY
                 );
                 setInteracting(false);
-                characterRef.current.startTrack("Sweeping");
+                characterRef.current.startAnimation("Sweeping");
               },
               cursor: "pointer",
             },

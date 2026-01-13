@@ -1,5 +1,4 @@
-import React, { useCallback } from "react";
-import clsx from "clsx";
+import  { useCallback } from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
@@ -11,49 +10,42 @@ import sceneryTextureUrl from "@site/static/demo-assets/scenery.png";
 import socialImageUrl from "@site/static/img/static-image.jpg";
 import fallbackUrl from "@site/static/img/static-homepage.jpg";
 import { AnimationControls, ImageDefinition } from "geppetto-player";
-import { animationTween, tick } from "../components/tween";
+import {  tick } from "../components/tween";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 
-const DAY = 0.1;
-const NIGHT = 1.5;
+const DAY = 0.0;
+const NIGHT = 0.5;
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
   const onAnimationReady = useCallback((controls: AnimationControls) => {
-    controls.startTrack("Wheel");
-    controls.startTrack("WheelBlades");
-    controls.startTrack("Tree");
-    controls.startTrack("Bird");
-    controls.startTrack("Cloud1", { speed: 0.15 });
-    controls.startTrack("Cloud2", { speed: 0.1 });
-    controls.startTrack("Cloud3", { speed: 0.15 });
-    controls.startTrack("Smoke");
-    controls.startTrack("Water");
-    controls.startTrack("LightOff");
+    controls.startAnimation("Wheel");
+    controls.startAnimation("WheelBlades");
+    controls.startAnimation("Tree");
+    controls.startAnimation("Bird");
+    controls.startAnimation("Cloud1", { speed: 0.15 });
+    controls.startAnimation("Cloud2", { speed: 0.1 });
+    controls.startAnimation("Cloud3", { speed: 0.15 });
+    controls.startAnimation("Smoke");
+    controls.startAnimation("Water");
+    controls.startAnimation("LightOff");
     const html = document.querySelector("html");
 
     let mode = "light";
     let position = DAY;
-    const speed = 0.03;
     controls.setControlValue("DayNight", position);
 
     const updateMode = () => {
-      if (html.getAttribute("data-theme") === "light" && mode === "dark") {
-        animationTween("daylight", position, DAY, speed, (value) => {
-          position = value;
-          controls.setControlValue("DayNight", value);
-        });
-        controls.startTrack("LightOff");
+      if (html && html.getAttribute("data-theme") === "light" && mode === "dark") {
+        controls.tweenControlTo("DayNight", DAY, 1_000, { easing: "easeInOut" });
+        controls.startAnimation("LightOff");
         mode = "light";
       } else if (
-        html.getAttribute("data-theme") === "dark" &&
+        html && html.getAttribute("data-theme") === "dark" &&
         mode === "light"
       ) {
-        animationTween("daylight", position, NIGHT, speed, (value) => {
-          position = value;
-          controls.setControlValue("DayNight", value);
-        });
-        controls.startTrack("LightFlicker");
+        controls.tweenControlTo("DayNight", NIGHT, 1_000, { easing: "easeInOut" });
+        controls.startAnimation("LightFlicker");
         mode = "dark";
       }
     };
@@ -88,7 +80,7 @@ function HomepageHeader() {
               <Animation
                 animation={scenery as unknown as ImageDefinition}
                 textureUrl={sceneryTextureUrl}
-                options={{ zoom: 2.95, panY: -0.1, panX: 0.05 }}
+                options={{ fitMode: "cover", panY: -0.2 }}
                 onAnimationReady={onAnimationReady}
               />
             </Player>
