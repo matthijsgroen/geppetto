@@ -72,27 +72,4 @@ export const StartupScreen: React.FC<StartupScreenProps> = ({
       </div>
     </div>
   );
-  // }
-
-  // if (
-  //   (screen === "composition" || screen === "animation") &&
-  //   texture &&
-  //   !hasPoints(file)
-  // ) {
-  //   return (
-  //     <p>
-  //       No layers with a surface. Add a layer in the &ldquo;Layers&rdquo;
-  //       screen.
-  //     </p>
-  //   );
-  // }
-  // if (screen === "animation" && texture && !hasControls(file)) {
-  //   return (
-  //     <p>
-  //       No Controls defined. Add a control in the &ldquo;Composition&rdquo;
-  //       screen.
-  //     </p>
-  //   );
-  // }
-  // return null;
 };
