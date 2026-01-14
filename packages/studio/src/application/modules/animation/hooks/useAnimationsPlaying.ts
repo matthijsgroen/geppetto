@@ -5,9 +5,25 @@ import { useEffect, useRef } from "react";
 export const useAnimationsPlaying = (
   animationControlsRef: RefObject<AnimationControls | null>,
   file: GeppettoImage,
-  animationsPlaying: string[]
+  animationsPlaying: string[],
+  onStop?: (animationId: string) => void
 ) => {
   const animationsPlayingRef = useRef<string[]>([]);
+  useEffect(() => {
+    if (!animationControlsRef.current) return;
+    const unsubscribe = animationControlsRef.current.onTrackStopped(
+      (animationName: string) => {
+        const animationEntry = Object.entries(file.animations).find(
+          ([, animation]) => animation.name === animationName
+        );
+        if (animationEntry) {
+          const [animationId] = animationEntry;
+          onStop?.(animationId);
+        }
+      }
+    );
+    return unsubscribe;
+  }, [animationControlsRef, file.animations, onStop]);
   useEffect(() => {
     if (!animationControlsRef.current) return;
     if (
@@ -33,5 +49,5 @@ export const useAnimationsPlaying = (
       animationControlsRef.current?.stopAnimation(animationName);
     });
     animationsPlayingRef.current = animationsPlaying;
-  }, [animationsPlaying, file.animations, animationControlsRef]);
+  }, [animationsPlaying, file.animations, animationControlsRef, onStop]);
 };

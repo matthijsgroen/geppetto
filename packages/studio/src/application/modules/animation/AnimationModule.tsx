@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
 import type {
@@ -44,6 +44,12 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
   const resetZoom = useUpdateScreenTranslation();
   const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
 
+  const stopAnimationState = useCallback((animationId: string) => {
+    setAnimationsPlaying((prev) =>
+      prev.filter((animId) => animId !== animationId)
+    );
+  }, []);
+
   return (
     <Column>
       <ToolBar>
@@ -74,6 +80,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
             animationsPlaying={animationsPlaying}
             file={file}
             image={texture}
+            onStop={stopAnimationState}
           >
             {activeFrame && isControlFrame(activeFrame) && (
               <ControlFrameEdit

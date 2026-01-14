@@ -6,6 +6,7 @@ export type TimePlayIndicatorProps = {
   loop?: boolean;
   duration: number;
   trackIndex?: number;
+  selected?: boolean;
 };
 
 export const TimePlayIndicator: FC<TimePlayIndicatorProps> = ({
@@ -13,13 +14,15 @@ export const TimePlayIndicator: FC<TimePlayIndicatorProps> = ({
   loop = false,
   trackIndex,
   duration,
+  selected = false,
 }) => {
   return playing ? (
     <div
       className={clsx("absolute top-0 z-10 mx-2", {
         "play-indicator-(--length)/loop": loop,
         "play-indicator-(--length)/once": !loop,
-        "h-6": trackIndex === undefined,
+        "h-6": trackIndex === undefined && selected,
+        "bottom-0": trackIndex === undefined && !selected,
         "h-5": trackIndex !== undefined,
       })}
       style={

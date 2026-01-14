@@ -16,6 +16,7 @@ export { TimeBar } from "./atoms/TimeBar/TimeBar";
 export { TimeCurve } from "./atoms/TimeCurve/TimeCurve";
 export { TimeLineEndHandle } from "./atoms/TimeLineEndHandle/TimeLineEndHandle";
 export { TimePin } from "./atoms/TimePin/TimePin";
+export { TimePlayIndicator } from "./atoms/TimePlayIndicator/TimePlayIndicator";
 export { Title } from "./atoms/Title/Title";
 export { TodoItem } from "./atoms/TodoItem/TodoItem";
 export { ToggleInput } from "./atoms/ToggleInput/ToggleInput";

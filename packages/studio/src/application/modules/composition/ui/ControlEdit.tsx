@@ -71,9 +71,11 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   const [slideValue, setSlideValue] = useState(controlValue);
   useEffect(() => {
     if (activeControlId) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSlideValue(controlValue);
     }
   }, [activeControlId, controlValue]);
+
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     if (activeControlId === null) return;
     const value = e.currentTarget.valueAsNumber;
@@ -272,9 +274,11 @@ export const ControlEditSteps: React.FC<ControlEditStepProps> = ({
             onClick={handleDeleteStepContext}
             shortcut={{ interaction: "DelOrBackspace" }}
           >
-            Delete step
+            Delete step {selectedStep + 1}
           </MenuItem>
-          <MenuItem onClick={handleAddStepContext}>Insert step</MenuItem>
+          <MenuItem onClick={handleAddStepContext}>
+            Insert step before {selectedStep + 1}
+          </MenuItem>
         </ControlledMenu>
 
         <Control label="Steps">
