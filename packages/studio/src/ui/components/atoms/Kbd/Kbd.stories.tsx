@@ -50,6 +50,8 @@ const meta = preview.meta({
         "Delete",
         "DelOrBackspace",
         "MouseDrag",
+        "Undo",
+        "Redo",
       ],
       control: "select",
     },

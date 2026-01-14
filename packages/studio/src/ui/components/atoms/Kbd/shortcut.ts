@@ -8,6 +8,8 @@ const keyMap = {
   Delete: "Del",
   Backspace: "Backspace",
   DelOrBackspace: "Del",
+  Undo: "Z",
+  Redo: "Y",
 };
 
 const mouseMap = {
@@ -22,6 +24,8 @@ const macKeyMap: Record<SpecialKeys, string> = {
   Delete: "⌦",
   Backspace: "⌫",
   DelOrBackspace: "⌫",
+  Undo: "Z",
+  Redo: "Z",
 };
 
 export type Shortcut = {
@@ -41,24 +45,58 @@ const MAC_PLATFORM = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 const isMac = (shortcut: Shortcut): boolean =>
   shortcut.mac === undefined ? MAC_PLATFORM : shortcut.mac;
 
+const applySpecialMacShortcuts = (shortcut: Shortcut): Shortcut => {
+  if (shortcut.interaction === "Undo") {
+    return {
+      interaction: "KeyZ",
+      ctrlOrCmd: true,
+    };
+  }
+  if (shortcut.interaction === "Redo") {
+    return {
+      interaction: "KeyZ",
+      ctrlOrCmd: true,
+      shift: true,
+    };
+  }
+  return shortcut;
+};
+
 const macShortcut = (shortcut: Shortcut): string => {
-  const cmd = shortcut.ctrlOrCmd ? `${CMD_KEY} ` : "";
-  const shift = shortcut.shift ? `${SHIFT_KEY} ` : "";
-  const option = shortcut.alt ? `${OPTION_KEY} ` : "";
+  const internalShortcut = applySpecialMacShortcuts(shortcut);
+  const cmd = internalShortcut.ctrlOrCmd ? `${CMD_KEY} ` : "";
+  const shift = internalShortcut.shift ? `${SHIFT_KEY} ` : "";
+  const option = internalShortcut.alt ? `${OPTION_KEY} ` : "";
 
   let key = "";
-  if (shortcut.interaction.startsWith("Key")) {
-    key = shortcut.interaction.slice(3);
-  } else if (shortcut.interaction.startsWith("Digit")) {
-    key = shortcut.interaction.slice(5);
+  if (internalShortcut.interaction.startsWith("Key")) {
+    key = internalShortcut.interaction.slice(3);
+  } else if (internalShortcut.interaction.startsWith("Digit")) {
+    key = internalShortcut.interaction.slice(5);
   } else {
     key =
-      macKeyMap[shortcut.interaction as SpecialKeys] ||
-      mouseMap[shortcut.interaction as MouseInteractions] ||
+      macKeyMap[internalShortcut.interaction as SpecialKeys] ||
+      mouseMap[internalShortcut.interaction as MouseInteractions] ||
       "";
   }
 
   return `${option}${shift}${cmd}${key}`;
+};
+
+const applySpecialShortcuts = (shortcut: Shortcut): Shortcut => {
+  if (shortcut.interaction === "Undo") {
+    return {
+      interaction: "KeyZ",
+      ctrlOrCmd: true,
+    };
+  }
+  if (shortcut.interaction === "Redo") {
+    return {
+      interaction: "KeyY",
+      ctrlOrCmd: true,
+    };
+  }
+  return shortcut;
 };
 
 export const shortcutStr = (shortcut: Shortcut): string => {
@@ -66,20 +104,21 @@ export const shortcutStr = (shortcut: Shortcut): string => {
   if (isMacBrowser) {
     return macShortcut(shortcut);
   }
+  const internalShortcut = applySpecialShortcuts(shortcut);
 
-  const ctrl = shortcut.ctrlOrCmd ? "Ctrl+" : "";
-  const shift = shortcut.shift ? "Shift+" : "";
-  const alt = shortcut.alt ? "Alt+" : "";
+  const ctrl = internalShortcut.ctrlOrCmd ? "Ctrl+" : "";
+  const shift = internalShortcut.shift ? "Shift+" : "";
+  const alt = internalShortcut.alt ? "Alt+" : "";
 
   let key = "";
-  if (shortcut.interaction.startsWith("Key")) {
-    key = shortcut.interaction.slice(3);
-  } else if (shortcut.interaction.startsWith("Digit")) {
-    key = shortcut.interaction.slice(5);
+  if (internalShortcut.interaction.startsWith("Key")) {
+    key = internalShortcut.interaction.slice(3);
+  } else if (internalShortcut.interaction.startsWith("Digit")) {
+    key = internalShortcut.interaction.slice(5);
   } else {
     key =
-      keyMap[shortcut.interaction as SpecialKeys] ||
-      mouseMap[shortcut.interaction as MouseInteractions] ||
+      keyMap[internalShortcut.interaction as SpecialKeys] ||
+      mouseMap[internalShortcut.interaction as MouseInteractions] ||
       "";
   }
 
@@ -93,19 +132,25 @@ export const isEvent = (
   event: KeyboardEvent | React.KeyboardEvent<HTMLElement>
 ): boolean => {
   const isMacBrowser = isMac(shortcut);
+  const internalShortcut = isMacBrowser
+    ? applySpecialMacShortcuts(shortcut)
+    : applySpecialShortcuts(shortcut);
 
   const delOrBackspace =
     (event.code === "Delete" &&
       !isMacBrowser &&
-      shortcut.interaction === "DelOrBackspace") ||
+      internalShortcut.interaction === "DelOrBackspace") ||
     (event.code === "Backspace" &&
       isMacBrowser &&
-      shortcut.interaction === "DelOrBackspace");
+      internalShortcut.interaction === "DelOrBackspace");
 
-  if (event.code !== shortcut.interaction && !delOrBackspace) return false;
-  if (event.shiftKey !== f(shortcut.shift)) return false;
-  if (shortcut.ctrlOrCmd && !isMacBrowser && !event.ctrlKey) return false;
-  if (shortcut.ctrlOrCmd && isMacBrowser && !event.metaKey) return false;
+  if (event.code !== internalShortcut.interaction && !delOrBackspace)
+    return false;
+  if (event.shiftKey !== f(internalShortcut.shift)) return false;
+  if (internalShortcut.ctrlOrCmd && !isMacBrowser && !event.ctrlKey)
+    return false;
+  if (internalShortcut.ctrlOrCmd && isMacBrowser && !event.metaKey)
+    return false;
 
   return true;
 };

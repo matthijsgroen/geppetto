@@ -27,6 +27,7 @@ import {
   LogoIcon,
   Menu,
   MenuDivider,
+  MenuHeader,
   MenuItem,
   MenuRadioGroup,
   type Shortcut,
@@ -320,26 +321,40 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         <MenuDivider />
         <MenuItem disabled>Revert file</MenuItem>
       </SubMenu>
+      <SubMenu label="Edit">
+        <MenuItem disabled shortcut={{ interaction: "Undo" }}>
+          Undo
+        </MenuItem>
+        <MenuItem disabled shortcut={{ interaction: "Redo" }}>
+          Redo
+        </MenuItem>
+        <MenuDivider />
+        <MenuItem disabled>Cut</MenuItem>
+        <MenuItem disabled>Copy</MenuItem>
+        <MenuItem disabled>Paste</MenuItem>
+        <MenuItem disabled>Delete</MenuItem>
+        <MenuDivider />
+        <MenuItem disabled>Select all</MenuItem>
+      </SubMenu>
       <SubMenu label="Preferences">
-        <SubMenu label="Color scheme">
-          <MenuRadioGroup value={lightModePreference}>
-            <ActionMenuItem
-              action={actions.setLightMode}
-              type="radio"
-              value={"light"}
-            />
-            <ActionMenuItem
-              action={actions.setDarkMode}
-              type="radio"
-              value={"dark"}
-            />
-            <ActionMenuItem
-              action={actions.setSystemMode}
-              type="radio"
-              value={"system"}
-            />
-          </MenuRadioGroup>
-        </SubMenu>
+        <MenuHeader>Color mode</MenuHeader>
+        <MenuRadioGroup value={lightModePreference}>
+          <ActionMenuItem
+            action={actions.setLightMode}
+            type="radio"
+            value={"light"}
+          />
+          <ActionMenuItem
+            action={actions.setDarkMode}
+            type="radio"
+            value={"dark"}
+          />
+          <ActionMenuItem
+            action={actions.setSystemMode}
+            type="radio"
+            value={"system"}
+          />
+        </MenuRadioGroup>
       </SubMenu>
       <SubMenu label="Help">
         <MenuItem disabled>Documentation</MenuItem>
