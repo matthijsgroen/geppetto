@@ -6,15 +6,16 @@ import { TodoList as TodoListComponent } from "@/ui/components/molecules/TodoLis
 const meta = preview.meta({
   title: "Molecules/TodoList",
   component: TodoListComponent,
+  subcomponents: { TodoItem },
   argTypes: {
     children: { control: false },
   },
   args: {
     children: (
       <>
-        <TodoItem>Item 1</TodoItem>
-        <TodoItem inProgress>Item 2</TodoItem>
-        <TodoItem done>Item 3</TodoItem>
+        <TodoItem done>Completed item</TodoItem>
+        <TodoItem inProgress>In progress item</TodoItem>
+        <TodoItem>Todo item</TodoItem>
       </>
     ),
   },
