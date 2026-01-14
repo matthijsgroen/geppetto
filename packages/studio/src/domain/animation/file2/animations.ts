@@ -137,3 +137,41 @@ export const deleteAnimation = (animationId: string) =>
   produce<GeppettoImage>((draft) => {
     delete draft.animations[animationId];
   });
+
+export const deleteControlTrackFromAnimation = (
+  animationId: string,
+  controlId: string
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    animation.tracks = animation.tracks.filter(
+      (t) => !(t.type === "control" && t.controlId === controlId)
+    );
+  });
+
+export const moveControlTrackToAnimation = (
+  fromAnimationId: string,
+  toAnimationId: string,
+  controlId: string
+) =>
+  produce<GeppettoImage>((draft) => {
+    const fromAnimation = draft.animations[fromAnimationId];
+    const toAnimation = draft.animations[toAnimationId];
+    if (!fromAnimation || !toAnimation) {
+      return;
+    }
+
+    const trackIndex = fromAnimation.tracks.findIndex(
+      (t) => t.type === "control" && t.controlId === controlId
+    );
+    if (trackIndex === -1) {
+      return;
+    }
+
+    const [track] = fromAnimation.tracks.splice(trackIndex, 1);
+    toAnimation.tracks.push(track);
+  });

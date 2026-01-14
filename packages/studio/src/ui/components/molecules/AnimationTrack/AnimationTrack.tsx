@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import type { FC, PropsWithChildren, Ref } from "react";
+import type { FC, MouseEvent, PropsWithChildren, Ref } from "react";
 
 import { TimeStretchHandle } from "@/ui/components/atoms/TimeBar/TimeStretchHandle";
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
@@ -14,6 +14,10 @@ type AnimationTrackProps = PropsWithChildren<{
   loop?: boolean;
   name: React.ReactNode;
   onSelect?: () => void;
+  onLabelContextMenu?: (
+    event: MouseEvent<HTMLDivElement>,
+    trackName: string
+  ) => void;
   ref?: Ref<HTMLDivElement>;
   selected?: boolean;
   trackNames?: string[];
@@ -26,6 +30,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
   loop = false,
   name,
   onSelect,
+  onLabelContextMenu,
   ref,
   selected = false,
   trackNames = [],
@@ -57,6 +62,9 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
               <div
                 className="h-5 cursor-grab px-2 pl-4 text-sm text-text hover:bg-control-highlight"
                 key={trackName}
+                onContextMenu={(e) => {
+                  onLabelContextMenu?.(e, trackName);
+                }}
               >
                 {trackName}
               </div>

@@ -4,9 +4,11 @@ import {
   addAnimation,
   addControlFrameToAnimation,
   deleteAnimation,
+  deleteControlTrackFromAnimation,
   getNextAnimationId,
   hasAnimations,
   hasAnimationsWithData,
+  moveControlTrackToAnimation,
   renameAnimation,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
@@ -216,5 +218,57 @@ describe("addControlFrameToAnimation", () => {
     expect(action.controlEndValue).toBe(1.0);
     expect(action.easingFunction).toBe("easeInOut");
     expect(action.controlStartValue).toBe(0.0);
+  });
+});
+
+describe("deleteControlTrackFromAnimation", () => {
+  it("deletes the specified control track from the animation", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addControl("move")
+      .addControlFrame("move", 0, 1000, 0.5)
+      .addControlFrame("move", 1500, 1000, 1.0)
+      .build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = deleteControlTrackFromAnimation("0", controlId)(file);
+
+    const originalAnimation = file.animations["0"];
+    const updatedAnimation = updatedFile.animations["0"];
+
+    expect(originalAnimation.tracks).toHaveLength(1);
+    expect(updatedAnimation.tracks).toHaveLength(0);
+  });
+});
+
+describe("moveControlTrackToAnimation", () => {
+  it("moves the specified control track from one animation to another", () => {
+    const file = fileBuilder()
+      .addControl("move")
+      .addAnimation("walk")
+      .addControlFrame("move", 0, 1000, 0.5)
+      .addControlFrame("move", 1500, 1000, 1.0)
+      .addAnimation("run")
+      .build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = moveControlTrackToAnimation("0", "1", controlId)(file);
+
+    const originalWalkAnimation = file.animations["0"];
+    const originalRunAnimation = file.animations["1"];
+    const updatedWalkAnimation = updatedFile.animations["0"];
+    const updatedRunAnimation = updatedFile.animations["1"];
+
+    expect(originalWalkAnimation.tracks).toHaveLength(1);
+    expect(updatedWalkAnimation.tracks).toHaveLength(0);
+
+    expect(originalRunAnimation.tracks).toHaveLength(0);
+    expect(updatedRunAnimation.tracks).toHaveLength(1);
+
+    const track = updatedRunAnimation.tracks[0];
+    expect(track.type).toBe("control");
+    const controlTrack = track as AnimationControlTrack;
+    expect(controlTrack.controlId).toBe(controlId);
+    expect(controlTrack.actions).toHaveLength(2);
   });
 });
