@@ -1,6 +1,6 @@
 @theme {
   --play-count-once: 1;
-  --play-count-infinite: infinite;
+  --play-count-loop: infinite;
 }
 
 @utility play-indicator-* {
