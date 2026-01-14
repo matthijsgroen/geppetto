@@ -75,29 +75,31 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
         }}
       >
         <div className="relative flex h-full">
-          <div className="flex w-min bg-panel/50">
+          <div
+            className="absolute top-0 bottom-0 box-content flex w-min bg-panel/50 ps-2"
+            style={{ width: `${length}em` }}
+          ></div>
+          <div
+            className={clsx(
+              "box-content bg-panel ps-2 group-hover:bg-control-highlight group-focus:bg-control-highlight",
+              selected ? "h-5 py-0.5" : "h-full"
+            )}
+            style={{ width: `${length}em` }}
+          >
             <div
               className={clsx(
-                "box-content bg-panel ps-2 group-hover:bg-control-highlight group-focus:bg-control-highlight",
-                selected ? "h-5 py-0.5" : "h-full"
+                "rounded-sm bg-toolbar",
+                selected ? "h-4" : "h-0"
               )}
-              style={{ width: `${length}em` }}
-            >
-              <div
-                className={clsx(
-                  "rounded-sm bg-toolbar",
-                  selected ? "h-4" : "h-0"
-                )}
-              ></div>
-            </div>
-            <div
-              className={clsx(
-                "flex w-2 items-start justify-end rounded-e-sm bg-panel pt-0.5 group-hover:bg-control-highlight group-focus:bg-control-highlight",
-                selected ? "h-6" : "h-full"
-              )}
-            >
-              {selected && <TimeStretchHandle />}
-            </div>
+            ></div>
+          </div>
+          <div
+            className={clsx(
+              "flex w-2 items-start justify-end rounded-e-sm bg-panel pt-0.5 group-hover:bg-control-highlight group-focus:bg-control-highlight",
+              selected ? "h-6" : "h-full"
+            )}
+          >
+            {selected && <TimeStretchHandle />}
           </div>
           {loop && <div className="px-2 text-sm text-dimmed">⏎</div>}
           <AnimationTrackContext.Provider value={{ activeTrack: selected }}>

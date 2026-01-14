@@ -1,0 +1,48 @@
+@theme {
+  --color-workspace: var(--color-emerald-500);
+  --color-toolbar: var(--color-zinc-100);
+  --color-notification: var(--color-red-600);
+  --color-panel: var(--color-white);
+
+  --color-control-interaction: var(--color-zinc-200);
+  --color-control-edge: color-mix(
+    in oklch,
+    var(--color-neutral-800),
+    transparent 80%
+  );
+  --color-control-focus: var(--color-sky-500);
+  --color-control-highlight: var(--color-sky-200);
+  --color-control-active: var(--color-sky-300);
+  --color-control-active-dimmed: var(--color-sky-200);
+
+  --color-text: var(--color-zinc-800);
+  --color-dimmed: color-mix(in oklch, var(--color-zinc-800), transparent 50%);
+  --color-active: var(--color-slate-500);
+}
+
+.dark {
+  --color-workspace: var(--color-emerald-900);
+  --color-toolbar: var(--color-zinc-800);
+  --color-notification: var(--color-red-400);
+  --color-panel: var(--color-zinc-900);
+
+  /* Add color for Control Interaction -- button, toggle, thumb */
+  --color-control-interaction: var(--color-zinc-700);
+  --color-control-edge: color-mix(
+    in oklch,
+    var(--color-zinc-600),
+    transparent 70%
+  );
+  --color-control-focus: var(--color-green-500);
+  --color-control-highlight: var(--color-green-800);
+  --color-control-active: var(--color-green-700);
+  --color-control-active-dimmed: var(--color-green-600);
+
+  --color-text: var(--color-zinc-300);
+  --color-dimmed: color-mix(
+    in oklch,
+    var(--color-neutral-400),
+    transparent 50%
+  );
+  --color-active: var(--color-green-500);
+}

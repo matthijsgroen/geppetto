@@ -7,6 +7,9 @@ import { RangeInput } from "./RangeInput";
 const meta = preview.meta({
   title: "Atoms/Controls/RangeInput",
   component: RangeInput,
+  argTypes: {
+    onChange: { action: "changed" },
+  },
   args: {
     id: "InputField",
     checked: false,

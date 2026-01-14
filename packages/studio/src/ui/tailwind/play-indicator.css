@@ -1,0 +1,27 @@
+@theme {
+  --play-count-once: 1;
+  --play-count-infinite: infinite;
+}
+
+@utility play-indicator-* {
+  background-image: linear-gradient(
+    to right,
+    var(--color-control-focus),
+    var(--color-control-focus)
+  );
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  width: calc(--value(number, [number], [*]) * 1em);
+  animation: trackPlay calc(--value(number, [number], [*]) * 1s) linear
+    --modifier(--play-count-*, number, [number], 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes trackPlay {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
+}
