@@ -1,6 +1,7 @@
 import { clsx } from "clsx";
 import type { FC, MouseEvent, PropsWithChildren, Ref } from "react";
 
+import { isEvent } from "@/ui/components";
 import { TimeStretchHandle } from "@/ui/components/atoms/TimeBar/TimeStretchHandle";
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { Column } from "@/ui/components/molecules/Column/Column";
@@ -35,7 +36,6 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
   selected = false,
   trackNames = [],
 }) => {
-  const Element = selected ? "div" : "button";
   return (
     <>
       <div
@@ -71,16 +71,26 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
             ))}
         </Column>
       </div>
-      <Element
+      <div
         className={clsx(
           "items-center border-b border-control-edge/50 bg-workspace last:rounded-b-control nth-[4]:rounded-t-control",
           !selected &&
-            "group cursor-pointer hover:bg-control-highlight focus:z-10 focus:bg-control-highlight focus:outline-1 focus:outline-control-focus"
+            "group cursor-pointer hover:bg-control-highlight focus:z-10 focus:bg-control-highlight focus:outline-1 focus:outline-control-focus",
+          selected && "focus:outline-0"
         )}
+        key="track"
         onClick={() => {
           if (selected) return;
           onSelect?.();
         }}
+        onKeyDown={(event) => {
+          if (isEvent({ interaction: "Enter" }, event)) {
+            if (selected) return;
+            onSelect?.();
+          }
+        }}
+        role={selected ? "region" : "button"}
+        tabIndex={selected ? -1 : 0}
       >
         <div className="relative flex h-full">
           <div
@@ -114,7 +124,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
             {children}
           </AnimationTrackContext.Provider>
         </div>
-      </Element>
+      </div>
     </>
   );
 };

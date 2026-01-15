@@ -237,25 +237,23 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
             location={event.start / 1000}
           />
         ))}
-        {isPlaying && (
+        <TimePlayIndicator
+          duration={animationLength / 1000}
+          key="total-indicator"
+          loop={animation.looping}
+          playing={isPlaying}
+          selected={selected}
+        />
+        {animation.tracks.map((track, index) => (
           <TimePlayIndicator
-            duration={animationLength / 1000}
-            key="total-indicator"
+            duration={track.length / 1000}
+            key={`indicator-${index}`}
             loop={animation.looping}
-            playing
+            playing={isPlaying}
+            selected={selected}
+            trackIndex={index}
           />
-        )}
-        {isPlaying &&
-          selected &&
-          animation.tracks.map((track, index) => (
-            <TimePlayIndicator
-              duration={track.length / 1000}
-              key={`indicator-${index}`}
-              loop={animation.looping}
-              playing
-              trackIndex={index}
-            />
-          ))}
+        ))}
       </AnimationTrackComponent>
     </>
   );

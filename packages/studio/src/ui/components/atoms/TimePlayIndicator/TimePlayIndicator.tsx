@@ -16,14 +16,15 @@ export const TimePlayIndicator: FC<TimePlayIndicatorProps> = ({
   duration,
   selected = false,
 }) => {
-  return playing ? (
+  return (
     <div
       className={clsx("absolute top-0 z-10 mx-2", {
-        "play-indicator-(--length)/loop": loop,
-        "play-indicator-(--length)/once": !loop,
+        "play-indicator-(--length)/loop": loop && playing,
+        "play-indicator-(--length)/once": !loop && playing,
         "h-6": trackIndex === undefined && selected,
         "bottom-0": trackIndex === undefined && !selected,
         "h-5": trackIndex !== undefined,
+        "opacity-0": !selected && trackIndex !== undefined,
       })}
       style={
         {
@@ -35,5 +36,5 @@ export const TimePlayIndicator: FC<TimePlayIndicatorProps> = ({
         } as CSSProperties
       }
     ></div>
-  ) : null;
+  );
 };
