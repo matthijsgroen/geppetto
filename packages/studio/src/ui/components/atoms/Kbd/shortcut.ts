@@ -2,12 +2,16 @@ import type React from "react";
 
 const OPTION_KEY = "⎇";
 const CMD_KEY = "⌘";
+const CTRL_KEY = "⌃";
 const SHIFT_KEY = "⇧";
 
 const keyMap = {
   Delete: "Del",
   Backspace: "Backspace",
   DelOrBackspace: "Del",
+  Enter: "Enter",
+  Escape: "Esc",
+  Tab: "Tab",
   Undo: "Z",
   Redo: "Y",
 };
@@ -24,6 +28,9 @@ const macKeyMap: Record<SpecialKeys, string> = {
   Delete: "⌦",
   Backspace: "⌫",
   DelOrBackspace: "⌫",
+  Enter: "↩",
+  Escape: "⎋",
+  Tab: "⇥",
   Undo: "Z",
   Redo: "Z",
 };
@@ -35,6 +42,7 @@ export type Shortcut = {
     | SpecialKeys
     | MouseInteractions;
   ctrlOrCmd?: boolean;
+  ctrl?: boolean;
   shift?: boolean;
   alt?: boolean;
   mac?: boolean;
@@ -65,6 +73,7 @@ const applySpecialMacShortcuts = (shortcut: Shortcut): Shortcut => {
 const macShortcut = (shortcut: Shortcut): string => {
   const internalShortcut = applySpecialMacShortcuts(shortcut);
   const cmd = internalShortcut.ctrlOrCmd ? `${CMD_KEY} ` : "";
+  const ctrl = internalShortcut.ctrl ? `${CTRL_KEY} ` : "";
   const shift = internalShortcut.shift ? `${SHIFT_KEY} ` : "";
   const option = internalShortcut.alt ? `${OPTION_KEY} ` : "";
 
@@ -80,7 +89,7 @@ const macShortcut = (shortcut: Shortcut): string => {
       "";
   }
 
-  return `${option}${shift}${cmd}${key}`;
+  return `${option}${shift}${ctrl}${cmd}${key}`;
 };
 
 const applySpecialShortcuts = (shortcut: Shortcut): Shortcut => {
@@ -106,7 +115,8 @@ export const shortcutStr = (shortcut: Shortcut): string => {
   }
   const internalShortcut = applySpecialShortcuts(shortcut);
 
-  const ctrl = internalShortcut.ctrlOrCmd ? "Ctrl+" : "";
+  const ctrl =
+    internalShortcut.ctrlOrCmd || internalShortcut.ctrl ? "Ctrl+" : "";
   const shift = internalShortcut.shift ? "Shift+" : "";
   const alt = internalShortcut.alt ? "Alt+" : "";
 
@@ -147,6 +157,7 @@ export const isEvent = (
   if (event.code !== internalShortcut.interaction && !delOrBackspace)
     return false;
   if (event.shiftKey !== f(internalShortcut.shift)) return false;
+  if (internalShortcut.ctrl && !event.ctrlKey) return false;
   if (internalShortcut.ctrlOrCmd && !isMacBrowser && !event.ctrlKey)
     return false;
   if (internalShortcut.ctrlOrCmd && isMacBrowser && !event.metaKey)
