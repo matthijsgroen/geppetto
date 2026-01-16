@@ -13,6 +13,7 @@ import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   renameAnimation,
+  updateAnimationSpeedModifier,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import {
@@ -21,7 +22,9 @@ import {
   Menu,
   MenuHeader,
   MenuItem,
+  MenuRadioGroup,
   RenameInput,
+  SubMenu,
   TimeBar,
   TimeLineEndHandle,
   TimePin,
@@ -140,6 +143,22 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
       >
         Loop animation
       </MenuItem>
+      <SubMenu label="Speed modifier">
+        <MenuRadioGroup value={animation.speedModifier ?? 1}>
+          {[0.125, 0.25, 0.5, 1, 1.5, 2, 4].map((speed) => (
+            <MenuItem
+              key={speed}
+              onClick={() => {
+                setFile(updateAnimationSpeedModifier(animationId, speed));
+              }}
+              type="radio"
+              value={speed}
+            >
+              {speed}x
+            </MenuItem>
+          ))}
+        </MenuRadioGroup>
+      </SubMenu>
       {onDelete && (
         <MenuItem dangerous onClick={onDelete} type="checkbox">
           Delete
@@ -147,6 +166,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
       )}
     </>
   );
+  const speed = animation.speedModifier ?? 1;
 
   return (
     <>
@@ -201,7 +221,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           </ToolBar>
         }
         key={animationId}
-        length={animationLength / 1000}
+        length={animationLength / 1000 / speed}
         loop={animation.looping}
         name={
           <RenameInput
@@ -223,7 +243,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           track.type === "control"
             ? track.actions.map((action, actionIndex) => (
                 <TimeBar
-                  duration={action.duration / 1000}
+                  duration={action.duration / 1000 / speed}
                   easing={action.easingFunction}
                   key={`${track.controlId}-${actionIndex}`}
                   onClick={() => {
@@ -242,7 +262,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                       selectedTimeBar.actionIndex === actionIndex) ??
                     false
                   }
-                  start={action.start / 1000}
+                  start={action.start / 1000 / speed}
                   trackIndex={index}
                 />
               ))
@@ -252,7 +272,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           return track.type === "control" ? (
             <TimeLineEndHandle
               key={`${track.controlId}-end`}
-              location={track.length / 1000}
+              location={track.length / 1000 / speed}
               loop={animation.looping}
               trackIndex={index}
             />
@@ -262,11 +282,11 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           <TimePin
             key={`event-${eventIndex}`}
             label={event.eventName}
-            location={event.start / 1000}
+            location={event.start / 1000 / speed}
           />
         ))}
         <TimePlayIndicator
-          duration={animationLength / 1000}
+          duration={animationLength / 1000 / speed}
           key="total-indicator"
           loop={animation.looping}
           playing={isPlaying}
@@ -274,7 +294,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
         />
         {animation.tracks.map((track, index) => (
           <TimePlayIndicator
-            duration={track.length / 1000}
+            duration={track.length / 1000 / speed}
             key={`indicator-${index}`}
             loop={animation.looping}
             playing={isPlaying}

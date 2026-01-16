@@ -135,18 +135,18 @@ export type AnimationControls = {
   setZIndex(zIndex: number): void;
 
   /**
-   * Register a callback to get notifications when a track is stopped.
-   * A track can be stopped for the following reasons.
+   * Register a callback to get notifications when an animation is stopped.
+   * An animation can be stopped for the following reasons.
    *
-   * - A control is used that is conflicting with an animation track.
-   * - Another track is started that is conflicting with an animation track.
-   * - A track is stopped using `stopAnimation `
+   * - A control is used that is conflicting with an animation.
+   * - Another animation is started that is conflicting with an animation.
+   * - An animation is stopped using `stopAnimation `
    *
-   * @param callback function to call when tracks are stopped.
-   * The first argument will be the trackname.
+   * @param callback function to call when animations are stopped.
+   * The first argument will be the animation name.
    * @returns a function to call to unsubscribe
    */
-  onTrackStopped(callback: TrackStoppedCallback): Unsubscribe;
+  onAnimationStopped(callback: TrackStoppedCallback): Unsubscribe;
 
   /**
    * Register a callback to get notifications when an event is triggered.
@@ -718,6 +718,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           const animationControls = animation.animations[trackIndex].tracks.map(
             (track) => track.controlIndex
           );
+          const playSpeed = speed * animation.animations[trackIndex].speed;
 
           // Stop all conflicting animations and tweens
           for (const playing of playingAnimations) {
@@ -745,9 +746,9 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             name: animationName,
             index: trackIndex,
             startAt,
-            speed,
+            speed: playSpeed,
             startedAt: +new Date(),
-            iterationStartedAt: +new Date() - startAt / speed,
+            iterationStartedAt: +new Date() - startAt / playSpeed,
             lastRender: 0,
           });
         },
@@ -1099,7 +1100,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           // Disable scissor test after rendering
           gl.disable(gl.SCISSOR_TEST);
         },
-        onTrackStopped(callback) {
+        onAnimationStopped(callback) {
           onTrackStoppedListeners = onTrackStoppedListeners.concat({
             animation: id,
             callback,

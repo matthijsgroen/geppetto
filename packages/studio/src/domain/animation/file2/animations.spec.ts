@@ -10,6 +10,7 @@ import {
   hasAnimationsWithData,
   moveControlTrackToAnimation,
   renameAnimation,
+  updateAnimationSpeedModifier,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import { newFile } from "@/domain/animation/file2/new";
@@ -270,5 +271,29 @@ describe("moveControlTrackToAnimation", () => {
     const controlTrack = track as AnimationControlTrack;
     expect(controlTrack.controlId).toBe(controlId);
     expect(controlTrack.actions).toHaveLength(2);
+  });
+});
+
+describe("updateAnimationSpeedModifier", () => {
+  it("updates the speed modifier of the specified animation", () => {
+    const file = fileBuilder().addAnimation("walk").build();
+
+    const updatedFile = updateAnimationSpeedModifier("0", 1.5)(file);
+
+    expect(file.animations["0"].speedModifier).toBeUndefined();
+    expect(updatedFile.animations["0"].speedModifier).toBe(1.5);
+  });
+
+  it("removes the speed modifier if undefined is passed", () => {
+    const file = fileBuilder().addAnimation("walk").build();
+    const fileWithSpeed = updateAnimationSpeedModifier("0", 2.0)(file);
+
+    const updatedFile = updateAnimationSpeedModifier(
+      "0",
+      undefined
+    )(fileWithSpeed);
+
+    expect(fileWithSpeed.animations["0"].speedModifier).toBe(2.0);
+    expect(updatedFile.animations["0"].speedModifier).toBeUndefined();
   });
 });

@@ -175,3 +175,20 @@ export const moveControlTrackToAnimation = (
     const [track] = fromAnimation.tracks.splice(trackIndex, 1);
     toAnimation.tracks.push(track);
   });
+
+export const updateAnimationSpeedModifier = (
+  animationId: string,
+  speedModifier: number | undefined
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    if (speedModifier === undefined) {
+      delete animation.speedModifier;
+    } else {
+      animation.speedModifier = speedModifier;
+    }
+  });

@@ -276,6 +276,7 @@ export const prepareAnimation = (
       name: animation.name,
       duration: animationDuration,
       looping: animation.looping,
+      speed: animation.speedModifier ?? 1,
       tracks,
       visibilityTracks,
       events,

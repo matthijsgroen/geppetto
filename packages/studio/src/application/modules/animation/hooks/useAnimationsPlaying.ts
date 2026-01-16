@@ -11,7 +11,7 @@ export const useAnimationsPlaying = (
   const animationsPlayingRef = useRef<string[]>([]);
   useEffect(() => {
     if (!animationControlsRef.current) return;
-    const unsubscribe = animationControlsRef.current.onTrackStopped(
+    const unsubscribe = animationControlsRef.current.onAnimationStopped(
       (animationName: string) => {
         const animationEntry = Object.entries(file.animations).find(
           ([, animation]) => animation.name === animationName

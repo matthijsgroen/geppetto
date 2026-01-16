@@ -105,6 +105,7 @@ export type PreparedControlTrack = {
 export type PreparedAnimation = {
   name: string;
   duration: number; // Overall animation duration
+  speed: number; // Speed modifier for playback
   looping: boolean;
   tracks: PreparedControlTrack[];
   visibilityTracks: Map<number, [number, boolean][]>;

@@ -52,8 +52,12 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
 
   const maxTime = Object.values(file.animations).reduce((max, animation) => {
     const animationMax = Math.max(
-      ...animation.tracks.map((track) => track.length),
-      ...animation.events.map((event) => event.start)
+      ...animation.tracks.map(
+        (track) => track.length / (animation.speedModifier ?? 1)
+      ),
+      ...animation.events.map(
+        (event) => event.start / (animation.speedModifier ?? 1)
+      )
     );
     return Math.max(max, animationMax);
   }, 0);
