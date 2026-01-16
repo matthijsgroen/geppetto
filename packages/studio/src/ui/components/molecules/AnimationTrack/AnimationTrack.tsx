@@ -18,7 +18,8 @@ type AnimationTrackProps = PropsWithChildren<{
   loop?: boolean;
   name: React.ReactNode;
   onSelect?: () => void;
-  onLabelContextMenu?: (
+  onLabelContextMenu?: (event: MouseEvent<HTMLDivElement>) => void;
+  onTrackNameContextMenu?: (
     event: MouseEvent<HTMLDivElement>,
     trackName: string
   ) => void;
@@ -36,6 +37,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
   name,
   onSelect,
   onLabelContextMenu,
+  onTrackNameContextMenu,
   ref,
   selected = false,
   trackNames = [],
@@ -152,6 +154,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
                 "box-content h-5 flex-1 px-2 text-base text-text",
                 selected && "pb-1"
               )}
+              onContextMenu={onLabelContextMenu}
             >
               {name}
             </div>
@@ -164,7 +167,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
                 draggable={!!trackDragContext}
                 key={trackName}
                 onContextMenu={(e) => {
-                  onLabelContextMenu?.(e, trackName);
+                  onTrackNameContextMenu?.(e, trackName);
                 }}
                 onDrag={(e) => handleTrackDrag(e)}
                 onDragEnd={handleTrackDragEnd}

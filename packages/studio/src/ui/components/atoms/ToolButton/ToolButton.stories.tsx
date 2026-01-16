@@ -16,12 +16,20 @@ const meta = preview.meta({
     onContextMenu: { control: false },
     label: { control: "text" },
     tooltip: { control: "text" },
+    size: {
+      control: {
+        type: "select",
+      },
+      options: ["default", "small", "minimal"],
+    },
   },
   args: {
     disabled: false,
     active: false,
     notificationBadge: false,
     standAlone: false,
+    keyboardFocusOnly: false,
+    size: "default",
     onClick: fn(),
   },
 });
@@ -67,5 +75,13 @@ export const ActiveDisabled = meta.story({
     icon: <Icon>💡</Icon>,
     disabled: true,
     active: true,
+  },
+});
+
+export const KeyboardFocusOnly = meta.story({
+  args: {
+    icon: <Icon>💡</Icon>,
+    active: false,
+    keyboardFocusOnly: true,
   },
 });

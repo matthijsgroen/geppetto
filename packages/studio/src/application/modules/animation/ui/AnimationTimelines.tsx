@@ -75,10 +75,6 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
       <Panel padding="sm">
         <ToolBar>
           <PanelTitle>Animations</PanelTitle>
-          {/* <ToolButton disabled icon={<Icon>⏮️</Icon>} tooltip="Go to start" />
-        <ToolButton disabled icon={<Icon>▶️</Icon>} tooltip="Play/Pause" />
-        <ToolButton disabled icon={<Icon>⏭️</Icon>} tooltip="Go to end" />
-        */}
           <ToolSeparator />
           <ToolButton
             icon={<Icon>➕</Icon>}

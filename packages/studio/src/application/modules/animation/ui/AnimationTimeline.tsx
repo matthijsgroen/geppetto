@@ -7,6 +7,7 @@ import type {
 import type { FC, MouseEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 
+import { AnimationContextMenu } from "@/application/modules/animation/ui/AnimationContextMenu";
 import { ControlTrackContextMenu } from "@/application/modules/animation/ui/ControlTrackContextMenu";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
@@ -18,6 +19,7 @@ import {
   AnimationTrack as AnimationTrackComponent,
   Icon,
   Menu,
+  MenuHeader,
   MenuItem,
   RenameInput,
   TimeBar,
@@ -95,7 +97,8 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
     }
   }, [selected]);
 
-  const [menuProps, toggleMenu] = useMenuState();
+  const [controlTrackMenuProps, toggleControlTrackMenu] = useMenuState();
+  const [animationTrackMenuProps, toggleAnimationTrackMenu] = useMenuState();
   const [anchorPoint, setAnchorPoint] = useState({
     x: 0,
     y: 0,
@@ -103,16 +106,46 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   const [contextMenuTrackName, setContextMenuTrackName] = useState<
     string | null
   >(null);
-  const handleContextMenu = useEvent(
+  const handleControlTrackContextMenu = useEvent(
     (event: MouseEvent<HTMLElement>, trackName: string): void => {
       event.preventDefault();
       setAnchorPoint({
         x: event.clientX,
         y: event.clientY,
       });
-      toggleMenu(true);
+      toggleControlTrackMenu(true);
       setContextMenuTrackName(trackName);
     }
+  );
+  const handleAnimationTrackContextMenu = useEvent(
+    (event: MouseEvent<HTMLElement>): void => {
+      event.preventDefault();
+      setAnchorPoint({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      toggleAnimationTrackMenu(true);
+    }
+  );
+
+  const animationMenuItems = (
+    <>
+      <MenuHeader>Animation Options</MenuHeader>
+      <MenuItem
+        checked={animation.looping}
+        onClick={() => {
+          setFile(updateLoopingAnimation(animationId, !animation.looping));
+        }}
+        type="checkbox"
+      >
+        Loop animation
+      </MenuItem>
+      {onDelete && (
+        <MenuItem dangerous onClick={onDelete} type="checkbox">
+          Delete
+        </MenuItem>
+      )}
+    </>
   );
 
   return (
@@ -121,9 +154,16 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
         anchorPoint={anchorPoint}
         animationId={animationId}
         trackName={contextMenuTrackName ?? ""}
-        {...menuProps}
-        onClose={() => toggleMenu(false)}
+        {...controlTrackMenuProps}
+        onClose={() => toggleControlTrackMenu(false)}
       />
+      <AnimationContextMenu
+        anchorPoint={anchorPoint}
+        {...animationTrackMenuProps}
+        onClose={() => toggleAnimationTrackMenu(false)}
+      >
+        {animationMenuItems}
+      </AnimationContextMenu>
       <AnimationTrackComponent
         animationId={animationId}
         extraContent={
@@ -148,6 +188,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                 <ToolButton
                   active={open}
                   icon={<Icon colorize>⋯</Icon>}
+                  keyboardFocusOnly
                   tooltip="Options"
                 />
               )}
@@ -155,22 +196,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
               portal
               position="auto"
             >
-              <MenuItem
-                checked={animation.looping}
-                onClick={() => {
-                  setFile(
-                    updateLoopingAnimation(animationId, !animation.looping)
-                  );
-                }}
-                type="checkbox"
-              >
-                Loop animation
-              </MenuItem>
-              {onDelete && (
-                <MenuItem dangerous onClick={onDelete} type="checkbox">
-                  Delete
-                </MenuItem>
-              )}
+              {animationMenuItems}
             </Menu>
           </ToolBar>
         }
@@ -186,8 +212,9 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
             value={animation.name}
           />
         }
-        onLabelContextMenu={handleContextMenu}
+        onLabelContextMenu={handleAnimationTrackContextMenu}
         onSelect={onSelect}
+        onTrackNameContextMenu={handleControlTrackContextMenu}
         ref={trackRef}
         selected={selected}
         trackNames={trackNames}
