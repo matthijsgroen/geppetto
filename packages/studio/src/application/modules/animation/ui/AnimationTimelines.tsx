@@ -112,16 +112,15 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
               <ToolButton
                 active={open}
                 icon={<Icon>🔎</Icon>}
-                label={`${zoom}×`}
                 tooltip="Zoom level"
               />
             )}
             portal
             transition
           >
-            <MenuHeader>Grid size</MenuHeader>
+            <MenuHeader>Zoom level</MenuHeader>
             <MenuRadioGroup value={zoom}>
-              {[0.25, 0.5, 1, 2, 4, 8].map((zoomLevel) => (
+              {[0.25, 0.5, 1, 4, 12].map((zoomLevel) => (
                 <MenuItem
                   key={`zoom${zoomLevel}`}
                   onClick={() => {
@@ -140,6 +139,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
         </ToolBar>
         <AnimationsContainer
           duration={(maxTime + EXTRA_TIME) / 1000}
+          onZoomChange={setZoom}
           title="Timeline"
           zoom={zoom}
         >
