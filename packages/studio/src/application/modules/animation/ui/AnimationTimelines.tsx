@@ -4,6 +4,7 @@ import { useFile } from "@/application/state/FileContext";
 import type { AddAnimationDetails } from "@/domain/animation/file2/animations";
 import {
   addAnimation,
+  createAnimationControlTrack,
   deleteAnimation,
   moveControlTrackToAnimation,
 } from "@/domain/animation/file2/animations";
@@ -61,6 +62,9 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
     );
     return Math.max(max, animationMax);
   }, 0);
+  const animation = selectedAnimation
+    ? file.animations[selectedAnimation]
+    : null;
 
   return (
     <TrackDragProvider
@@ -92,18 +96,50 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
             tooltip="Add Animation"
           />
           {/*
-        <ToolButton
-          disabled
-          icon={<Icon>➕</Icon>}
-          label="Event"
-          tooltip="Add Event"
-        />
-        <ToolButton
-          disabled
-          icon={<Icon>➕</Icon>}
-          label="Control"
-          tooltip="Add Control layer"
-        />*/}
+          <ToolButton
+            disabled
+            icon={<Icon>➕</Icon>}
+            label="Event"
+            tooltip="Add Event"
+          />*/}
+          <Menu
+            align="center"
+            arrow
+            direction="top"
+            menuButton={({ open }) => (
+              <ToolButton
+                active={open}
+                disabled={animation === null}
+                icon={<Icon>➕</Icon>}
+                label="Track"
+                tooltip="Add Control track"
+              />
+            )}
+            portal
+            transition
+          >
+            <MenuHeader>Add Control Track</MenuHeader>
+            {Object.entries(file.controls)
+              .filter(
+                ([id]) =>
+                  !animation?.tracks.some(
+                    (track) =>
+                      track.type === "control" && track.controlId === id
+                  )
+              )
+              .map(([id, control]) => (
+                <MenuItem
+                  key={id}
+                  onClick={() => {
+                    setFile(
+                      createAnimationControlTrack(selectedAnimation!, id)
+                    );
+                  }}
+                >
+                  {control.name}
+                </MenuItem>
+              ))}
+          </Menu>
           <Menu
             align="center"
             arrow

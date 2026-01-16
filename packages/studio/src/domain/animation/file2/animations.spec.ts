@@ -3,6 +3,7 @@ import type { AnimationControlTrack } from "geppetto-player";
 import {
   addAnimation,
   addControlFrameToAnimation,
+  createAnimationControlTrack,
   deleteAnimation,
   deleteControlTrackFromAnimation,
   getNextAnimationId,
@@ -295,5 +296,26 @@ describe("updateAnimationSpeedModifier", () => {
 
     expect(fileWithSpeed.animations["0"].speedModifier).toBe(2.0);
     expect(updatedFile.animations["0"].speedModifier).toBeUndefined();
+  });
+});
+
+describe("createAnimationControlTrack", () => {
+  it("creates a control track in the specified animation", () => {
+    const file = fileBuilder().addAnimation("walk").addControl("move").build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = createAnimationControlTrack("0", controlId)(file);
+
+    const originalAnimation = file.animations["0"];
+    const updatedAnimation = updatedFile.animations["0"];
+
+    expect(originalAnimation.tracks).toHaveLength(0);
+    expect(updatedAnimation.tracks).toHaveLength(1);
+
+    const track = updatedAnimation.tracks[0];
+    expect(track.type).toBe("control");
+    const controlTrack = track as AnimationControlTrack;
+    expect(controlTrack.controlId).toBe(controlId);
+    expect(controlTrack.actions).toHaveLength(0);
   });
 });

@@ -192,3 +192,29 @@ export const updateAnimationSpeedModifier = (
       animation.speedModifier = speedModifier;
     }
   });
+
+export const createAnimationControlTrack = (
+  animationId: string,
+  controlId: string
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    let track = animation.tracks.find(
+      (t): t is AnimationControlTrack =>
+        t.type === "control" && t.controlId === controlId
+    );
+
+    if (!track) {
+      track = {
+        type: "control",
+        controlId,
+        actions: [],
+        length: 0,
+      };
+      animation.tracks.push(track);
+    }
+  });

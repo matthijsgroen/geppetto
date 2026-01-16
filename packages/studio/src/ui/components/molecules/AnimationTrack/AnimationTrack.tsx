@@ -3,7 +3,6 @@ import type { DragEvent, FC, MouseEvent, PropsWithChildren, Ref } from "react";
 import { useState } from "react";
 
 import { isEvent } from "@/ui/components";
-import { TimeStretchHandle } from "@/ui/components/atoms/TimeBar/TimeStretchHandle";
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { Column } from "@/ui/components/molecules/Column/Column";
 import { Row } from "@/ui/components/molecules/Row/Row";
@@ -23,6 +22,7 @@ type AnimationTrackProps = PropsWithChildren<{
     event: MouseEvent<HTMLDivElement>,
     trackName: string
   ) => void;
+  onTrackContextMenu?: (event: MouseEvent<HTMLDivElement>) => void;
   ref?: Ref<HTMLDivElement>;
   selected?: boolean;
   trackNames?: string[];
@@ -38,6 +38,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
   onSelect,
   onLabelContextMenu,
   onTrackNameContextMenu,
+  onTrackContextMenu,
   ref,
   selected = false,
   trackNames = [],
@@ -199,7 +200,10 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
         role={selected ? "region" : "button"}
         tabIndex={selected ? -1 : 0}
       >
-        <div className="relative flex h-full">
+        <div
+          className="relative flex h-full"
+          onContextMenu={onTrackContextMenu}
+        >
           <div
             className="absolute top-0 bottom-0 box-content flex w-min bg-panel/50 ps-2"
             style={{ width: `${length}em` }}
@@ -223,9 +227,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
               "flex w-2 items-start justify-end rounded-e-sm bg-panel pt-0.5 group-hover:bg-control-highlight group-focus:bg-control-highlight",
               selected ? "h-6" : "h-full"
             )}
-          >
-            {selected && <TimeStretchHandle />}
-          </div>
+          ></div>
           {loop && <div className="px-2 text-sm text-dimmed">⏎</div>}
           <AnimationTrackContext.Provider value={{ activeTrack: selected }}>
             {children}
