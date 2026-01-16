@@ -26,6 +26,7 @@ export { ToolSpacer } from "./atoms/ToolSpacer/ToolSpacer";
 export { ToolTab } from "./atoms/ToolTab/ToolTab";
 export { AnimationsContainer } from "./molecules/AnimationsContainer/AnimationsContainer";
 export { AnimationTrack } from "./molecules/AnimationTrack/AnimationTrack";
+export { TrackDragProvider } from "./molecules/AnimationTrack/TrackDragContext";
 export { Column } from "./molecules/Column/Column";
 export { Control } from "./molecules/Control/Control";
 export { ControlPanel } from "./molecules/ControlPanel/ControlPanel";

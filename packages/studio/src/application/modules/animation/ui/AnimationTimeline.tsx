@@ -125,6 +125,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
         onClose={() => toggleMenu(false)}
       />
       <AnimationTrackComponent
+        animationId={animationId}
         extraContent={
           <ToolBar size="minimal" transparent>
             {isPlaying ? (
