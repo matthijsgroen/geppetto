@@ -91,8 +91,8 @@ export const ResizePanel: React.FC<ResizePanelProps> = ({
     clsx(
       "z-10 flex place-content-center items-center bg-transparent hover:bg-control-focus",
       {
-        "-mx-0.5 w-1 cursor-ew-resize": horizontal,
-        "-my-0.5 h-1 cursor-ns-resize": !horizontal,
+        "-mx-0.5 w-1 cursor-col-resize": horizontal,
+        "-my-0.5 h-1 cursor-row-resize": !horizontal,
       }
     );
 
