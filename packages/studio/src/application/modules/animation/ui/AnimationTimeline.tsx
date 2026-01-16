@@ -63,6 +63,16 @@ type AnimationTimelineProps = {
   selectedTimeBar?: AnimationFrame | null;
 };
 
+const speedLabel = (speed: number) => {
+  if (speed < 1) {
+    return `${1 / speed}× slower`;
+  }
+  if (speed > 1) {
+    return `${speed}× faster`;
+  }
+  return "Original speed";
+};
+
 export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   animationId,
   isPlaying = false,
@@ -145,7 +155,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
       </MenuItem>
       <SubMenu label="Speed modifier">
         <MenuRadioGroup value={animation.speedModifier ?? 1}>
-          {[0.125, 0.25, 0.5, 1, 1.5, 2, 4].map((speed) => (
+          {[0.125, 0.25, 0.5, 1 / 1.5, 1, 1.5, 2, 4, 8].map((speed) => (
             <MenuItem
               key={speed}
               onClick={() => {
@@ -154,7 +164,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
               type="radio"
               value={speed}
             >
-              {speed}x
+              {speedLabel(speed)}
             </MenuItem>
           ))}
         </MenuRadioGroup>
