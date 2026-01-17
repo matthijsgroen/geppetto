@@ -11,6 +11,7 @@ import {
   hasAnimationsWithData,
   moveControlTrackToAnimation,
   renameAnimation,
+  updateAnimationControlTrackLength,
   updateAnimationSpeedModifier,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
@@ -317,5 +318,31 @@ describe("createAnimationControlTrack", () => {
     const controlTrack = track as AnimationControlTrack;
     expect(controlTrack.controlId).toBe(controlId);
     expect(controlTrack.actions).toHaveLength(0);
+  });
+});
+
+describe("updateAnimationControlTrackLength", () => {
+  it("updates the length of the specified control track", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addControl("move")
+      .addControlFrame("move", 0, 1000, 0.5)
+      .build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = updateAnimationControlTrackLength(
+      "0",
+      controlId,
+      5000
+    )(file);
+
+    const originalAnimation = file.animations["0"];
+    const updatedAnimation = updatedFile.animations["0"];
+
+    const originalTrack = originalAnimation.tracks[0] as AnimationControlTrack;
+    const updatedTrack = updatedAnimation.tracks[0] as AnimationControlTrack;
+
+    expect(originalTrack.length).toBe(1000);
+    expect(updatedTrack.length).toBe(5000);
   });
 });

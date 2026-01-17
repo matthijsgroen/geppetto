@@ -218,3 +218,24 @@ export const createAnimationControlTrack = (
       animation.tracks.push(track);
     }
   });
+
+export const updateAnimationControlTrackLength = (
+  animationId: string,
+  controlId: string,
+  newLength: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    const track = animation.tracks.find(
+      (t): t is AnimationControlTrack =>
+        t.type === "control" && t.controlId === controlId
+    );
+
+    if (track) {
+      track.length = newLength;
+    }
+  });

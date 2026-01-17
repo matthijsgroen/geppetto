@@ -336,7 +336,7 @@ const setupWebGLProgram = (
     console.error("Link failed: " + gl.getProgramInfoLog(program));
     console.error("vs info-log: " + gl.getShaderInfoLog(vs));
     console.error("fs info-log: " + gl.getShaderInfoLog(fs));
-    throw new Error("Could not initialise shaders");
+    throw new Error("Could not initialize shaders");
   }
 
   return [program, vs, fs];

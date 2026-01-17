@@ -5,14 +5,14 @@ import type {
   FrameLayerVisibilityAction,
 } from "@geppetto/types";
 import type { FC, MouseEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
-import { AnimationContextMenu } from "@/application/modules/animation/ui/AnimationContextMenu";
-import { ControlTrackContextMenu } from "@/application/modules/animation/ui/ControlTrackContextMenu";
+import ZoomContext from "@/application/modules/animation/state/ZoomContext";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   renameAnimation,
+  updateAnimationControlTrackLength,
   updateAnimationSpeedModifier,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
@@ -26,13 +26,16 @@ import {
   RenameInput,
   SubMenu,
   TimeBar,
-  TimeLineEndHandle,
   TimePin,
   TimePlayIndicator,
   ToolBar,
   ToolButton,
   useMenuState,
 } from "@/ui/components";
+
+import { AnimationContextMenu } from "./AnimationContextMenu";
+import { ControlTrackContextMenu } from "./ControlTrackContextMenu";
+import { TrackTimeline } from "./TrackTimeLine";
 
 export type AnimationControlFrame = {
   animationId: string;
@@ -177,6 +180,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
     </>
   );
   const speed = animation.speedModifier ?? 1;
+  const { zoom } = use(ZoomContext);
 
   return (
     <>
@@ -280,11 +284,22 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
         )}
         {animation.tracks.map((track, index) => {
           return track.type === "control" ? (
-            <TimeLineEndHandle
+            <TrackTimeline
               key={`${track.controlId}-end`}
-              location={track.length / 1000 / speed}
-              loop={animation.looping}
+              length={track.length}
+              looping={animation.looping}
+              onEndDrag={(newTime) => {
+                setFile(
+                  updateAnimationControlTrackLength(
+                    animationId,
+                    track.controlId,
+                    newTime
+                  )
+                );
+              }}
+              speed={speed}
               trackIndex={index}
+              zoom={zoom}
             />
           ) : null;
         })}

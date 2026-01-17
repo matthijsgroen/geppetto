@@ -1,5 +1,6 @@
 import { type FC, useState } from "react";
 
+import ZoomContext from "@/application/modules/animation/state/ZoomContext";
 import { useFile } from "@/application/state/FileContext";
 import type { AddAnimationDetails } from "@/domain/animation/file2/animations";
 import {
@@ -80,135 +81,141 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
         });
       }}
     >
-      <Panel padding="sm">
-        <ToolBar>
-          <PanelTitle>Animations</PanelTitle>
-          <ToolSeparator />
-          <ToolButton
-            icon={<Icon>➕</Icon>}
-            label="Animation"
-            onClick={() => {
-              const addDetails: AddAnimationDetails | Record<string, never> =
-                {};
-              setFile(addAnimation(addDetails));
-              setSelectedAnimation(addDetails.id);
-            }}
-            tooltip="Add Animation"
-          />
-          {/*
+      <ZoomContext.Provider value={{ zoom }}>
+        <Panel padding="sm">
+          <ToolBar>
+            <PanelTitle>Animations</PanelTitle>
+            <ToolSeparator />
+            <ToolButton
+              icon={<Icon>➕</Icon>}
+              label="Animation"
+              onClick={() => {
+                const addDetails: AddAnimationDetails | Record<string, never> =
+                  {};
+                setFile(addAnimation(addDetails));
+                setSelectedAnimation(addDetails.id);
+              }}
+              tooltip="Add Animation"
+            />
+            {/*
           <ToolButton
             disabled
             icon={<Icon>➕</Icon>}
             label="Event"
             tooltip="Add Event"
           />*/}
-          <Menu
-            align="center"
-            arrow
-            direction="top"
-            menuButton={({ open }) => (
-              <ToolButton
-                active={open}
-                disabled={animation === null}
-                icon={<Icon>➕</Icon>}
-                label="Track"
-                tooltip="Add Control track"
-              />
-            )}
-            portal
-            transition
-          >
-            <MenuHeader>Add Control Track</MenuHeader>
-            {Object.entries(file.controls)
-              .filter(
-                ([id]) =>
-                  !animation?.tracks.some(
-                    (track) =>
-                      track.type === "control" && track.controlId === id
-                  )
-              )
-              .map(([id, control]) => (
-                <MenuItem
-                  key={id}
-                  onClick={() => {
-                    setFile(
-                      createAnimationControlTrack(selectedAnimation!, id)
-                    );
-                  }}
-                >
-                  {control.name}
-                </MenuItem>
-              ))}
-          </Menu>
-          <Menu
-            align="center"
-            arrow
-            direction="bottom"
-            menuButton={({ open }) => (
-              <ToolButton
-                active={open}
-                icon={<Icon>🔎</Icon>}
-                tooltip="Zoom level"
-              />
-            )}
-            portal
-            transition
-          >
-            <MenuHeader>Zoom level</MenuHeader>
-            <MenuRadioGroup value={zoom}>
-              {[0.25, 0.5, 1, 4, 12].map((zoomLevel) => (
-                <MenuItem
-                  key={`zoom${zoomLevel}`}
-                  onClick={() => {
-                    setZoom(zoomLevel);
-                  }}
-                  type="radio"
-                  value={zoomLevel}
-                >
-                  {zoomLevel}×
-                </MenuItem>
-              ))}
-            </MenuRadioGroup>
-          </Menu>
-          <ToolSpacer />
-          <ToolButton disabled icon={<Icon colorize>?</Icon>} tooltip="Help" />
-        </ToolBar>
-        <AnimationsContainer
-          duration={(maxTime + EXTRA_TIME) / 1000}
-          onZoomChange={setZoom}
-          title="Timeline"
-          zoom={zoom}
-        >
-          {Object.keys(file.animations).map((animationId) => (
-            <AnimationTimeline
-              animationId={animationId}
-              isPlaying={animationsPlaying.includes(animationId)}
-              key={animationId}
-              onDelete={() => {
-                setFile(deleteAnimation(animationId));
-                setSelectedAnimation(null);
-              }}
-              onFrameSelect={onFrameSelect}
-              onPlay={() => {
-                onStartAnimation?.(animationId);
-              }}
-              onSelect={() => {
-                setSelectedAnimation(animationId);
-                if (animationId !== selectedFrame?.animationId) {
-                  onFrameSelect?.(null);
-                }
-              }}
-              onStop={() => {
-                onStopAnimation?.(animationId);
-              }}
-              selected={selectedAnimation === animationId}
-              selectedTimeBar={
-                selectedAnimation === animationId ? selectedFrame : null
-              }
+            <Menu
+              align="center"
+              arrow
+              direction="top"
+              menuButton={({ open }) => (
+                <ToolButton
+                  active={open}
+                  disabled={animation === null}
+                  icon={<Icon>➕</Icon>}
+                  label="Track"
+                  tooltip="Add Control track"
+                />
+              )}
+              portal
+              transition
+            >
+              <MenuHeader>Add Control Track</MenuHeader>
+              {Object.entries(file.controls)
+                .filter(
+                  ([id]) =>
+                    !animation?.tracks.some(
+                      (track) =>
+                        track.type === "control" && track.controlId === id
+                    )
+                )
+                .map(([id, control]) => (
+                  <MenuItem
+                    key={id}
+                    onClick={() => {
+                      setFile(
+                        createAnimationControlTrack(selectedAnimation!, id)
+                      );
+                    }}
+                  >
+                    {control.name}
+                  </MenuItem>
+                ))}
+            </Menu>
+            <Menu
+              align="center"
+              arrow
+              direction="bottom"
+              menuButton={({ open }) => (
+                <ToolButton
+                  active={open}
+                  icon={<Icon>🔎</Icon>}
+                  tooltip="Zoom level"
+                />
+              )}
+              portal
+              transition
+            >
+              <MenuHeader>Zoom level</MenuHeader>
+              <MenuRadioGroup value={zoom}>
+                {[0.25, 0.5, 1, 4, 12].map((zoomLevel) => (
+                  <MenuItem
+                    key={`zoom${zoomLevel}`}
+                    onClick={() => {
+                      setZoom(zoomLevel);
+                    }}
+                    type="radio"
+                    value={zoomLevel}
+                  >
+                    {zoomLevel}×
+                  </MenuItem>
+                ))}
+              </MenuRadioGroup>
+            </Menu>
+            <ToolSpacer />
+            <ToolButton
+              disabled
+              icon={<Icon colorize>?</Icon>}
+              tooltip="Help"
             />
-          ))}
-        </AnimationsContainer>
-      </Panel>
+          </ToolBar>
+          <AnimationsContainer
+            duration={(maxTime + EXTRA_TIME) / 1000}
+            onZoomChange={setZoom}
+            title="Timeline"
+            zoom={zoom}
+          >
+            {Object.keys(file.animations).map((animationId) => (
+              <AnimationTimeline
+                animationId={animationId}
+                isPlaying={animationsPlaying.includes(animationId)}
+                key={animationId}
+                onDelete={() => {
+                  setFile(deleteAnimation(animationId));
+                  setSelectedAnimation(null);
+                }}
+                onFrameSelect={onFrameSelect}
+                onPlay={() => {
+                  onStartAnimation?.(animationId);
+                }}
+                onSelect={() => {
+                  setSelectedAnimation(animationId);
+                  if (animationId !== selectedFrame?.animationId) {
+                    onFrameSelect?.(null);
+                  }
+                }}
+                onStop={() => {
+                  onStopAnimation?.(animationId);
+                }}
+                selected={selectedAnimation === animationId}
+                selectedTimeBar={
+                  selectedAnimation === animationId ? selectedFrame : null
+                }
+              />
+            ))}
+          </AnimationsContainer>
+        </Panel>
+      </ZoomContext.Provider>
     </TrackDragProvider>
   );
 };
