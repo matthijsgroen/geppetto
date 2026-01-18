@@ -187,7 +187,8 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       () => ({
         toggleInfo: {
           icon: "ℹ",
-          tooltip: "toggle info display",
+          colorizedIcon: true,
+          tooltip: "Toggle info display",
           shortcut: TOGGLE_INFO_SHORTCUT,
           handler: () => {
             setShowItemDetails((prev) => !prev);
@@ -195,7 +196,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
         },
         toggleWireFrames: {
           icon: "🩻",
-          tooltip: "toggle wireframes",
+          tooltip: "Toggle wireframes",
           shortcut: { alt: true, interaction: "KeyW" } as Shortcut,
           handler: () => {
             setShowWireFrames((prev) => !prev);

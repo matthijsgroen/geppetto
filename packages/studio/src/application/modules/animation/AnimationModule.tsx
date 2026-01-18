@@ -22,6 +22,7 @@ import {
   ToolBar,
   ToolButton,
   ToolSeparator,
+  ToolSpacer,
 } from "@/ui/components";
 
 type AnimationModuleProps = {
@@ -72,6 +73,12 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
             }));
           }}
           tooltip="Fit to screen"
+        />
+        <ToolSpacer />
+        <ToolButton
+          disabled
+          icon={<Icon colorize>ℹ</Icon>}
+          tooltip="Toggle info display"
         />
       </ToolBar>
       <Panel center workspace>

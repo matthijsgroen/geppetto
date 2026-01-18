@@ -6,6 +6,7 @@ import { isEvent, type Shortcut } from "@/ui/components";
 export type Action = {
   caption?: string;
   icon?: string;
+  colorizedIcon?: boolean;
   tooltip?: string;
   shortcut: Shortcut;
   type?: "checkbox" | "normal" | "radio";
@@ -29,6 +30,7 @@ export const useActionMap = <T extends string>(
     result: ActionMap<ActionHandlers<T>>;
     producer: typeof producer;
   }>(null);
+
   if (ref.current?.producer !== producer) {
     const result = producer();
     const actionList = Object.entries<Action>(result);
