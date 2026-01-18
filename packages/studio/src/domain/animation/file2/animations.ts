@@ -128,9 +128,29 @@ export const addControlFrameToAnimation = (
     if (startValue !== undefined) {
       action.controlStartValue = startValue;
     }
-    // TODO: Handle overlapping frames
+
+    const startedDuringNewFrame = track.actions.find(
+      (a) => a.start <= start && a.start + a.duration > start
+    );
+
+    if (startedDuringNewFrame) {
+      startedDuringNewFrame.duration = start - startedDuringNewFrame.start;
+    }
+
+    const firstOverlappingAfter = track.actions.find(
+      (a) => a.start <= start + duration && a.start > start
+    );
+    if (firstOverlappingAfter) {
+      const delta = start + duration - firstOverlappingAfter.start;
+      track.actions.forEach((a) => {
+        if (a.start >= firstOverlappingAfter.start) {
+          a.start += delta;
+        }
+      });
+    }
 
     track.actions.push(action);
+    track.actions.sort((a, b) => a.start - b.start);
   });
 
 export const deleteAnimation = (animationId: string) =>

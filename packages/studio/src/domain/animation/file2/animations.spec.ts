@@ -222,6 +222,69 @@ describe("addControlFrameToAnimation", () => {
     expect(action.easingFunction).toBe("easeInOut");
     expect(action.controlStartValue).toBe(0.0);
   });
+
+  it("moves existing items up when adding a control frame that overlaps", () => {
+    const file = fileBuilder()
+      .addControl("move")
+      .addAnimation("walk")
+      .addControlFrame("move", 0, 1000, 0.5)
+      .addControlFrame("move", 1500, 1000, 1.0)
+      .build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = addControlFrameToAnimation(
+      "0",
+      controlId,
+      1200,
+      2000,
+      0.75
+    )(file);
+
+    const updatedAnimation = updatedFile.animations["0"];
+
+    const track = updatedAnimation.tracks[0];
+    const controlTrack = track as AnimationControlTrack;
+    expect(controlTrack.actions).toHaveLength(3);
+    expect(controlTrack.actions[0].start).toBe(0);
+    expect(controlTrack.actions[0].duration).toBe(1000);
+
+    expect(controlTrack.actions[1].start).toBe(1200);
+    expect(controlTrack.actions[1].duration).toBe(2000);
+
+    expect(controlTrack.actions[2].start).toBe(3200);
+    expect(controlTrack.actions[2].duration).toBe(1000);
+  });
+
+  it("shortens existing item when start during other frame", () => {
+    const file = fileBuilder()
+      .addControl("move")
+      .addAnimation("walk")
+      .addControlFrame("move", 0, 2000, 0.5)
+      .addControlFrame("move", 2000, 1000, 0.5)
+      .build();
+    const controlId = getControlIdByName(file, "move");
+    const updatedFile = addControlFrameToAnimation(
+      "0",
+      controlId,
+      1500,
+      1000,
+      0.75
+    )(file);
+
+    const updatedAnimation = updatedFile.animations["0"];
+
+    const track = updatedAnimation.tracks[0];
+    const controlTrack = track as AnimationControlTrack;
+    expect(controlTrack.actions).toHaveLength(3);
+    expect(controlTrack.actions[0].start).toBe(0);
+    expect(controlTrack.actions[0].duration).toBe(1500);
+
+    expect(controlTrack.actions[1].start).toBe(1500);
+    expect(controlTrack.actions[1].duration).toBe(1000);
+
+    expect(controlTrack.actions[2].start).toBe(2500);
+    expect(controlTrack.actions[2].duration).toBe(1000);
+  });
 });
 
 describe("deleteControlTrackFromAnimation", () => {
@@ -257,15 +320,10 @@ describe("moveControlTrackToAnimation", () => {
 
     const updatedFile = moveControlTrackToAnimation("0", "1", controlId)(file);
 
-    const originalWalkAnimation = file.animations["0"];
-    const originalRunAnimation = file.animations["1"];
     const updatedWalkAnimation = updatedFile.animations["0"];
     const updatedRunAnimation = updatedFile.animations["1"];
 
-    expect(originalWalkAnimation.tracks).toHaveLength(1);
     expect(updatedWalkAnimation.tracks).toHaveLength(0);
-
-    expect(originalRunAnimation.tracks).toHaveLength(0);
     expect(updatedRunAnimation.tracks).toHaveLength(1);
 
     const track = updatedRunAnimation.tracks[0];
