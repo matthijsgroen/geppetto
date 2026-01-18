@@ -236,6 +236,18 @@ export const updateAnimationControlTrackLength = (
     );
 
     if (track) {
+      // if latest action goes beyond new length, scale all actions to new length
+      const latestActionEnd = Math.max(
+        ...track.actions.map((a) => a.start + a.duration)
+      );
+      if (latestActionEnd > newLength) {
+        const scale = newLength / latestActionEnd;
+        track.actions = track.actions.map((action) => ({
+          ...action,
+          start: action.start * scale,
+          duration: action.duration * scale,
+        }));
+      }
       track.length = newLength;
     }
   });

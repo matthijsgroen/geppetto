@@ -345,4 +345,46 @@ describe("updateAnimationControlTrackLength", () => {
     expect(originalTrack.length).toBe(1000);
     expect(updatedTrack.length).toBe(5000);
   });
+
+  it("squeezes actions if new length is shorter than existing actions", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addControl("move")
+      .addControlFrame("move", 0, 2000, 0.5)
+      .addControlFrame("move", 2500, 2000, 1.0)
+      .build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = updateAnimationControlTrackLength(
+      "0",
+      controlId,
+      3000
+    )(file);
+
+    const originalAnimation = file.animations["0"];
+    const updatedAnimation = updatedFile.animations["0"];
+
+    const originalTrack = originalAnimation.tracks[0] as AnimationControlTrack;
+    const updatedTrack = updatedAnimation.tracks[0] as AnimationControlTrack;
+
+    expect(originalTrack.length).toBe(4500);
+    expect(updatedTrack.length).toBe(3000);
+
+    expect(originalTrack.actions).toHaveLength(2);
+    expect(updatedTrack.actions).toHaveLength(2);
+
+    const originalFirstAction = originalTrack.actions[0];
+    const updatedFirstAction = updatedTrack.actions[0];
+    expect(originalFirstAction.start).toBe(0);
+    expect(originalFirstAction.duration).toBe(2000);
+    expect(updatedFirstAction.start).toBe(0);
+    expect(updatedFirstAction.duration).toBeCloseTo(1333.33, 2);
+
+    const originalSecondAction = originalTrack.actions[1];
+    const updatedSecondAction = updatedTrack.actions[1];
+    expect(originalSecondAction.start).toBe(2500);
+    expect(originalSecondAction.duration).toBe(2000);
+    expect(updatedSecondAction.start).toBeCloseTo(1666.67, 2);
+    expect(updatedSecondAction.duration).toBeCloseTo(1333.33, 2);
+  });
 });

@@ -11,6 +11,7 @@ import ZoomContext from "@/application/modules/animation/state/ZoomContext";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
+  addControlFrameToAnimation,
   renameAnimation,
   updateAnimationControlTrackLength,
   updateAnimationSpeedModifier,
@@ -288,6 +289,17 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
               key={`${track.controlId}-end`}
               length={track.length}
               looping={animation.looping}
+              onAddFrame={(startTime) => {
+                setFile(
+                  addControlFrameToAnimation(
+                    animationId,
+                    track.controlId,
+                    startTime,
+                    500,
+                    0
+                  )
+                );
+              }}
               onEndDrag={(newTime) => {
                 setFile(
                   updateAnimationControlTrackLength(

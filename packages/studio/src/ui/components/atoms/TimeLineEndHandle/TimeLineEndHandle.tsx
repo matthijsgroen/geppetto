@@ -1,3 +1,4 @@
+import type { MouseEventHandler } from "react";
 import { type FC, use } from "react";
 
 import { TimeStretchHandle } from "@/ui/components/atoms/TimeBar/TimeStretchHandle";
@@ -11,11 +12,13 @@ export const TimeLineEndHandle: FC<{
   trackIndex?: number;
   onEndDrag?: (newTime: TimeStamp) => void;
   onEndDragRelease?: (newTime: TimeStamp) => void;
+  onContextMenu?: MouseEventHandler<HTMLDivElement>;
 }> = ({
   location,
   loop = false,
   zoom = 1,
   trackIndex = 0,
+  onContextMenu,
   onEndDrag,
   onEndDragRelease,
 }) => {
@@ -33,6 +36,7 @@ export const TimeLineEndHandle: FC<{
     >
       <div
         className="box-content flex h-full bg-panel ps-2"
+        onContextMenu={onContextMenu}
         style={{
           width: `${location}em`,
         }}

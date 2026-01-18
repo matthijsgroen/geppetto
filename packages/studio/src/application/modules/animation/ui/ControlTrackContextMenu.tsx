@@ -1,13 +1,14 @@
 import type { MenuState } from "@szhsin/react-menu";
 import type { FC } from "react";
 
+import { AnimationContextMenu } from "@/application/modules/animation/ui/AnimationContextMenu";
 import { useFile } from "@/application/state/FileContext";
 import {
   deleteControlTrackFromAnimation,
   moveControlTrackToAnimation,
 } from "@/domain/animation/file2/animations";
 import { getControlIdByName } from "@/domain/animation/file2/testFileBuilder";
-import { ControlledMenu, MenuHeader, MenuItem, SubMenu } from "@/ui/components";
+import { MenuHeader, MenuItem, SubMenu } from "@/ui/components";
 
 type ControlTrackContextMenuProps = {
   anchorPoint: { x: number; y: number };
@@ -31,11 +32,7 @@ export const ControlTrackContextMenu: FC<ControlTrackContextMenuProps> = ({
   );
 
   return (
-    <ControlledMenu
-      {...menuProps}
-      menuStyle={{ fontSize: "1rem" }}
-      onClose={onClose}
-    >
+    <AnimationContextMenu {...menuProps} onClose={onClose}>
       <MenuHeader>{trackName}</MenuHeader>
       <SubMenu label="Move to...">
         {otherAnimations.map(([id, animation]) => (
@@ -57,6 +54,6 @@ export const ControlTrackContextMenu: FC<ControlTrackContextMenuProps> = ({
       >
         Delete
       </MenuItem>
-    </ControlledMenu>
+    </AnimationContextMenu>
   );
 };
