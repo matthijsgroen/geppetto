@@ -52,14 +52,14 @@ export const ToolButton: FC<ToolButtonProps> = ({
       aria-label={tooltip}
       {...props}
       className={clsx(
-        `relative inline-flex flex-row items-center gap-1 border-0 whitespace-nowrap outline-2 outline-transparent`,
-        `focus:outline-control-focus hover:enabled:bg-control-highlight disabled:opacity-50`,
+        "relative inline-flex flex-row items-center justify-center gap-1 border-0 whitespace-nowrap outline-2 outline-transparent",
+        "focus:outline-control-focus hover:enabled:bg-control-highlight disabled:opacity-50",
         {
           "bg-toolbar text-text": !active && !standAlone,
           "bg-control-interaction text-text": !active && standAlone,
           "bg-control-active text-active": active,
 
-          "h-6 justify-center rounded-control-small text-xs":
+          "h-6 rounded-control-small text-xs":
             useSize === "small" || useSize === "minimal",
           "min-w-6 px-1":
             (useSize === "small" || useSize === "minimal") && displayButton,
