@@ -1,5 +1,5 @@
 import type { FC, MouseEvent } from "react";
-import { useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { BASE_FONT_SIZE_PIXELS } from "@/ui/foundations/fontSize";
@@ -44,6 +44,14 @@ const calculateNewLocation = (
   return newTime;
 };
 
+const displayTime = (time: TimeStamp): string => {
+  if (time < 1) {
+    return `${Math.round(time * 1000)} ms`;
+  } else {
+    return `${time.toFixed(2)} s`;
+  }
+};
+
 export const TimeStretchHandle: FC<{
   ref?: React.Ref<HTMLDivElement>;
   location: TimeStamp;
@@ -54,6 +62,7 @@ export const TimeStretchHandle: FC<{
   const dragging = useRef(false);
   const startX = useRef(0);
   const lastDelta = useRef(0);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   const onMouseDown = useCallback(
     (e: MouseEvent<HTMLDivElement>) => {
@@ -61,6 +70,7 @@ export const TimeStretchHandle: FC<{
       startX.current = e.clientX;
       lastDelta.current = 0;
       document.body.style.cursor = "ew-resize";
+      setShowTooltip(true);
 
       const onMouseMove = (e: globalThis.MouseEvent) => {
         if (!dragging.current) return;
@@ -90,6 +100,7 @@ export const TimeStretchHandle: FC<{
         window.removeEventListener("mouseup", onMouseUp);
         lastDelta.current = 0;
         document.body.style.cursor = "";
+        setShowTooltip(false);
       };
 
       window.addEventListener("mousemove", onMouseMove);
@@ -101,9 +112,15 @@ export const TimeStretchHandle: FC<{
 
   return (
     <div
-      className="h-4 w-1 cursor-ew-resize border-x border-control-interaction hover:bg-control-active"
+      className="relative h-4 w-1 cursor-ew-resize border-x border-control-interaction hover:bg-control-active"
       onMouseDown={onMouseDown}
       ref={ref}
-    ></div>
+    >
+      {showTooltip && (
+        <p className="absolute -top-8 -left-5 rounded-full bg-black px-2 py-1 text-xs whitespace-nowrap text-white">
+          {displayTime(location)}
+        </p>
+      )}
+    </div>
   );
 };
