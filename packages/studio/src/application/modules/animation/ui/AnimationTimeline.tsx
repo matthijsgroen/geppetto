@@ -37,7 +37,7 @@ import {
 
 import { AnimationContextMenu } from "./AnimationContextMenu";
 import { ControlTrackContextMenu } from "./ControlTrackContextMenu";
-import { TrackTimeline } from "./TrackTimeLine";
+import { TrackTimeline } from "./TrackTimeline";
 
 export type AnimationControlFrame = {
   animationId: string;
