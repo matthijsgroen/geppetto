@@ -13,7 +13,7 @@
   background-repeat: no-repeat;
   width: calc(--value(number, [number], [*]) * 1em);
   animation: trackPlay calc(--value(number, [number], [*]) * 1s) linear
-    --modifier(--play-count-*, number, [number], 1) forwards;
+    --modifier(--play-count-*, number, [number]) forwards;
   pointer-events: none;
 }
 
