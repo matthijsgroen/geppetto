@@ -97,13 +97,6 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
               }}
               tooltip="Add Animation"
             />
-            {/*
-          <ToolButton
-            disabled
-            icon={<Icon>➕</Icon>}
-            label="Event"
-            tooltip="Add Event"
-          />*/}
             <Menu
               align="center"
               arrow

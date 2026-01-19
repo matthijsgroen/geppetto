@@ -39,7 +39,7 @@ export const AnimationsContainer: FC<
   }, [onZoomChange]);
 
   return (
-    <div className="overflow-scroll">
+    <div className="overflow-scroll pb-4">
       <div
         className="grid min-w-fit grid-cols-[minmax(min-content,10vw)_1fr] gap-x-0.5"
         style={{ fontSize: `${zoom}rem` }}

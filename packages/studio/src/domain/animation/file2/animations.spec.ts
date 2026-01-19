@@ -11,6 +11,7 @@ import {
   hasAnimationsWithData,
   moveControlTrackToAnimation,
   renameAnimation,
+  resizeControlFrame,
   updateAnimationControlTrackLength,
   updateAnimationSpeedModifier,
   updateLoopingAnimation,
@@ -444,5 +445,70 @@ describe("updateAnimationControlTrackLength", () => {
     expect(originalSecondAction.duration).toBe(2000);
     expect(updatedSecondAction.start).toBeCloseTo(1666.67, 2);
     expect(updatedSecondAction.duration).toBeCloseTo(1333.33, 2);
+  });
+});
+
+describe("resizeControlFrame", () => {
+  it("resizes the specified control frame", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addControl("move")
+      .addControlFrame("move", 0, 2000, 0.5)
+      .build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = resizeControlFrame("0", controlId, 0, 0, 3000)(file);
+    const updatedAnimation = updatedFile.animations["0"];
+    const updatedTrack = updatedAnimation.tracks[0] as AnimationControlTrack;
+    const updatedAction = updatedTrack.actions[0];
+
+    expect(updatedAction.start).toBe(0);
+    expect(updatedAction.duration).toBe(3000);
+  });
+
+  it("resizes the specified control frame and adjacent frames on overlap (next)", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addControl("move")
+      .addControlFrame("move", 0, 2000, 0.5)
+      .addControlFrame("move", 2500, 2000, 0.5)
+      .build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = resizeControlFrame("0", controlId, 0, 0, 3000)(file);
+    const updatedAnimation = updatedFile.animations["0"];
+    const updatedTrack = updatedAnimation.tracks[0] as AnimationControlTrack;
+    const updatedAction = updatedTrack.actions[0];
+
+    expect(updatedAction.start).toBe(0);
+    expect(updatedAction.duration).toBe(3000);
+
+    const adjacentAction = updatedTrack.actions[1];
+
+    expect(adjacentAction.start).toBe(3000);
+    expect(adjacentAction.duration).toBe(1500);
+  });
+
+  it("resizes the specified control frame and adjacent frames on overlap (previous)", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addControl("move")
+      .addControlFrame("move", 0, 2000, 0.5)
+      .addControlFrame("move", 2500, 2000, 0.5)
+      .build();
+    const controlId = getControlIdByName(file, "move");
+
+    const updatedFile = resizeControlFrame("0", controlId, 1, 1500, 3000)(file);
+    const updatedAnimation = updatedFile.animations["0"];
+    const updatedTrack = updatedAnimation.tracks[0] as AnimationControlTrack;
+    const updatedAction = updatedTrack.actions[1];
+
+    expect(updatedAction.start).toBe(1500);
+    expect(updatedAction.duration).toBe(3000);
+
+    const adjacentAction = updatedTrack.actions[0];
+
+    expect(adjacentAction.start).toBe(0);
+    expect(adjacentAction.duration).toBe(1500);
   });
 });

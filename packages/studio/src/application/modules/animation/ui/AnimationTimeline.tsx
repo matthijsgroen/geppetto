@@ -8,11 +8,13 @@ import type { FC, MouseEvent } from "react";
 import { use, useEffect, useRef, useState } from "react";
 
 import ZoomContext from "@/application/modules/animation/state/ZoomContext";
+import { TrackControlFrame } from "@/application/modules/animation/ui/TrackControlFrame";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   addControlFrameToAnimation,
   renameAnimation,
+  resizeControlFrame,
   updateAnimationControlTrackLength,
   updateAnimationSpeedModifier,
   updateLoopingAnimation,
@@ -26,7 +28,6 @@ import {
   MenuRadioGroup,
   RenameInput,
   SubMenu,
-  TimeBar,
   TimePin,
   TimePlayIndicator,
   ToolBar,
@@ -257,9 +258,9 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
         {animation.tracks.map((track, index) =>
           track.type === "control"
             ? track.actions.map((action, actionIndex) => (
-                <TimeBar
-                  duration={action.duration / 1000 / speed}
-                  easing={action.easingFunction}
+                <TrackControlFrame
+                  action={action}
+                  actionIndex={actionIndex}
                   key={`${track.controlId}-${actionIndex}`}
                   onClick={() => {
                     onFrameSelect?.({
@@ -269,6 +270,17 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                       actionIndex,
                     });
                   }}
+                  onResize={(newStart, newDuration) => {
+                    setFile(
+                      resizeControlFrame(
+                        animationId,
+                        track.controlId,
+                        actionIndex,
+                        newStart,
+                        newDuration
+                      )
+                    );
+                  }}
                   selected={
                     (selectedTimeBar &&
                       selectedTimeBar.animationId === animationId &&
@@ -277,8 +289,10 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                       selectedTimeBar.actionIndex === actionIndex) ??
                     false
                   }
-                  start={action.start / 1000 / speed}
+                  speed={speed}
+                  track={track}
                   trackIndex={index}
+                  zoom={zoom}
                 />
               ))
             : null

@@ -150,7 +150,7 @@ export const addControlFrameToAnimation = (
     }
 
     track.actions.push(action);
-    track.actions.sort((a, b) => a.start - b.start);
+    track.actions = track.actions.toSorted((a, b) => a.start - b.start);
   });
 
 export const deleteAnimation = (animationId: string) =>
@@ -270,4 +270,50 @@ export const updateAnimationControlTrackLength = (
       }
       track.length = newLength;
     }
+  });
+
+export const resizeControlFrame = (
+  animationId: string,
+  controlId: string,
+  actionIndex: number,
+  newStart: number,
+  newDuration: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    const track = animation.tracks.find(
+      (t): t is AnimationControlTrack =>
+        t.type === "control" && t.controlId === controlId
+    );
+
+    if (!track) {
+      return;
+    }
+
+    const action = track.actions[actionIndex];
+    if (!action) {
+      return;
+    }
+
+    const nextItem = track.actions[actionIndex + 1];
+    if (nextItem && newStart + newDuration > nextItem.start) {
+      const delta = newStart + newDuration - nextItem.start;
+
+      nextItem.start = newStart + newDuration;
+      nextItem.duration -= delta;
+    }
+
+    const previousItem = track.actions[actionIndex - 1];
+    if (previousItem && newStart < previousItem.start + previousItem.duration) {
+      const delta = previousItem.start + previousItem.duration - newStart;
+
+      previousItem.duration -= delta;
+    }
+
+    action.start = newStart;
+    action.duration = newDuration;
   });
