@@ -201,6 +201,7 @@ export const animationVisibilityTrackSchema = z.object({
 export const animationSchema = z.object({
   name: z.string(),
   looping: z.boolean(),
+  speedModifier: z.number().optional(),
   tracks: z.array(
     z.union([animationControlTrackSchema, animationVisibilityTrackSchema])
   ),

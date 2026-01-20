@@ -1,0 +1,42 @@
+@utility text-vertical {
+  writing-mode: vertical-lr;
+}
+
+@utility hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+@utility hide-spinner {
+  &:not(:focus)::-webkit-outer-spin-button,
+  &:not(:focus)::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+  /* Firefox */
+  &:not(:focus) {
+    appearance: textfield;
+  }
+}
+
+@custom-variant track {
+  &::-webkit-slider-runnable-track {
+    @slot;
+  }
+  &::-moz-range-track {
+    @slot;
+  }
+}
+
+@custom-variant thumb {
+  &::-webkit-slider-thumb {
+    appearance: none;
+    @slot;
+  }
+  &::-moz-range-thumb {
+    @slot;
+  }
+}

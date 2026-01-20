@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
 import type {
@@ -22,6 +22,7 @@ import {
   ToolBar,
   ToolButton,
   ToolSeparator,
+  ToolSpacer,
 } from "@/ui/components";
 
 type AnimationModuleProps = {
@@ -43,6 +44,12 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
   const resetZoom = useUpdateScreenTranslation();
   const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
+
+  const stopAnimationState = useCallback((animationId: string) => {
+    setAnimationsPlaying((prev) =>
+      prev.filter((animId) => animId !== animationId)
+    );
+  }, []);
 
   return (
     <Column>
@@ -67,6 +74,12 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           }}
           tooltip="Fit to screen"
         />
+        <ToolSpacer />
+        <ToolButton
+          disabled
+          icon={<Icon colorize>ℹ</Icon>}
+          tooltip="Toggle info display"
+        />
       </ToolBar>
       <Panel center workspace>
         {texture && hasControls(file) && (
@@ -74,6 +87,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
             animationsPlaying={animationsPlaying}
             file={file}
             image={texture}
+            onStop={stopAnimationState}
           >
             {activeFrame && isControlFrame(activeFrame) && (
               <ControlFrameEdit

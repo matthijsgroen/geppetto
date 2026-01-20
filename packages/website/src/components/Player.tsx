@@ -1,15 +1,17 @@
 import React, {
   Children,
-  MutableRefObject,
+  createContext,
+  FC,
+  PropsWithChildren,
+  RefObject,
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { setupWebGL, prepareAnimation } from "geppetto-player";
 import type {
   GeppettoPlayer,
-  ImageDefinition,
+  GeppettoImage,
   AnimationControls,
   AnimationOptions,
   PreparedImageDefinition,
@@ -22,27 +24,22 @@ type PlayerProps = {
   onRender?: () => void;
 };
 
-type ContextValueType = (
+type ContextValueType = ((
   animation: PreparedImageDefinition,
   textureUrl: string,
   options?: Partial<AnimationOptions>
-) => Promise<[AnimationControls, () => void]>;
+) => Promise<[AnimationControls, () => void]>) | null;
 
-const PlayerContext = React.createContext<ContextValueType>(null);
+const PlayerContext = createContext<ContextValueType>(null);
 
-const useForceUpdate = () => {
-  const [, updater] = useState(0);
-  return useCallback(() => updater((n) => n + 1), []);
-};
-
-export const Player: React.FC<PlayerProps> = ({
+export const Player: FC<PropsWithChildren<PlayerProps>> = ({
   width,
   height,
   fallbackUrl,
   children,
   onRender,
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const animations = useRef<AnimationControls[]>([]);
   const animationDataPrepped = useRef<boolean[]>(
     Array(Children.count(children)).fill(false)
@@ -51,11 +48,11 @@ export const Player: React.FC<PlayerProps> = ({
   const playerMounted = useRef<boolean>(true);
 
   const preparePlayer = useCallback(
-    async (animationList: MutableRefObject<boolean[]>) =>
+    async (animationList: RefObject<boolean[]>) =>
       new Promise<GeppettoPlayer>((resolve) => {
         animationResolvers.current.push(resolve);
 
-        if (animationList.current.every((e) => e)) {
+        if (animationList.current.every((e) => e) && canvasRef.current) {
           const player = setupWebGL(canvasRef.current);
 
           const renderFrame = () => {
@@ -87,13 +84,12 @@ export const Player: React.FC<PlayerProps> = ({
       options?: Partial<AnimationOptions>
     ): Promise<[AnimationControls, () => void]> => {
       const index = animations.current.length;
-      animations.current.push(null);
       const texture = await loadTexture(textureUrl);
       animationDataPrepped.current[index] = true;
       const player: GeppettoPlayer = await preparePlayer(animationDataPrepped);
 
       const controls = player.addAnimation(animation, texture, index, options);
-      animations.current[index] = controls;
+      animations.current.push(controls);
 
       return [
         controls,
@@ -114,6 +110,7 @@ export const Player: React.FC<PlayerProps> = ({
 
   useEffect(() => {
     const setCanvasSize = () => {
+      if (!canvasRef.current) return;
       const box = canvasRef.current.getBoundingClientRect();
       const override = navigator.userAgent.includes("SMART-TV") ? 2 : 1;
       canvasRef.current.width = Math.min(
@@ -165,7 +162,7 @@ const loadTexture = async (url: string): Promise<HTMLImageElement> =>
   });
 
 type AnimationProps = {
-  animation: ImageDefinition;
+  animation: GeppettoImage;
   textureUrl: string;
   options?: Partial<AnimationOptions>;
   onAnimationReady: (
@@ -174,7 +171,7 @@ type AnimationProps = {
   ) => void;
 };
 
-export const Animation: React.VFC<AnimationProps> = ({
+export const Animation: React.FC<AnimationProps> = ({
   animation,
   textureUrl,
   options,

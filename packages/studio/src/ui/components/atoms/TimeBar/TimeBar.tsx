@@ -8,28 +8,41 @@ import { AnimationTrackContext } from "@/ui/components/molecules/AnimationTrack/
 
 import { TimeStretchHandle } from "./TimeStretchHandle";
 
-export const TimeBar: FC<{
+type TimeBarProps = {
   start: TimeStamp;
   duration: TimeStamp;
   selected?: boolean;
   trackIndex: number;
-  onClick?: () => void;
   easing?: EasingFunction;
   variant?: "mini" | "default";
-}> = ({
+  zoom?: number;
+  onClick?: () => void;
+  onEndDrag?: (newTime: TimeStamp) => void;
+  onEndDragRelease?: (newTime: TimeStamp) => void;
+  onStartDrag?: (newTime: TimeStamp) => void;
+  onStartDragRelease?: (newTime: TimeStamp) => void;
+};
+
+export const TimeBar: FC<TimeBarProps> = ({
   start,
   duration,
   selected = false,
   trackIndex,
-  onClick,
   easing,
+  zoom = 1,
   variant,
+  onClick,
+  onEndDrag,
+  onEndDragRelease,
+  onStartDrag,
+  onStartDragRelease,
 }) => {
   const containerProps = use(AnimationTrackContext);
   const activeVariant =
     variant ?? (containerProps.activeTrack ? "default" : "mini");
 
   const Element = activeVariant === "default" ? "button" : "div";
+
   return (
     <Element
       className={clsx(
@@ -53,9 +66,19 @@ export const TimeBar: FC<{
     >
       {activeVariant === "default" && (
         <>
-          <TimeStretchHandle />
+          <TimeStretchHandle
+            location={start}
+            onDrag={onStartDrag}
+            onDragRelease={onStartDragRelease}
+            zoom={zoom}
+          />
           {easing && <TimeCurve variant={easing} />}
-          <TimeStretchHandle />
+          <TimeStretchHandle
+            location={start + duration}
+            onDrag={onEndDrag}
+            onDragRelease={onEndDragRelease}
+            zoom={zoom}
+          />
         </>
       )}
     </Element>

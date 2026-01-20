@@ -162,6 +162,6 @@ window.requestAnimationFrame(renderFrame);
 With the animation now visible, you can start animation tracks, listen to events, or do real-time control manipulations.
 
 ```ts
-animationControl.startTrack("MyAnimation");
+animationControl.startAnimation("MyAnimation");
 animationControl.setControlValue("MyControl", 0.65);
 ```

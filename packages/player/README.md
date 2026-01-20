@@ -55,9 +55,9 @@ const start = async () => {
   canvas.height = box.height * window.devicePixelRatio;
 
   // Start some animation tracks
-  bgAnimationControl.startTrack("Waterwheel");
-  bgAnimationControl.startTrack("Waterwheel2");
-  bgAnimationControl.startTrack("Smoke");
+  bgAnimationControl.startAnimation("Waterwheel");
+  bgAnimationControl.startAnimation("Waterwheel2");
+  bgAnimationControl.startAnimation("Smoke");
 
   // Render each frame
   const renderFrame = () => {

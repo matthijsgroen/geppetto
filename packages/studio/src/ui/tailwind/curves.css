@@ -1,0 +1,12 @@
+@utility clip-linear {
+  clip-path: url(#linearCurve);
+}
+@utility clip-ease-in {
+  clip-path: url(#easeInCurve);
+}
+@utility clip-ease-out {
+  clip-path: url(#easeOutCurve);
+}
+@utility clip-ease-in-out {
+  clip-path: url(#easeInOutCurve);
+}

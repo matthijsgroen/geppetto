@@ -1,3 +1,4 @@
+import type { MouseEventHandler } from "react";
 import { type FC, use } from "react";
 
 import { TimeStretchHandle } from "@/ui/components/atoms/TimeBar/TimeStretchHandle";
@@ -7,12 +8,25 @@ import { AnimationTrackContext } from "@/ui/components/molecules/AnimationTrack/
 export const TimeLineEndHandle: FC<{
   location: TimeStamp;
   loop?: boolean;
+  zoom?: number;
   trackIndex?: number;
-}> = ({ location, loop = false, trackIndex = 0 }) => {
-  const containerProps = use(AnimationTrackContext);
-  if (!containerProps.activeTrack) {
+  onEndDrag?: (newTime: TimeStamp) => void;
+  onEndDragRelease?: (newTime: TimeStamp) => void;
+  onContextMenu?: MouseEventHandler<HTMLDivElement>;
+}> = ({
+  location,
+  loop = false,
+  zoom = 1,
+  trackIndex = 0,
+  onContextMenu,
+  onEndDrag,
+  onEndDragRelease,
+}) => {
+  const { activeTrack } = use(AnimationTrackContext);
+  if (!activeTrack) {
     return null;
   }
+
   return (
     <div
       className="absolute left-0 flex h-6"
@@ -22,12 +36,18 @@ export const TimeLineEndHandle: FC<{
     >
       <div
         className="box-content flex h-full bg-panel ps-2"
+        onContextMenu={onContextMenu}
         style={{
           width: `${location}em`,
         }}
       ></div>
       <div className="flex h-full w-2 items-center justify-end rounded-e-sm bg-panel">
-        <TimeStretchHandle />
+        <TimeStretchHandle
+          location={location}
+          onDrag={onEndDrag}
+          onDragRelease={onEndDragRelease}
+          zoom={zoom}
+        />
       </div>
       {loop && <div className="px-2 text-sm text-dimmed">⏎</div>}
     </div>

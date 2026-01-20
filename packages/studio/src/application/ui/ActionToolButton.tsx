@@ -11,7 +11,11 @@ type Props = { action: Action } & Omit<
 export const ActionToolButton: React.FC<Props> = ({ action, ...props }) => (
   <ToolButton
     {...props}
-    icon={action.icon ? <Icon>{action.icon}</Icon> : undefined}
+    icon={
+      action.icon ? (
+        <Icon colorize={action.colorizedIcon}>{action.icon}</Icon>
+      ) : undefined
+    }
     onClick={action.handler}
     tooltip={`${action.tooltip} ${shortcutStr(action.shortcut)}`}
   />

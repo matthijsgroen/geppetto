@@ -15,6 +15,7 @@ import {
 export type AnimationCanvasProps = {
   image: HTMLImageElement | null;
   animationsPlaying?: string[];
+  onStop?: (animationId: string) => void;
   file: GeppettoImage;
 };
 
@@ -22,6 +23,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
   image,
   file,
   children,
+  onStop,
   animationsPlaying = [],
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -90,7 +92,7 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     image
   );
 
-  useAnimationsPlaying(animationControlsRef, file, animationsPlaying);
+  useAnimationsPlaying(animationControlsRef, file, animationsPlaying, onStop);
 
   return (
     <div className="relative size-full">

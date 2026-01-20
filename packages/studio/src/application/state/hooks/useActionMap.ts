@@ -1,11 +1,12 @@
 import type React from "react";
-import { useRef } from "react";
+import { useMemo } from "react";
 
 import { isEvent, type Shortcut } from "@/ui/components";
 
 export type Action = {
   caption?: string;
   icon?: string;
+  colorizedIcon?: boolean;
   tooltip?: string;
   shortcut: Shortcut;
   type?: "checkbox" | "normal" | "radio";
@@ -25,11 +26,7 @@ export type ActionMap<ActionHandlers> = {
 export const useActionMap = <T extends string>(
   producer: () => ActionHandlers<T>
 ): ActionMap<ActionHandlers<T>> => {
-  const ref = useRef<{
-    result: ActionMap<ActionHandlers<T>>;
-    producer: typeof producer;
-  }>(null);
-  if (ref.current?.producer !== producer) {
+  const result = useMemo(() => {
     const result = producer();
     const actionList = Object.entries<Action>(result);
     const triggerKeyboardAction = (
@@ -43,14 +40,11 @@ export const useActionMap = <T extends string>(
       }
       return false;
     };
-    ref.current = {
-      result: {
-        triggerKeyboardAction,
-        actions: result,
-      },
-      producer,
+    return {
+      triggerKeyboardAction,
+      actions: result,
     };
-  }
+  }, [producer]);
 
-  return ref.current.result;
+  return result;
 };

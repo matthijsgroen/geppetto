@@ -5,7 +5,6 @@ import type {
 import type { FC } from "react";
 
 import { ToggleControl } from "@/application/modules/composition/ui/controls";
-import { useFile } from "@/application/state/FileContext";
 import {
   Column,
   Control,
@@ -25,21 +24,10 @@ export const ControlFrameEdit: FC<{
   track: AnimationControlTrack;
   frame: FrameControlAction;
   actionIndex: number;
-}> = ({ track, frame }) => {
-  const [file] = useFile();
-
+}> = ({ frame }) => {
   return (
     <Inlay>
       <ControlPanel>
-        <Control label="Control">
-          <select value={track.controlId}>
-            {Object.entries(file.controls).map(([controlId, control]) => (
-              <option key={controlId} value={controlId}>
-                {control.name}
-              </option>
-            ))}
-          </select>
-        </Control>
         <Control label="Start with current value">
           <ToggleControl value={frame.controlStartValue === undefined} />
         </Control>

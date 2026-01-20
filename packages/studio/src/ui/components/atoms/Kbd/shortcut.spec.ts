@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { shortcutStr } from "./shortcut";
+import type { Shortcut } from "./shortcut";
+import { isEvent, shortcutStr } from "./shortcut";
 
 describe("shortcutStr", () => {
   describe("for mac", () => {
@@ -25,6 +26,16 @@ describe("shortcutStr", () => {
     it("supports Delete or Backspace", () => {
       const result = mShort({ interaction: "DelOrBackspace" });
       expect(result).toEqual("⌫");
+    });
+
+    it("supports Undo", () => {
+      const result = mShort({ interaction: "Undo" });
+      expect(result).toEqual("⌘ Z");
+    });
+
+    it("supports Redo", () => {
+      const result = mShort({ interaction: "Redo" });
+      expect(result).toEqual("⇧ ⌘ Z");
     });
 
     it("supports Backspace", () => {
@@ -108,6 +119,16 @@ describe("shortcutStr", () => {
       expect(result).toEqual("Del");
     });
 
+    it("supports Undo", () => {
+      const result = short({ interaction: "Undo" });
+      expect(result).toEqual("Ctrl+Z");
+    });
+
+    it("supports Redo", () => {
+      const result = short({ interaction: "Redo" });
+      expect(result).toEqual("Ctrl+Y");
+    });
+
     it("supports BackSpace", () => {
       const result = short({ interaction: "Backspace" });
       expect(result).toEqual("Backspace");
@@ -169,5 +190,121 @@ describe("shortcutStr", () => {
       });
       expect(result).toEqual("Shift+Drag");
     });
+  });
+});
+
+describe("isEvent", () => {
+  it("matches correct event", () => {
+    const shortcut: Shortcut = {
+      interaction: "KeyH",
+      ctrlOrCmd: true,
+      shift: true,
+      alt: true,
+      mac: false,
+    };
+    const event = {
+      code: "KeyH",
+      ctrlKey: true,
+      shiftKey: true,
+      altKey: true,
+      metaKey: false,
+    } as unknown as React.KeyboardEvent<HTMLElement>;
+
+    const result = isEvent(shortcut, event);
+    expect(result).toBe(true);
+  });
+
+  describe("non-mac undo/redo", () => {
+    it("matches undo shortcut", () => {
+      const shortcut: Shortcut = {
+        interaction: "Undo",
+      };
+      // Ctrl+Z
+      const event = {
+        code: "KeyZ",
+        ctrlKey: true,
+        shiftKey: false,
+        altKey: false,
+        metaKey: false,
+      } as unknown as React.KeyboardEvent<HTMLElement>;
+
+      const result = isEvent(shortcut, event);
+      expect(result).toBe(true);
+    });
+
+    it("matches redo shortcut", () => {
+      const shortcut: Shortcut = {
+        interaction: "Redo",
+      };
+      // Ctrl+Y
+      const event = {
+        code: "KeyY",
+        ctrlKey: true,
+        shiftKey: false,
+        altKey: false,
+        metaKey: false,
+      } as unknown as React.KeyboardEvent<HTMLElement>;
+
+      const result = isEvent(shortcut, event);
+      expect(result).toBe(true);
+    });
+  });
+
+  describe("mac undo/redo", () => {
+    it("matches undo shortcut", () => {
+      const shortcut: Shortcut = {
+        interaction: "Undo",
+        mac: true,
+      };
+      // Cmd+Z
+      const event = {
+        code: "KeyZ",
+        ctrlKey: false,
+        shiftKey: false,
+        altKey: false,
+        metaKey: true,
+      } as unknown as React.KeyboardEvent<HTMLElement>;
+
+      const result = isEvent(shortcut, event);
+      expect(result).toBe(true);
+    });
+
+    it("matches redo shortcut", () => {
+      const shortcut: Shortcut = {
+        interaction: "Redo",
+        mac: true,
+      };
+      // Shift+Cmd+Z
+      const event = {
+        code: "KeyZ",
+        ctrlKey: false,
+        shiftKey: true,
+        altKey: false,
+        metaKey: true,
+      } as unknown as React.KeyboardEvent<HTMLElement>;
+
+      const result = isEvent(shortcut, event);
+      expect(result).toBe(true);
+    });
+  });
+
+  it("does not match incorrect event", () => {
+    const shortcut: Shortcut = {
+      interaction: "KeyH",
+      ctrlOrCmd: true,
+      shift: true,
+      alt: true,
+      mac: false,
+    };
+    const event = {
+      code: "KeyH",
+      ctrlKey: false,
+      shiftKey: true,
+      altKey: true,
+      metaKey: false,
+    } as unknown as React.KeyboardEvent<HTMLElement>;
+
+    const result = isEvent(shortcut, event);
+    expect(result).toBe(false);
   });
 });

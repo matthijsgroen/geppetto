@@ -4,25 +4,40 @@ import type {
   FrameControlAction,
   FrameLayerVisibilityAction,
 } from "@geppetto/types";
-import { type FC, useEffect, useRef } from "react";
+import type { FC, MouseEvent } from "react";
+import { use, useEffect, useRef, useState } from "react";
 
+import ZoomContext from "@/application/modules/animation/state/ZoomContext";
+import { TrackControlFrame } from "@/application/modules/animation/ui/TrackControlFrame";
 import { useFile } from "@/application/state/FileContext";
+import useEvent from "@/application/state/hooks/useEvent";
 import {
+  addControlFrameToAnimation,
   renameAnimation,
+  resizeControlFrame,
+  updateAnimationControlTrackLength,
+  updateAnimationSpeedModifier,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import {
   AnimationTrack as AnimationTrackComponent,
   Icon,
   Menu,
+  MenuHeader,
   MenuItem,
+  MenuRadioGroup,
   RenameInput,
-  TimeBar,
-  TimeLineEndHandle,
+  SubMenu,
   TimePin,
+  TimePlayIndicator,
   ToolBar,
   ToolButton,
+  useMenuState,
 } from "@/ui/components";
+
+import { AnimationContextMenu } from "./AnimationContextMenu";
+import { ControlTrackContextMenu } from "./ControlTrackContextMenu";
+import { TrackTimeline } from "./TrackTimeline";
 
 export type AnimationControlFrame = {
   animationId: string;
@@ -51,6 +66,16 @@ type AnimationTimelineProps = {
   onDelete?: () => void;
   selected: boolean;
   selectedTimeBar?: AnimationFrame | null;
+};
+
+const speedLabel = (speed: number) => {
+  if (speed < 1) {
+    return `${1 / speed}× slower`;
+  }
+  if (speed > 1) {
+    return `${speed}× faster`;
+  }
+  return "Original speed";
 };
 
 export const AnimationTimeline: FC<AnimationTimelineProps> = ({
@@ -90,119 +115,245 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
     }
   }, [selected]);
 
+  const [controlTrackMenuProps, toggleControlTrackMenu] = useMenuState();
+  const [animationTrackMenuProps, toggleAnimationTrackMenu] = useMenuState();
+  const [anchorPoint, setAnchorPoint] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [contextMenuTrackName, setContextMenuTrackName] = useState<
+    string | null
+  >(null);
+  const handleControlTrackContextMenu = useEvent(
+    (event: MouseEvent<HTMLElement>, trackName: string): void => {
+      event.preventDefault();
+      setAnchorPoint({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      toggleControlTrackMenu(true);
+      setContextMenuTrackName(trackName);
+    }
+  );
+  const handleAnimationTrackContextMenu = useEvent(
+    (event: MouseEvent<HTMLElement>): void => {
+      event.preventDefault();
+      setAnchorPoint({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      toggleAnimationTrackMenu(true);
+    }
+  );
+
+  const animationMenuItems = (
+    <>
+      <MenuHeader>Animation Options</MenuHeader>
+      <MenuItem
+        checked={animation.looping}
+        onClick={() => {
+          setFile(updateLoopingAnimation(animationId, !animation.looping));
+        }}
+        type="checkbox"
+      >
+        Loop animation
+      </MenuItem>
+      <SubMenu label="Speed modifier">
+        <MenuRadioGroup value={animation.speedModifier ?? 1}>
+          {[0.125, 0.25, 0.5, 1 / 1.5, 1, 1.5, 2, 4, 8].map((speed) => (
+            <MenuItem
+              key={speed}
+              onClick={() => {
+                setFile(updateAnimationSpeedModifier(animationId, speed));
+              }}
+              type="radio"
+              value={speed}
+            >
+              {speedLabel(speed)}
+            </MenuItem>
+          ))}
+        </MenuRadioGroup>
+      </SubMenu>
+      {onDelete && (
+        <MenuItem dangerous onClick={onDelete} type="checkbox">
+          Delete
+        </MenuItem>
+      )}
+    </>
+  );
+  const speed = animation.speedModifier ?? 1;
+  const { zoom } = use(ZoomContext);
+
   return (
-    <AnimationTrackComponent
-      extraContent={
-        <ToolBar size="minimal" transparent>
-          {isPlaying ? (
-            <ToolButton
-              icon={<Icon colorize>■</Icon>}
-              onClick={onStop}
-              tooltip="Stop"
-            />
-          ) : (
-            <ToolButton
-              icon={<Icon colorize>▶</Icon>}
-              onClick={onPlay}
-              tooltip="Play"
-            />
-          )}
-          <Menu
-            arrow
-            direction="right"
-            menuButton={({ open }) => (
+    <>
+      <ControlTrackContextMenu
+        anchorPoint={anchorPoint}
+        animationId={animationId}
+        trackName={contextMenuTrackName ?? ""}
+        {...controlTrackMenuProps}
+        onClose={() => toggleControlTrackMenu(false)}
+      />
+      <AnimationContextMenu
+        anchorPoint={anchorPoint}
+        {...animationTrackMenuProps}
+        onClose={() => toggleAnimationTrackMenu(false)}
+      >
+        {animationMenuItems}
+      </AnimationContextMenu>
+      <AnimationTrackComponent
+        animationId={animationId}
+        extraContent={
+          <ToolBar size="minimal" transparent>
+            {isPlaying ? (
               <ToolButton
-                active={open}
-                icon={<Icon colorize>⋯</Icon>}
-                tooltip="Options"
+                icon={<Icon colorize>■</Icon>}
+                onClick={onStop}
+                tooltip="Stop"
+              />
+            ) : (
+              <ToolButton
+                icon={<Icon colorize>▶</Icon>}
+                onClick={onPlay}
+                tooltip="Play"
               />
             )}
-            menuStyle={{ fontSize: "1rem" }}
-            portal
-            position="auto"
-          >
-            <MenuItem
-              checked={animation.looping}
-              onClick={() => {
+            <Menu
+              arrow
+              direction="right"
+              menuButton={({ open }) => (
+                <ToolButton
+                  active={open}
+                  icon={<Icon colorize>⋯</Icon>}
+                  keyboardFocusOnly
+                  tooltip="Options"
+                />
+              )}
+              menuStyle={{ fontSize: "1rem" }}
+              portal
+              position="auto"
+            >
+              {animationMenuItems}
+            </Menu>
+          </ToolBar>
+        }
+        key={animationId}
+        length={animationLength / 1000 / speed}
+        loop={animation.looping}
+        name={
+          <RenameInput
+            align="right"
+            onRename={(newName) => {
+              setFile(renameAnimation(animationId, newName));
+            }}
+            value={animation.name}
+          />
+        }
+        onLabelContextMenu={handleAnimationTrackContextMenu}
+        onSelect={onSelect}
+        onTrackNameContextMenu={handleControlTrackContextMenu}
+        ref={trackRef}
+        selected={selected}
+        trackNames={trackNames}
+      >
+        {animation.tracks.map((track, index) =>
+          track.type === "control"
+            ? track.actions.map((action, actionIndex) => (
+                <TrackControlFrame
+                  action={action}
+                  actionIndex={actionIndex}
+                  key={`${track.controlId}-${actionIndex}`}
+                  onClick={() => {
+                    onFrameSelect?.({
+                      animationId,
+                      track,
+                      frame: action,
+                      actionIndex,
+                    });
+                  }}
+                  onResize={(newStart, newDuration) => {
+                    setFile(
+                      resizeControlFrame(
+                        animationId,
+                        track.controlId,
+                        actionIndex,
+                        newStart,
+                        newDuration
+                      )
+                    );
+                  }}
+                  selected={
+                    (selectedTimeBar &&
+                      selectedTimeBar.animationId === animationId &&
+                      selectedTimeBar.track.type === track.type &&
+                      selectedTimeBar.track.controlId === track.controlId &&
+                      selectedTimeBar.actionIndex === actionIndex) ??
+                    false
+                  }
+                  speed={speed}
+                  track={track}
+                  trackIndex={index}
+                  zoom={zoom}
+                />
+              ))
+            : null
+        )}
+        {animation.tracks.map((track, index) => {
+          return track.type === "control" ? (
+            <TrackTimeline
+              key={`${track.controlId}-end`}
+              length={track.length}
+              looping={animation.looping}
+              onAddFrame={(startTime) => {
                 setFile(
-                  updateLoopingAnimation(animationId, !animation.looping)
+                  addControlFrameToAnimation(
+                    animationId,
+                    track.controlId,
+                    startTime,
+                    500,
+                    0
+                  )
                 );
               }}
-              type="checkbox"
-            >
-              Loop animation
-            </MenuItem>
-            {onDelete && (
-              <MenuItem dangerous onClick={onDelete} type="checkbox">
-                Delete
-              </MenuItem>
-            )}
-          </Menu>
-        </ToolBar>
-      }
-      key={animationId}
-      length={animationLength / 1000}
-      loop={animation.looping}
-      name={
-        <RenameInput
-          align="right"
-          onRename={(newName) => {
-            setFile(renameAnimation(animationId, newName));
-          }}
-          value={animation.name}
-        />
-      }
-      onSelect={onSelect}
-      ref={trackRef}
-      selected={selected}
-      trackNames={trackNames}
-    >
-      {animation.tracks.map((track, index) =>
-        track.type === "control"
-          ? track.actions.map((action, actionIndex) => (
-              <TimeBar
-                duration={action.duration / 1000}
-                easing={action.easingFunction}
-                key={`${track.controlId}-${actionIndex}`}
-                onClick={() => {
-                  onFrameSelect?.({
+              onEndDrag={(newTime) => {
+                setFile(
+                  updateAnimationControlTrackLength(
                     animationId,
-                    track,
-                    frame: action,
-                    actionIndex,
-                  });
-                }}
-                selected={
-                  (selectedTimeBar &&
-                    selectedTimeBar.animationId === animationId &&
-                    selectedTimeBar.track.type === track.type &&
-                    selectedTimeBar.track.controlId === track.controlId &&
-                    selectedTimeBar.actionIndex === actionIndex) ??
-                  false
-                }
-                start={action.start / 1000}
-                trackIndex={index}
-              />
-            ))
-          : null
-      )}
-      {animation.tracks.map((track, index) => {
-        return track.type === "control" ? (
-          <TimeLineEndHandle
-            key={`${track.controlId}-end`}
-            location={track.length / 1000}
+                    track.controlId,
+                    newTime
+                  )
+                );
+              }}
+              speed={speed}
+              trackIndex={index}
+              zoom={zoom}
+            />
+          ) : null;
+        })}
+        {animation.events.map((event, eventIndex) => (
+          <TimePin
+            key={`event-${eventIndex}`}
+            label={event.eventName}
+            location={event.start / 1000 / speed}
+          />
+        ))}
+        <TimePlayIndicator
+          duration={animationLength / 1000 / speed}
+          key="total-indicator"
+          loop={animation.looping}
+          playing={isPlaying}
+          selected={selected}
+        />
+        {animation.tracks.map((track, index) => (
+          <TimePlayIndicator
+            duration={track.length / 1000 / speed}
+            key={`indicator-${index}`}
             loop={animation.looping}
+            playing={isPlaying}
+            selected={selected}
             trackIndex={index}
           />
-        ) : null;
-      })}
-      {animation.events.map((event, eventIndex) => (
-        <TimePin
-          key={`event-${eventIndex}`}
-          label={event.eventName}
-          location={event.start / 1000}
-        />
-      ))}
-    </AnimationTrackComponent>
+        ))}
+      </AnimationTrackComponent>
+    </>
   );
 };

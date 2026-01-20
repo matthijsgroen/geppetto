@@ -10,6 +10,7 @@ type StoryProps = {
   dimmed?: boolean;
   inMenu?: boolean;
   ctrlOrCmd?: boolean;
+  ctrl?: boolean;
   shift?: boolean;
   alt?: boolean;
   mac?: boolean;
@@ -18,12 +19,13 @@ type StoryProps = {
 const StoryTemplate: React.FC<StoryProps> = ({
   interaction = "KeyO",
   ctrlOrCmd = false,
+  ctrl = false,
   shift = false,
   alt = false,
   mac = false,
   ...props
 }) => {
-  const shortcut: Shortcut = { interaction, ctrlOrCmd, shift, alt, mac };
+  const shortcut: Shortcut = { interaction, ctrlOrCmd, ctrl, shift, alt, mac };
   return (
     <div>
       <p style={{ background: "var(--colors-panel)", margin: 0 }}>
@@ -38,6 +40,7 @@ const meta = preview.meta({
   component: StoryTemplate,
   argTypes: {
     ctrlOrCmd: { control: "boolean" },
+    ctrl: { control: "boolean" },
     shift: { control: "boolean" },
     alt: { control: "boolean" },
     interaction: {
@@ -49,7 +52,12 @@ const meta = preview.meta({
         "Digit3",
         "Delete",
         "DelOrBackspace",
+        "Enter",
+        "Escape",
+        "Tab",
         "MouseDrag",
+        "Undo",
+        "Redo",
       ],
       control: "select",
     },
@@ -58,6 +66,7 @@ const meta = preview.meta({
     interaction: "KeyO",
     disabled: false,
     ctrlOrCmd: false,
+    ctrl: false,
     shift: false,
     alt: false,
     mac: false,

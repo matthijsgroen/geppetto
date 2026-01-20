@@ -16,8 +16,8 @@ const awaitClick = async () =>
 const charSay = (character: AnimationControls, name: string) => {
   const talkDelay = async (message: string) => {
     await delayFrames("talking", message.length * 6);
-    character.startTrack("StopTalking");
-    character.startTrack("EyebrowReset");
+    character.startAnimation("StopTalking");
+    character.startAnimation("EyebrowReset");
   };
 
   const showText = (text: string) => {
@@ -40,14 +40,14 @@ const charSay = (character: AnimationControls, name: string) => {
   };
 
   return async (message: string) => {
-    character.startTrack("Talking", { startAt: 800 });
-    character.startTrack("Eyebrows");
+    character.startAnimation("Talking", { startAt: 800 });
+    character.startAnimation("Eyebrows");
     const hideText = showText(message);
     talkDelay(message);
 
     await awaitClick();
-    character.startTrack("StopTalking");
-    character.startTrack("EyebrowReset");
+    character.startAnimation("StopTalking");
+    character.startAnimation("EyebrowReset");
     hideText();
   };
 };
@@ -160,7 +160,7 @@ const playDialog = async (
 
 export const conversation = async (character: AnimationControls) => {
   await delayFrames("startTalking", 60);
-  character.startTrack("PauseSweeping");
+  character.startAnimation("PauseSweeping");
   const say = charSay(character, "Innkeeper");
 
   await playDialog(dialogText, say);

@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@import "./tailwind/colors.css";
+@import "./tailwind/play-indicator.css";
+@import "./tailwind/curves.css";
+@import "./tailwind/utilities.css";
+@import "./tailwind/timeline.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -16,158 +21,10 @@
   --shadow-inset-sm: inset 1px 1px 2px #0003;
 }
 
-@theme {
-  --color-workspace: var(--color-emerald-500);
-  --color-toolbar: var(--color-zinc-100);
-  --color-notification: var(--color-red-600);
-  --color-panel: var(--color-white);
-
-  --color-control-interaction: var(--color-zinc-200);
-  --color-control-edge: color-mix(
-    in oklch,
-    var(--color-neutral-800),
-    transparent 80%
-  );
-  --color-control-focus: var(--color-sky-500);
-  --color-control-highlight: var(--color-sky-200);
-  --color-control-active: var(--color-sky-300);
-  --color-control-active-dimmed: var(--color-sky-200);
-
-  --color-text: var(--color-zinc-800);
-  --color-dimmed: color-mix(in oklch, var(--color-zinc-800), transparent 50%);
-  --color-active: var(--color-slate-500);
-}
-
-.dark {
-  --color-workspace: var(--color-emerald-900);
-  --color-toolbar: var(--color-zinc-800);
-  --color-notification: var(--color-red-400);
-  --color-panel: var(--color-zinc-900);
-
-  /* Add color for Control Interaction -- button, toggle, thumb */
-  --color-control-interaction: var(--color-zinc-700);
-  --color-control-edge: color-mix(
-    in oklch,
-    var(--color-zinc-600),
-    transparent 70%
-  );
-  --color-control-focus: var(--color-green-500);
-  --color-control-highlight: var(--color-green-800);
-  --color-control-active: var(--color-green-700);
-  --color-control-active-dimmed: var(--color-green-600);
-
-  --color-text: var(--color-zinc-300);
-  --color-dimmed: color-mix(
-    in oklch,
-    var(--color-neutral-400),
-    transparent 50%
-  );
-  --color-active: var(--color-green-500);
-}
-
-@utility text-vertical {
-  writing-mode: vertical-lr;
-}
-
-@utility clip-linear {
-  clip-path: url(#linearCurve);
-}
-@utility clip-ease-in {
-  clip-path: url(#easeInCurve);
-}
-@utility clip-ease-out {
-  clip-path: url(#easeOutCurve);
-}
-@utility clip-ease-in-out {
-  clip-path: url(#easeInOutCurve);
-}
-
-@utility hide-scrollbar {
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-@utility hide-spinner {
-  &:not(:focus)::-webkit-outer-spin-button,
-  &:not(:focus)::-webkit-inner-spin-button {
-    appearance: none;
-    margin: 0;
-  }
-  /* Firefox */
-  &:not(:focus) {
-    appearance: textfield;
-  }
-}
-
 @utility font-caption {
   @layer base {
     font: caption;
   }
-}
-
-@custom-variant track {
-  &::-webkit-slider-runnable-track {
-    @slot;
-  }
-  &::-moz-range-track {
-    @slot;
-  }
-}
-
-@custom-variant thumb {
-  &::-webkit-slider-thumb {
-    appearance: none;
-    @slot;
-  }
-  &::-moz-range-thumb {
-    @slot;
-  }
-}
-
-/**
- * Timeline background utility
- * Shows lines for 10 seconds, seconds, 200mx, 100ms
- */
-@utility timeline {
-  background-image:
-    repeating-linear-gradient(
-      90deg,
-      var(--color-workspace) 0px,
-      var(--color-workspace) 1px,
-      transparent 1px,
-      transparent 10em
-    ),
-    repeating-linear-gradient(
-      90deg,
-      var(--color-workspace) 0px,
-      var(--color-workspace) 1px,
-      transparent 1px,
-      transparent 1em
-    ),
-    repeating-linear-gradient(
-      90deg,
-      var(--color-workspace) 0px,
-      var(--color-workspace) 1px,
-      transparent 1px,
-      transparent 0.2em
-    ),
-    repeating-linear-gradient(
-      90deg,
-      var(--color-workspace) 0px,
-      var(--color-workspace) 1px,
-      transparent 1px,
-      transparent 0.1em
-    );
-  background-size:
-    100% 100%,
-    100% 80%,
-    100% 50%,
-    100% 30%;
-  background-position: left bottom;
-  background-repeat: repeat-x;
 }
 
 html,
