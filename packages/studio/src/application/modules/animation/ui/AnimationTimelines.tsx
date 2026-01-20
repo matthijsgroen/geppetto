@@ -22,7 +22,6 @@ import {
   ToolBar,
   ToolButton,
   ToolSeparator,
-  ToolSpacer,
 } from "@/ui/components";
 import { TrackDragProvider } from "@/ui/components/molecules/AnimationTrack/TrackDragContext";
 
@@ -165,12 +164,6 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                 ))}
               </MenuRadioGroup>
             </Menu>
-            <ToolSpacer />
-            <ToolButton
-              disabled
-              icon={<Icon colorize>?</Icon>}
-              tooltip="Help"
-            />
           </ToolBar>
           <AnimationsContainer
             duration={(maxTime + EXTRA_TIME) / 1000}
