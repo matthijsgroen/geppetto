@@ -14,6 +14,14 @@ const meta = preview.meta({
       control: "radio",
       options: ["flex", "option"],
     },
+    start: {
+      control: "number",
+      defaultValue: 0,
+    },
+    end: {
+      control: "number",
+      defaultValue: 1,
+    },
   },
   parameters: {
     layout: "fullscreen",
@@ -33,5 +41,7 @@ export const TimeCurve = meta.story({
   args: {
     variant: "easeInOut",
     size: "option",
+    start: 0,
+    end: 1,
   },
 });
