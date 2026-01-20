@@ -8,7 +8,6 @@ import {
   use,
 } from "react";
 
-import { Label } from "@/ui/components/atoms/Label/Label";
 import { type ToolBarSize } from "@/ui/components/molecules/ToolBar/ToolBar";
 import { ToolbarContext } from "@/ui/components/molecules/ToolBar/ToolBarContext";
 
@@ -92,9 +91,15 @@ export const ToolButton: FC<ToolButtonProps> = ({
     >
       {icon}
       {label && (
-        <Label active={active} size={useSize}>
+        <span
+          className={clsx("contents py-1 font-caption", {
+            ["text-text"]: !active,
+            ["text-active"]: active,
+            ["text-xs"]: useSize === "small" || useSize === "minimal",
+          })}
+        >
           {label}
-        </Label>
+        </span>
       )}
     </button>
   );

@@ -1,5 +1,6 @@
 import type {
   AnimationControlTrack,
+  ControlDefinition,
   FrameControlAction,
 } from "@geppetto/types";
 import type { FC } from "react";
@@ -22,9 +23,11 @@ import {
 export const ControlFrameEdit: FC<{
   animationId: string;
   track: AnimationControlTrack;
+  control: ControlDefinition;
   frame: FrameControlAction;
   actionIndex: number;
-}> = ({ frame }) => {
+}> = ({ frame, control }) => {
+  const controlMaxValue = control.steps.length - 1;
   return (
     <Inlay>
       <ControlPanel>
@@ -38,9 +41,9 @@ export const ControlFrameEdit: FC<{
                 max={1}
                 min={0}
                 step={0.01}
-                value={frame.controlStartValue}
+                value={frame.controlStartValue / controlMaxValue}
               />
-              <RangeValue value={frame.controlStartValue} />
+              <RangeValue value={frame.controlStartValue / controlMaxValue} />
             </Column>
           </Control>
         )}
@@ -50,9 +53,9 @@ export const ControlFrameEdit: FC<{
               max={1}
               min={0}
               step={0.01}
-              value={frame.controlEndValue}
+              value={frame.controlEndValue / controlMaxValue}
             />
-            <RangeValue value={frame.controlEndValue} />
+            <RangeValue value={frame.controlEndValue / controlMaxValue} />
           </Column>
         </Control>
         <Control label="Easing function">

@@ -93,6 +93,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
               <ControlFrameEdit
                 actionIndex={activeFrame.actionIndex}
                 animationId={activeFrame.animationId}
+                control={file.controls[activeFrame.track.controlId]}
                 frame={activeFrame.frame}
                 track={activeFrame.track}
               />

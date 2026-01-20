@@ -261,6 +261,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                 <TrackControlFrame
                   action={action}
                   actionIndex={actionIndex}
+                  control={file.controls[track.controlId]}
                   key={`${track.controlId}-${actionIndex}`}
                   onClick={() => {
                     onFrameSelect?.({

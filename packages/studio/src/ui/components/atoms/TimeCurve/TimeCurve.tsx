@@ -14,7 +14,7 @@ export const TimeCurve: FC<{
   return (
     <div
       className={clsx(
-        "pointer-events-none flex-col gap-0",
+        "pointer-events-none flex-col gap-0 opacity-50",
         size === "flex" && "flex h-full flex-1",
         size === "option" && "me-1 inline-flex h-4 w-8"
       )}
@@ -22,7 +22,7 @@ export const TimeCurve: FC<{
       <div style={{ height: `${offsetTop * 100}%` }}></div>
       <div
         className={clsx(
-          "pointer-events-none flex flex-1 bg-control-focus/50",
+          "pointer-events-none -mb-px flex flex-1 bg-control-focus",
           start > end && "scale-x-[-1]",
           variant === "linear" && "clip-linear",
           variant === "easeIn" && "clip-ease-in",
@@ -31,8 +31,8 @@ export const TimeCurve: FC<{
         )}
       ></div>
       <div
-        className="bg-control-focus/50"
-        style={{ height: `${offsetBottom * 100}%` }}
+        className="bg-control-focus"
+        style={{ height: `${offsetBottom * 100}%`, minHeight: "1px" }}
       ></div>
     </div>
   );

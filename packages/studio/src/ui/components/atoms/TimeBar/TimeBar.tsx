@@ -14,6 +14,8 @@ type TimeBarProps = {
   selected?: boolean;
   trackIndex: number;
   easing?: EasingFunction;
+  startValue?: number;
+  endValue?: number;
   variant?: "mini" | "default";
   zoom?: number;
   onClick?: () => void;
@@ -30,6 +32,8 @@ export const TimeBar: FC<TimeBarProps> = ({
   trackIndex,
   easing,
   zoom = 1,
+  startValue = 0,
+  endValue = 1,
   variant,
   onClick,
   onEndDrag,
@@ -72,7 +76,9 @@ export const TimeBar: FC<TimeBarProps> = ({
             onDragRelease={onStartDragRelease}
             zoom={zoom}
           />
-          {easing && <TimeCurve variant={easing} />}
+          {easing && (
+            <TimeCurve end={endValue} start={startValue} variant={easing} />
+          )}
           <TimeStretchHandle
             location={start + duration}
             onDrag={onEndDrag}

@@ -1,19 +1,21 @@
-import type { FrameControlAction } from "@geppetto/types";
+import type { ControlDefinition, FrameControlAction } from "@geppetto/types";
 import type { AnimationControlTrack } from "geppetto-player";
 import { useState } from "react";
 
 import { TimeBar } from "@/ui/components";
 
 type TrackControlFrameProps = {
-  track: AnimationControlTrack;
   action: FrameControlAction;
   actionIndex: number;
-  trackIndex: number;
+  control?: ControlDefinition;
+  selected?: boolean;
   speed?: number;
+  track: AnimationControlTrack;
+  trackIndex: number;
   zoom?: number;
+
   onClick?: VoidFunction;
   onResize?: (newStart: number, newDuration: number) => void;
-  selected?: boolean;
 };
 
 const ADJACENT_FRAME_GAP_MS = 200;
@@ -25,6 +27,7 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
   zoom = 1,
   actionIndex,
   trackIndex,
+  control,
   onClick,
   onResize,
   selected,
@@ -52,10 +55,19 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
       ? (previousItem.start + ADJACENT_FRAME_GAP_MS) / 1000 / speed
       : 0;
 
+  // normalize control values
+  const maxControlValue = control?.steps.length ?? 1;
+
+  const startValue =
+    (action.controlStartValue ?? previousItem?.controlEndValue ?? 0) /
+    maxControlValue;
+  const endValue = (action.controlEndValue ?? startValue) / maxControlValue;
+
   return (
     <TimeBar
       duration={displayDuration}
       easing={action.easingFunction}
+      endValue={endValue}
       key={`${track.controlId}-${actionIndex}`}
       onClick={onClick}
       onEndDrag={(newTime) => {
@@ -109,6 +121,7 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
       }}
       selected={selected}
       start={displayStart}
+      startValue={startValue}
       trackIndex={trackIndex}
       zoom={zoom}
     />
