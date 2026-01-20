@@ -116,6 +116,7 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
   useEffect(() => {
     if (metadataChanged(file, fileRef.current)) {
       border.setImageSize(file.metadata.width, file.metadata.height);
+      composition.setImageBounds(file.metadata.width, file.metadata.height);
     }
     if (shapesChanged(file, fileRef.current)) {
       composition.setShapes(file);

@@ -3,6 +3,7 @@
 precision mediump float;
 
 varying mediump vec2 vTextureCoord;
+varying mediump vec2 vImagePosition;
 varying lowp float vOpacity;
 varying lowp float vBrightness;
 varying lowp float vSaturation;
@@ -11,6 +12,7 @@ varying lowp float vTargetSaturation;
 
 uniform sampler2D uSampler;
 uniform mediump vec2 uTextureDimensions;
+uniform mediump vec2 uImageBounds;
 
 float RGBToL(vec3 color) {
   lowp float fmin = min(min(color.r, color.g), color.b);    //Min. value of RGB
@@ -74,5 +76,15 @@ void main(void) {
     clamp(vBrightness - 1.0, 0.0, 1.0)
   );
 
-  gl_FragColor = vec4(color * texelColor.a * vOpacity, texelColor.a * vOpacity);
+  // Check if rendered position is outside image bounds (metadata dimensions)
+  // vImagePosition is already in centered coordinate space (from deformPos)
+  float borderOpacity = 1.0;
+  vec2 halfBounds = uImageBounds * 0.5;
+  
+  if (vImagePosition.x < -halfBounds.x || vImagePosition.x > halfBounds.x ||
+      vImagePosition.y < -halfBounds.y || vImagePosition.y > halfBounds.y) {
+    borderOpacity = 0.5; // 50% opacity for content outside the border
+  }
+
+  gl_FragColor = vec4(color * texelColor.a * vOpacity * borderOpacity, texelColor.a * vOpacity * borderOpacity);
 }
