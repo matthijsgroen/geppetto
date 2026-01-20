@@ -32,6 +32,10 @@ import {
   visit,
 } from "@/domain/animation/file2/hierarchy";
 import {
+  updateImageHeight,
+  updateImageWidth,
+} from "@/domain/animation/file2/metadata";
+import {
   addMutation,
   type AddMutationDetails,
   iconMapping,
@@ -52,10 +56,14 @@ import {
 } from "@/infrastructure/webgl/lib/vectorPositions";
 import {
   Column,
+  Control,
   ControlledMenu,
+  ControlPanel,
   Inlay,
   MenuItem,
+  NumberInput,
   Panel,
+  PanelTitle,
   ResizeDirection,
   ResizePanel,
   Row,
@@ -554,6 +562,25 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
           >
             <Column>
               <Panel padding="sm">
+                <PanelTitle>Image Properties</PanelTitle>
+                <ControlPanel>
+                  <Control label="Width">
+                    <NumberInput
+                      onChange={(newWidth) => {
+                        setFile(updateImageWidth(newWidth));
+                      }}
+                      value={file.metadata.width}
+                    />
+                  </Control>
+                  <Control label="Height">
+                    <NumberInput
+                      onChange={(newHeight) => {
+                        setFile(updateImageHeight(newHeight));
+                      }}
+                      value={file.metadata.height}
+                    />
+                  </Control>
+                </ControlPanel>
                 <ItemEdit
                   activeMutator={activeMutator}
                   editingControlId={editingControl}

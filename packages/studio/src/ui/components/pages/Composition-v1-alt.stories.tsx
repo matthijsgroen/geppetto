@@ -211,6 +211,15 @@ export const Version1Alt = meta.story({
         >
           <Column>
             <Panel padding="sm">
+              <PanelTitle>Image Properties</PanelTitle>
+              <ControlPanel>
+                <Control label="Width">
+                  <NumberInput value={2048} />
+                </Control>
+                <Control label="Height">
+                  <NumberInput value={1024} />
+                </Control>
+              </ControlPanel>
               <PanelTitle>Opacity (4)</PanelTitle>
               <ControlPanel>
                 <Control label="Visible">
