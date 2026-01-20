@@ -14,20 +14,16 @@ import {  tick } from "../components/tween";
 import BrowserOnly from "@docusaurus/BrowserOnly";
 
 const DAY = 0.0;
-const NIGHT = 0.5;
+const NIGHT = 0.45;
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
   const onAnimationReady = useCallback((controls: AnimationControls) => {
     controls.startAnimation("Wheel");
-    controls.startAnimation("WheelBlades");
     controls.startAnimation("Tree");
     controls.startAnimation("Bird");
-    controls.startAnimation("Cloud1", { speed: 0.15 });
-    controls.startAnimation("Cloud2", { speed: 0.1 });
-    controls.startAnimation("Cloud3", { speed: 0.15 });
+    controls.startAnimation("Clouds", { speed: 0.2 });
     controls.startAnimation("Smoke");
-    controls.startAnimation("Water");
     controls.startAnimation("LightOff");
     const html = document.querySelector("html");
 
