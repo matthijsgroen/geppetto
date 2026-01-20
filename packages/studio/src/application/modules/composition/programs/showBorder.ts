@@ -3,6 +3,7 @@ import {
   createProgram,
   type WebGLRenderer,
 } from "@/infrastructure/webgl/lib/webgl";
+import { isInDarkMode } from "@/shared/utils/darkMode";
 
 import borderFragmentShader from "./showBorder.frag";
 import borderVertexShader from "./showBorder.vert";
@@ -50,7 +51,7 @@ export const showBorder = (
 
   let cWidth = 0;
   let cHeight = 0;
-  let basePosition = [0, 0, 0.05]; // In front of the composition (which is at 0.1)
+  let basePosition = [0, 0, 0.01]; // In front of everything else
 
   let onChange: () => void = () => {};
 
@@ -89,13 +90,16 @@ export const showBorder = (
           basePosition = [
             canvasWidth / 2 / scale,
             canvasHeight / 2 / scale,
-            0.05,
+            0.01,
           ];
           cWidth = canvasWidth;
           cHeight = canvasHeight;
         }
 
         gl.useProgram(program);
+
+        // Disable depth test and depth writing so border always draws on top
+        gl.disable(gl.DEPTH_TEST);
 
         // Set uniforms
         gl.uniform2f(
@@ -120,17 +124,33 @@ export const showBorder = (
           imageWidth,
           imageHeight
         );
-        gl.uniform4f(
-          gl.getUniformLocation(program, "uBorderColor"),
-          0.5,
-          0.5,
-          0.5,
-          1.0 // Gray border
-        );
+        const inDarkMode = isInDarkMode();
+        if (inDarkMode) {
+          gl.uniform4f(
+            gl.getUniformLocation(program, "uBorderColor"),
+            0.0,
+            201 / 255,
+            81 / 255,
+            1.0 // green border
+          );
+        } else {
+          gl.uniform4f(
+            gl.getUniformLocation(program, "uBorderColor"),
+            245 / 255,
+            244 / 255,
+            244 / 255,
+            1.0 // light gray border
+          );
+        }
         gl.uniform1f(
           gl.getUniformLocation(program, "uBorderWidth"),
-          2.0 // 2px border
+          1.0 // 2px border constant width
         );
+        gl.uniform1f(
+          gl.getUniformLocation(program, "uZoom"),
+          screenTranslation.zoom
+        );
+        gl.uniform1f(gl.getUniformLocation(program, "uScale"), scale);
         gl.uniform2f(
           gl.getUniformLocation(program, "uDropShadowOffset"),
           3.0,
@@ -149,6 +169,9 @@ export const showBorder = (
 
         // Draw the border quad
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        // Re-enable depth test
+        gl.enable(gl.DEPTH_TEST);
       };
 
       onChange = render;

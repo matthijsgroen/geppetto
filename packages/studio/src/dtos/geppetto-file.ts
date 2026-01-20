@@ -30,6 +30,6 @@ export const saveGeppettoFile = async (
   image: GeppettoImage
 ): Promise<void> => {
   const writable = await fileHandle.createWritable();
-  await writable.write(JSON.stringify(image, null, 2));
+  await writable.write(JSON.stringify(image));
   await writable.close();
 };

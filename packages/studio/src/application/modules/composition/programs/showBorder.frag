@@ -7,6 +7,8 @@ uniform vec4 uBorderColor;
 uniform float uBorderWidth;
 uniform vec2 uDropShadowOffset;
 uniform float uDropShadowBlur;
+uniform float uZoom;
+uniform float uScale;
 
 varying vec2 vPosition;
 
@@ -19,8 +21,12 @@ void main(void) {
   // Distance to the border edge (positive = outside, negative = inside)
   float distToBorder = max(distFromEdge.x, distFromEdge.y);
   
-  // Calculate border line (1.0 on the line, 0.0 elsewhere)
-  float borderLine = smoothstep(uBorderWidth, 0.0, abs(distToBorder));
+  // Calculate border line
+  float totalScale = uScale * uZoom;
+  float adjustedBorderWidth = uBorderWidth / totalScale;
+  
+  // Show solid border when within adjustedBorderWidth from the edge
+  float borderLine = step(abs(distToBorder), adjustedBorderWidth);
   
   // Calculate drop shadow position
   vec2 shadowPos = vPosition - uDropShadowOffset;

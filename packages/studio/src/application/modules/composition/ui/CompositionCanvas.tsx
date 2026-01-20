@@ -70,10 +70,10 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
   );
   const renderers = useMemo(
     () => [
-      border.renderer,
       composition.renderer,
       compositionMap.renderer,
       vectorMap.renderer,
+      border.renderer,
     ],
     [
       border.renderer,
