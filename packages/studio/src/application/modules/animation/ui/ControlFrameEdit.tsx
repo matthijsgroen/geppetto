@@ -10,7 +10,6 @@ import {
   Column,
   Control,
   ControlPanel,
-  Inlay,
   Menu,
   MenuItem,
   MenuRadioGroup,
@@ -26,77 +25,73 @@ export const ControlFrameEdit: FC<{
   control: ControlDefinition;
   frame: FrameControlAction;
   actionIndex: number;
-}> = ({ frame, control }) => {
+  shadow?: boolean;
+}> = ({ frame, control, shadow = false }) => {
   const controlMaxValue = control.steps.length - 1;
   return (
-    <Inlay>
-      <ControlPanel>
-        <Control label="Start with current value">
-          <ToggleControl value={frame.controlStartValue === undefined} />
-        </Control>
-        {frame.controlStartValue !== undefined && (
-          <Control label="Start value">
-            <Column>
-              <RangeInput
-                max={1}
-                min={0}
-                step={0.01}
-                value={frame.controlStartValue / controlMaxValue}
-              />
-              <RangeValue value={frame.controlStartValue / controlMaxValue} />
-            </Column>
-          </Control>
-        )}
-        <Control label="End value">
+    <ControlPanel shadow={shadow}>
+      <Control label="Start with current value">
+        <ToggleControl value={frame.controlStartValue === undefined} />
+      </Control>
+      {frame.controlStartValue !== undefined && (
+        <Control label="Start value">
           <Column>
             <RangeInput
               max={1}
               min={0}
               step={0.01}
-              value={frame.controlEndValue / controlMaxValue}
+              value={frame.controlStartValue / controlMaxValue}
             />
-            <RangeValue value={frame.controlEndValue / controlMaxValue} />
+            <RangeValue value={frame.controlStartValue / controlMaxValue} />
           </Column>
         </Control>
-        <Control label="Easing function">
-          <Menu
-            align="center"
-            arrow
-            direction="bottom"
-            menuButton={({ open }) => (
-              <ToolButton
-                active={open}
-                label={
-                  <>
-                    <TimeCurve size="option" variant={frame.easingFunction} />{" "}
-                    {frame.easingFunction}
-                  </>
-                }
-              />
+      )}
+      <Control label="End value">
+        <Column>
+          <RangeInput
+            max={1}
+            min={0}
+            step={0.01}
+            value={frame.controlEndValue / controlMaxValue}
+          />
+          <RangeValue value={frame.controlEndValue / controlMaxValue} />
+        </Column>
+      </Control>
+      <Control label="Easing function">
+        <Menu
+          align="center"
+          arrow
+          direction="bottom"
+          menuButton={({ open }) => (
+            <ToolButton
+              active={open}
+              label={
+                <>
+                  <TimeCurve size="option" variant={frame.easingFunction} />{" "}
+                  {frame.easingFunction}
+                </>
+              }
+            />
+          )}
+          portal
+          transition
+        >
+          <MenuRadioGroup value={frame.easingFunction}>
+            {(["linear", "easeIn", "easeOut", "easeInOut"] as const).map(
+              (timing) => (
+                <MenuItem
+                  key={`timing${timing}`}
+                  onClick={() => {}}
+                  type="radio"
+                  value={timing}
+                >
+                  <TimeCurve size="option" variant={timing} /> {timing}
+                </MenuItem>
+              )
             )}
-            portal
-            transition
-          >
-            <MenuRadioGroup value={frame.easingFunction}>
-              {(["linear", "easeIn", "easeOut", "easeInOut"] as const).map(
-                (timing) => (
-                  <MenuItem
-                    key={`timing${timing}`}
-                    onClick={() => {}}
-                    type="radio"
-                    value={timing}
-                  >
-                    <TimeCurve size="option" variant={timing} /> {timing}
-                  </MenuItem>
-                )
-              )}
-            </MenuRadioGroup>
-          </Menu>
-        </Control>
-        <Control>
-          <ToolButton disabled label="Done" standAlone />
-        </Control>
-      </ControlPanel>
-    </Inlay>
+          </MenuRadioGroup>
+        </Menu>
+      </Control>
+    </ControlPanel>
   );
 };
