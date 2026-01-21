@@ -14,10 +14,13 @@
   --color-control-highlight: var(--color-sky-200);
   --color-control-active: var(--color-sky-300);
   --color-control-active-dimmed: var(--color-sky-200);
+  --color-control-dangerous: var(--color-red-300);
+  --color-control-dangerous-highlight: var(--color-red-400);
 
   --color-text: var(--color-zinc-800);
   --color-dimmed: color-mix(in oklch, var(--color-zinc-800), transparent 50%);
   --color-active: var(--color-slate-500);
+  --color-dangerous: var(--color-red-800);
 }
 
 .dark {
@@ -37,6 +40,8 @@
   --color-control-highlight: var(--color-green-800);
   --color-control-active: var(--color-green-700);
   --color-control-active-dimmed: var(--color-green-600);
+  --color-control-dangerous: var(--color-red-700);
+  --color-control-dangerous-highlight: var(--color-red-600);
 
   --color-text: var(--color-zinc-300);
   --color-dimmed: color-mix(
@@ -45,4 +50,5 @@
     transparent 50%
   );
   --color-active: var(--color-green-500);
+  --color-dangerous: var(--color-red-300);
 }
