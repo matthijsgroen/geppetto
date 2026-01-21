@@ -2,8 +2,9 @@ dist
 build
 node_modules
 storybook-static
-src/old
 coverage
+examples/*.json
+src/demos/*.json
 *.min.js
 *.min.css
 .yarn
