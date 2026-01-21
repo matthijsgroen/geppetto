@@ -4,8 +4,8 @@ import {
   type FC,
   type PropsWithChildren,
   type RefObject,
+  use,
   useCallback,
-  useContext,
   useRef,
 } from "react";
 
@@ -98,17 +98,14 @@ export const ImageControlContext: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export const useControlValues = () =>
-  useContext(ImageCtrlContext).controlValues;
+export const useControlValues = () => use(ImageCtrlContext).controlValues;
 
-export const useMutationValues = () =>
-  useContext(ImageCtrlContext).mutationValues;
+export const useMutationValues = () => use(ImageCtrlContext).mutationValues;
 
-export const useControlValueSubscription = () =>
-  useContext(ImageCtrlContext).onUpdate;
+export const useControlValueSubscription = () => use(ImageCtrlContext).onUpdate;
 
 export const useUpdateControlValues = () =>
-  useContext(ImageCtrlContext).updateControlValues;
+  use(ImageCtrlContext).updateControlValues;
 
 export const useUpdateMutationValues = () =>
-  useContext(ImageCtrlContext).updateMutationValues;
+  use(ImageCtrlContext).updateMutationValues;
