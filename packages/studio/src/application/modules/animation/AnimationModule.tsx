@@ -94,13 +94,13 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
     )
   );
 
+  // TODO: Maybe make this part of the useActionMap hook?
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (triggerKeyboardAction(event)) {
         event.preventDefault();
       }
     };
-
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("keydown", onKeyDown);

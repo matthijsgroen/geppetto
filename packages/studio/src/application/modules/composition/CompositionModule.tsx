@@ -215,6 +215,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     )
   );
 
+  // TODO: Maybe make this part of the useActionMap hook?
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (triggerKeyboardAction(event)) {
