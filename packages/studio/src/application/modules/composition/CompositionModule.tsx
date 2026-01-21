@@ -542,6 +542,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                       activeMutator={activeMutator}
                       editingControlId={editingControl}
                       editingControlStep={activeControlStep}
+                      key={activeMutator}
                       onSelectControl={(controlId) =>
                         setSelectedControls([controlId])
                       }
