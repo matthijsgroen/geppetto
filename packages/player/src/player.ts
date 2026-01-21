@@ -874,8 +874,8 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             scissorHeight += scissorY;
             scissorY = 0;
           }
-          scissorWidth = Math.min(scissorWidth, element.width - scissorX);
-          scissorHeight = Math.min(scissorHeight, element.height - scissorY);
+          scissorWidth = Math.max(Math.min(scissorWidth, element.width - scissorX ), 0);
+          scissorHeight = Math.max(Math.min(scissorHeight, element.height - scissorY), 0);
           
           // Apply scissor test to clip to image bounds
           gl.enable(gl.SCISSOR_TEST);
