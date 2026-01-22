@@ -42,7 +42,10 @@ export const ControlFrameEdit: FC<{
               step={0.01}
               value={frame.controlStartValue / controlMaxValue}
             />
-            <RangeValue value={frame.controlStartValue / controlMaxValue} />
+            <RangeValue
+              formatter={(v) => v.toFixed(2)}
+              value={frame.controlStartValue / controlMaxValue}
+            />
           </Column>
         </Control>
       )}
@@ -54,7 +57,10 @@ export const ControlFrameEdit: FC<{
             step={0.01}
             value={frame.controlEndValue / controlMaxValue}
           />
-          <RangeValue value={frame.controlEndValue / controlMaxValue} />
+          <RangeValue
+            formatter={(v) => v.toFixed(2)}
+            value={frame.controlEndValue / controlMaxValue}
+          />
         </Column>
       </Control>
       <Control label="Easing function">

@@ -56,7 +56,7 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
       : 0;
 
   // normalize control values
-  const maxControlValue = control?.steps.length ?? 1;
+  const maxControlValue = (control?.steps.length ?? 2) - 1;
 
   const startValue =
     (action.controlStartValue ?? previousItem?.controlEndValue ?? 0) /
