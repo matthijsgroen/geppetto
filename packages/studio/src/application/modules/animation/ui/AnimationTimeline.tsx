@@ -13,6 +13,7 @@ import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   addControlFrameToAnimation,
+  deleteControlFrame,
   renameAnimation,
   resizeControlFrame,
   updateAnimationControlTrackLength,
@@ -270,6 +271,15 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                       frame: action,
                       actionIndex,
                     });
+                  }}
+                  onDelete={() => {
+                    setFile(
+                      deleteControlFrame(
+                        animationId,
+                        track.controlId,
+                        actionIndex
+                      )
+                    );
                   }}
                   onResize={(newStart, newDuration) => {
                     setFile(

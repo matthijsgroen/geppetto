@@ -1,8 +1,12 @@
 import type { ControlDefinition, FrameControlAction } from "@geppetto/types";
 import type { AnimationControlTrack } from "geppetto-player";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
-import { TimeBar } from "@/ui/components";
+import { AnimationContextMenu } from "@/application/modules/animation/ui/AnimationContextMenu";
+import { useActionMap } from "@/application/state/hooks/useActionMap";
+import { useEvent } from "@/application/state/hooks/useEvent";
+import { ActionMenuItem } from "@/application/ui/ActionMenuItem";
+import { TimeBar, useMenuState } from "@/ui/components";
 
 type TrackControlFrameProps = {
   action: FrameControlAction;
@@ -15,6 +19,7 @@ type TrackControlFrameProps = {
   zoom?: number;
 
   onClick?: VoidFunction;
+  onDelete?: VoidFunction;
   onResize?: (newStart: number, newDuration: number) => void;
 };
 
@@ -22,15 +27,16 @@ const ADJACENT_FRAME_GAP_MS = 200;
 
 export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
   action,
+  actionIndex,
+  control,
+  selected,
   speed = 1,
   track,
-  zoom = 1,
-  actionIndex,
   trackIndex,
-  control,
+  zoom = 1,
   onClick,
+  onDelete,
   onResize,
-  selected,
 }) => {
   const [dragStart, setDragStart] = useState<null | number>(null);
   const [dragEnd, setDragEnd] = useState<null | number>(null);
@@ -63,46 +69,80 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
     maxControlValue;
   const endValue = (action.controlEndValue ?? startValue) / maxControlValue;
 
-  return (
-    <TimeBar
-      duration={displayDuration}
-      easing={action.easingFunction}
-      endValue={endValue}
-      key={`${track.controlId}-${actionIndex}`}
-      onClick={onClick}
-      onEndDrag={(newTime) => {
-        const newDragEnd = Math.min(
-          Math.max(newTime - displayStart, 0.1),
-          maxEnd - displayStart
-        );
+  const [controlFrameMenuProps, toggleControlFrameMenu] = useMenuState();
+  const [anchorPoint, setAnchorPoint] = useState({
+    x: 0,
+    y: 0,
+  });
 
-        setDragEnd(newDragEnd);
-      }}
-      onEndDragRelease={(newTime) => {
-        if (onResize) {
+  const { triggerKeyboardAction, actions } = useActionMap(
+    useCallback(
+      () => ({
+        deleteFrame: {
+          caption: "Delete Frame",
+          dangerous: true,
+          shortcut: { interaction: "DelOrBackspace" as const },
+          handler: () => {
+            onDelete?.();
+          },
+        },
+      }),
+      [onDelete]
+    )
+  );
+
+  const handleContextMenu = useEvent(
+    (event: React.MouseEvent<HTMLElement>): void => {
+      event.preventDefault();
+      setAnchorPoint({
+        x: event.clientX,
+        y: event.clientY,
+      });
+      toggleControlFrameMenu(true);
+    }
+  );
+
+  return (
+    <>
+      <AnimationContextMenu
+        anchorPoint={anchorPoint}
+        {...controlFrameMenuProps}
+        onClose={() => toggleControlFrameMenu(false)}
+      >
+        <ActionMenuItem action={actions.deleteFrame} />
+      </AnimationContextMenu>
+      <TimeBar
+        duration={displayDuration}
+        easing={action.easingFunction}
+        endValue={endValue}
+        key={`${track.controlId}-${actionIndex}`}
+        onClick={onClick}
+        onContextMenu={handleContextMenu}
+        onEndDrag={(newTime) => {
           const newDragEnd = Math.min(
             Math.max(newTime - displayStart, 0.1),
             maxEnd - displayStart
           );
-          const newLength = newDragEnd * 1000 * speed;
-          onResize(action.start, newLength);
-        }
-        setDragEnd(null);
-      }}
-      onStartDrag={(newTime) => {
-        const endTime = displayStart + displayDuration;
 
-        const newDragStart = Math.max(
-          Math.min(newTime, endTime - 0.1),
-          minStart
-        );
-
-        const delta = start - newDragStart;
-        setDragStart(newDragStart);
-        setDragEnd(duration + delta);
-      }}
-      onStartDragRelease={(newTime) => {
-        if (onResize) {
+          setDragEnd(newDragEnd);
+        }}
+        onEndDragRelease={(newTime) => {
+          if (onResize) {
+            const newDragEnd = Math.min(
+              Math.max(newTime - displayStart, 0.1),
+              maxEnd - displayStart
+            );
+            const newLength = newDragEnd * 1000 * speed;
+            onResize(action.start, newLength);
+          }
+          setDragEnd(null);
+        }}
+        onKeyDown={(e) => {
+          if (triggerKeyboardAction(e)) {
+            e.preventDefault();
+          }
+        }}
+        onStartDrag={(newTime) => {
           const endTime = displayStart + displayDuration;
 
           const newDragStart = Math.max(
@@ -111,19 +151,33 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
           );
 
           const delta = start - newDragStart;
-          onResize(
-            newDragStart * 1000 * speed,
-            (duration + delta) * 1000 * speed
-          );
-        }
-        setDragStart(null);
-        setDragEnd(null);
-      }}
-      selected={selected}
-      start={displayStart}
-      startValue={startValue}
-      trackIndex={trackIndex}
-      zoom={zoom}
-    />
+          setDragStart(newDragStart);
+          setDragEnd(duration + delta);
+        }}
+        onStartDragRelease={(newTime) => {
+          if (onResize) {
+            const endTime = displayStart + displayDuration;
+
+            const newDragStart = Math.max(
+              Math.min(newTime, endTime - 0.1),
+              minStart
+            );
+
+            const delta = start - newDragStart;
+            onResize(
+              newDragStart * 1000 * speed,
+              (duration + delta) * 1000 * speed
+            );
+          }
+          setDragStart(null);
+          setDragEnd(null);
+        }}
+        selected={selected}
+        start={displayStart}
+        startValue={startValue}
+        trackIndex={trackIndex}
+        zoom={zoom}
+      />
+    </>
   );
 };

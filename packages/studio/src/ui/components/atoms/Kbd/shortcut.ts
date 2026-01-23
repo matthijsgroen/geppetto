@@ -139,7 +139,7 @@ const f = (v: boolean | undefined): boolean => !!v;
 
 export const isEvent = (
   shortcut: Shortcut,
-  event: KeyboardEvent | React.KeyboardEvent<HTMLElement>
+  event: KeyboardEvent | React.KeyboardEvent<Element>
 ): boolean => {
   const isMacBrowser = isMac(shortcut);
   const internalShortcut = isMacBrowser

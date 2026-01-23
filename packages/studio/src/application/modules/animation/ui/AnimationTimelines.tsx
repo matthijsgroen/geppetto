@@ -1,5 +1,9 @@
 import { type FC, useState } from "react";
 
+import {
+  usePlayerControls,
+  usePlayerTimestamp,
+} from "@/application/modules/animation/state/PlayerControlsProvider";
 import ZoomContext from "@/application/modules/animation/state/ZoomContext";
 import { useFile } from "@/application/state/FileContext";
 import type { AddAnimationDetails } from "@/domain/animation/file2/animations";
@@ -35,20 +39,21 @@ type AnimationTimelinesProps = {
   selectedFrame?: AnimationFrame | null;
   onStartAnimation?: (animationId: string) => void;
   onStopAnimation?: (animationId: string) => void;
+  selectedAnimation?: string | null;
+  onSelectAnimation?: (animationId: string | null) => void;
   animationsPlaying?: string[];
 };
 
 export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   onFrameSelect,
   selectedFrame,
+  selectedAnimation,
   onStartAnimation,
   onStopAnimation,
+  onSelectAnimation,
   animationsPlaying = [],
 }) => {
   const [file, setFile] = useFile();
-  const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
-    null
-  );
   const [zoom, setZoom] = useState(2);
 
   const maxTime = Object.values(file.animations).reduce((max, animation) => {
@@ -65,6 +70,16 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   const animation = selectedAnimation
     ? file.animations[selectedAnimation]
     : null;
+
+  const [timeline, setTimeline] = useState<number | null>(null);
+  const { setTimestamp } = usePlayerControls();
+
+  usePlayerTimestamp((timestamp) => {
+    setTimeline(timestamp);
+    if (selectedAnimation && timestamp !== null) {
+      onStopAnimation?.(selectedAnimation);
+    }
+  });
 
   return (
     <TrackDragProvider
@@ -92,7 +107,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                 const addDetails: AddAnimationDetails | Record<string, never> =
                   {};
                 setFile(addAnimation(addDetails));
-                setSelectedAnimation(addDetails.id);
+                onSelectAnimation?.(addDetails.id);
               }}
               tooltip="Add Animation"
             />
@@ -167,7 +182,17 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
           </ToolBar>
           <AnimationsContainer
             duration={(maxTime + EXTRA_TIME) / 1000}
+            momentTimestamp={timeline !== null ? timeline / 1000 : 0}
+            onTimelineDrag={(time) => {
+              if (!selectedAnimation) return;
+
+              if (animationsPlaying.includes(selectedAnimation)) {
+                onStopAnimation?.(selectedAnimation);
+              }
+              setTimestamp(time * 1000);
+            }}
             onZoomChange={setZoom}
+            showMomentMarker={timeline !== null}
             title="Timeline"
             zoom={zoom}
           >
@@ -178,14 +203,22 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                 key={animationId}
                 onDelete={() => {
                   setFile(deleteAnimation(animationId));
-                  setSelectedAnimation(null);
+                  onSelectAnimation?.(null);
                 }}
                 onFrameSelect={onFrameSelect}
                 onPlay={() => {
                   onStartAnimation?.(animationId);
+                  if (animationId === selectedAnimation) {
+                    setTimestamp(null);
+                  }
                 }}
                 onSelect={() => {
-                  setSelectedAnimation(animationId);
+                  onSelectAnimation?.(animationId);
+                  if (!animationsPlaying.includes(animationId)) {
+                    setTimestamp(0);
+                  } else {
+                    setTimestamp(null);
+                  }
                   if (animationId !== selectedFrame?.animationId) {
                     onFrameSelect?.(null);
                   }

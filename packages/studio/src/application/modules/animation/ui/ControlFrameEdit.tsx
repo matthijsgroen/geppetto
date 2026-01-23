@@ -5,6 +5,7 @@ import type {
 } from "@geppetto/types";
 import type { FC } from "react";
 
+import { usePlayerControls } from "@/application/modules/animation/state/PlayerControlsProvider";
 import { ToggleControl } from "@/application/modules/composition/ui/controls";
 import {
   Column,
@@ -28,6 +29,8 @@ export const ControlFrameEdit: FC<{
   shadow?: boolean;
 }> = ({ frame, control, shadow = false }) => {
   const controlMaxValue = control.steps.length - 1;
+  const { setTimestamp } = usePlayerControls();
+
   return (
     <ControlPanel shadow={shadow}>
       <Control label="Start with current value">
@@ -39,7 +42,9 @@ export const ControlFrameEdit: FC<{
             <RangeInput
               max={1}
               min={0}
-              step={0.01}
+              onFocus={() => {
+                setTimestamp(frame.start);
+              }}
               value={frame.controlStartValue / controlMaxValue}
             />
             <RangeValue
@@ -54,6 +59,9 @@ export const ControlFrameEdit: FC<{
           <RangeInput
             max={1}
             min={0}
+            onFocus={() => {
+              setTimestamp(frame.start + frame.duration);
+            }}
             step={0.01}
             value={frame.controlEndValue / controlMaxValue}
           />

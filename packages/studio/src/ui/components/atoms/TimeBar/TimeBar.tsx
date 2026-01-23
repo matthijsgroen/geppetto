@@ -19,8 +19,10 @@ type TimeBarProps = {
   variant?: "mini" | "default";
   zoom?: number;
   onClick?: () => void;
+  onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onEndDrag?: (newTime: TimeStamp) => void;
   onEndDragRelease?: (newTime: TimeStamp) => void;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
   onStartDrag?: (newTime: TimeStamp) => void;
   onStartDragRelease?: (newTime: TimeStamp) => void;
 };
@@ -36,8 +38,10 @@ export const TimeBar: FC<TimeBarProps> = ({
   endValue = 1,
   variant,
   onClick,
+  onContextMenu,
   onEndDrag,
   onEndDragRelease,
+  onKeyDown,
   onStartDrag,
   onStartDragRelease,
 }) => {
@@ -58,6 +62,8 @@ export const TimeBar: FC<TimeBarProps> = ({
         !selected && "border-control-edge bg-toolbar"
       )}
       onClick={activeVariant === "default" ? onClick : undefined}
+      onContextMenu={onContextMenu}
+      onKeyDown={onKeyDown}
       role={activeVariant === "default" ? "button" : "presentation"}
       style={{
         left: `calc(${start}em + 2 * var(--spacing))`,

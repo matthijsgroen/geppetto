@@ -317,3 +317,26 @@ export const resizeControlFrame = (
     action.start = newStart;
     action.duration = newDuration;
   });
+
+export const deleteControlFrame = (
+  animationId: string,
+  controlId: string,
+  actionIndex: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    const track = animation.tracks.find(
+      (t): t is AnimationControlTrack =>
+        t.type === "control" && t.controlId === controlId
+    );
+
+    if (!track) {
+      return;
+    }
+
+    track.actions.splice(actionIndex, 1);
+  });

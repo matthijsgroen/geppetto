@@ -7,6 +7,7 @@ export type Action = {
   caption?: string;
   icon?: string;
   colorizedIcon?: boolean;
+  dangerous?: boolean;
   tooltip?: string;
   shortcut: Shortcut;
   type?: "checkbox" | "normal" | "radio";
@@ -18,7 +19,7 @@ export type ActionHandlers<T extends string> = Record<T, Action>;
 
 export type ActionMap<ActionHandlers> = {
   triggerKeyboardAction: (
-    event: KeyboardEvent | React.KeyboardEvent<HTMLElement>
+    event: KeyboardEvent | React.KeyboardEvent<Element>
   ) => boolean;
   actions: ActionHandlers;
 };
@@ -30,7 +31,7 @@ export const useActionMap = <T extends string>(
     const result = producer();
     const actionList = Object.entries<Action>(result);
     const triggerKeyboardAction = (
-      e: KeyboardEvent | React.KeyboardEvent<HTMLElement>
+      e: KeyboardEvent | React.KeyboardEvent<Element>
     ) => {
       for (const [, action] of actionList) {
         if (isEvent(action.shortcut, e)) {

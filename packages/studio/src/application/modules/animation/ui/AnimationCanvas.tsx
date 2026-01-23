@@ -5,6 +5,7 @@ import { useAnimationsPlaying } from "@/application/modules/animation/hooks/useA
 import { useCanvasResize } from "@/application/modules/animation/hooks/useCanvasResize";
 import { useGeppettoPlayer } from "@/application/modules/animation/hooks/useGeppettoPlayer";
 import { usePanningAndZoom } from "@/application/modules/animation/hooks/usePanningAndZoom";
+import { usePlayerTimestamp } from "@/application/modules/animation/state/PlayerControlsProvider";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   useControlValues,
@@ -14,6 +15,7 @@ import {
 
 export type AnimationCanvasProps = {
   image: HTMLImageElement | null;
+  activeAnimation?: string | null;
   animationsPlaying?: string[];
   onStop?: (animationId: string) => void;
   file: GeppettoImage;
@@ -21,6 +23,7 @@ export type AnimationCanvasProps = {
 
 export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
   image,
+  activeAnimation,
   file,
   children,
   onStop,
@@ -65,6 +68,19 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
       });
     }
   );
+
+  usePlayerTimestamp((time: number | null) => {
+    if (
+      !animationControlsRef.current ||
+      activeAnimation === null ||
+      activeAnimation === undefined ||
+      time === null
+    )
+      return;
+    const name = file.animations[activeAnimation]?.name;
+    if (!name) return;
+    animationControlsRef.current.renderAtTimestamp(name, time);
+  });
 
   const controlValuesRef = useControlValues();
   const mutationValuesRef = useMutationValues();

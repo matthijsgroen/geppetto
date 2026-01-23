@@ -74,6 +74,18 @@ export type AnimationControls = {
   stopAnimation(animationName: string): void;
 
   /**
+   * Render the image at a specific timestamp for an animation track.
+   * This will stop the specified animation and render it at the given timestamp,
+   * considering looping for tracks shorter than the timestamp.
+   * Does not emit events or callbacks.
+   *
+   * @param animationName the name of the animation track to render.
+   * @param timestamp the timestamp in milliseconds to render at.
+   * @throws an error if the provided trackName does not exist
+   */
+  renderAtTimestamp(animationName: string, timestamp: number): void;
+
+  /**
    * Manipulates a control. Will stop animations that are using this control as well.
    *
    * @param controlName name of the control to change
@@ -755,6 +767,89 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         stopAnimation,
         setControlValue,
         tweenControlTo,
+        renderAtTimestamp(animationName: string, timestamp: number) {
+          const trackIndex = nameToTrackIndex(animationName);
+          const playingAnimation = animation.animations[trackIndex];
+          
+          const playSpeed =  animation.animations[trackIndex].speed;
+          // Stop the animation if it's currently playing
+          const playingIndex = playingAnimations.findIndex(
+            (p) => p.index === trackIndex
+          );
+          if (playingIndex !== -1) {
+            playingAnimations.splice(playingIndex, 1);
+          }
+          
+          // Process each track at the given timestamp
+          for (const track of playingAnimation.tracks) {
+            // Track position wraps at track.length (handles looping)
+            const trackPosition = (timestamp * playSpeed) % track.length;
+            
+            // Find active action at the timestamp
+            let activeAction: PreparedControlAction | null = null;
+            let lastCompletedAction: PreparedControlAction | null = null;
+            
+            for (const action of track.actions) {
+              if (trackPosition >= action.start && trackPosition < action.start + action.duration) {
+                activeAction = action;
+                break;
+              }
+              if (trackPosition >= action.start + action.duration) {
+                lastCompletedAction = action;
+              }
+            }
+            
+            if (activeAction) {
+              // Calculate progress within this action
+              const actionProgress = (trackPosition - activeAction.start) / activeAction.duration;
+              const easedProgress = applyEasing(actionProgress, activeAction.easingFunction);
+              
+              // Determine start value
+              let startValue: number;
+              if (activeAction.controlStartValue !== undefined) {
+                startValue = activeAction.controlStartValue;
+              } else {
+                // Find the previous action's end value
+                let previousActionEndValue: number | undefined;
+                for (const action of track.actions) {
+                  if (action.start + action.duration === activeAction.start) {
+                    previousActionEndValue = action.controlEndValue;
+                    break;
+                  }
+                }
+                startValue = previousActionEndValue !== undefined 
+                  ? previousActionEndValue 
+                  : controlValues[track.controlIndex];
+              }
+              
+              // Interpolate from start to end
+              const interpolatedValue = mix(startValue, activeAction.controlEndValue, easedProgress);
+              controlValues[track.controlIndex] = interpolatedValue;
+              renderControlValues[track.controlIndex] = interpolatedValue;
+            } else if (lastCompletedAction) {
+              // No active action - hold at the end value of the last completed action
+              controlValues[track.controlIndex] = lastCompletedAction.controlEndValue;
+              renderControlValues[track.controlIndex] = lastCompletedAction.controlEndValue;
+            }
+          }
+          
+          // Recalculate mutation values based on new control values
+          recalculateMutationValues(
+            animation.mutationValues.data,
+            renderControlValues,
+            animation.rawControls,
+            animation.rawMutations,
+            animation.mutatorMapping,
+            defaultFrameValues
+          );
+          
+          // Update last control values
+          lastControlValues.set(renderControlValues);
+          
+          // Upload to GPU
+          gl.useProgram(program);
+          gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
+        },
         getControlValue: (controlName) => {
           const controlIndex = nameToControlIndex(controlName);
           const controlIds = Object.keys(animation.rawControls);

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+import { PlayerControlsProvider } from "@/application/modules/animation/state/PlayerControlsProvider";
 import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
 import type {
   AnimationControlFrame,
@@ -13,6 +14,7 @@ import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useUpdateScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import { SectionSelector } from "@/application/ui/SectionSelector";
+import { deleteControlFrame } from "@/domain/animation/file2/animations";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import type { Shortcut } from "@/ui/components";
@@ -50,8 +52,9 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
   texture,
   onSectionChange,
 }) => {
-  const [file] = useFile();
+  const [file, setFile] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
+  const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
   const [showItemDetails, setShowItemDetails] = useState(false);
   const resetZoom = useUpdateScreenTranslation();
   const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
@@ -124,90 +127,110 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           active={showItemDetails}
         />
       </ToolBar>
-      <Row>
-        <Panel center workspace>
-          {texture && hasControls(file) && (
-            <AnimationCanvas
-              animationsPlaying={animationsPlaying}
-              file={file}
-              image={texture}
-              onStop={stopAnimationState}
+      <PlayerControlsProvider>
+        <Row>
+          <Panel center workspace>
+            {texture && hasControls(file) && (
+              <AnimationCanvas
+                activeAnimation={activeAnimation}
+                animationsPlaying={animationsPlaying}
+                file={file}
+                image={texture}
+                onStop={stopAnimationState}
+              >
+                {activeFrame &&
+                  isControlFrame(activeFrame) &&
+                  !showItemDetails && (
+                    <Inlay>
+                      <ControlFrameEdit
+                        actionIndex={activeFrame.actionIndex}
+                        animationId={activeFrame.animationId}
+                        control={file.controls[activeFrame.track.controlId]}
+                        frame={activeFrame.frame}
+                        shadow
+                        track={activeFrame.track}
+                      />
+                    </Inlay>
+                  )}
+              </AnimationCanvas>
+            )}
+            {(!texture || !hasControls(file)) && (
+              <StartupScreen file={file} texture={texture} />
+            )}
+          </Panel>
+          {showItemDetails && (
+            <ResizePanel
+              defaultSize={250}
+              direction={ResizeDirection.West}
+              minSize={150}
             >
-              {activeFrame &&
-                isControlFrame(activeFrame) &&
-                !showItemDetails && (
-                  <Inlay>
-                    <ControlFrameEdit
-                      actionIndex={activeFrame.actionIndex}
-                      animationId={activeFrame.animationId}
-                      control={file.controls[activeFrame.track.controlId]}
-                      frame={activeFrame.frame}
-                      shadow
-                      track={activeFrame.track}
-                    />
-                  </Inlay>
-                )}
-            </AnimationCanvas>
+              <Column>
+                <Panel padding="sm">
+                  {activeFrame && isControlFrame(activeFrame) && (
+                    <>
+                      <PanelTitle>
+                        {file.controls[activeFrame.track.controlId].name} Frame
+                      </PanelTitle>
+                      <ControlFrameEdit
+                        actionIndex={activeFrame.actionIndex}
+                        animationId={activeFrame.animationId}
+                        control={file.controls[activeFrame.track.controlId]}
+                        frame={activeFrame.frame}
+                        track={activeFrame.track}
+                      />
+                      <ToolBar transparent>
+                        <ToolSpacer />
+                        <ToolButton
+                          dangerous
+                          label="Delete"
+                          onClick={() => {
+                            if (activeFrame && isControlFrame(activeFrame)) {
+                              setFile(
+                                deleteControlFrame(
+                                  activeFrame.animationId,
+                                  activeFrame.track.controlId,
+                                  activeFrame.actionIndex
+                                )
+                              );
+                            }
+                          }}
+                          standAlone
+                        />
+                        <ToolSpacer />
+                      </ToolBar>
+                    </>
+                  )}
+                </Panel>
+              </Column>
+            </ResizePanel>
           )}
-          {(!texture || !hasControls(file)) && (
-            <StartupScreen file={file} texture={texture} />
-          )}
-        </Panel>
-        {showItemDetails && (
+        </Row>
+        {texture && hasControls(file) && (
           <ResizePanel
             defaultSize={250}
-            direction={ResizeDirection.West}
-            minSize={150}
+            direction={ResizeDirection.North}
+            minSize={50}
           >
-            <Column>
-              <Panel padding="sm">
-                {activeFrame && isControlFrame(activeFrame) && (
-                  <>
-                    <PanelTitle>
-                      {file.controls[activeFrame.track.controlId].name} Frame
-                    </PanelTitle>
-                    <ControlFrameEdit
-                      actionIndex={activeFrame.actionIndex}
-                      animationId={activeFrame.animationId}
-                      control={file.controls[activeFrame.track.controlId]}
-                      frame={activeFrame.frame}
-                      track={activeFrame.track}
-                    />
-                    <ToolBar transparent>
-                      <ToolSpacer />
-                      <ToolButton dangerous label="Delete" standAlone />
-                      <ToolSpacer />
-                    </ToolBar>
-                  </>
-                )}
-              </Panel>
-            </Column>
+            <AnimationTimelines
+              animationsPlaying={animationsPlaying}
+              onFrameSelect={(frame) => {
+                setActiveFrame(frame);
+              }}
+              onSelectAnimation={setActiveAnimation}
+              onStartAnimation={(id) =>
+                setAnimationsPlaying((prev) => [...prev, id])
+              }
+              onStopAnimation={(id) =>
+                setAnimationsPlaying((prev) =>
+                  prev.filter((animId) => animId !== id)
+                )
+              }
+              selectedAnimation={activeAnimation}
+              selectedFrame={activeFrame}
+            />
           </ResizePanel>
         )}
-      </Row>
-      {texture && hasControls(file) && (
-        <ResizePanel
-          defaultSize={250}
-          direction={ResizeDirection.North}
-          minSize={50}
-        >
-          <AnimationTimelines
-            animationsPlaying={animationsPlaying}
-            onFrameSelect={(frame) => {
-              setActiveFrame(frame);
-            }}
-            onStartAnimation={(id) =>
-              setAnimationsPlaying((prev) => [...prev, id])
-            }
-            onStopAnimation={(id) =>
-              setAnimationsPlaying((prev) =>
-                prev.filter((animId) => animId !== id)
-              )
-            }
-            selectedFrame={activeFrame}
-          />
-        </ResizePanel>
-      )}
+      </PlayerControlsProvider>
     </Column>
   );
 };

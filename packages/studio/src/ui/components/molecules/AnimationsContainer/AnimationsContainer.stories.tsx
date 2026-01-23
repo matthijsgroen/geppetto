@@ -11,14 +11,22 @@ const meta = preview.meta({
   argTypes: {
     zoom: {
       control: "select",
-      options: [0.5, 1, 1.5, 2],
+      options: [0.5, 1, 1.5, 2, 4, 8],
     },
     children: { control: false },
+    momentTimestamp: {
+      control: { type: "number", min: 0, step: 1, max: 30 },
+    },
+    onTimelineMouseDown: { action: "timeline mouse down" },
+    onTimelineMouseMove: { action: "timeline mouse move" },
+    onTimelineMouseUp: { action: "timeline mouse up" },
   },
   args: {
     duration: 30,
-    zoom: 1,
+    zoom: 2,
     title: "Timeline",
+    showMomentMarker: true,
+    momentTimestamp: 0,
     children: (
       <>
         <AnimationTrack
@@ -66,3 +74,10 @@ const meta = preview.meta({
 export default meta;
 
 export const AnimationsContainer = meta.story({});
+
+export const MomentMarker = meta.story({
+  args: {
+    showMomentMarker: true,
+    momentTimestamp: 5.5,
+  },
+});
