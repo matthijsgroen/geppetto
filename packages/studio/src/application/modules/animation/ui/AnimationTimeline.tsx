@@ -63,7 +63,7 @@ type AnimationTimelineProps = {
   onSelect: () => void;
   onPlay?: () => void;
   onStop?: () => void;
-  onFrameSelect?: (frame: AnimationFrame) => void;
+  onFrameSelect?: (frame: AnimationFrame | null) => void;
   onDelete?: () => void;
   selected: boolean;
   selectedTimeBar?: AnimationFrame | null;
@@ -280,6 +280,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                         actionIndex
                       )
                     );
+                    onFrameSelect?.(null);
                   }}
                   onResize={(newStart, newDuration) => {
                     setFile(

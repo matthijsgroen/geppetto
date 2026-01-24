@@ -1,4 +1,4 @@
-import { clsx } from "clsx";
+import clsx from "clsx";
 import type { FC, PropsWithChildren } from "react";
 import { useCallback, useEffect, useRef } from "react";
 
@@ -122,15 +122,15 @@ export const AnimationsContainer: FC<AnimationsContainerProps> = ({
   return (
     <div className="overflow-scroll pb-4">
       <div
-        className="relative grid min-w-fit grid-cols-[minmax(min-content,10vw)_1fr] gap-x-0.5"
+        className="grid min-w-fit grid-cols-[minmax(min-content,10vw)_1fr] gap-x-0.5"
         ref={containerRef}
         style={{ fontSize: `${zoom}rem` }}
       >
-        <div className="sticky top-0 left-0 z-40 border-b border-control-edge bg-toolbar/70 p-2 text-right text-base text-text backdrop-blur-md">
+        <div className="sticky top-0 left-0 z-40 border-b border-control-edge bg-toolbar/95 p-2 text-right text-base text-text backdrop-blur-md">
           {title}
         </div>
         <div
-          className="sticky top-0 z-30 box-content h-6 border-b border-control-edge bg-toolbar/70 p-2 text-base whitespace-nowrap text-text backdrop-blur-md"
+          className="sticky top-0 z-30 box-content border-b border-control-edge bg-toolbar/95 p-2 text-base whitespace-nowrap text-text backdrop-blur-md"
           ref={timelineRef}
         >
           <div

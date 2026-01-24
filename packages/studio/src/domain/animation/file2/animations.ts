@@ -340,3 +340,72 @@ export const deleteControlFrame = (
 
     track.actions.splice(actionIndex, 1);
   });
+
+export const updateControlFrame = (
+  animationId: string,
+  controlId: string,
+  actionIndex: number,
+  update: {
+    newEasing?: EasingFunction;
+    startValue?: number | null;
+    endValue?: number;
+  }
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    const track = animation.tracks.find(
+      (t): t is AnimationControlTrack =>
+        t.type === "control" && t.controlId === controlId
+    );
+
+    if (!track) {
+      return;
+    }
+
+    const action = track.actions[actionIndex];
+    if (!action) {
+      return;
+    }
+
+    if (update.newEasing !== undefined) {
+      action.easingFunction = update.newEasing;
+    }
+    if (update.endValue !== undefined) {
+      action.controlEndValue = update.endValue;
+    }
+    if (update.startValue !== undefined) {
+      action.controlStartValue =
+        update.startValue === null ? undefined : update.startValue;
+    }
+  });
+
+export const getAnimationControlFrame = (
+  file: GeppettoImage,
+  animationId: string,
+  controlId: string,
+  actionIndex: number
+): FrameControlAction | null => {
+  const animation = file.animations[animationId];
+  if (!animation) {
+    return null;
+  }
+  const track = animation.tracks.find(
+    (t): t is AnimationControlTrack =>
+      t.type === "control" && t.controlId === controlId
+  );
+
+  if (!track) {
+    return null;
+  }
+
+  const action = track.actions[actionIndex];
+  if (!action) {
+    return null;
+  }
+
+  return action;
+};

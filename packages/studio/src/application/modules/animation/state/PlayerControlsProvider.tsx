@@ -14,11 +14,19 @@ type Unsubscribe = () => void;
 type DataHandler<T> = (value: T) => void;
 type Subscription<T> = (handler: DataHandler<T>) => Unsubscribe;
 
-const PlayerControlsContext = createContext<{
+type ControlValue = { controlId: string; value: number | null };
+
+type ContextValue = {
   setTimestamp: (time: number | null) => void;
+  showControlValue: (controlId: string, value: number | null) => void;
+  subscribeToControlValue: Subscription<ControlValue>;
   subscribeToTimestamp: Subscription<number | null>;
-}>({
+};
+
+const PlayerControlsContext = createContext<ContextValue>({
   setTimestamp: () => {},
+  showControlValue: () => {},
+  subscribeToControlValue: () => () => {},
   subscribeToTimestamp: () => () => {},
 });
 
@@ -27,8 +35,11 @@ export const PlayerControlsProvider: FC<PlayerControlsProviderProps> = ({
 }) => {
   const timestamp = useRef<number | null>(0);
   const timestampSubscribers = useRef<DataHandler<number | null>[]>([]);
+  const latestControlValue = useRef<ControlValue | null>(null);
+  const controlValueSubscribers = useRef<DataHandler<ControlValue>[]>([]);
 
-  const value = useMemo(
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
+  const value: ContextValue = useMemo(
     () => ({
       setTimestamp: (time: number | null) => {
         timestamp.current = time;
@@ -43,6 +54,22 @@ export const PlayerControlsProvider: FC<PlayerControlsProviderProps> = ({
             (sub) => sub !== handler
           );
         };
+      },
+      subscribeToControlValue: (handler: (value: ControlValue) => void) => {
+        controlValueSubscribers.current.push(handler);
+        if (latestControlValue.current) {
+          handler(latestControlValue.current);
+        }
+        return () => {
+          controlValueSubscribers.current =
+            controlValueSubscribers.current.filter((sub) => sub !== handler);
+        };
+      },
+      showControlValue: (controlId: string, value: number | null) => {
+        latestControlValue.current = { controlId, value };
+        controlValueSubscribers.current.forEach((handler) =>
+          handler({ controlId, value })
+        );
       },
     }),
     []
@@ -62,5 +89,13 @@ export const usePlayerTimestamp = (handler: DataHandler<number | null>) => {
   useEffect(
     () => subscribeToTimestamp(handler),
     [subscribeToTimestamp, handler]
+  );
+};
+
+export const usePlayerControlValue = (handler: DataHandler<ControlValue>) => {
+  const { subscribeToControlValue } = usePlayerControls();
+  useEffect(
+    () => subscribeToControlValue(handler),
+    [subscribeToControlValue, handler]
   );
 };

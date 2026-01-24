@@ -14,7 +14,10 @@ import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useUpdateScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import { SectionSelector } from "@/application/ui/SectionSelector";
-import { deleteControlFrame } from "@/domain/animation/file2/animations";
+import {
+  deleteControlFrame,
+  getAnimationControlFrame,
+} from "@/domain/animation/file2/animations";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import type { Shortcut } from "@/ui/components";
@@ -97,6 +100,16 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
     )
   );
 
+  const frame =
+    activeFrame && isControlFrame(activeFrame)
+      ? getAnimationControlFrame(
+          file,
+          activeFrame.animationId,
+          activeFrame.track.controlId,
+          activeFrame.actionIndex
+        )
+      : null;
+
   // TODO: Maybe make this part of the useActionMap hook?
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -140,13 +153,14 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
               >
                 {activeFrame &&
                   isControlFrame(activeFrame) &&
+                  frame &&
                   !showItemDetails && (
                     <Inlay>
                       <ControlFrameEdit
                         actionIndex={activeFrame.actionIndex}
                         animationId={activeFrame.animationId}
                         control={file.controls[activeFrame.track.controlId]}
-                        frame={activeFrame.frame}
+                        key={`${activeFrame.animationId}-${activeFrame.track.controlId}-${activeFrame.actionIndex}`}
                         shadow
                         track={activeFrame.track}
                       />
@@ -166,7 +180,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
             >
               <Column>
                 <Panel padding="sm">
-                  {activeFrame && isControlFrame(activeFrame) && (
+                  {activeFrame && isControlFrame(activeFrame) && frame && (
                     <>
                       <PanelTitle>
                         {file.controls[activeFrame.track.controlId].name} Frame
@@ -175,7 +189,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                         actionIndex={activeFrame.actionIndex}
                         animationId={activeFrame.animationId}
                         control={file.controls[activeFrame.track.controlId]}
-                        frame={activeFrame.frame}
+                        key={`${activeFrame.animationId}-${activeFrame.track.controlId}-${activeFrame.actionIndex}`}
                         track={activeFrame.track}
                       />
                       <ToolBar transparent>
@@ -192,6 +206,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                                   activeFrame.actionIndex
                                 )
                               );
+                              setActiveFrame(null);
                             }
                           }}
                           standAlone

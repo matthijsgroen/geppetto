@@ -1,4 +1,4 @@
-import { type FC, useState } from "react";
+import { type FC, useCallback, useState } from "react";
 
 import {
   usePlayerControls,
@@ -80,6 +80,18 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
       onStopAnimation?.(selectedAnimation);
     }
   });
+
+  const handleTimelineDrag = useCallback(
+    (time: number) => {
+      if (!selectedAnimation) return;
+
+      if (animationsPlaying.includes(selectedAnimation)) {
+        onStopAnimation?.(selectedAnimation);
+      }
+      setTimestamp(time * 1000);
+    },
+    [selectedAnimation, animationsPlaying, onStopAnimation, setTimestamp]
+  );
 
   return (
     <TrackDragProvider
@@ -183,14 +195,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
           <AnimationsContainer
             duration={(maxTime + EXTRA_TIME) / 1000}
             momentTimestamp={timeline !== null ? timeline / 1000 : 0}
-            onTimelineDrag={(time) => {
-              if (!selectedAnimation) return;
-
-              if (animationsPlaying.includes(selectedAnimation)) {
-                onStopAnimation?.(selectedAnimation);
-              }
-              setTimestamp(time * 1000);
-            }}
+            onTimelineDrag={handleTimelineDrag}
             onZoomChange={setZoom}
             showMomentMarker={timeline !== null}
             title="Timeline"
@@ -204,6 +209,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                 onDelete={() => {
                   setFile(deleteAnimation(animationId));
                   onSelectAnimation?.(null);
+                  onFrameSelect?.(null);
                 }}
                 onFrameSelect={onFrameSelect}
                 onPlay={() => {
