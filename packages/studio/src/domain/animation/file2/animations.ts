@@ -349,6 +349,7 @@ export const updateControlFrame = (
     newEasing?: EasingFunction;
     startValue?: number | null;
     endValue?: number;
+    easingFunction?: EasingFunction;
   }
 ) =>
   produce<GeppettoImage>((draft) => {
@@ -380,6 +381,9 @@ export const updateControlFrame = (
     if (update.startValue !== undefined) {
       action.controlStartValue =
         update.startValue === null ? undefined : update.startValue;
+    }
+    if (update.easingFunction !== undefined) {
+      action.easingFunction = update.easingFunction;
     }
   });
 

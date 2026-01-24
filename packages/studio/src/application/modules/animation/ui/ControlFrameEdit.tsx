@@ -155,7 +155,18 @@ export const ControlFrameEdit: FC<{
               (timing) => (
                 <MenuItem
                   key={`timing${timing}`}
-                  onClick={() => {}}
+                  onClick={() => {
+                    setFile(
+                      updateControlFrame(
+                        animationId,
+                        track.controlId,
+                        actionIndex,
+                        {
+                          easingFunction: timing,
+                        }
+                      )
+                    );
+                  }}
                   type="radio"
                   value={timing}
                 >
