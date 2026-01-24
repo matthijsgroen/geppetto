@@ -36,3 +36,6 @@ yarn-error.log*
 coverage-summary.json
 *storybook.log
 .parcel-cache
+
+*_PLAN.md
+*-PLAN.md
