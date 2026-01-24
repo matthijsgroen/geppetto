@@ -17,9 +17,8 @@ const meta = preview.meta({
     momentTimestamp: {
       control: { type: "number", min: 0, step: 1, max: 30 },
     },
-    onTimelineMouseDown: { action: "timeline mouse down" },
-    onTimelineMouseMove: { action: "timeline mouse move" },
-    onTimelineMouseUp: { action: "timeline mouse up" },
+    onTimelineDrag: { action: "timeline drag" },
+    onTimelineDragRelease: { action: "timeline drag release" },
   },
   args: {
     duration: 30,
