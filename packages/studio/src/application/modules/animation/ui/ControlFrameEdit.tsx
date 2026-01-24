@@ -30,7 +30,7 @@ export const ControlFrameEdit: FC<{
 }> = ({ control, shadow = false, animationId, track, actionIndex }) => {
   const [file, setFile] = useFile();
   const controlMaxValue = control.steps.length - 1;
-  const { setTimestamp } = usePlayerControls();
+  const { setTimestamp, showControlValue } = usePlayerControls();
 
   const frame = getAnimationControlFrame(
     file,
@@ -66,16 +66,16 @@ export const ControlFrameEdit: FC<{
               min={0}
               onChange={(e) => {
                 setStartValue(e.target.valueAsNumber * controlMaxValue);
-                // showControlValue(
-                //   track.controlId,
-                //   e.target.valueAsNumber * controlMaxValue
-                // );
+                showControlValue(
+                  track.controlId,
+                  e.target.valueAsNumber * controlMaxValue
+                );
               }}
               onFocus={() => {
                 setTimestamp(frame.start);
               }}
               onMouseUp={() => {
-                // showControlValue(track.controlId, null);
+                showControlValue(track.controlId, null);
                 setFile(
                   updateControlFrame(
                     animationId,
@@ -86,7 +86,9 @@ export const ControlFrameEdit: FC<{
                     }
                   )
                 );
-                setTimestamp(frame.start);
+                setTimeout(() => {
+                  setTimestamp(frame.start);
+                }, 0);
               }}
               step={0.01}
               value={startValue / controlMaxValue}
@@ -105,22 +107,24 @@ export const ControlFrameEdit: FC<{
             min={0}
             onChange={(e) => {
               setEndValue(e.target.valueAsNumber * controlMaxValue);
-              // showControlValue(
-              //   track.controlId,
-              //   e.target.valueAsNumber * controlMaxValue
-              // );
+              showControlValue(
+                track.controlId,
+                e.target.valueAsNumber * controlMaxValue
+              );
             }}
             onFocus={() => {
               setTimestamp(frame.start + frame.duration);
             }}
             onMouseUp={() => {
-              // showControlValue(track.controlId, null);
+              showControlValue(track.controlId, null);
               setFile(
                 updateControlFrame(animationId, track.controlId, actionIndex, {
                   endValue: endValue,
                 })
               );
-              setTimestamp(frame.start + frame.duration);
+              setTimeout(() => {
+                setTimestamp(frame.start + frame.duration);
+              }, 0);
             }}
             step={0.01}
             value={endValue / controlMaxValue}

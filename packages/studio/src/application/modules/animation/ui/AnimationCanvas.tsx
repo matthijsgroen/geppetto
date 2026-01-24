@@ -95,11 +95,11 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     const controlName = control?.name;
     if (controlName) {
       if (controlValue.value === null) {
-        // If value is null, reset to current value
-        animationControlsRef.current?.setControlValue(
-          controlName,
-          controlValuesRef.current[controlValue.controlId]
-        );
+        // // If value is null, reset to current value
+        // animationControlsRef.current?.setControlValue(
+        //   controlName,
+        //   controlValuesRef.current[controlValue.controlId]
+        // );
         return;
       }
       const maxSteps = control.steps.length - 1;
