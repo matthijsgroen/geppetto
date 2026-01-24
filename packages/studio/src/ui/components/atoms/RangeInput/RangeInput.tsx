@@ -3,6 +3,8 @@ import { type ComponentProps, type FC } from "react";
 
 type RangeInputProps = Omit<ComponentProps<"input">, "type" | "className">;
 
+// TODO: Enhance keyboard support to use shift, alt for finer/coarser control
+
 export const RangeInput: FC<RangeInputProps> = (props) => (
   <input
     className={clsx(

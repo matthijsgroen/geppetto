@@ -43,6 +43,30 @@ export const ControlFrameEdit: FC<{
   const [startValue, setStartValue] = useState(frame.controlStartValue);
   const [endValue, setEndValue] = useState(frame.controlEndValue);
 
+  const updateStartValue = () => {
+    showControlValue(track.controlId, null);
+    setFile(
+      updateControlFrame(animationId, track.controlId, actionIndex, {
+        startValue: startValue,
+      })
+    );
+    setTimeout(() => {
+      setTimestamp(frame.start);
+    }, 0);
+  };
+
+  const updateEndValue = () => {
+    showControlValue(track.controlId, null);
+    setFile(
+      updateControlFrame(animationId, track.controlId, actionIndex, {
+        endValue: endValue,
+      })
+    );
+    setTimeout(() => {
+      setTimestamp(frame.start + frame.duration);
+    }, 0);
+  };
+
   return (
     <ControlPanel shadow={shadow}>
       <Control label="Start with current value">
@@ -64,6 +88,7 @@ export const ControlFrameEdit: FC<{
             <RangeInput
               max={1}
               min={0}
+              onBlur={updateStartValue}
               onChange={(e) => {
                 setStartValue(e.target.valueAsNumber * controlMaxValue);
                 showControlValue(
@@ -74,22 +99,7 @@ export const ControlFrameEdit: FC<{
               onFocus={() => {
                 setTimestamp(frame.start);
               }}
-              onMouseUp={() => {
-                showControlValue(track.controlId, null);
-                setFile(
-                  updateControlFrame(
-                    animationId,
-                    track.controlId,
-                    actionIndex,
-                    {
-                      startValue: startValue,
-                    }
-                  )
-                );
-                setTimeout(() => {
-                  setTimestamp(frame.start);
-                }, 0);
-              }}
+              onMouseUp={updateStartValue}
               step={0.01}
               value={startValue / controlMaxValue}
             />
@@ -105,6 +115,7 @@ export const ControlFrameEdit: FC<{
           <RangeInput
             max={1}
             min={0}
+            onBlur={updateEndValue}
             onChange={(e) => {
               setEndValue(e.target.valueAsNumber * controlMaxValue);
               showControlValue(
@@ -115,17 +126,7 @@ export const ControlFrameEdit: FC<{
             onFocus={() => {
               setTimestamp(frame.start + frame.duration);
             }}
-            onMouseUp={() => {
-              showControlValue(track.controlId, null);
-              setFile(
-                updateControlFrame(animationId, track.controlId, actionIndex, {
-                  endValue: endValue,
-                })
-              );
-              setTimeout(() => {
-                setTimestamp(frame.start + frame.duration);
-              }, 0);
-            }}
+            onMouseUp={updateEndValue}
             step={0.01}
             value={endValue / controlMaxValue}
           />
