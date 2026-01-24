@@ -836,9 +836,8 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                 // Find the previous action's end value
                 let previousActionEndValue: number | undefined;
                 for (const action of track.actions) {
-                  if (action.start + action.duration < activeAction.start) {
+                  if (action.start + action.duration <= activeAction.start) {
                     previousActionEndValue = action.controlEndValue;
-                    break;
                   }
                 }
                 if (isInLoopIteration && previousActionEndValue === undefined) {
@@ -850,13 +849,6 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                   previousActionEndValue !== undefined
                     ? previousActionEndValue
                     : controlValues[track.controlIndex];
-
-                console.log(
-                  "Determined startValue:",
-                  startValue,
-                  previousActionEndValue,
-                  controlValues[track.controlIndex]
-                );
               }
 
               // Interpolate from start to end
@@ -1145,6 +1137,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             for (const track of playingAnimation.tracks) {
               // Track position wraps at track.length (independent per-track looping)
               const trackPosition = animationTime % track.length;
+              const isInLoopIteration = animationTime >= track.length;
 
               // Find active action at current track position
               let activeAction: PreparedControlAction | null = null;
@@ -1184,10 +1177,17 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                   // Find the previous action's end value
                   let previousActionEndValue: number | undefined;
                   for (const action of track.actions) {
-                    if (action.start + action.duration < activeAction.start) {
+                    if (action.start + action.duration <= activeAction.start) {
                       previousActionEndValue = action.controlEndValue;
-                      break;
                     }
+                  }
+                  if (
+                    isInLoopIteration &&
+                    previousActionEndValue === undefined
+                  ) {
+                    // look for last action in previous iteration
+                    const lastAction = track.actions[track.actions.length - 1];
+                    previousActionEndValue = lastAction.controlEndValue;
                   }
                   // If we found a previous action, use its end value, otherwise use current control value
                   startValue =
