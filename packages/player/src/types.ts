@@ -122,25 +122,25 @@ export type PreparedImageDefinition = {
   mutationValues: PreparedFloatBuffer;
   mutatorMapping: Record<string, number>; // For updating mutation values from controls/animations
   rawMutations: Record<string, MutationVector>; // Raw mutation definitions for interpolation
-  
+
   // Geometry data
   shapeVertices: PreparedFloatBuffer;
   shapeIndices: Uint16Array;
-  
+
   // Layer/shape list (sorted by z-index)
   layers: PreparedLayer[];
-  
+
   // Control data (simplified - no shader optimization)
   controls: PreparedControl[];
   defaultControlValues: Float32Array;
   controlNames: Map<string, number>;
   rawControls: Record<string, ControlDefinition>; // Raw control definitions with steps for interpolation
-  
+
   // Animation data
   animations: PreparedAnimation[];
   animationNames: Map<string, number>;
   layerNames: Map<string, number>;
-  
+
   // Canvas metadata
   metadata: CanvasMetadata;
 };

@@ -35,4 +35,3 @@ export type {
   PreparedFloatBuffer,
   PreparedIntBuffer,
 } from "./types";
-

@@ -108,9 +108,18 @@ describe("interpolateControlStep", () => {
   };
 
   const rawMutations = {
-    mut1: { type: "translate" as const, name: "Translation", origin: [0, 0] as Vec2, radius: 100 },
+    mut1: {
+      type: "translate" as const,
+      name: "Translation",
+      origin: [0, 0] as Vec2,
+      radius: 100,
+    },
     mut2: { type: "stretch" as const, name: "Stretch", origin: [0, 0] as Vec2 },
-    colorMut: { type: "colorize" as const, name: "Colorize", origin: [0, 0] as Vec2 },
+    colorMut: {
+      type: "colorize" as const,
+      name: "Colorize",
+      origin: [0, 0] as Vec2,
+    },
   };
 
   const controlIds = ["control1", "controlColorize"];
@@ -212,12 +221,12 @@ describe("interpolateControlStep", () => {
         1,
         0.5
       );
-      
+
       // Hue should wrap: 0.9 -> 1.0 -> 0.0 -> 0.1 (distance 0.2)
       // At 50%, should be at 0.0 (or 1.0, equivalent)
       const hue = result.colorMut[0];
       expect(hue).toBeCloseTo(0, 5); // Should be very close to 0 or 1
-      
+
       // Saturation should interpolate normally
       expect(result.colorMut[1]).toBeCloseTo(0.65, 5);
     });
@@ -230,7 +239,7 @@ describe("interpolateControlStep", () => {
         1,
         0.3
       );
-      
+
       // Saturation: 0.5 + (0.8 - 0.5) * 0.3 = 0.5 + 0.09 = 0.59
       expect(result.colorMut[1]).toBeCloseTo(0.59, 5);
     });
@@ -302,10 +311,7 @@ describe("interpolateControlStep", () => {
         partial: {
           name: "Partial",
           type: "slider" as const,
-          steps: [
-            { mut1: [0, 0] as Vec2 },
-            { mut1: [100, 200] as Vec2 },
-          ],
+          steps: [{ mut1: [0, 0] as Vec2 }, { mut1: [100, 200] as Vec2 }],
         },
       };
       const result = interpolateControlStep(
@@ -325,31 +331,27 @@ describe("recalculateMutationValues", () => {
     ctrl1: {
       name: "Control1",
       type: "slider" as const,
-      steps: [
-        { mut1: [0, 0] as Vec2 },
-        { mut1: [10, 20] as Vec2 },
-      ],
+      steps: [{ mut1: [0, 0] as Vec2 }, { mut1: [10, 20] as Vec2 }],
     },
     ctrl2: {
       name: "Control2",
       type: "slider" as const,
-      steps: [
-        { mut2: [1, 1] as Vec2 },
-        { mut2: [2, 2] as Vec2 },
-      ],
+      steps: [{ mut2: [1, 1] as Vec2 }, { mut2: [2, 2] as Vec2 }],
     },
     ctrl3: {
       name: "Control3",
       type: "slider" as const,
-      steps: [
-        { mut1: [0, 0] as Vec2 },
-        { mut1: [5, 10] as Vec2 },
-      ],
+      steps: [{ mut1: [0, 0] as Vec2 }, { mut1: [5, 10] as Vec2 }],
     },
   };
 
   const rawMutations = {
-    mut1: { type: "translate" as const, name: "Translation", origin: [0, 0] as Vec2, radius: 100 },
+    mut1: {
+      type: "translate" as const,
+      name: "Translation",
+      origin: [0, 0] as Vec2,
+      radius: 100,
+    },
     mut2: { type: "stretch" as const, name: "Stretch", origin: [0, 0] as Vec2 },
   };
 

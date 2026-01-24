@@ -8,6 +8,6 @@
   "arrowParens": "always",
   "endOfLine": "lf",
   "plugins": ["prettier-plugin-tailwindcss"],
-  "tailwindStylesheet": "./src/ui/index.css",
+  "tailwindStylesheet": "packages/studio/src/ui/index.css",
   "tailwindFunctions": ["clsx"]
 }

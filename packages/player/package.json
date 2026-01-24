@@ -30,6 +30,8 @@
     "build-docs": "typedoc src/index.ts --includeVersion --name 'Geppetto Player' --json typedocs.json --logLevel Error",
     "postbuild-docs": "size-limit",
     "dev": "vite",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",

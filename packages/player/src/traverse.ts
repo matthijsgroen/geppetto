@@ -1,11 +1,8 @@
-import type {
-  Hierarchy,
-  TreeNode,
-} from "./types";
+import type { Hierarchy, TreeNode } from "./types";
 
 /**
  * Visit all nodes in a hierarchy tree, calling the visitor function for each node.
- * 
+ *
  * @param hierarchy - The hierarchy tree to traverse
  * @param layers - Record of layer definitions by ID
  * @param mutations - Record of mutation definitions by ID
@@ -43,7 +40,7 @@ export const visitHierarchy = (
 /**
  * Extract the mutation chain for a given node by traversing up the hierarchy.
  * Returns an array of mutation IDs from root to the node.
- * 
+ *
  * @param nodeId - The node to get the mutation chain for
  * @param hierarchy - The hierarchy tree
  * @returns Array of mutation IDs in the chain from root to node
@@ -72,7 +69,7 @@ export const getMutationChain = (
 /**
  * Build a mapping of mutation ID to its parent mutation ID (or -1 if no parent).
  * This creates an array where index corresponds to mutation array position.
- * 
+ *
  * @param mutationIds - Ordered array of mutation IDs
  * @param hierarchy - The hierarchy tree
  * @returns Int32Array where each index points to parent mutation index (-1 if none)
@@ -117,7 +114,7 @@ export const buildMutationParentMap = (
 
 /**
  * Get all mutation IDs from the hierarchy in depth-first order.
- * 
+ *
  * @param hierarchy - The hierarchy tree
  * @returns Ordered array of mutation IDs
  */
@@ -152,7 +149,7 @@ export const getAllMutationIds = (
 
 /**
  * Get all layer IDs from the hierarchy in depth-first order.
- * 
+ *
  * @param hierarchy - The hierarchy tree
  * @returns Ordered array of layer IDs
  */
@@ -188,7 +185,7 @@ export const getAllLayerIds = (
 /**
  * Find the previous sibling of a specific type in the hierarchy.
  * Looks up the parent chain to find previous siblings of the given type.
- * 
+ *
  * @param hierarchy - The hierarchy tree
  * @param type - The type to search for
  * @param startId - The node ID to start from
@@ -207,7 +204,7 @@ export const getPreviousOfType = <T extends string>(
     if (!activeParent || activeParent.type === "root") {
       if (!activeParent || !activeParent.children) break;
     }
-    
+
     let lastOfType: string | null = null;
 
     const children = activeParent.children || [];

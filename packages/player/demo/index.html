@@ -1,177 +1,211 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Geppetto Player 2.0 Demo</title>
     <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            background: #222;
-            color: #fff;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #4CAF50;
-        }
-        
-        .canvas-container {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        
-        canvas {
-            border: 2px solid #4CAF50;
-            background: #000;
-        }
-        
-        .controls {
-            background: #333;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-        
-        .control-group {
-            margin: 15px 0;
-        }
-        
-        label {
-            display: inline-block;
-            min-width: 150px;
-            color: #4CAF50;
-        }
-        
-        button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        button:hover {
-            background: #45a049;
-        }
-        
-        button:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-        
-        input[type="range"] {
-            width: 300px;
-            vertical-align: middle;
-        }
-        
-        .value-display {
-            display: inline-block;
-            min-width: 50px;
-            text-align: right;
-            margin-left: 10px;
-        }
-        
-        .error {
-            color: #ff5252;
-            background: #440000;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 20px 0;
-        }
-        
-        .info {
-            background: #004400;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 20px 0;
-        }
+      body {
+        margin: 0;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+        background: #222;
+        color: #fff;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        color: #4caf50;
+      }
+
+      .canvas-container {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+      }
+
+      canvas {
+        border: 2px solid #4caf50;
+        background: #000;
+      }
+
+      .controls {
+        background: #333;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+      }
+
+      .control-group {
+        margin: 15px 0;
+      }
+
+      label {
+        display: inline-block;
+        min-width: 150px;
+        color: #4caf50;
+      }
+
+      button {
+        background: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background: #45a049;
+      }
+
+      button:disabled {
+        background: #666;
+        cursor: not-allowed;
+      }
+
+      input[type="range"] {
+        width: 300px;
+        vertical-align: middle;
+      }
+
+      .value-display {
+        display: inline-block;
+        min-width: 50px;
+        text-align: right;
+        margin-left: 10px;
+      }
+
+      .error {
+        color: #ff5252;
+        background: #440000;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 20px 0;
+      }
+
+      .info {
+        background: #004400;
+        padding: 15px;
+        border-radius: 4px;
+        margin: 20px 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>🎭 Geppetto Player 2.0 Demo</h1>
-        
-        <div class="info">
-            <strong>This demo tests the new Geppetto Player with format 2.x support:</strong>
-            <ul>
-                <li>✅ ID-based hierarchy traversal</li>
-                <li>✅ Track-based animations</li>
-                <li>✅ Easing functions (linear, easeIn, easeOut, easeInOut)</li>
-                <li>✅ Layer visibility toggles</li>
-                <li>✅ Canvas metadata (width, height, zoom, pan)</li>
-            </ul>
+      <h1>🎭 Geppetto Player 2.0 Demo</h1>
+
+      <div class="info">
+        <strong
+          >This demo tests the new Geppetto Player with format 2.x
+          support:</strong
+        >
+        <ul>
+          <li>✅ ID-based hierarchy traversal</li>
+          <li>✅ Track-based animations</li>
+          <li>✅ Easing functions (linear, easeIn, easeOut, easeInOut)</li>
+          <li>✅ Layer visibility toggles</li>
+          <li>✅ Canvas metadata (width, height, zoom, pan)</li>
+        </ul>
+      </div>
+
+      <div id="error" class="error" style="display: none"></div>
+
+      <div class="canvas-container">
+        <canvas id="canvas" width="1024" height="768"></canvas>
+      </div>
+
+      <div class="controls">
+        <h2>Animation Controls</h2>
+        <div class="control-group">
+          <button id="startBtn">▶ Start Animation</button>
+          <button id="stopBtn" disabled>⏸ Stop Animation</button>
         </div>
-        
-        <div id="error" class="error" style="display: none;"></div>
-        
-        <div class="canvas-container">
-            <canvas id="canvas" width="1024" height="768"></canvas>
+
+        <h2>Control Tweening</h2>
+        <div class="control-group">
+          <label>Easing:</label>
+          <select id="easingSelect">
+            <option value="linear">Linear</option>
+            <option value="easeIn">Ease In</option>
+            <option value="easeOut">Ease Out</option>
+            <option value="easeInOut" selected>Ease In Out</option>
+          </select>
         </div>
-        
-        <div class="controls">
-            <h2>Animation Controls</h2>
-            <div class="control-group">
-                <button id="startBtn">▶ Start Animation</button>
-                <button id="stopBtn" disabled>⏸ Stop Animation</button>
-            </div>
-            
-            <h2>Control Tweening</h2>
-            <div class="control-group">
-                <label>Easing:</label>
-                <select id="easingSelect">
-                    <option value="linear">Linear</option>
-                    <option value="easeIn">Ease In</option>
-                    <option value="easeOut">Ease Out</option>
-                    <option value="easeInOut" selected>Ease In Out</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label>Duration (ms):</label>
-                <input type="number" id="durationInput" value="1000" min="100" max="5000" step="100">
-            </div>
-            <div class="control-group">
-                <button id="tweenToDayBtn">☀️ Tween to Day</button>
-                <button id="tweenToNightBtn">🌙 Tween to Night</button>
-                <span id="tweenStatus" style="margin-left: 10px; color: #4CAF50;"></span>
-            </div>
-            
-            <h2>Manual Controls</h2>
-            <div id="controlSliders"></div>
-            
-            <h2>Layer Visibility</h2>
-            <div id="visibilityToggles"></div>
-            
-            <h2>Canvas Settings</h2>
-            <div class="control-group">
-                <label>Zoom:</label>
-                <input type="range" id="zoomSlider" min="0.5" max="3" step="0.1" value="1">
-                <span id="zoomValue" class="value-display">1.0</span>
-            </div>
-            <div class="control-group">
-                <label>Pan X:</label>
-                <input type="range" id="panXSlider" min="-1" max="1" step="0.1" value="0">
-                <span id="panXValue" class="value-display">0.0</span>
-            </div>
-            <div class="control-group">
-                <label>Pan Y:</label>
-                <input type="range" id="panYSlider" min="-1" max="1" step="0.1" value="0">
-                <span id="panYValue" class="value-display">0.0</span>
-            </div>
+        <div class="control-group">
+          <label>Duration (ms):</label>
+          <input
+            type="number"
+            id="durationInput"
+            value="1000"
+            min="100"
+            max="5000"
+            step="100"
+          />
         </div>
+        <div class="control-group">
+          <button id="tweenToDayBtn">☀️ Tween to Day</button>
+          <button id="tweenToNightBtn">🌙 Tween to Night</button>
+          <span
+            id="tweenStatus"
+            style="margin-left: 10px; color: #4caf50"
+          ></span>
+        </div>
+
+        <h2>Manual Controls</h2>
+        <div id="controlSliders"></div>
+
+        <h2>Layer Visibility</h2>
+        <div id="visibilityToggles"></div>
+
+        <h2>Canvas Settings</h2>
+        <div class="control-group">
+          <label>Zoom:</label>
+          <input
+            type="range"
+            id="zoomSlider"
+            min="0.5"
+            max="3"
+            step="0.1"
+            value="1"
+          />
+          <span id="zoomValue" class="value-display">1.0</span>
+        </div>
+        <div class="control-group">
+          <label>Pan X:</label>
+          <input
+            type="range"
+            id="panXSlider"
+            min="-1"
+            max="1"
+            step="0.1"
+            value="0"
+          />
+          <span id="panXValue" class="value-display">0.0</span>
+        </div>
+        <div class="control-group">
+          <label>Pan Y:</label>
+          <input
+            type="range"
+            id="panYSlider"
+            min="-1"
+            max="1"
+            step="0.1"
+            value="0"
+          />
+          <span id="panYValue" class="value-display">0.0</span>
+        </div>
+      </div>
     </div>
-    
+
     <script type="module" src="./main.js"></script>
-</body>
+  </body>
 </html>
