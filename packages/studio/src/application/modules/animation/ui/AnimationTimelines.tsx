@@ -201,43 +201,45 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
             title="Timeline"
             zoom={zoom}
           >
-            {Object.keys(file.animations).map((animationId) => (
-              <AnimationTimeline
-                animationId={animationId}
-                isPlaying={animationsPlaying.includes(animationId)}
-                key={animationId}
-                onDelete={() => {
-                  setFile(deleteAnimation(animationId));
-                  onSelectAnimation?.(null);
-                  onFrameSelect?.(null);
-                }}
-                onFrameSelect={onFrameSelect}
-                onPlay={() => {
-                  onStartAnimation?.(animationId);
-                  if (animationId === selectedAnimation) {
-                    setTimestamp(null);
-                  }
-                }}
-                onSelect={() => {
-                  onSelectAnimation?.(animationId);
-                  if (!animationsPlaying.includes(animationId)) {
-                    setTimestamp(0);
-                  } else {
-                    setTimestamp(null);
-                  }
-                  if (animationId !== selectedFrame?.animationId) {
+            {(file.animationHierarchy.root?.children ?? []).map(
+              (animationId) => (
+                <AnimationTimeline
+                  animationId={animationId}
+                  isPlaying={animationsPlaying.includes(animationId)}
+                  key={animationId}
+                  onDelete={() => {
+                    setFile(deleteAnimation(animationId));
+                    onSelectAnimation?.(null);
                     onFrameSelect?.(null);
+                  }}
+                  onFrameSelect={onFrameSelect}
+                  onPlay={() => {
+                    onStartAnimation?.(animationId);
+                    if (animationId === selectedAnimation) {
+                      setTimestamp(null);
+                    }
+                  }}
+                  onSelect={() => {
+                    onSelectAnimation?.(animationId);
+                    if (!animationsPlaying.includes(animationId)) {
+                      setTimestamp(0);
+                    } else {
+                      setTimestamp(null);
+                    }
+                    if (animationId !== selectedFrame?.animationId) {
+                      onFrameSelect?.(null);
+                    }
+                  }}
+                  onStop={() => {
+                    onStopAnimation?.(animationId);
+                  }}
+                  selected={selectedAnimation === animationId}
+                  selectedTimeBar={
+                    selectedAnimation === animationId ? selectedFrame : null
                   }
-                }}
-                onStop={() => {
-                  onStopAnimation?.(animationId);
-                }}
-                selected={selectedAnimation === animationId}
-                selectedTimeBar={
-                  selectedAnimation === animationId ? selectedFrame : null
-                }
-              />
-            ))}
+                />
+              )
+            )}
           </AnimationsContainer>
         </Panel>
       </ZoomContext.Provider>
