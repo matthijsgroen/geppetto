@@ -4,8 +4,11 @@ import type {
   EasingFunction,
   FrameControlAction,
   GeppettoImage,
+  TreeNode,
 } from "@geppetto/types";
 import { produce } from "immer";
+
+import { addInHierarchy } from "@/domain/animation/file2/hierarchy";
 
 export const hasAnimations = (file: GeppettoImage) =>
   Object.keys(file.animations).length > 0;
@@ -14,14 +17,6 @@ export const hasAnimationsWithData = (file: GeppettoImage) =>
   Object.values(file.animations).some(
     (animation) => Object.keys(animation.tracks).length > 0
   );
-
-export const getNextAnimationId = (file: GeppettoImage): string => {
-  let id = 0;
-  while (`${id}` in file.animations) {
-    id++;
-  }
-  return `${id}`;
-};
 
 export const getAnimationName = (file: GeppettoImage) => {
   let id = 1;
@@ -46,10 +41,14 @@ export const addAnimation = (
   dataResult?: AddAnimationDetails | Record<string, never>
 ) =>
   produce<GeppettoImage>((draft) => {
-    const newAnimationId = getNextAnimationId(draft);
     const newAnimationName = getAnimationName(draft);
-
-    draft.animations[newAnimationId] = {
+    const [animationHierarchy, animationId] = addInHierarchy(
+      draft.animationHierarchy,
+      { type: "animation" },
+      { parent: "root" }
+    );
+    draft.animationHierarchy = animationHierarchy;
+    draft.animations[animationId] = {
       name: newAnimationName,
       tracks: [],
       events: [],
@@ -57,8 +56,8 @@ export const addAnimation = (
     };
     if (dataResult) {
       Object.assign(dataResult, {
-        id: newAnimationId,
-        animation: draft.animations[newAnimationId],
+        id: animationId,
+        animation: draft.animations[animationId],
       });
     }
   });
@@ -155,6 +154,18 @@ export const addControlFrameToAnimation = (
 
 export const deleteAnimation = (animationId: string) =>
   produce<GeppettoImage>((draft) => {
+    const parentId = (
+      draft.animationHierarchy[animationId] as TreeNode<"animation">
+    )?.parentId;
+    if (parentId) {
+      const parentNode = draft.animationHierarchy[parentId];
+      if (parentNode && parentNode.children) {
+        parentNode.children = parentNode.children.filter(
+          (childId) => childId !== animationId
+        );
+      }
+    }
+    delete draft.animationHierarchy[animationId];
     delete draft.animations[animationId];
   });
 

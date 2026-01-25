@@ -289,6 +289,9 @@ describe("schemas", () => {
       controlFolders: {},
       controls: {},
       controlValues: {},
+      animationHierarchy: {
+        root: { type: "root", children: [] },
+      },
       animations: {},
     };
 

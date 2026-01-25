@@ -6,7 +6,6 @@ import {
   createAnimationControlTrack,
   deleteAnimation,
   deleteControlTrackFromAnimation,
-  getNextAnimationId,
   hasAnimations,
   hasAnimationsWithData,
   moveControlTrackToAnimation,
@@ -64,22 +63,6 @@ describe("hasAnimationsWithData", () => {
   });
 });
 
-describe("getNextAnimationId", () => {
-  it("returns '0' for empty file", () => {
-    const file = newFile();
-
-    const result = getNextAnimationId(file);
-    expect(result).toBe("0");
-  });
-
-  it("returns next available id", () => {
-    const file = fileBuilder().addAnimation("walk").addAnimation("run").build();
-
-    const result = getNextAnimationId(file);
-    expect(result).toBe("2");
-  });
-});
-
 describe("updateLoopingAnimation", () => {
   it("updates the looping property of the specified animation", () => {
     const file = fileBuilder().addAnimation("walk").build();
@@ -105,6 +88,19 @@ describe("addAnimation", () => {
     expect(addedAnimation.events).toEqual([]);
     expect(addedAnimation.looping).toBe(false);
   });
+
+  it("places the new animation in the animation hierarchy", () => {
+    const file = newFile();
+
+    const updatedFile = addAnimation()(file);
+
+    expect(updatedFile.animationHierarchy["0"]).toEqual({
+      type: "animation",
+      parentId: "root",
+    });
+    const rootChildren = updatedFile.animationHierarchy.root.children;
+    expect(rootChildren).toContain("0");
+  });
 });
 
 describe("deleteAnimation", () => {
@@ -115,6 +111,15 @@ describe("deleteAnimation", () => {
 
     expect(file.animations["0"]).toBeDefined();
     expect(updatedFile.animations["0"]).toBeUndefined();
+  });
+
+  it("removes the animation from the animation hierarchy", () => {
+    const file = fileBuilder().addAnimation("walk").build();
+
+    const updatedFile = deleteAnimation("0")(file);
+    expect(updatedFile.animationHierarchy["0"]).toBeUndefined();
+    const rootChildren = updatedFile.animationHierarchy.root.children;
+    expect(rootChildren).not.toContain("0");
   });
 });
 
