@@ -537,18 +537,30 @@ describe("reorderControlTrackInAnimation", () => {
 
     const originalAnimation = file.animations["0"];
     expect(originalAnimation.tracks).toHaveLength(3);
-    expect(originalAnimation.tracks[0].controlId).toBe(moveId);
-    expect(originalAnimation.tracks[1].controlId).toBe(jumpId);
-    expect(originalAnimation.tracks[2].controlId).toBe(rotateId);
+    expect(
+      (originalAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(moveId);
+    expect(
+      (originalAnimation.tracks[1] as AnimationControlTrack).controlId
+    ).toBe(jumpId);
+    expect(
+      (originalAnimation.tracks[2] as AnimationControlTrack).controlId
+    ).toBe(rotateId);
 
     // Move first track to last position
     const updatedFile = reorderControlTrackInAnimation("0", 0, 2)(file);
     const updatedAnimation = updatedFile.animations["0"];
 
     expect(updatedAnimation.tracks).toHaveLength(3);
-    expect(updatedAnimation.tracks[0].controlId).toBe(jumpId);
-    expect(updatedAnimation.tracks[1].controlId).toBe(rotateId);
-    expect(updatedAnimation.tracks[2].controlId).toBe(moveId);
+    expect(
+      (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(jumpId);
+    expect(
+      (updatedAnimation.tracks[1] as AnimationControlTrack).controlId
+    ).toBe(rotateId);
+    expect(
+      (updatedAnimation.tracks[2] as AnimationControlTrack).controlId
+    ).toBe(moveId);
   });
 
   it("handles moving a track backward", () => {
@@ -571,9 +583,15 @@ describe("reorderControlTrackInAnimation", () => {
     const updatedAnimation = updatedFile.animations["0"];
 
     expect(updatedAnimation.tracks).toHaveLength(3);
-    expect(updatedAnimation.tracks[0].controlId).toBe(rotateId);
-    expect(updatedAnimation.tracks[1].controlId).toBe(moveId);
-    expect(updatedAnimation.tracks[2].controlId).toBe(jumpId);
+    expect(
+      (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(rotateId);
+    expect(
+      (updatedAnimation.tracks[1] as AnimationControlTrack).controlId
+    ).toBe(moveId);
+    expect(
+      (updatedAnimation.tracks[2] as AnimationControlTrack).controlId
+    ).toBe(jumpId);
   });
 
   it("does nothing if fromIndex equals toIndex", () => {
@@ -591,8 +609,12 @@ describe("reorderControlTrackInAnimation", () => {
     const updatedFile = reorderControlTrackInAnimation("0", 0, 0)(file);
     const updatedAnimation = updatedFile.animations["0"];
 
-    expect(updatedAnimation.tracks[0].controlId).toBe(moveId);
-    expect(updatedAnimation.tracks[1].controlId).toBe(jumpId);
+    expect(
+      (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(moveId);
+    expect(
+      (updatedAnimation.tracks[1] as AnimationControlTrack).controlId
+    ).toBe(jumpId);
   });
 
   it("does nothing if indices are out of bounds", () => {
@@ -608,6 +630,8 @@ describe("reorderControlTrackInAnimation", () => {
     const updatedAnimation = updatedFile.animations["0"];
 
     expect(updatedAnimation.tracks).toHaveLength(1);
-    expect(updatedAnimation.tracks[0].controlId).toBe(moveId);
+    expect(
+      (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(moveId);
   });
 });
