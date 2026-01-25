@@ -12,6 +12,7 @@ import {
   createAnimationControlTrack,
   deleteAnimation,
   moveControlTrackToAnimation,
+  reorderControlTrackInAnimation,
 } from "@/domain/animation/file2/animations";
 import { getControlIdByName } from "@/domain/animation/file2/testFileBuilder";
 import {
@@ -103,6 +104,15 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
             from.animation,
             to.animation,
             controlId
+          )(file);
+        });
+      }}
+      onReorder={(animationId, fromIndex, toIndex) => {
+        setFile((file) => {
+          return reorderControlTrackInAnimation(
+            animationId,
+            fromIndex,
+            toIndex
           )(file);
         });
       }}

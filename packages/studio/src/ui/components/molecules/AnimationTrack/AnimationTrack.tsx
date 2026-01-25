@@ -46,6 +46,9 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
   const trackDragContext = useTrackDrag();
   const [dragOverElement, setDragOverElement] = useState<string | null>(null);
   const [isValidDrop, setIsValidDrop] = useState(false);
+  const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(
+    null
+  );
 
   const handleTrackDragStart = (
     trackName: string,
@@ -92,6 +95,82 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
   const handleDragLeave = () => {
     setDragOverElement(null);
     setIsValidDrop(false);
+    setDropPosition(null);
+  };
+
+  const handleTrackDragOver = (
+    trackIndex: number,
+    e: DragEvent<HTMLDivElement>
+  ) => {
+    if (!trackDragContext?.dragState.draggedTrack) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isSameAnimation =
+      trackDragContext.dragState.sourceAnimation === animationId;
+    const draggedTrackName = trackDragContext.dragState.draggedTrack;
+    const isDraggedTrack = trackNames[trackIndex] === draggedTrackName;
+
+    if (!isSameAnimation) {
+      // Not reordering within same animation, let parent handler deal with it
+      return;
+    }
+
+    // Calculate drop position based on mouse Y relative to element
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseY = e.clientY - rect.top;
+    const position = mouseY < rect.height / 2 ? "before" : "after";
+
+    setDragOverElement(`track-${trackIndex}`);
+    setDropPosition(position);
+    setIsValidDrop(!isDraggedTrack); // Can't drop on itself
+
+    e.dataTransfer.dropEffect = isDraggedTrack ? "none" : "move";
+  };
+
+  const handleTrackDrop = (
+    trackIndex: number,
+    e: DragEvent<HTMLDivElement>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (
+      !trackDragContext ||
+      !trackDragContext.dragState.draggedTrack ||
+      !trackDragContext.dragState.sourceAnimation ||
+      dropPosition === null
+    )
+      return;
+
+    const isSameAnimation =
+      trackDragContext.dragState.sourceAnimation === animationId;
+
+    if (isSameAnimation && trackDragContext.onReorder) {
+      // Reordering within same animation
+      const draggedTrackName = trackDragContext.dragState.draggedTrack;
+      const fromIndex = trackNames.indexOf(draggedTrackName);
+      let toIndex = trackIndex;
+
+      // Adjust toIndex based on drop position
+      if (dropPosition === "after") {
+        toIndex++;
+      }
+
+      // Adjust if dragging downward (removing from earlier position)
+      if (fromIndex < toIndex) {
+        toIndex--;
+      }
+
+      if (fromIndex !== -1 && fromIndex !== toIndex) {
+        trackDragContext.onReorder(animationId, fromIndex, toIndex);
+      }
+    }
+
+    setDragOverElement(null);
+    setIsValidDrop(false);
+    setDropPosition(null);
+    trackDragContext.endDrag();
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
@@ -162,9 +241,19 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
             {extraContent}
           </Row>
           {selected &&
-            trackNames.map((trackName) => (
+            trackNames.map((trackName, trackIndex) => (
               <div
-                className="h-5 cursor-grab px-2 pl-4 text-sm text-text hover:bg-control-highlight active:cursor-grabbing"
+                className={clsx(
+                  "relative h-5 cursor-grab px-2 pl-4 text-sm text-text hover:bg-control-highlight active:cursor-grabbing",
+                  dragOverElement === `track-${trackIndex}` &&
+                    isValidDrop &&
+                    dropPosition === "before" &&
+                    "border-t-2 border-t-control-focus",
+                  dragOverElement === `track-${trackIndex}` &&
+                    isValidDrop &&
+                    dropPosition === "after" &&
+                    "border-b-2 border-b-control-focus"
+                )}
                 draggable={!!trackDragContext}
                 key={trackName}
                 onContextMenu={(e) => {
@@ -172,7 +261,15 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
                 }}
                 onDrag={(e) => handleTrackDrag(e)}
                 onDragEnd={handleTrackDragEnd}
+                onDragLeave={() => {
+                  if (dragOverElement === `track-${trackIndex}`) {
+                    setDragOverElement(null);
+                    setDropPosition(null);
+                  }
+                }}
+                onDragOver={(e) => handleTrackDragOver(trackIndex, e)}
                 onDragStart={(e) => handleTrackDragStart(trackName, e)}
+                onDrop={(e) => handleTrackDrop(trackIndex, e)}
               >
                 {trackName}
               </div>

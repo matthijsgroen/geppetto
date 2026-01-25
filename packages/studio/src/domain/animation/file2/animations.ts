@@ -207,6 +207,33 @@ export const moveControlTrackToAnimation = (
     toAnimation.tracks.push(track);
   });
 
+export const reorderControlTrackInAnimation = (
+  animationId: string,
+  fromIndex: number,
+  toIndex: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    // Validate indices
+    if (
+      fromIndex < 0 ||
+      fromIndex >= animation.tracks.length ||
+      toIndex < 0 ||
+      toIndex >= animation.tracks.length ||
+      fromIndex === toIndex
+    ) {
+      return;
+    }
+
+    // Remove track from old position and insert at new position
+    const [track] = animation.tracks.splice(fromIndex, 1);
+    animation.tracks.splice(toIndex, 0, track);
+  });
+
 export const updateAnimationSpeedModifier = (
   animationId: string,
   speedModifier: number | undefined
