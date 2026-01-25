@@ -56,6 +56,9 @@ export type GeppettoImage = {
   /** Default control values */
   controlValues: Record<string, number>;
 
+  /** Animation hierarchy tree */
+  animationHierarchy: Hierarchy<"animation">;
+
   /** Animations by ID */
   animations: Record<string, Animation>;
 };

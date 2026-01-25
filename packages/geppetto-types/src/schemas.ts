@@ -230,5 +230,6 @@ export const geppettoImageSchema = z.strictObject({
   controlFolders: z.record(folderSchema),
   controls: z.record(controlDefinitionSchema),
   controlValues: z.record(z.number()),
+  animationHierarchy: hierarchySchema,
   animations: z.record(animationSchema),
 });

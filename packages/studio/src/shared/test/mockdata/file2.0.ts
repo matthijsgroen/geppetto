@@ -112,6 +112,11 @@ export const v2Format: GeppettoImage = {
     "1": 0.5,
   },
 
+  animationHierarchy: {
+    root: { type: "root", children: ["0"] },
+    "0": { type: "animation", parentId: "root" },
+  },
+
   animations: {
     "0": {
       name: "breathing",
