@@ -890,6 +890,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           const controlIds = Object.keys(animation.rawControls);
           const controlId = controlIds[controlIndex];
           const maxSteps = animation.rawControls[controlId].steps.length - 1;
+          if (maxSteps === 0) return 0;
           // Return value in 0-1 range (scale from step range)
           return controlValues[controlIndex] / maxSteps;
         },
