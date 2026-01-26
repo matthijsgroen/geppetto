@@ -1,5 +1,6 @@
 import type { EasingFunction } from "@geppetto/types";
 import clsx from "clsx";
+import type { Ref } from "react";
 import { type FC, use } from "react";
 
 import { TimeCurve } from "@/ui/components/atoms/TimeCurve/TimeCurve";
@@ -18,6 +19,7 @@ type TimeBarProps = {
   endValue?: number;
   variant?: "mini" | "default";
   zoom?: number;
+  ref?: React.Ref<HTMLDivElement | HTMLButtonElement>;
   onClick?: () => void;
   onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onEndDrag?: (newTime: TimeStamp) => void;
@@ -37,6 +39,7 @@ export const TimeBar: FC<TimeBarProps> = ({
   startValue = 0,
   endValue = 1,
   variant,
+  ref,
   onClick,
   onContextMenu,
   onEndDrag,
@@ -64,6 +67,7 @@ export const TimeBar: FC<TimeBarProps> = ({
       onClick={activeVariant === "default" ? onClick : undefined}
       onContextMenu={onContextMenu}
       onKeyDown={onKeyDown}
+      ref={ref as (Ref<HTMLButtonElement> & Ref<HTMLDivElement>) | undefined}
       role={activeVariant === "default" ? "button" : "presentation"}
       style={{
         left: `calc(${start}em + 2 * var(--spacing))`,

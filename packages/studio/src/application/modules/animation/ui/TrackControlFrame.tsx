@@ -1,6 +1,6 @@
 import type { ControlDefinition, FrameControlAction } from "@geppetto/types";
 import type { AnimationControlTrack } from "geppetto-player";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 import { AnimationContextMenu } from "@/application/modules/animation/ui/AnimationContextMenu";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
@@ -18,7 +18,8 @@ type TrackControlFrameProps = {
   trackIndex: number;
   zoom?: number;
 
-  onClick?: VoidFunction;
+  onSelect?: VoidFunction;
+  onDeselect?: VoidFunction;
   onDelete?: VoidFunction;
   onResize?: (newStart: number, newDuration: number) => void;
 };
@@ -34,12 +35,14 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
   track,
   trackIndex,
   zoom = 1,
-  onClick,
+  onSelect,
+  onDeselect,
   onDelete,
   onResize,
 }) => {
   const [dragStart, setDragStart] = useState<null | number>(null);
   const [dragEnd, setDragEnd] = useState<null | number>(null);
+  const ref = useRef<HTMLDivElement | HTMLButtonElement>(null);
 
   const start = action.start / 1000 / speed;
   const duration = action.duration / 1000 / speed;
@@ -86,8 +89,16 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
             onDelete?.();
           },
         },
+        deselect: {
+          caption: "Deselect Frame",
+          shortcut: { interaction: "Escape" as const },
+          handler: () => {
+            onDeselect?.();
+            ref.current?.blur();
+          },
+        },
       }),
-      [onDelete]
+      [onDelete, onDeselect]
     )
   );
 
@@ -117,7 +128,7 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
         easing={action.easingFunction}
         endValue={endValue}
         key={`${track.controlId}-${actionIndex}`}
-        onClick={onClick}
+        onClick={onSelect}
         onContextMenu={handleContextMenu}
         onEndDrag={(newTime) => {
           const newDragEnd = Math.min(
@@ -173,6 +184,7 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
           setDragStart(null);
           setDragEnd(null);
         }}
+        ref={ref}
         selected={selected}
         start={displayStart}
         startValue={startValue}

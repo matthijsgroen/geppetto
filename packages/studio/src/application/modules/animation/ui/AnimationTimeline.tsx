@@ -233,14 +233,6 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                   actionIndex={actionIndex}
                   control={file.controls[track.controlId]}
                   key={`${track.controlId}-${actionIndex}`}
-                  onClick={() => {
-                    onFrameSelect?.({
-                      animationId,
-                      track,
-                      frame: action,
-                      actionIndex,
-                    });
-                  }}
                   onDelete={() => {
                     setFile(
                       deleteControlFrame(
@@ -249,6 +241,9 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                         actionIndex
                       )
                     );
+                    onFrameSelect?.(null);
+                  }}
+                  onDeselect={() => {
                     onFrameSelect?.(null);
                   }}
                   onResize={(newStart, newDuration) => {
@@ -261,6 +256,14 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
                         newDuration
                       )
                     );
+                  }}
+                  onSelect={() => {
+                    onFrameSelect?.({
+                      animationId,
+                      track,
+                      frame: action,
+                      actionIndex,
+                    });
                   }}
                   selected={
                     (selectedTimeBar &&
