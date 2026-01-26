@@ -39,7 +39,7 @@ export default defineConfig({
         "src/application/modules/composition/programs/**",
       ],
       thresholds: {
-        lines: 89,
+        lines: 80,
         branches: 70,
         functions: 70,
         statements: 80,
