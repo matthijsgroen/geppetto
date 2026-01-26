@@ -20,6 +20,7 @@ const meta = preview.meta({
   args: {
     padding: "sm",
     workspace: false,
+    scrollable: false,
     center: false,
     fitContent: false,
   },

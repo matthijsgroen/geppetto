@@ -3,6 +3,7 @@ import { type FC, useState } from "react";
 
 import { usePlayerControls } from "@/application/modules/animation/state/PlayerControlsProvider";
 import { ToggleControl } from "@/application/modules/composition/ui/controls";
+import { formatTime } from "@/application/shared/timeFormatter";
 import { useFile } from "@/application/state/FileContext";
 import {
   getAnimationControlFrame,
@@ -12,6 +13,7 @@ import {
   Column,
   Control,
   ControlPanel,
+  Label,
   Menu,
   MenuItem,
   MenuRadioGroup,
@@ -26,8 +28,16 @@ export const ControlFrameEdit: FC<{
   track: AnimationControlTrack;
   control: ControlDefinition;
   actionIndex: number;
+  quickEdit?: boolean;
   shadow?: boolean;
-}> = ({ control, shadow = false, animationId, track, actionIndex }) => {
+}> = ({
+  control,
+  shadow = false,
+  quickEdit = false,
+  animationId,
+  track,
+  actionIndex,
+}) => {
   const [file, setFile] = useFile();
   const controlMaxValue = control.steps.length - 1;
   const { setTimestamp, showControlValue } = usePlayerControls();
@@ -42,6 +52,7 @@ export const ControlFrameEdit: FC<{
 
   const [startValue, setStartValue] = useState(frame.controlStartValue);
   const [endValue, setEndValue] = useState(frame.controlEndValue);
+  const speed = file.animations[animationId].speedModifier ?? 1;
 
   const updateStartValue = () => {
     showControlValue(track.controlId, null);
@@ -51,7 +62,7 @@ export const ControlFrameEdit: FC<{
       })
     );
     setTimeout(() => {
-      setTimestamp(frame.start);
+      setTimestamp(frame.start / speed);
     }, 0);
   };
 
@@ -63,7 +74,7 @@ export const ControlFrameEdit: FC<{
       })
     );
     setTimeout(() => {
-      setTimestamp(frame.start + frame.duration);
+      setTimestamp((frame.start + frame.duration) / speed);
     }, 0);
   };
 
@@ -97,7 +108,7 @@ export const ControlFrameEdit: FC<{
                 );
               }}
               onFocus={() => {
-                setTimestamp(frame.start);
+                setTimestamp(frame.start / speed);
               }}
               onMouseUp={updateStartValue}
               step={0.01}
@@ -124,7 +135,7 @@ export const ControlFrameEdit: FC<{
               );
             }}
             onFocus={() => {
-              setTimestamp(frame.start + frame.duration);
+              setTimestamp((frame.start + frame.duration) / speed);
             }}
             onMouseUp={updateEndValue}
             step={0.01}
@@ -182,6 +193,16 @@ export const ControlFrameEdit: FC<{
           </MenuRadioGroup>
         </Menu>
       </Control>
+      {!quickEdit && (
+        <>
+          <Control label="Start at">
+            <Label>{formatTime(frame.start / speed)}</Label>
+          </Control>
+          <Control label="Duration">
+            <Label>{formatTime(frame.duration / speed)}</Label>
+          </Control>
+        </>
+      )}
     </ControlPanel>
   );
 };

@@ -8,16 +8,17 @@ import type { FC, MouseEvent } from "react";
 import { use, useEffect, useRef, useState } from "react";
 
 import ZoomContext from "@/application/modules/animation/state/ZoomContext";
+import { AnimationSpeedOptions } from "@/application/modules/animation/ui/AnimationSpeedOptions";
 import { TrackControlFrame } from "@/application/modules/animation/ui/TrackControlFrame";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   addControlFrameToAnimation,
   deleteControlFrame,
+  getAnimationDuration,
   renameAnimation,
   resizeControlFrame,
   updateAnimationControlTrackLength,
-  updateAnimationSpeedModifier,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import {
@@ -26,7 +27,6 @@ import {
   Menu,
   MenuHeader,
   MenuItem,
-  MenuRadioGroup,
   RenameInput,
   SubMenu,
   TimePin,
@@ -69,16 +69,6 @@ type AnimationTimelineProps = {
   selectedTimeBar?: AnimationFrame | null;
 };
 
-const speedLabel = (speed: number) => {
-  if (speed < 1) {
-    return `${1 / speed}× slower`;
-  }
-  if (speed > 1) {
-    return `${speed}× faster`;
-  }
-  return "Original speed";
-};
-
 export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   animationId,
   isPlaying = false,
@@ -99,15 +89,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
       ? file.controls[track.controlId].name
       : (file.layerFolders[track.layerId] ?? file.layers[track.layerId]).name
   );
-  const animationLength = Math.max(
-    ...animation.tracks.map((track) => {
-      if (track.type === "control") {
-        return track.length;
-      }
-      return 0;
-    }),
-    ...animation.events.map((event) => event.start)
-  );
+  const animationDuration = getAnimationDuration(animation);
 
   const trackRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -160,24 +142,11 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
         Loop animation
       </MenuItem>
       <SubMenu label="Speed modifier">
-        <MenuRadioGroup value={animation.speedModifier ?? 1}>
-          {[0.125, 0.25, 0.5, 1 / 1.5, 1, 1.5, 2, 4, 8].map((speed) => (
-            <MenuItem
-              key={speed}
-              onClick={() => {
-                setFile(updateAnimationSpeedModifier(animationId, speed));
-              }}
-              type="radio"
-              value={speed}
-            >
-              {speedLabel(speed)}
-            </MenuItem>
-          ))}
-        </MenuRadioGroup>
+        <AnimationSpeedOptions animationId={animationId} />
       </SubMenu>
       {onDelete && (
         <MenuItem dangerous onClick={onDelete} type="checkbox">
-          Delete
+          Delete Animation
         </MenuItem>
       )}
     </>
@@ -238,7 +207,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           </ToolBar>
         }
         key={animationId}
-        length={animationLength / 1000 / speed}
+        length={animationDuration / 1000 / speed}
         loop={animation.looping}
         name={
           <RenameInput
@@ -349,7 +318,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           />
         ))}
         <TimePlayIndicator
-          duration={animationLength / 1000 / speed}
+          duration={animationDuration / 1000 / speed}
           key="total-indicator"
           loop={animation.looping}
           playing={isPlaying}

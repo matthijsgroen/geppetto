@@ -27,6 +27,16 @@ export const getAnimationName = (file: GeppettoImage) => {
   return `animation ${id}`;
 };
 
+export const getAnimationDuration = (animation: Animation) => {
+  const trackDurations = animation.tracks.map(
+    (track) => track.length / (animation.speedModifier ?? 1)
+  );
+  const eventDurations = animation.events.map(
+    (event) => event.start / (animation.speedModifier ?? 1)
+  );
+  return Math.max(...trackDurations, ...eventDurations, 0);
+};
+
 export const updateLoopingAnimation = (animationId: string, looping: boolean) =>
   produce<GeppettoImage>((draft) => {
     draft.animations[animationId].looping = looping;

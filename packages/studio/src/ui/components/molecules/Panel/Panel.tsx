@@ -6,6 +6,7 @@ type PanelProps = PropsWithChildren<{
   workspace?: boolean;
   center?: boolean;
   fitContent?: boolean;
+  scrollable?: boolean;
 }>;
 
 /**
@@ -18,9 +19,10 @@ export const Panel: FC<PanelProps> = ({
   workspace = false,
   center = false,
   fitContent = false,
+  scrollable = false,
 }) => (
   <div
-    className={clsx("relative flex flex-col overflow-hidden border text-text", {
+    className={clsx("relative flex flex-col border text-text", {
       "p-1": padding === "sm",
       "p-2": padding === "md",
       "border-control-edge bg-workspace": workspace,
@@ -28,6 +30,8 @@ export const Panel: FC<PanelProps> = ({
       "flex-1": !fitContent,
       "flex-[0_0_fit-content]": fitContent,
       "items-center justify-center": center,
+      "overflow-hidden": !scrollable,
+      "hide-scrollbar overflow-auto": scrollable,
     })}
   >
     {children}

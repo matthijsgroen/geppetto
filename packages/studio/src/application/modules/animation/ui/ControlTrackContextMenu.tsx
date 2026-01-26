@@ -33,7 +33,7 @@ export const ControlTrackContextMenu: FC<ControlTrackContextMenuProps> = ({
 
   return (
     <AnimationContextMenu {...menuProps} onClose={onClose}>
-      <MenuHeader>{trackName}</MenuHeader>
+      <MenuHeader>{trackName} Track Options</MenuHeader>
       <SubMenu label="Move to...">
         {otherAnimations.map(([id, animation]) => (
           <MenuItem
@@ -52,7 +52,7 @@ export const ControlTrackContextMenu: FC<ControlTrackContextMenuProps> = ({
           setFile(deleteControlTrackFromAnimation(animationId, controlId));
         }}
       >
-        Delete
+        Delete Track
       </MenuItem>
     </AnimationContextMenu>
   );

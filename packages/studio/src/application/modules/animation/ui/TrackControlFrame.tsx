@@ -6,7 +6,7 @@ import { AnimationContextMenu } from "@/application/modules/animation/ui/Animati
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useEvent } from "@/application/state/hooks/useEvent";
 import { ActionMenuItem } from "@/application/ui/ActionMenuItem";
-import { TimeBar, useMenuState } from "@/ui/components";
+import { MenuHeader, TimeBar, useMenuState } from "@/ui/components";
 
 type TrackControlFrameProps = {
   action: FrameControlAction;
@@ -109,6 +109,7 @@ export const TrackControlFrame: React.FC<TrackControlFrameProps> = ({
         {...controlFrameMenuProps}
         onClose={() => toggleControlFrameMenu(false)}
       >
+        <MenuHeader>Frame Options</MenuHeader>
         <ActionMenuItem action={actions.deleteFrame} />
       </AnimationContextMenu>
       <TimeBar

@@ -11,6 +11,7 @@ import {
   addAnimation,
   createAnimationControlTrack,
   deleteAnimation,
+  getAnimationDuration,
   moveControlTrackToAnimation,
   reorderControlTrackInAnimation,
 } from "@/domain/animation/file2/animations";
@@ -57,17 +58,10 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   const [file, setFile] = useFile();
   const [zoom, setZoom] = useState(2);
 
-  const maxTime = Object.values(file.animations).reduce((max, animation) => {
-    const animationMax = Math.max(
-      ...animation.tracks.map(
-        (track) => track.length / (animation.speedModifier ?? 1)
-      ),
-      ...animation.events.map(
-        (event) => event.start / (animation.speedModifier ?? 1)
-      )
-    );
-    return Math.max(max, animationMax);
-  }, 0);
+  const maxTime = Object.values(file.animations).reduce(
+    (max, animation) => Math.max(max, getAnimationDuration(animation)),
+    0
+  );
   const animation = selectedAnimation
     ? file.animations[selectedAnimation]
     : null;

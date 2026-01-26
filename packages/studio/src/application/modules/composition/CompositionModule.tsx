@@ -11,6 +11,7 @@ import {
 
 import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
+import { TOGGLE_INFO_SHORTCUT } from "@/application/shared/keymap";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import useEvent from "@/application/state/hooks/useEvent";
@@ -80,11 +81,6 @@ import { ControlEditSteps } from "./ui/ControlEdit";
 import { ControlTree } from "./ui/ControlTree";
 import { InlayControlPanel, ItemEdit } from "./ui/ItemEdit";
 import { ShapeTree } from "./ui/ShapeTree";
-
-const TOGGLE_INFO_SHORTCUT: Shortcut = {
-  ctrlOrCmd: true,
-  interaction: "KeyI",
-};
 
 const calculateScale = (element: Size, texture: Size) => {
   const landscape =

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { PlayerControlsProvider } from "@/application/modules/animation/state/PlayerControlsProvider";
 import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
+import { AnimationSpeedOptions } from "@/application/modules/animation/ui/AnimationSpeedOptions";
 import type {
   AnimationControlFrame,
   AnimationFrame,
@@ -9,21 +10,30 @@ import type {
 import { AnimationTimelines } from "@/application/modules/animation/ui/AnimationTimelines";
 import { ControlFrameEdit } from "@/application/modules/animation/ui/ControlFrameEdit";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
+import { ToggleControl } from "@/application/modules/composition/ui/controls";
+import { TOGGLE_INFO_SHORTCUT } from "@/application/shared/keymap";
+import { formatSpeed } from "@/application/shared/speedFormatter";
+import { formatTime } from "@/application/shared/timeFormatter";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useUpdateScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import { SectionSelector } from "@/application/ui/SectionSelector";
 import {
-  deleteControlFrame,
   getAnimationControlFrame,
+  getAnimationDuration,
+  updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import type { Shortcut } from "@/ui/components";
 import {
   Column,
+  Control,
+  ControlPanel,
   Inlay,
+  Label,
+  Menu,
   Panel,
   PanelTitle,
   ResizeDirection,
@@ -35,20 +45,19 @@ import {
   ToolSpacer,
 } from "@/ui/components";
 
-const TOGGLE_INFO_SHORTCUT: Shortcut = {
-  ctrlOrCmd: true,
-  interaction: "KeyI",
-};
-
 type AnimationModuleProps = {
   onSectionChange?: (newSection: AppSection) => void;
   menu?: React.ReactNode;
   texture: HTMLImageElement | null;
 };
 
+const isControlTrack = (
+  track: AnimationFrame["track"]
+): track is AnimationControlFrame["track"] => track.type === "control";
+
 const isControlFrame = (
   frame: AnimationFrame
-): frame is AnimationControlFrame => frame.track.type === "control";
+): frame is AnimationControlFrame => isControlTrack(frame.track);
 
 export const AnimationModule: React.FC<AnimationModuleProps> = ({
   menu,
@@ -123,6 +132,10 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
     };
   }, [triggerKeyboardAction, actions]);
 
+  const currentSelectedAnimation = activeAnimation
+    ? file.animations[activeAnimation]
+    : null;
+
   return (
     <Column>
       <ToolBar>
@@ -161,6 +174,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                         animationId={activeFrame.animationId}
                         control={file.controls[activeFrame.track.controlId]}
                         key={`${activeFrame.animationId}-${activeFrame.track.controlId}-${activeFrame.actionIndex}`}
+                        quickEdit
                         shadow
                         track={activeFrame.track}
                       />
@@ -178,45 +192,97 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
               direction={ResizeDirection.West}
               minSize={150}
             >
-              <Column>
-                <Panel padding="sm">
-                  {activeFrame && isControlFrame(activeFrame) && frame && (
+              <Panel padding="sm" scrollable>
+                {activeFrame && isControlFrame(activeFrame) && frame && (
+                  <>
+                    <PanelTitle>
+                      {file.controls[activeFrame.track.controlId].name} Frame
+                    </PanelTitle>
+                    <ControlFrameEdit
+                      actionIndex={activeFrame.actionIndex}
+                      animationId={activeFrame.animationId}
+                      control={file.controls[activeFrame.track.controlId]}
+                      key={`${activeFrame.animationId}-${activeFrame.track.controlId}-${activeFrame.actionIndex}`}
+                      track={activeFrame.track}
+                    />
+                  </>
+                )}
+
+                {activeFrame &&
+                  activeFrame.track &&
+                  isControlTrack(activeFrame.track) && (
                     <>
-                      <PanelTitle>
-                        {file.controls[activeFrame.track.controlId].name} Frame
-                      </PanelTitle>
-                      <ControlFrameEdit
-                        actionIndex={activeFrame.actionIndex}
-                        animationId={activeFrame.animationId}
-                        control={file.controls[activeFrame.track.controlId]}
-                        key={`${activeFrame.animationId}-${activeFrame.track.controlId}-${activeFrame.actionIndex}`}
-                        track={activeFrame.track}
-                      />
-                      <ToolBar transparent>
-                        <ToolSpacer />
-                        <ToolButton
-                          dangerous
-                          label="Delete"
-                          onClick={() => {
-                            if (activeFrame && isControlFrame(activeFrame)) {
-                              setFile(
-                                deleteControlFrame(
-                                  activeFrame.animationId,
-                                  activeFrame.track.controlId,
-                                  activeFrame.actionIndex
-                                )
-                              );
-                              setActiveFrame(null);
-                            }
-                          }}
-                          standAlone
-                        />
-                        <ToolSpacer />
-                      </ToolBar>
+                      <PanelTitle>Track Details</PanelTitle>
+                      <ControlPanel>
+                        <Control label="Name">
+                          <Label>
+                            {file.controls[activeFrame.track.controlId].name}
+                          </Label>
+                        </Control>
+                        <Control label="Duration">
+                          <Label>
+                            {formatTime(
+                              activeFrame.track.length /
+                                (currentSelectedAnimation?.speedModifier ?? 1)
+                            )}
+                          </Label>
+                        </Control>
+                      </ControlPanel>
                     </>
                   )}
-                </Panel>
-              </Column>
+
+                {currentSelectedAnimation && activeAnimation && (
+                  <>
+                    <PanelTitle>Animation Details</PanelTitle>
+                    <ControlPanel>
+                      <Control label="Name">
+                        <Label>{currentSelectedAnimation.name}</Label>
+                      </Control>
+                      <Control label="Duration">
+                        <Label>
+                          {formatTime(
+                            getAnimationDuration(currentSelectedAnimation)
+                          )}
+                        </Label>
+                      </Control>
+                      <ToggleControl
+                        label="Looping"
+                        onChange={(value) =>
+                          setFile(
+                            updateLoopingAnimation(activeAnimation, value)
+                          )
+                        }
+                        value={currentSelectedAnimation.looping}
+                      />
+                      <Control label="Speed Modifier">
+                        <Menu
+                          align="center"
+                          arrow
+                          direction="bottom"
+                          menuButton={({ open }) => (
+                            <ToolButton
+                              active={open}
+                              label={formatSpeed(
+                                currentSelectedAnimation.speedModifier ?? 1
+                              )}
+                            />
+                          )}
+                          portal
+                          transition
+                        >
+                          <AnimationSpeedOptions
+                            animationId={activeAnimation}
+                          />
+                        </Menu>
+                      </Control>
+                    </ControlPanel>
+                  </>
+                )}
+
+                {!activeAnimation && (
+                  <PanelTitle>No animation selected</PanelTitle>
+                )}
+              </Panel>
             </ResizePanel>
           )}
         </Row>
