@@ -298,12 +298,12 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                 setActiveFrame(frame);
               }}
               onSelectAnimation={setActiveAnimation}
-              onStartAnimation={(id) =>
-                setAnimationsPlaying((prev) => [...prev, id])
+              onStartAnimations={(ids) =>
+                setAnimationsPlaying((prev) => [...prev, ...ids])
               }
-              onStopAnimation={(id) =>
+              onStopAnimations={(ids) =>
                 setAnimationsPlaying((prev) =>
-                  prev.filter((animId) => animId !== id)
+                  prev.filter((animId) => !ids.includes(animId))
                 )
               }
               selectedAnimation={activeAnimation}

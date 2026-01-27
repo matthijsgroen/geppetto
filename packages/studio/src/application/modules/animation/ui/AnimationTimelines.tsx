@@ -39,8 +39,8 @@ const EXTRA_TIME = 2000; // milliseconds
 type AnimationTimelinesProps = {
   onFrameSelect?: (frame: AnimationFrame | null) => void;
   selectedFrame?: AnimationFrame | null;
-  onStartAnimation?: (animationId: string) => void;
-  onStopAnimation?: (animationId: string) => void;
+  onStartAnimations?: (animationIds: string[]) => void;
+  onStopAnimations?: (animationIds: string[]) => void;
   selectedAnimation?: string | null;
   onSelectAnimation?: (animationId: string | null) => void;
   animationsPlaying?: string[];
@@ -50,8 +50,8 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   onFrameSelect,
   selectedFrame,
   selectedAnimation,
-  onStartAnimation,
-  onStopAnimation,
+  onStartAnimations,
+  onStopAnimations,
   onSelectAnimation,
   animationsPlaying = [],
 }) => {
@@ -72,7 +72,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   usePlayerTimestamp((timestamp) => {
     setTimeline(timestamp);
     if (selectedAnimation && timestamp !== null) {
-      onStopAnimation?.(selectedAnimation);
+      onStopAnimations?.([selectedAnimation]);
     }
   });
 
@@ -81,11 +81,11 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
       if (!selectedAnimation) return;
 
       if (animationsPlaying.includes(selectedAnimation)) {
-        onStopAnimation?.(selectedAnimation);
+        onStopAnimations?.([selectedAnimation]);
       }
       setTimestamp(time * 1000);
     },
-    [selectedAnimation, animationsPlaying, onStopAnimation, setTimestamp]
+    [selectedAnimation, animationsPlaying, onStopAnimations, setTimestamp]
   );
 
   return (
@@ -195,6 +195,14 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                 ))}
               </MenuRadioGroup>
             </Menu>
+            <ToolButton
+              disabled={animationsPlaying.length === 0}
+              icon={<Icon colorize>⏹</Icon>}
+              onClick={() => {
+                onStopAnimations?.([...animationsPlaying]);
+              }}
+              tooltip="Stop all animations"
+            />
           </ToolBar>
           <AnimationsContainer
             duration={(maxTime + EXTRA_TIME) / 1000}
@@ -218,7 +226,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                   }}
                   onFrameSelect={onFrameSelect}
                   onPlay={() => {
-                    onStartAnimation?.(animationId);
+                    onStartAnimations?.([animationId]);
                     if (animationId === selectedAnimation) {
                       setTimestamp(null);
                     }
@@ -235,7 +243,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                     }
                   }}
                   onStop={() => {
-                    onStopAnimation?.(animationId);
+                    onStopAnimations?.([animationId]);
                   }}
                   selected={selectedAnimation === animationId}
                   selectedTimeBar={
