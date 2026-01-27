@@ -77,7 +77,7 @@ import {
 } from "@/ui/components";
 
 import CompositionCanvas from "./ui/CompositionCanvas";
-import { ControlEditSteps } from "./ui/ControlEdit";
+import { ControlEdit, ControlEditSteps } from "./ui/ControlEdit";
 import { ControlTree } from "./ui/ControlTree";
 import { InlayControlPanel, ItemEdit } from "./ui/ItemEdit";
 import { ShapeTree } from "./ui/ShapeTree";
@@ -420,6 +420,8 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     }
   );
   const editingControl = controlEditMode ? selectedControls[0] : undefined;
+  const activeControlId =
+    selectedControls.length === 1 ? selectedControls[0] : undefined;
 
   return (
     <Column>
@@ -463,13 +465,20 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 direction={ResizeDirection.North}
                 minSize={300}
               >
-                <ControlTree
-                  onEditControlSteps={() => setControlEditMode(true)}
-                  selectedControlsState={[
-                    selectedControls,
-                    setSelectedControls,
-                  ]}
-                />
+                <Panel padding="sm">
+                  <ControlTree
+                    onSelectControls={(controlIds: string[]) => {
+                      setSelectedControls(controlIds);
+                    }}
+                    selectedControls={selectedControls}
+                  />
+                  {activeControlId && !controlEditMode && (
+                    <ControlEdit
+                      controlId={activeControlId}
+                      onEditControlSteps={() => setControlEditMode(true)}
+                    />
+                  )}
+                </Panel>
               </ResizePanel>
             )}
             {controlEditMode && (
@@ -502,14 +511,6 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 ref={containerRef}
                 showWireFrames={showWireFrames}
               >
-                {/*activeMutator && containerRef.current && (
-                  <DebugMutatorPoint
-                    point={imageToPixels(
-                      translation,
-                      containerRef.current.getBoundingClientRect()
-                    )(mutatorMap[activeMutator])}
-                  />
-                    )*/}
                 <ControlledMenu
                   {...menuProps}
                   anchorPoint={anchorPoint}
@@ -539,10 +540,10 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                       activeMutator={activeMutator}
                       editingControlId={editingControl}
                       editingControlStep={activeControlStep}
-                      key={activeMutator}
-                      onSelectControl={(controlId) =>
-                        setSelectedControls([controlId])
-                      }
+                      key={editingControl ? activeControlStep : activeMutator}
+                      onSelectControl={(controlId) => {
+                        setSelectedControls([controlId]);
+                      }}
                     />
                   </Inlay>
                 )}
@@ -583,9 +584,9 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                   activeMutator={activeMutator}
                   editingControlId={editingControl}
                   editingControlStep={activeControlStep}
-                  onSelectControl={(controlId) =>
-                    setSelectedControls([controlId])
-                  }
+                  onSelectControl={(controlId) => {
+                    setSelectedControls([controlId]);
+                  }}
                   selectedShapeIds={selectedItems}
                 />
               </Panel>

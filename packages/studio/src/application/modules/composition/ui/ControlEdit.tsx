@@ -34,7 +34,7 @@ import {
 } from "@/ui/components";
 
 type ControlEditProps = {
-  selectedControlIds: string[];
+  controlId: string;
   onEditControlSteps?: () => void;
 };
 
@@ -52,54 +52,51 @@ const EditStepsToggle: React.FC<{
 );
 
 export const ControlEdit: React.FC<ControlEditProps> = ({
-  selectedControlIds,
+  controlId,
   onEditControlSteps,
 }) => {
   const [file, setFile] = useFile();
-  const activeControlId =
-    selectedControlIds.length === 1 ? selectedControlIds[0] : null;
   const hierarchyItem =
-    activeControlId !== null ? file.controlHierarchy[activeControlId] : null;
+    controlId !== null ? file.controlHierarchy[controlId] : null;
   const [, startTransition] = useTransition();
 
-  const isNoControl =
-    activeControlId === null || hierarchyItem?.type !== "control";
+  const isNoControl = controlId === null || hierarchyItem?.type !== "control";
   const controlValues = useControlValues();
   const updateControlValues = useUpdateControlValues();
 
-  const controlValue = isNoControl ? 0 : controlValues.current[activeControlId];
+  const controlValue = isNoControl ? 0 : controlValues.current[controlId];
   const [slideValue, setSlideValue] = useState(controlValue);
   useEffect(() => {
-    if (activeControlId) {
+    if (controlId) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setSlideValue(controlValue);
     }
-  }, [activeControlId, controlValue]);
+  }, [controlId, controlValue]);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
-    if (activeControlId === null) return;
+    if (controlId === null) return;
     const value = e.currentTarget.valueAsNumber;
 
     setSlideValue(value);
     updateControlValues((current) => ({
       ...current,
-      [activeControlId]: value,
+      [controlId]: value,
     }));
     startTransition(() => {
       setFile(
         produce((draft) => {
-          draft.controlValues[activeControlId] = value;
+          draft.controlValues[controlId] = value;
         })
       );
     });
   });
 
   const handleEditControlSteps = useEvent(() => {
-    if (activeControlId === null) return;
+    if (controlId === null) return;
 
     updateControlValues((current) => ({
       ...current,
-      [activeControlId]: 0,
+      [controlId]: 0,
     }));
     onEditControlSteps?.();
   });
@@ -107,7 +104,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   if (isNoControl) {
     return null;
   }
-  const control = file.controls[activeControlId];
+  const control = file.controls[controlId];
   return (
     <>
       <PanelTitle>
