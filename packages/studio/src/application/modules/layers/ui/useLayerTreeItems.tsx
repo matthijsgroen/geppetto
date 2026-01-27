@@ -99,12 +99,16 @@ const populateTree = (
       if (toggleVisibility) {
         data.itemTools = (
           <ToolButton
-            active={layerData.visible}
-            icon={<Icon>👁</Icon>}
+            icon={
+              <Icon active={layerData.visible} colorize>
+                {layerData.visible ? "🔴" : "⭕️"}
+              </Icon>
+            }
             onClick={() => {
               actionHandler(`${nodeId}`, "visibility");
             }}
             size="small"
+            tooltip="Toggle layer visibility"
           />
         );
       }
@@ -127,12 +131,16 @@ const populateTree = (
       if (toggleVisibility) {
         data.itemTools = (
           <ToolButton
-            active={layerFolderData.visible}
-            icon={<Icon>👁</Icon>}
+            icon={
+              <Icon active={layerFolderData.visible} colorize>
+                {layerFolderData.visible ? "🔴" : "⭕️"}
+              </Icon>
+            }
             onClick={() => {
               actionHandler(`${nodeId}`, "visibility");
             }}
             size="small"
+            tooltip="Toggle folder visibility"
           />
         );
       }
