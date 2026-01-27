@@ -82,7 +82,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
           <Row>
             <div
               className={clsx(
-                "box-content h-5 flex-1 px-2 text-base text-text",
+                "box-content h-5 flex-1 ps-4 pe-2 text-base text-text",
                 selected && "pb-1"
               )}
               onContextMenu={onLabelContextMenu}

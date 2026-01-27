@@ -1,5 +1,5 @@
 import type { GeppettoImage, NodeType } from "@geppetto/types";
-import { type RefObject, useMemo, useRef } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 
 import { iconMapping } from "@/domain/animation/file2/mutation";
 import { newFile } from "@/domain/animation/file2/new";
@@ -196,13 +196,12 @@ export const useLayerTreeItems = (
   actionHandler: (nodeId: string, button: ActionButton) => void,
   showMutations: boolean,
   toggleVisibility: boolean
-  // expandedItems: string[]
 ) => {
   const treeItemsRef = useRef<Record<TreeItemIndex, LayerItem>>({});
   const fileRef = useRef<GeppettoImage>(newFile());
-  // const expandRef = useRef<string[]>(expandedItems);
+  const [result, setResult] = useState<Record<TreeItemIndex, LayerItem>>({});
 
-  useMemo(() => {
+  useEffect(() => {
     populateTree(
       file,
       fileRef.current,
@@ -211,14 +210,10 @@ export const useLayerTreeItems = (
       showMutations,
       toggleVisibility
     );
+    setResult(treeItemsRef.current);
 
     fileRef.current = file;
   }, [file, toggleVisibility, showMutations, actionHandler]);
-  // if (expandRef.current !== expandedItems) {
-  //   // This is a workaround for issue: https://github.com/lukasbach/react-complex-tree/issues/76
-  //   treeItemsRef.current = { ...treeItemsRef.current };
-  //   expandRef.current = expandedItems;
-  // }
 
-  return treeItemsRef.current;
+  return result;
 };
