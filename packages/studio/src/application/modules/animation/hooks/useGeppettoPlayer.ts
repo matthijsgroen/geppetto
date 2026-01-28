@@ -44,6 +44,7 @@ export const useGeppettoPlayer = (
         panY: translation.panY,
         pixelDensity:
           typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1,
+        disableAutoplay: true,
       });
 
       animationControlsRef.current = controls;

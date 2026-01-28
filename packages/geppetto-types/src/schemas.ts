@@ -202,6 +202,7 @@ export const animationSchema = z.object({
   name: z.string(),
   looping: z.boolean(),
   speedModifier: z.number().optional(),
+  autoplay: z.boolean().optional(),
   tracks: z.array(
     z.union([animationControlTrackSchema, animationVisibilityTrackSchema])
   ),

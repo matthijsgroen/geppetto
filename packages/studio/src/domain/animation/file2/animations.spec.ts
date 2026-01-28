@@ -14,6 +14,7 @@ import {
   resizeControlFrame,
   updateAnimationControlTrackLength,
   updateAnimationSpeedModifier,
+  updateAutoplayAnimation,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import { newFile } from "@/domain/animation/file2/new";
@@ -72,6 +73,17 @@ describe("updateLoopingAnimation", () => {
 
     expect(file.animations["0"].looping).toBe(false);
     expect(updatedFile.animations["0"].looping).toBe(true);
+  });
+});
+
+describe("updateAutoplayAnimation", () => {
+  it("updates the autoplay property of the specified animation", () => {
+    const file = fileBuilder().addAnimation("walk").build();
+
+    const updatedFile = updateAutoplayAnimation("0", true)(file);
+
+    expect(file.animations["0"].autoplay).toBeUndefined();
+    expect(updatedFile.animations["0"].autoplay).toBe(true);
   });
 });
 

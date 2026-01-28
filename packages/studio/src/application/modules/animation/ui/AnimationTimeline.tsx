@@ -19,6 +19,7 @@ import {
   renameAnimation,
   resizeControlFrame,
   updateAnimationControlTrackLength,
+  updateAutoplayAnimation,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import {
@@ -141,6 +142,15 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
       >
         Loop animation
       </MenuItem>
+      <MenuItem
+        checked={animation.autoplay ?? false}
+        onClick={() => {
+          setFile(updateAutoplayAnimation(animationId, !animation.autoplay));
+        }}
+        type="checkbox"
+      >
+        Autoplay animation
+      </MenuItem>
       <SubMenu label="Speed modifier">
         <AnimationSpeedOptions animationId={animationId} />
       </SubMenu>
@@ -182,7 +192,11 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
               />
             ) : (
               <ToolButton
-                icon={<Icon colorize>▶</Icon>}
+                icon={
+                  <Icon active={animation.autoplay ?? false} colorize>
+                    ▶
+                  </Icon>
+                }
                 onClick={onPlay}
                 tooltip="Play"
               />

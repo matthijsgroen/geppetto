@@ -203,6 +203,23 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
               }}
               tooltip="Stop all animations"
             />
+            <ToolButton
+              disabled={!Object.values(file.animations).some((a) => a.autoplay)}
+              icon={<Icon colorize>▶</Icon>}
+              onClick={() => {
+                const autoPlayAnimations = Object.entries(file.animations)
+                  .filter(([_, a]) => a.autoplay)
+                  .map(([id]) => id);
+                onStartAnimations?.(autoPlayAnimations);
+                if (
+                  selectedAnimation &&
+                  autoPlayAnimations.includes(selectedAnimation)
+                ) {
+                  setTimestamp(null);
+                }
+              }}
+              tooltip="Start all autoplay animations"
+            />
           </ToolBar>
           <AnimationsContainer
             duration={(maxTime + EXTRA_TIME) / 1000}

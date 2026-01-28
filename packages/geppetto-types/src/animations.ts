@@ -69,7 +69,8 @@ export type AnimationTrack = AnimationControlTrack | AnimationVisibilityTrack;
 export type Animation = {
   name: string;
   looping: boolean;
-  speedModifier?: number
+  autoplay?: boolean;
+  speedModifier?: number;
   tracks: AnimationTrack[];
   events: FrameEvent[];
 };

@@ -282,6 +282,7 @@ export const prepareAnimation = (
       duration: animationDuration,
       looping: animation.looping,
       speed: animation.speedModifier ?? 1,
+      autoplay: animation.autoplay ?? false,
       tracks,
       visibilityTracks,
       events,

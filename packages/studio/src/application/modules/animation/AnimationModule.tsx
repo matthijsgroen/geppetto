@@ -22,6 +22,7 @@ import { SectionSelector } from "@/application/ui/SectionSelector";
 import {
   getAnimationControlFrame,
   getAnimationDuration,
+  updateAutoplayAnimation,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import { hasControls } from "@/domain/animation/file2/controls";
@@ -253,6 +254,15 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                           )
                         }
                         value={currentSelectedAnimation.looping}
+                      />
+                      <ToggleControl
+                        label="Autoplay"
+                        onChange={(value) =>
+                          setFile(
+                            updateAutoplayAnimation(activeAnimation, value)
+                          )
+                        }
+                        value={currentSelectedAnimation.autoplay ?? false}
                       />
                       <Control label="Speed Modifier">
                         <Menu

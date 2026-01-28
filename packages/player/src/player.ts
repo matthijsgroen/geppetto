@@ -244,6 +244,11 @@ export interface AnimationOptions {
    * @default 0
    */
   zIndex: number;
+  /**
+   * Disable auto-playing animation.
+   * @default false
+   */
+  disableAutoplay?: boolean;
 }
 
 type PlayStatus = {
@@ -441,19 +446,18 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         options?.pixelDensity ??
         (typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1);
 
-      // Get fitMode (default to 'contain')
-      const fitMode = options?.fitMode ?? "contain";
-
       // Use metadata from animation as defaults, merged with provided options
       // For zoom: if fitMode is 'none', use metadata zoom; otherwise start at 1 (auto-fit will handle scaling)
       const animationDefaults: AnimationOptions = {
-        zoom: fitMode === "none" ? animation.metadata.zoom : 1,
+        zoom: options?.fitMode === "none" ? animation.metadata.zoom : 1,
         panX: animation.metadata.pan[0],
         panY: animation.metadata.pan[1],
         zIndex: 0,
         pixelDensity,
-        fitMode,
+        fitMode: "contain",
+        disableAutoplay: false,
       };
+      const animationOptions = { ...animationDefaults, ...options };
 
       const unit = [
         gl.TEXTURE0,
@@ -556,7 +560,6 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       let cWidth = 0,
         cHeight = 0;
 
-      const animationOptions = { ...animationDefaults, ...options };
       let { zoom, panX, panY, zIndex } = animationOptions;
       let basePosition = [0, 0];
       let scale = 1.0;
@@ -1321,6 +1324,17 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         },
       };
       animations.push(newAnimation);
+
+      if (!animationOptions.disableAutoplay) {
+        animation.animations.forEach((anim) => {
+          if (anim.autoplay) {
+            newAnimation.startAnimation(anim.name, {
+              startAt: 0,
+              speed: 1,
+            });
+          }
+        });
+      }
 
       return newAnimation;
     },

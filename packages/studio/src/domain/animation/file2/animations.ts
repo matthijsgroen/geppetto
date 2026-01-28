@@ -42,6 +42,14 @@ export const updateLoopingAnimation = (animationId: string, looping: boolean) =>
     draft.animations[animationId].looping = looping;
   });
 
+export const updateAutoplayAnimation = (
+  animationId: string,
+  autoplay: boolean
+) =>
+  produce<GeppettoImage>((draft) => {
+    draft.animations[animationId].autoplay = autoplay;
+  });
+
 export type AddAnimationDetails = {
   id: string;
   animation: Animation;
@@ -63,6 +71,7 @@ export const addAnimation = (
       tracks: [],
       events: [],
       looping: false,
+      autoplay: false,
     };
     if (dataResult) {
       Object.assign(dataResult, {
