@@ -168,12 +168,20 @@ export const frameLayerVisibilityActionSchema = z.object({
 });
 
 /**
- * Zod schema for frame event
+ * Zod schema for frame callback event
  */
-export const frameEventSchema = z.object({
+export const frameCallbackEventSchema = z.object({
+  type: z.literal("callback"),
   start: z.number(),
   eventName: z.string(),
 });
+
+/**
+ * Zod schema for frame event
+ */
+export const frameEventSchema = z.discriminatedUnion("type", [
+  frameCallbackEventSchema,
+]);
 
 /**
  * Zod schema for animation control track
@@ -204,7 +212,10 @@ export const animationSchema = z.object({
   speedModifier: z.number().optional(),
   autoplay: z.boolean().optional(),
   tracks: z.array(
-    z.union([animationControlTrackSchema, animationVisibilityTrackSchema])
+    z.discriminatedUnion("type", [
+      animationControlTrackSchema,
+      animationVisibilityTrackSchema,
+    ])
   ),
   events: z.array(frameEventSchema),
 });

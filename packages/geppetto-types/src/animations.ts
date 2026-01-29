@@ -25,7 +25,10 @@ export type FrameLayerVisibilityAction = {
 /**
  * Custom event triggered at a specific time
  */
-export type FrameEvent = {
+export type FrameEvent = CallbackEvent;
+
+export type CallbackEvent = {
+  type: "callback";
   start: number;
   eventName: string;
 };

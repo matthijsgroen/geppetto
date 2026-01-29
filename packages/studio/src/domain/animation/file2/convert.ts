@@ -221,6 +221,7 @@ const convertEvents = (
   for (const keyframe of keyframes) {
     if (keyframe.event) {
       events.push({
+        type: "callback",
         start: keyframe.time,
         eventName: keyframe.event,
       });
