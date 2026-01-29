@@ -52,8 +52,8 @@ export const showComposition = (
   let mutMapping: Record<string, number> = {};
   let scale = 1.0;
   const screenTranslation = trans;
-  let imageBoundsWidth = 2048;
-  let imageBoundsHeight = 1536;
+  let imageBoundsWidth = 0;
+  let imageBoundsHeight = 0;
 
   const setImageTexture = (): void => {
     if (img === null || texture === null || gl === null || program === null) {
@@ -267,11 +267,11 @@ export const showComposition = (
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
             const landscape =
-              img.width / canvasWidth > img.height / canvasHeight;
+              imageBoundsWidth / canvasWidth > imageBoundsHeight / canvasHeight;
 
             scale = landscape
-              ? canvasWidth / img.width
-              : canvasHeight / img.height;
+              ? canvasWidth / imageBoundsWidth
+              : canvasHeight / imageBoundsHeight;
 
             gl.uniform2f(
               gl.getUniformLocation(shaderProgram, "viewport"),

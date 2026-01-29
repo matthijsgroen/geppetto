@@ -77,7 +77,7 @@ void main(void) {
   );
 
   // Check if rendered position is outside image bounds (metadata dimensions)
-  // vImagePosition is already in centered coordinate space (from deformPos)
+  // vImagePosition is in image coordinate space, need to scale relative to bounds
   float borderOpacity = 1.0;
   vec2 halfBounds = uImageBounds * 0.5;
   

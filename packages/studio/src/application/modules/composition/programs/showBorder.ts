@@ -84,8 +84,8 @@ export const showBorder = (
             imageWidth / canvasWidth > imageHeight / canvasHeight;
 
           scale = landscape
-            ? canvasWidth / imageWidth / 2
-            : canvasHeight / imageHeight / 2;
+            ? canvasWidth / imageWidth
+            : canvasHeight / imageHeight;
 
           basePosition = [
             canvasWidth / 2 / scale,

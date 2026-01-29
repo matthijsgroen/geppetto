@@ -117,6 +117,8 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
     if (metadataChanged(file, fileRef.current)) {
       border.setImageSize(file.metadata.width, file.metadata.height);
       composition.setImageBounds(file.metadata.width, file.metadata.height);
+      compositionMap.setImageBounds(file.metadata.width, file.metadata.height);
+      vectorMap.setImageBounds(file.metadata.width, file.metadata.height);
     }
     if (shapesChanged(file, fileRef.current)) {
       composition.setShapes(file);
@@ -148,7 +150,7 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
 
   useEffect(() => {
     compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);
-    vectorMap.setLayerSelected(activeLayers);
+    vectorMap.setVisibleMutations(activeLayers);
   }, [activeLayers, compositionMap, vectorMap, showWireFrames]);
 
   useEffect(() => {

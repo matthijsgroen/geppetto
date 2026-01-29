@@ -7,7 +7,7 @@ import {
   type TranslationVector,
 } from "@geppetto/types";
 
-import { collectChildIds, visit } from "@/domain/animation/file2/hierarchy";
+import { visit } from "@/domain/animation/file2/hierarchy";
 import { type ScreenTranslation } from "@/dtos/application.dto";
 import { flatten } from "@/infrastructure/webgl/lib/vertices";
 import {
@@ -58,7 +58,8 @@ export const showCompositionVectors = (
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
   setActiveMutation(mutation: string | null): void;
-  setLayerSelected(layers: string[]): void;
+  setVisibleMutations(mutations: string[]): void;
+  setImageBounds(width: number, height: number): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 6;
@@ -70,7 +71,7 @@ export const showCompositionVectors = (
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
   let program: WebGLProgram | null = null;
-  let vectorsSelected: string[] = [];
+  const vectorsSelected: string[] = [];
   let vectorValues: Keyframe = {};
 
   let vectors: {
@@ -84,8 +85,12 @@ export const showCompositionVectors = (
     z: number;
   }[] = [];
   let mutMapping: Record<string, number> = {};
-  const screenTranslation = trans;
+  let activeMutation: string | null = null;
+  let visibleMutations: string[] = [];
   let scale = 1.0;
+  const screenTranslation = trans;
+  let imageBoundsWidth = 0;
+  let imageBoundsHeight = 0;
 
   const populateShapes = () => {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer || !program) return;
@@ -218,7 +223,6 @@ export const showCompositionVectors = (
   let cWidth = 0;
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
-  let activeMutation: string | null = null;
 
   let onChange: () => void = () => {};
 
@@ -241,18 +245,14 @@ export const showCompositionVectors = (
       activeMutation = mutation;
       onChange();
     },
-    setLayerSelected(layers) {
-      if (layers === null || shapes === null) {
-        vectorsSelected = [];
-        return;
-      }
-      vectorsSelected = [];
-      for (const layerId of layers) {
-        vectorsSelected.push(layerId);
-        vectorsSelected.push(
-          ...collectChildIds(shapes.layerHierarchy, layerId)
-        );
-      }
+    setVisibleMutations(mutations) {
+      visibleMutations = mutations;
+      populateShapes();
+      onChange();
+    },
+    setImageBounds(width: number, height: number) {
+      imageBoundsWidth = width;
+      imageBoundsHeight = height;
       onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
@@ -323,11 +323,11 @@ export const showCompositionVectors = (
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
             const landscape =
-              img.width / canvasWidth > img.height / canvasHeight;
+              imageBoundsWidth / canvasWidth > imageBoundsHeight / canvasHeight;
 
             scale = landscape
-              ? canvasWidth / img.width
-              : canvasHeight / img.height;
+              ? canvasWidth / imageBoundsWidth
+              : canvasHeight / imageBoundsHeight;
 
             gl.uniform2f(
               programInfo.uniforms.viewport,

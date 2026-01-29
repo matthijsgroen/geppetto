@@ -74,7 +74,7 @@ export const colorizeSchema = baseMutationVectorSchema.extend({
 /**
  * Zod schema for any mutation vector
  */
-export const mutationVectorSchema = z.union([
+export const mutationVectorSchema = z.discriminatedUnion("type", [
   translationVectorSchema,
   deformationVectorSchema,
   stretchVectorSchema,

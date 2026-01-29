@@ -108,13 +108,24 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                     ],
                   });
                   fileRef.current = fileHandle;
-                  const [filename, image] = await loadGeppettoFile(fileHandle);
+                } catch (_ignore) {
+                  // user abort
+                  return;
+                }
+                try {
+                  const [filename, image] = await loadGeppettoFile(
+                    fileRef.current
+                  );
                   fileNameState[1](filename);
                   setFile(image);
                   controlUpdate(() => image.controlValues);
                   mutationUpdate(() => image.defaultFrame);
-                } catch (_ignore) {
-                  // user abort
+                } catch (e) {
+                  alert(
+                    `Failed to load file: ${
+                      e instanceof Error ? e.message : "Unknown error"
+                    }`
+                  );
                 }
               } else {
                 alert("Sorry no support for local filesystem");

@@ -34,6 +34,12 @@ const populateMutations = (
     target.mutations[id] = {
       ...mutation,
     };
+    if (
+      target.mutations[id].type === "translate" ||
+      target.mutations[id].type === "deform"
+    ) {
+      target.mutations[id].radius = target.mutations[id].radius ?? -1;
+    }
   }
   return ids;
 };

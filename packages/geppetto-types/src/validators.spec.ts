@@ -18,6 +18,7 @@ import type {
   RootNode,
   AnimationTrack,
 } from "./index";
+import { ZodError } from "zod";
 
 describe("validators", () => {
   describe("isFormat2File", () => {
@@ -86,6 +87,29 @@ describe("validators", () => {
     it("returns false for missing required fields", () => {
       const { metadata: _metadata, ...incomplete } = validFile;
       expect(isFormat2File(incomplete)).toBe(false);
+    });
+
+    it("returns reports error through onError callback", () => {
+      const { metadata: _metadata, ...incomplete } = validFile;
+      let error: ZodError<GeppettoImage> | null = null;
+      const onError = (err: ZodError<GeppettoImage>) => {
+        error = err;
+      };
+      expect(isFormat2File(incomplete, onError)).toBe(false);
+      expect(error).not.toBeNull();
+      expect(error).toMatchInlineSnapshot(`
+        [ZodError: [
+          {
+            "code": "invalid_type",
+            "expected": "object",
+            "received": "undefined",
+            "path": [
+              "metadata"
+            ],
+            "message": "Required"
+          }
+        ]]
+      `);
     });
 
     it("returns false for invalid metadata", () => {
