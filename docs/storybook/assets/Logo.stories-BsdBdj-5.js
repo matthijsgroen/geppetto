@@ -1,3 +1,0 @@
-import{p as t,b as s,j as a,c as n}from"./iframe-Cm78seEQ.js";import"./preload-helper-PPVm8Dsz.js";const r=t.meta({title:"Atoms/Logo",component:s,tags:["svg"]}),o=r.story(),e=r.story({render:()=>a.jsx(n,{})});o.input.parameters={...o.input.parameters,docs:{...o.input.parameters?.docs,source:{originalSource:"meta.story()",...o.input.parameters?.docs?.source}}};e.input.parameters={...e.input.parameters,docs:{...e.input.parameters?.docs,source:{originalSource:`meta.story({
-  render: () => <LogoIconElement />
-})`,...e.input.parameters?.docs?.source}}};const m=["Logo","LogoIcon"];export{o as Logo,e as LogoIcon,m as __namedExportsOrder,r as default};
