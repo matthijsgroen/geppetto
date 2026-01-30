@@ -25,7 +25,7 @@ export const loadGeppettoFile = async (
         ) {
           resolve([file.name, image]);
         } else {
-          console.log("Validation error:", error);
+          console.warn("Validation error:", error);
           reject(
             new Error(
               `Unsupported file format or invalid file structure. Please check that this is a valid Geppetto animation file.`
