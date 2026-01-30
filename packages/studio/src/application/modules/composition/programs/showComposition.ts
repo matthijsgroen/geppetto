@@ -52,8 +52,8 @@ export const showComposition = (
   let mutMapping: Record<string, number> = {};
   let scale = 1.0;
   const screenTranslation = trans;
-  let imageBoundsWidth = 0;
-  let imageBoundsHeight = 0;
+  let imageBoundsWidth = 1;
+  let imageBoundsHeight = 1;
 
   const setImageTexture = (): void => {
     if (img === null || texture === null || gl === null || program === null) {
@@ -187,8 +187,8 @@ export const showComposition = (
       onChange();
     },
     setImageBounds(width: number, height: number) {
-      imageBoundsWidth = width;
-      imageBoundsHeight = height;
+      imageBoundsWidth = width || 1;
+      imageBoundsHeight = height || 1;
       onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getUnit, getSize }) {
