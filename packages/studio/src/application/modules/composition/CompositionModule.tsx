@@ -11,10 +11,11 @@ import {
 
 import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
-import { TOGGLE_INFO_SHORTCUT } from "@/application/shared/keymap";
+import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
+import { useInfoPanel } from "@/application/shared/actions/useInfoPanel";
 import { useFile } from "@/application/state/FileContext";
-import { useActionMap } from "@/application/state/hooks/useActionMap";
 import useEvent from "@/application/state/hooks/useEvent";
+import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { useUpdateMutationValues } from "@/application/state/ImageControlContext";
 import {
   useScreenTranslation,
@@ -139,7 +140,6 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
   onSectionChange,
 }) => {
   const [file, setFile] = useFile();
-  const [showItemDetails, setShowItemDetails] = useState(false);
   const [showWireFrames, setShowWireFrames] = useState(true);
   const [controlEditMode, setControlEditMode] = useState(false);
   const [activeControlStep, setActiveControlStep] = useState<number>(0);
@@ -186,18 +186,13 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     }
   );
 
-  const { actions, triggerKeyboardAction } = useActionMap(
+  const fitToScreenAction = useFitToScreenAction();
+  const [showItemDetails, toggleInfoAction] = useInfoPanel();
+
+  const actions = useGlobalActionMap(
     useCallback(
       () => ({
-        toggleInfo: {
-          icon: "ℹ",
-          colorizedIcon: true,
-          tooltip: "Toggle info display",
-          shortcut: TOGGLE_INFO_SHORTCUT,
-          handler: () => {
-            setShowItemDetails((prev) => !prev);
-          },
-        },
+        toggleInfo: toggleInfoAction,
         toggleWireFrames: {
           icon: "🩻",
           tooltip: "Toggle wireframes",
@@ -206,24 +201,11 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
             setShowWireFrames((prev) => !prev);
           },
         },
+        fitToScreen: fitToScreenAction,
       }),
-      []
+      [fitToScreenAction, toggleInfoAction]
     )
   );
-
-  // TODO: Maybe make this part of the useActionMap hook?
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (triggerKeyboardAction(event)) {
-        event.preventDefault();
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [triggerKeyboardAction, actions]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   useScaleUpdater(containerRef, texture);
@@ -284,16 +266,23 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     return imageToPixels(translation, rect, fitScale);
   });
 
-  const getFitScale = useCallback((): number => {
-    if (!containerRef.current) return 1;
+  const [fitScale, setFitScale] = useState<number>(1);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
     const landscape =
       file.metadata.width / rect.width > file.metadata.height / rect.height;
-    return landscape
+    const newFitScale = landscape
       ? rect.width / file.metadata.width
       : rect.height / file.metadata.height;
-  }, [file.metadata.height, file.metadata.width]);
+
+    const clear = setTimeout(() => {
+      setFitScale(newFitScale);
+    }, 0);
+    return () => clearTimeout(clear);
+  }, [file.metadata.width, file.metadata.height, containerRef]);
 
   const handleClick = useEvent((event: React.MouseEvent<HTMLElement>) => {
     if (selectedItems.length === 1 && containerRef.current) {
@@ -472,6 +461,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
           action={actions.toggleWireFrames}
           active={showWireFrames}
         />
+        <ActionToolButton action={actions.fitToScreen} />
         <ToolSpacer />
         <ActionToolButton
           action={actions.toggleInfo}
@@ -531,7 +521,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
         <Panel center workspace>
           {texture && hasPoints(file) ? (
             <LayerMouseControl
-              fitScale={getFitScale()}
+              fitScale={fitScale}
               handleDrag={handleDrag}
               hoverCursor={hoverCursor}
               maxZoomFactor={maxZoom}

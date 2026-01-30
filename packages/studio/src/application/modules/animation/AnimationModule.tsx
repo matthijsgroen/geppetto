@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { PlayerControlsProvider } from "@/application/modules/animation/state/PlayerControlsProvider";
 import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
@@ -11,12 +11,12 @@ import { AnimationTimelines } from "@/application/modules/animation/ui/Animation
 import { ControlFrameEdit } from "@/application/modules/animation/ui/ControlFrameEdit";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { ToggleControl } from "@/application/modules/composition/ui/controls";
-import { TOGGLE_INFO_SHORTCUT } from "@/application/shared/keymap";
+import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
+import { useInfoPanel } from "@/application/shared/actions/useInfoPanel";
 import { formatSpeed } from "@/application/shared/speedFormatter";
 import { formatTime } from "@/application/shared/timeFormatter";
 import { useFile } from "@/application/state/FileContext";
-import { useActionMap } from "@/application/state/hooks/useActionMap";
-import { useUpdateScreenTranslation } from "@/application/state/ScreenTranslationContext";
+import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import { SectionSelector } from "@/application/ui/SectionSelector";
 import {
@@ -27,7 +27,6 @@ import {
 } from "@/domain/animation/file2/animations";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
-import type { Shortcut } from "@/ui/components";
 import {
   Column,
   Control,
@@ -68,8 +67,6 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
   const [file, setFile] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
   const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
-  const [showItemDetails, setShowItemDetails] = useState(false);
-  const resetZoom = useUpdateScreenTranslation();
   const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
 
   const stopAnimationState = useCallback((animationId: string) => {
@@ -78,35 +75,16 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
     );
   }, []);
 
-  const { actions, triggerKeyboardAction } = useActionMap(
+  const fitToScreenAction = useFitToScreenAction();
+  const [showItemDetails, toggleInfoAction] = useInfoPanel();
+
+  const actions = useGlobalActionMap(
     useCallback(
       () => ({
-        toggleInfo: {
-          icon: "ℹ",
-          colorizedIcon: true,
-          tooltip: "Toggle info display",
-          shortcut: TOGGLE_INFO_SHORTCUT,
-          handler: () => {
-            setShowItemDetails((prev) => !prev);
-          },
-        },
-        fitToScreen: {
-          icon: "⛶",
-          colorizedIcon: true,
-          label: "Fit",
-          tooltip: "Fit to screen",
-          shortcut: { alt: true, interaction: "KeyF" } as Shortcut,
-          handler: () => {
-            resetZoom(() => ({
-              zoom: 1.0,
-              scale: 1.0,
-              panX: 0,
-              panY: 0,
-            }));
-          },
-        },
+        toggleInfo: toggleInfoAction,
+        fitToScreen: fitToScreenAction,
       }),
-      [resetZoom]
+      [fitToScreenAction, toggleInfoAction]
     )
   );
 
@@ -119,19 +97,6 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           activeFrame.actionIndex
         )
       : null;
-
-  // TODO: Maybe make this part of the useActionMap hook?
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (triggerKeyboardAction(event)) {
-        event.preventDefault();
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [triggerKeyboardAction, actions]);
 
   const currentSelectedAnimation = activeAnimation
     ? file.animations[activeAnimation]
