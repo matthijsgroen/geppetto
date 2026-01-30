@@ -41,6 +41,6 @@ export const RenameInput: FC<RenameInputProps> = ({
       transparent
     />
   ) : (
-    <TextButton onClick={() => setRenaming(true)}>{value}</TextButton>
+    <TextButton onDoubleClick={() => setRenaming(true)}>{value}</TextButton>
   );
 };

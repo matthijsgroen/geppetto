@@ -11,9 +11,11 @@ import {
 
 import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
+import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
+import { useInfoPanel } from "@/application/shared/actions/useInfoPanel";
 import { useFile } from "@/application/state/FileContext";
-import { useActionMap } from "@/application/state/hooks/useActionMap";
 import useEvent from "@/application/state/hooks/useEvent";
+import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { useUpdateMutationValues } from "@/application/state/ImageControlContext";
 import {
   useScreenTranslation,
@@ -31,6 +33,10 @@ import {
   type PlacementInfo,
   visit,
 } from "@/domain/animation/file2/hierarchy";
+import {
+  updateImageHeight,
+  updateImageWidth,
+} from "@/domain/animation/file2/metadata";
 import {
   addMutation,
   type AddMutationDetails,
@@ -52,10 +58,14 @@ import {
 } from "@/infrastructure/webgl/lib/vectorPositions";
 import {
   Column,
+  Control,
   ControlledMenu,
+  ControlPanel,
   Inlay,
   MenuItem,
+  NumberInput,
   Panel,
+  PanelTitle,
   ResizeDirection,
   ResizePanel,
   Row,
@@ -68,15 +78,10 @@ import {
 } from "@/ui/components";
 
 import CompositionCanvas from "./ui/CompositionCanvas";
-import { ControlEditSteps } from "./ui/ControlEdit";
+import { ControlEdit, ControlEditSteps } from "./ui/ControlEdit";
 import { ControlTree } from "./ui/ControlTree";
 import { InlayControlPanel, ItemEdit } from "./ui/ItemEdit";
 import { ShapeTree } from "./ui/ShapeTree";
-
-const TOGGLE_INFO_SHORTCUT: Shortcut = {
-  ctrlOrCmd: true,
-  interaction: "KeyI",
-};
 
 const calculateScale = (element: Size, texture: Size) => {
   const landscape =
@@ -135,7 +140,6 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
   onSectionChange,
 }) => {
   const [file, setFile] = useFile();
-  const [showItemDetails, setShowItemDetails] = useState(false);
   const [showWireFrames, setShowWireFrames] = useState(true);
   const [controlEditMode, setControlEditMode] = useState(false);
   const [activeControlStep, setActiveControlStep] = useState<number>(0);
@@ -182,18 +186,13 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     }
   );
 
-  const { actions, triggerKeyboardAction } = useActionMap(
+  const fitToScreenAction = useFitToScreenAction();
+  const [showItemDetails, toggleInfoAction] = useInfoPanel();
+
+  const actions = useGlobalActionMap(
     useCallback(
       () => ({
-        toggleInfo: {
-          icon: "ℹ",
-          colorizedIcon: true,
-          tooltip: "Toggle info display",
-          shortcut: TOGGLE_INFO_SHORTCUT,
-          handler: () => {
-            setShowItemDetails((prev) => !prev);
-          },
-        },
+        toggleInfo: toggleInfoAction,
         toggleWireFrames: {
           icon: "🩻",
           tooltip: "Toggle wireframes",
@@ -202,23 +201,11 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
             setShowWireFrames((prev) => !prev);
           },
         },
+        fitToScreen: fitToScreenAction,
       }),
-      []
+      [fitToScreenAction, toggleInfoAction]
     )
   );
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (triggerKeyboardAction(event)) {
-        event.preventDefault();
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [triggerKeyboardAction, actions]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   useScaleUpdater(containerRef, texture);
@@ -264,20 +251,57 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     file.layerFolders,
   ]);
 
+  const getImageConvert = useEvent(() => {
+    if (!containerRef.current) return null;
+
+    const rect = containerRef.current.getBoundingClientRect();
+
+    // Calculate the fit scale the same way the shader does
+    const landscape =
+      file.metadata.width / rect.width > file.metadata.height / rect.height;
+    const fitScale = landscape
+      ? rect.width / file.metadata.width
+      : rect.height / file.metadata.height;
+
+    return imageToPixels(translation, rect, fitScale);
+  });
+
+  const [fitScale, setFitScale] = useState<number>(1);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const landscape =
+      file.metadata.width / rect.width > file.metadata.height / rect.height;
+    const newFitScale = landscape
+      ? rect.width / file.metadata.width
+      : rect.height / file.metadata.height;
+
+    const clear = setTimeout(() => {
+      setFitScale(newFitScale);
+    }, 0);
+    return () => clearTimeout(clear);
+  }, [file.metadata.width, file.metadata.height, containerRef]);
+
   const handleClick = useEvent((event: React.MouseEvent<HTMLElement>) => {
     if (selectedItems.length === 1 && containerRef.current) {
+      const imageConvert = getImageConvert();
+      if (!imageConvert) return;
+
+      const hitRadius = 5; // Scaled to match MUTATION_DOT_SIZE of 2.5
       const rect = containerRef.current.getBoundingClientRect();
-      const imageConvert = imageToPixels(translation, rect);
+
       for (const mutatorId of visibleMutators) {
         const position = imageConvert(mutatorMap[mutatorId]);
 
         const elementX = event.pageX - rect.left;
         const elementY = event.pageY - rect.top - 2;
         if (
-          elementX > position[0] - 6 &&
-          elementX < position[0] + 6 &&
-          elementY > position[1] - 6 &&
-          elementY < position[1] + 6
+          elementX > position[0] - hitRadius &&
+          elementX < position[0] + hitRadius &&
+          elementY > position[1] - hitRadius &&
+          elementY < position[1] + hitRadius
         ) {
           setActiveMutator(mutatorId);
           setFocusedLayer(mutatorId);
@@ -289,19 +313,24 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
 
   const hoverCursor = useEvent(
     (event: React.MouseEvent<HTMLElement>): MouseMode => {
-      if (selectedItems.length === 1 && containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const imageConvert = imageToPixels(translation, rect);
+      if (selectedItems.length === 1) {
+        const imageConvert = getImageConvert();
+        if (!imageConvert)
+          return event.shiftKey ? MouseMode.Grab : MouseMode.Normal;
+
+        const hitRadius = 5; // Scaled to match MUTATION_DOT_SIZE of 2.5
+
         for (const mutatorId of visibleMutators) {
           const position = imageConvert(mutatorMap[mutatorId]);
 
+          const rect = containerRef.current!.getBoundingClientRect();
           const elementX = event.pageX - rect.left;
           const elementY = event.pageY - rect.top - 2;
           if (
-            elementX > position[0] - 6 &&
-            elementX < position[0] + 6 &&
-            elementY > position[1] - 6 &&
-            elementY < position[1] + 6
+            elementX > position[0] - hitRadius &&
+            elementX < position[0] + hitRadius &&
+            elementY > position[1] - hitRadius &&
+            elementY < position[1] + hitRadius
           ) {
             return MouseMode.Target;
           }
@@ -415,6 +444,8 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     }
   );
   const editingControl = controlEditMode ? selectedControls[0] : undefined;
+  const activeControlId =
+    selectedControls.length === 1 ? selectedControls[0] : undefined;
 
   return (
     <Column>
@@ -430,6 +461,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
           action={actions.toggleWireFrames}
           active={showWireFrames}
         />
+        <ActionToolButton action={actions.fitToScreen} />
         <ToolSpacer />
         <ActionToolButton
           action={actions.toggleInfo}
@@ -458,13 +490,20 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 direction={ResizeDirection.North}
                 minSize={300}
               >
-                <ControlTree
-                  onEditControlSteps={() => setControlEditMode(true)}
-                  selectedControlsState={[
-                    selectedControls,
-                    setSelectedControls,
-                  ]}
-                />
+                <Panel padding="sm">
+                  <ControlTree
+                    onSelectControls={(controlIds: string[]) => {
+                      setSelectedControls(controlIds);
+                    }}
+                    selectedControls={selectedControls}
+                  />
+                  {activeControlId && !controlEditMode && (
+                    <ControlEdit
+                      controlId={activeControlId}
+                      onEditControlSteps={() => setControlEditMode(true)}
+                    />
+                  )}
+                </Panel>
               </ResizePanel>
             )}
             {controlEditMode && (
@@ -482,6 +521,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
         <Panel center workspace>
           {texture && hasPoints(file) ? (
             <LayerMouseControl
+              fitScale={fitScale}
               handleDrag={handleDrag}
               hoverCursor={hoverCursor}
               maxZoomFactor={maxZoom}
@@ -497,14 +537,6 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 ref={containerRef}
                 showWireFrames={showWireFrames}
               >
-                {/*activeMutator && containerRef.current && (
-                  <DebugMutatorPoint
-                    point={imageToPixels(
-                      translation,
-                      containerRef.current.getBoundingClientRect()
-                    )(mutatorMap[activeMutator])}
-                  />
-                    )*/}
                 <ControlledMenu
                   {...menuProps}
                   anchorPoint={anchorPoint}
@@ -534,9 +566,10 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                       activeMutator={activeMutator}
                       editingControlId={editingControl}
                       editingControlStep={activeControlStep}
-                      onSelectControl={(controlId) =>
-                        setSelectedControls([controlId])
-                      }
+                      key={editingControl ? activeControlStep : activeMutator}
+                      onSelectControl={(controlId) => {
+                        setSelectedControls([controlId]);
+                      }}
                     />
                   </Inlay>
                 )}
@@ -554,13 +587,32 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
           >
             <Column>
               <Panel padding="sm">
+                <PanelTitle>Image Properties</PanelTitle>
+                <ControlPanel>
+                  <Control label="Width">
+                    <NumberInput
+                      onChange={(newWidth) => {
+                        setFile(updateImageWidth(newWidth));
+                      }}
+                      value={file.metadata.width}
+                    />
+                  </Control>
+                  <Control label="Height">
+                    <NumberInput
+                      onChange={(newHeight) => {
+                        setFile(updateImageHeight(newHeight));
+                      }}
+                      value={file.metadata.height}
+                    />
+                  </Control>
+                </ControlPanel>
                 <ItemEdit
                   activeMutator={activeMutator}
                   editingControlId={editingControl}
                   editingControlStep={activeControlStep}
-                  onSelectControl={(controlId) =>
-                    setSelectedControls([controlId])
-                  }
+                  onSelectControl={(controlId) => {
+                    setSelectedControls([controlId]);
+                  }}
                   selectedShapeIds={selectedItems}
                 />
               </Panel>

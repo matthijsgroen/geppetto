@@ -22,6 +22,7 @@ type TrackDragContextValue = {
     from: { track: string; animation: string },
     to: { animation: string }
   ) => void;
+  onReorder?: (animationId: string, fromIndex: number, toIndex: number) => void;
 };
 
 const TrackDragContext = createContext<TrackDragContextValue | null>(null);
@@ -36,11 +37,13 @@ type TrackDragProviderProps = PropsWithChildren<{
     from: { track: string; animation: string },
     to: { animation: string }
   ) => void;
+  onReorder?: (animationId: string, fromIndex: number, toIndex: number) => void;
 }>;
 
 export const TrackDragProvider: FC<TrackDragProviderProps> = ({
   children,
   onMove,
+  onReorder,
 }) => {
   const [dragState, setDragState] = useState<TrackDragState>({
     draggedTrack: null,
@@ -88,6 +91,7 @@ export const TrackDragProvider: FC<TrackDragProviderProps> = ({
         updateDragPosition,
         endDrag,
         onMove,
+        onReorder,
       }}
     >
       {children}

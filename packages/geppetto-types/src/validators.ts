@@ -11,12 +11,21 @@ import {
   type AnimationControlTrack,
   type AnimationVisibilityTrack,
 } from "./animations";
+import { ZodError } from "zod";
+
+export type GeppettoImageParseError = ZodError<GeppettoImage>;
 
 /**
  * Type guard to check if a file is format 2.x using Zod validation
  */
-export const isFormat2File = (file: unknown): file is GeppettoImage => {
+export const isFormat2File = (
+  file: unknown,
+  onError?: (error: GeppettoImageParseError) => void
+): file is GeppettoImage => {
   const result = geppettoImageSchema.safeParse(file);
+  if (!result.success) {
+    onError?.(result.error);
+  }
   return result.success;
 };
 

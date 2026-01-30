@@ -26,6 +26,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "json-summary", "html"],
+      // include: ["src/**/*.{js,ts,jsx,tsx}"],
       exclude: [
         "node_modules/",
         "src/shared/test/setupTests.ts",
@@ -33,12 +34,15 @@ export default defineConfig({
         "**/*.config.*",
         "**/mockData",
         "**/*.stories.*",
+        "src/shared/test/**",
+        "src/application/modules/layers/programs/**",
+        "src/application/modules/composition/programs/**",
       ],
       thresholds: {
-        lines: 77,
-        branches: 65,
-        functions: 66,
-        statements: 78,
+        lines: 80,
+        branches: 70,
+        functions: 70,
+        statements: 80,
       },
     },
     projects: [

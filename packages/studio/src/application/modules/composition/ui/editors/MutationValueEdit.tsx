@@ -4,7 +4,7 @@ import React, { Fragment } from "react";
 import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl";
 import { useFile } from "@/application/state/FileContext";
 import { type MutationVectorTypes } from "@/dtos/animation-file1.dto";
-import { ColorPreview, Control, TextButton } from "@/ui/components";
+import { ColorPreview, Control, Paragraph, TextButton } from "@/ui/components";
 
 import { ValueSlider } from "./ValueSlider";
 
@@ -24,6 +24,13 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
   value,
   onValueChange,
 }) => {
+  if (!value) {
+    return (
+      <>
+        <Paragraph>No value set</Paragraph>
+      </>
+    );
+  }
   if (mutationType === "opacity") {
     return (
       <ValueSlider

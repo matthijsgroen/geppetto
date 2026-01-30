@@ -2,7 +2,7 @@
  * Places a hidden svg in the DOM that contains various curve clip paths
  */
 export const Curves: React.FC = () => (
-  <svg height="0" width="0">
+  <svg height="0" viewBox="0 0 1 1" width="0">
     <defs>
       <clipPath clipPathUnits="objectBoundingBox" id="linearCurve">
         <path d="M0 1L1 0L1 1L0 1" />

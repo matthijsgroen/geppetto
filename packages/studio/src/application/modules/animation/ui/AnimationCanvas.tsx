@@ -5,6 +5,10 @@ import { useAnimationsPlaying } from "@/application/modules/animation/hooks/useA
 import { useCanvasResize } from "@/application/modules/animation/hooks/useCanvasResize";
 import { useGeppettoPlayer } from "@/application/modules/animation/hooks/useGeppettoPlayer";
 import { usePanningAndZoom } from "@/application/modules/animation/hooks/usePanningAndZoom";
+import {
+  usePlayerControlValue,
+  usePlayerTimestamp,
+} from "@/application/modules/animation/state/PlayerControlsProvider";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   useControlValues,
@@ -14,6 +18,7 @@ import {
 
 export type AnimationCanvasProps = {
   image: HTMLImageElement | null;
+  activeAnimation?: string | null;
   animationsPlaying?: string[];
   onStop?: (animationId: string) => void;
   file: GeppettoImage;
@@ -21,6 +26,7 @@ export type AnimationCanvasProps = {
 
 export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
   image,
+  activeAnimation,
   file,
   children,
   onStop,
@@ -66,8 +72,48 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     }
   );
 
+  usePlayerTimestamp((time: number | null) => {
+    if (
+      !animationControlsRef.current ||
+      activeAnimation === null ||
+      activeAnimation === undefined ||
+      time === null
+    )
+      return;
+    const name = file.animations[activeAnimation]?.name;
+    if (!name) return;
+    animationControlsRef.current.renderAtTimestamp(name, time);
+  });
+
   const controlValuesRef = useControlValues();
   const mutationValuesRef = useMutationValues();
+
+  usePlayerControlValue((controlValue) => {
+    if (!animationControlsRef.current) return;
+
+    const control = file.controls[controlValue.controlId];
+    const controlName = control?.name;
+    if (controlName) {
+      if (controlValue.value === null) {
+        // // If value is null, reset to current value
+        // animationControlsRef.current?.setControlValue(
+        //   controlName,
+        //   controlValuesRef.current[controlValue.controlId]
+        // );
+        return;
+      }
+      const maxSteps = control.steps.length - 1;
+      const normalizedValue = Math.min(
+        1,
+        Math.max(0, maxSteps > 0 ? controlValue.value / maxSteps : 0)
+      );
+      animationControlsRef.current?.setControlValue(
+        controlName,
+        normalizedValue
+      );
+    }
+  });
+
   const subscribe = useControlValueSubscription();
   // Subscribe to control value changes
   useEffect(() => {

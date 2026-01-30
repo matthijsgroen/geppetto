@@ -1,91 +1,156 @@
 <!doctype html>
 <html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Geppetto Player - v1.1.1</title>
-	<meta name="description" content="Documentation for Geppetto Player - v1.1.1">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-	<script async src="assets/js/search.js" id="search-script"></script>
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="index.html" class="title">Geppetto Player - v1.1.1</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-							<input type="checkbox" id="tsd-filter-externals" checked />
-							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<h1>Geppetto Player - v1.1.1</h1>
-		</div>
-	</div>
-</header>
-<div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<a href="#geppetto-player-🌱" id="geppetto-player-🌱" style="color: inherit; text-decoration: none;">
-					<h1>Geppetto player 🌱</h1>
-				</a>
-				<p><a href="https://matthijsgroen.github.io/geppetto-player"><img src="https://img.shields.io/npm/types/geppetto-player" alt="npm type definitions"></a>
-					<a href="https://github.com/matthijsgroen/geppetto-player/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/geppetto-player" alt="License"></a>
-				<a href="https://www.npmjs.com/package/geppetto-player"><img src="https://img.shields.io/npm/v/geppetto-player" alt="Version"></a></p>
-				<p><a href="https://matthijsgroen.github.io/geppetto-player">API documentation</a></p>
-				<p>Library for playing Geppetto animations. For the Desktop application to create the animations, see <a href="https://geppetto.js.org">the Geppetto website</a></p>
-				<a href="#features" id="features" style="color: inherit; text-decoration: none;">
-					<h1>Features</h1>
-				</a>
-				<ul>
-					<li>Setup of webGL Canvas for playing Geppetto files</li>
-					<li>Loading and rendering of Geppetto files</li>
-					<li>Listening to events from animation tracks</li>
-					<li>Using controls from images</li>
-					<li>Starting/stopping looping of animation tracks</li>
-				</ul>
-				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
-					<h1>Install</h1>
-				</a>
-				<pre><code><span style="color: #001080">yarn</span><span style="color: #000000"> </span><span style="color: #001080">add</span><span style="color: #000000"> </span><span style="color: #001080">geppetto</span><span style="color: #000000">-</span><span style="color: #001080">player</span>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Geppetto Player - v1.1.1</title>
+    <meta
+      name="description"
+      content="Documentation for Geppetto Player - v1.1.1"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <script async src="assets/js/search.js" id="search-script"></script>
+  </head>
+  <body>
+    <header>
+      <div class="tsd-page-toolbar">
+        <div class="container">
+          <div class="table-wrap">
+            <div
+              class="table-cell"
+              id="tsd-search"
+              data-index="assets/js/search.json"
+              data-base="."
+            >
+              <div class="field">
+                <label
+                  for="tsd-search-field"
+                  class="tsd-widget search no-caption"
+                  >Search</label
+                >
+                <input id="tsd-search-field" type="text" />
+              </div>
+              <ul class="results">
+                <li class="state loading">Preparing search index...</li>
+                <li class="state failure">The search index is not available</li>
+              </ul>
+              <a href="index.html" class="title">Geppetto Player - v1.1.1</a>
+            </div>
+            <div class="table-cell" id="tsd-widgets">
+              <div id="tsd-filter">
+                <a
+                  href="#"
+                  class="tsd-widget options no-caption"
+                  data-toggle="options"
+                  >Options</a
+                >
+                <div class="tsd-filter-group">
+                  <div class="tsd-select" id="tsd-filter-visibility">
+                    <span class="tsd-select-label">All</span>
+                    <ul class="tsd-select-list">
+                      <li data-value="public">Public</li>
+                      <li data-value="protected">Public/Protected</li>
+                      <li data-value="private" class="selected">All</li>
+                    </ul>
+                  </div>
+                  <input type="checkbox" id="tsd-filter-inherited" checked />
+                  <label class="tsd-widget" for="tsd-filter-inherited"
+                    >Inherited</label
+                  >
+                  <input type="checkbox" id="tsd-filter-externals" checked />
+                  <label class="tsd-widget" for="tsd-filter-externals"
+                    >Externals</label
+                  >
+                </div>
+              </div>
+              <a href="#" class="tsd-widget menu no-caption" data-toggle="menu"
+                >Menu</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tsd-page-title">
+        <div class="container">
+          <h1>Geppetto Player - v1.1.1</h1>
+        </div>
+      </div>
+    </header>
+    <div class="container-main container">
+      <div class="row">
+        <div class="col-content col-8">
+          <div class="tsd-panel tsd-typography">
+            <a
+              href="#geppetto-player-🌱"
+              id="geppetto-player-🌱"
+              style="color: inherit; text-decoration: none"
+            >
+              <h1>Geppetto player 🌱</h1>
+            </a>
+            <p>
+              <a href="https://matthijsgroen.github.io/geppetto-player"
+                ><img
+                  src="https://img.shields.io/npm/types/geppetto-player"
+                  alt="npm type definitions"
+              /></a>
+              <a
+                href="https://github.com/matthijsgroen/geppetto-player/blob/main/LICENSE"
+                ><img
+                  src="https://img.shields.io/npm/l/geppetto-player"
+                  alt="License"
+              /></a>
+              <a href="https://www.npmjs.com/package/geppetto-player"
+                ><img
+                  src="https://img.shields.io/npm/v/geppetto-player"
+                  alt="Version"
+              /></a>
+            </p>
+            <p>
+              <a href="https://matthijsgroen.github.io/geppetto-player"
+                >API documentation</a
+              >
+            </p>
+            <p>
+              Library for playing Geppetto animations. For the Desktop
+              application to create the animations, see
+              <a href="https://geppetto.js.org">the Geppetto website</a>
+            </p>
+            <a
+              href="#features"
+              id="features"
+              style="color: inherit; text-decoration: none"
+            >
+              <h1>Features</h1>
+            </a>
+            <ul>
+              <li>Setup of webGL Canvas for playing Geppetto files</li>
+              <li>Loading and rendering of Geppetto files</li>
+              <li>Listening to events from animation tracks</li>
+              <li>Using controls from images</li>
+              <li>Starting/stopping looping of animation tracks</li>
+            </ul>
+            <a
+              href="#install"
+              id="install"
+              style="color: inherit; text-decoration: none"
+            >
+              <h1>Install</h1>
+            </a>
+            <pre><code><span style="color: #001080">yarn</span><span style="color: #000000"> </span><span style="color: #001080">add</span><span style="color: #000000"> </span><span style="color: #001080">geppetto</span><span style="color: #000000">-</span><span style="color: #001080">player</span>
 </code></pre>
-				<a href="#minimal-setup" id="minimal-setup" style="color: inherit; text-decoration: none;">
-					<h2>Minimal setup</h2>
-				</a>
-				<p>This example is based on a build using Parcel2. For Webpack, change the way the url of the texture asset is referenced.</p>
-				<pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">setupWebGL</span><span style="color: #000000">, </span><span style="color: #001080">prepareAnimation</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;geppetto-player&quot;</span><span style="color: #000000">;</span>
+            <a
+              href="#minimal-setup"
+              id="minimal-setup"
+              style="color: inherit; text-decoration: none"
+            >
+              <h2>Minimal setup</h2>
+            </a>
+            <p>
+              This example is based on a build using Parcel2. For Webpack,
+              change the way the url of the texture asset is referenced.
+            </p>
+            <pre><code class="language-typescript"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">setupWebGL</span><span style="color: #000000">, </span><span style="color: #001080">prepareAnimation</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;geppetto-player&quot;</span><span style="color: #000000">;</span>
 <span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">backgroundImage</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;url:./assets/landscape.png&quot;</span><span style="color: #000000">;</span>
 <span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">backgroundAnimationData</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;./assets/landscape.json&quot;</span><span style="color: #000000">;</span>
 
@@ -128,74 +193,121 @@
 
 <span style="color: #795E26">start</span><span style="color: #000000">();</span>
 </code></pre>
-				<a href="#why-do-i-need-to-setup-this-render-loop-myself" id="why-do-i-need-to-setup-this-render-loop-myself" style="color: inherit; text-decoration: none;">
-					<h2>Why do I need to setup this render loop myself?</h2>
-				</a>
-				<p>It is to give you more control. You can specify the resolution to render,
-				or render multiply Geppetto animations in the same WebGL Canvas. You could even create framebuffers, render into them and apply a shader aftereffect on it if you desire. (all these things I consider outside of the scope of this player library :-))</p>
-				<a href="#using-the-library-in-a-babel-built-site-webpack-cra" id="using-the-library-in-a-babel-built-site-webpack-cra" style="color: inherit; text-decoration: none;">
-					<h2>Using the library in a babel built site (Webpack, CRA)</h2>
-				</a>
-				<p>Check out: <a href="https://babeljs.io/docs/en/babel-plugin-proposal-optional-chaining">https://babeljs.io/docs/en/babel-plugin-proposal-optional-chaining</a></p>
-				<a href="#license" id="license" style="color: inherit; text-decoration: none;">
-					<h1>License</h1>
-				</a>
-				<p><a href="./LICENSE">MIT</a> (c) <a href="https://twitter.com/matthijsgroen">Matthijs Groen</a></p>
-			</div>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class=" ">
-						<a href="modules.html">Exports</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/animationoptions.html" class="tsd-kind-icon">Animation<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="modules.html#animationcontrols" class="tsd-kind-icon">Animation<wbr>Controls</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="modules.html#geppettoplayer" class="tsd-kind-icon">Geppetto<wbr>Player</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="modules.html#playoptions" class="tsd-kind-icon">Play<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="modules.html#unsubscribe" class="tsd-kind-icon">Unsubscribe</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="modules.html#createplayer" class="tsd-kind-icon">create<wbr>Player</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="modules.html#prepareanimation" class="tsd-kind-icon">prepare<wbr>Animation</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="modules.html#setupwebgl" class="tsd-kind-icon">setup<wbr>WebGL</a>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
-<div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-</body>
+            <a
+              href="#why-do-i-need-to-setup-this-render-loop-myself"
+              id="why-do-i-need-to-setup-this-render-loop-myself"
+              style="color: inherit; text-decoration: none"
+            >
+              <h2>Why do I need to setup this render loop myself?</h2>
+            </a>
+            <p>
+              It is to give you more control. You can specify the resolution to
+              render, or render multiply Geppetto animations in the same WebGL
+              Canvas. You could even create framebuffers, render into them and
+              apply a shader aftereffect on it if you desire. (all these things
+              I consider outside of the scope of this player library :-))
+            </p>
+            <a
+              href="#using-the-library-in-a-babel-built-site-webpack-cra"
+              id="using-the-library-in-a-babel-built-site-webpack-cra"
+              style="color: inherit; text-decoration: none"
+            >
+              <h2>Using the library in a babel built site (Webpack, CRA)</h2>
+            </a>
+            <p>
+              Check out:
+              <a
+                href="https://babeljs.io/docs/en/babel-plugin-proposal-optional-chaining"
+                >https://babeljs.io/docs/en/babel-plugin-proposal-optional-chaining</a
+              >
+            </p>
+            <a
+              href="#license"
+              id="license"
+              style="color: inherit; text-decoration: none"
+            >
+              <h1>License</h1>
+            </a>
+            <p>
+              <a href="./LICENSE">MIT</a> (c)
+              <a href="https://twitter.com/matthijsgroen">Matthijs Groen</a>
+            </p>
+          </div>
+        </div>
+        <div class="col-menu menu-sticky-wrap menu-highlight col-4">
+          <nav class="tsd-navigation primary">
+            <ul>
+              <li class=" ">
+                <a href="modules.html">Exports</a>
+              </li>
+            </ul>
+          </nav>
+          <nav class="tsd-navigation secondary menu-sticky">
+            <ul class="before-current">
+              <li class="tsd-kind-interface">
+                <a href="interfaces/animationoptions.html" class="tsd-kind-icon"
+                  >Animation<wbr />Options</a
+                >
+              </li>
+              <li class="tsd-kind-type-alias">
+                <a href="modules.html#animationcontrols" class="tsd-kind-icon"
+                  >Animation<wbr />Controls</a
+                >
+              </li>
+              <li class="tsd-kind-type-alias">
+                <a href="modules.html#geppettoplayer" class="tsd-kind-icon"
+                  >Geppetto<wbr />Player</a
+                >
+              </li>
+              <li class="tsd-kind-type-alias">
+                <a href="modules.html#playoptions" class="tsd-kind-icon"
+                  >Play<wbr />Options</a
+                >
+              </li>
+              <li class="tsd-kind-type-alias">
+                <a href="modules.html#unsubscribe" class="tsd-kind-icon"
+                  >Unsubscribe</a
+                >
+              </li>
+              <li class="tsd-kind-function">
+                <a href="modules.html#createplayer" class="tsd-kind-icon"
+                  >create<wbr />Player</a
+                >
+              </li>
+              <li class="tsd-kind-function">
+                <a href="modules.html#prepareanimation" class="tsd-kind-icon"
+                  >prepare<wbr />Animation</a
+                >
+              </li>
+              <li class="tsd-kind-function">
+                <a href="modules.html#setupwebgl" class="tsd-kind-icon"
+                  >setup<wbr />WebGL</a
+                >
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <footer class="with-border-bottom">
+      <div class="container">
+        <h2>Legend</h2>
+        <div class="tsd-legend-group">
+          <ul class="tsd-legend">
+            <li class="tsd-kind-property tsd-parent-kind-interface">
+              <span class="tsd-kind-icon">Property</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+    <div class="tsd-generator container">
+      <p>
+        Generated using
+        <a href="https://typedoc.org/" target="_blank">TypeDoc</a>
+      </p>
+    </div>
+    <div class="overlay"></div>
+    <script src="assets/js/main.js"></script>
+  </body>
 </html>

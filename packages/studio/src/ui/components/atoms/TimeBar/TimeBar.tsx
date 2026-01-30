@@ -1,5 +1,6 @@
 import type { EasingFunction } from "@geppetto/types";
 import clsx from "clsx";
+import type { Ref } from "react";
 import { type FC, use } from "react";
 
 import { TimeCurve } from "@/ui/components/atoms/TimeCurve/TimeCurve";
@@ -14,11 +15,16 @@ type TimeBarProps = {
   selected?: boolean;
   trackIndex: number;
   easing?: EasingFunction;
+  startValue?: number;
+  endValue?: number;
   variant?: "mini" | "default";
   zoom?: number;
+  ref?: React.Ref<HTMLDivElement | HTMLButtonElement>;
   onClick?: () => void;
+  onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
   onEndDrag?: (newTime: TimeStamp) => void;
   onEndDragRelease?: (newTime: TimeStamp) => void;
+  onKeyDown?: (event: React.KeyboardEvent) => void;
   onStartDrag?: (newTime: TimeStamp) => void;
   onStartDragRelease?: (newTime: TimeStamp) => void;
 };
@@ -30,10 +36,15 @@ export const TimeBar: FC<TimeBarProps> = ({
   trackIndex,
   easing,
   zoom = 1,
+  startValue = 0,
+  endValue = 1,
   variant,
+  ref,
   onClick,
+  onContextMenu,
   onEndDrag,
   onEndDragRelease,
+  onKeyDown,
   onStartDrag,
   onStartDragRelease,
 }) => {
@@ -54,6 +65,9 @@ export const TimeBar: FC<TimeBarProps> = ({
         !selected && "border-control-edge bg-toolbar"
       )}
       onClick={activeVariant === "default" ? onClick : undefined}
+      onContextMenu={onContextMenu}
+      onKeyDown={onKeyDown}
+      ref={ref as (Ref<HTMLButtonElement> & Ref<HTMLDivElement>) | undefined}
       role={activeVariant === "default" ? "button" : "presentation"}
       style={{
         left: `calc(${start}em + 2 * var(--spacing))`,
@@ -72,7 +86,9 @@ export const TimeBar: FC<TimeBarProps> = ({
             onDragRelease={onStartDragRelease}
             zoom={zoom}
           />
-          {easing && <TimeCurve variant={easing} />}
+          {easing && (
+            <TimeCurve end={endValue} start={startValue} variant={easing} />
+          )}
           <TimeStretchHandle
             location={start + duration}
             onDrag={onEndDrag}

@@ -29,6 +29,7 @@ const meta = preview.meta({
     notificationBadge: false,
     standAlone: false,
     keyboardFocusOnly: false,
+    dangerous: false,
     size: "default",
     onClick: fn(),
   },
@@ -75,6 +76,13 @@ export const ActiveDisabled = meta.story({
     icon: <Icon>💡</Icon>,
     disabled: true,
     active: true,
+  },
+});
+
+export const Dangerous = meta.story({
+  args: {
+    label: "Delete",
+    dangerous: true,
   },
 });
 

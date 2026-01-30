@@ -3,8 +3,8 @@ import type { GeppettoImage } from "@geppetto/types";
 export const v2Format: GeppettoImage = {
   version: "2.0",
   metadata: {
-    width: 2048,
-    height: 1536,
+    width: 1024,
+    height: 1024,
     zoom: 1.0,
     pan: [0, 0],
   },
@@ -112,6 +112,11 @@ export const v2Format: GeppettoImage = {
     "1": 0.5,
   },
 
+  animationHierarchy: {
+    root: { type: "root", children: ["0"] },
+    "0": { type: "animation", parentId: "root" },
+  },
+
   animations: {
     "0": {
       name: "breathing",
@@ -151,8 +156,8 @@ export const v2Format: GeppettoImage = {
         },
       ],
       events: [
-        { start: 2500, eventName: "Breathing" },
-        { start: 3500, eventName: "Blink" },
+        { start: 2500, eventName: "Breathing", type: "callback" },
+        { start: 3500, eventName: "Blink", type: "callback" },
       ],
     },
   },

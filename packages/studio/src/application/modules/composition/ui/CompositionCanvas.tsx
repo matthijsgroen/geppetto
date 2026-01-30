@@ -19,6 +19,7 @@ import { newFile } from "@/domain/animation/file2/new";
 import { calculateVectorValues } from "@/infrastructure/webgl/lib/vectorPositions";
 import WebGLCanvas from "@/infrastructure/webgl/WebGLCanvas";
 
+import { showBorder } from "../programs/showBorder";
 import { showComposition } from "../programs/showComposition";
 import { showCompositionMap } from "../programs/showCompositionMap";
 import { showCompositionVectors } from "../programs/showCompositionVectors";
@@ -31,6 +32,9 @@ export type CompositionCanvasProps = {
   activeMutation: string | null;
   ref?: RefObject<HTMLDivElement | null>;
 };
+
+const metadataChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
+  fileA.metadata !== fileB.metadata;
 
 const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
   fileA.layerHierarchy !== fileB.layerHierarchy ||
@@ -51,6 +55,7 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
   ref,
 }) => {
   const translation = useScreenTranslation();
+  const border = useMemo(() => showBorder(translation), [translation]);
   const composition = useMemo(
     () => showComposition(translation),
     [translation]
@@ -64,8 +69,18 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
     [translation]
   );
   const renderers = useMemo(
-    () => [composition.renderer, compositionMap.renderer, vectorMap.renderer],
-    [composition.renderer, compositionMap.renderer, vectorMap.renderer]
+    () => [
+      composition.renderer,
+      compositionMap.renderer,
+      vectorMap.renderer,
+      border.renderer,
+    ],
+    [
+      border.renderer,
+      composition.renderer,
+      compositionMap.renderer,
+      vectorMap.renderer,
+    ]
   );
 
   useEffect(() => {
@@ -99,6 +114,12 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
   const subscribe = useControlValueSubscription();
 
   useEffect(() => {
+    if (metadataChanged(file, fileRef.current)) {
+      border.setImageSize(file.metadata.width, file.metadata.height);
+      composition.setImageBounds(file.metadata.width, file.metadata.height);
+      compositionMap.setImageBounds(file.metadata.width, file.metadata.height);
+      vectorMap.setImageBounds(file.metadata.width, file.metadata.height);
+    }
     if (shapesChanged(file, fileRef.current)) {
       composition.setShapes(file);
       compositionMap.setShapes(file);
@@ -112,6 +133,7 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
     fileRef.current = file;
   }, [
     file,
+    border,
     composition,
     compositionMap,
     vectorMap,

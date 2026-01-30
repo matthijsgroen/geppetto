@@ -1,6 +1,5 @@
 import { clsx } from "clsx";
-import type { DragEvent, FC, MouseEvent, PropsWithChildren, Ref } from "react";
-import { useState } from "react";
+import type { FC, MouseEvent, PropsWithChildren, Ref } from "react";
 
 import { isEvent } from "@/ui/components";
 import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
@@ -9,6 +8,7 @@ import { Row } from "@/ui/components/molecules/Row/Row";
 
 import { AnimationTrackContext } from "./AnimationTrackContext";
 import { useTrackDrag } from "./TrackDragContext";
+import { useTrackDragDrop } from "./useTrackDragDrop";
 
 type AnimationTrackProps = PropsWithChildren<{
   animationId?: string;
@@ -44,90 +44,20 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
   trackNames = [],
 }) => {
   const trackDragContext = useTrackDrag();
-  const [dragOverElement, setDragOverElement] = useState<string | null>(null);
-  const [isValidDrop, setIsValidDrop] = useState(false);
-
-  const handleTrackDragStart = (
-    trackName: string,
-    e: DragEvent<HTMLDivElement>
-  ) => {
-    if (!trackDragContext) return;
-
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", trackName);
-
-    trackDragContext.startDrag(trackName, animationId, e.clientX, e.clientY);
-  };
-
-  const handleTrackDrag = (e: DragEvent<HTMLDivElement>) => {
-    if (!trackDragContext) return;
-    if (e.clientX !== 0 && e.clientY !== 0) {
-      trackDragContext.updateDragPosition(e.clientX, e.clientY);
-    }
-  };
-
-  const handleTrackDragEnd = () => {
-    if (!trackDragContext) return;
-    trackDragContext.endDrag();
-  };
-
-  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    if (!trackDragContext?.dragState.draggedTrack) return;
-    e.preventDefault();
-
-    // Check if this animation already has a track with the same name
-    const isDuplicate = trackNames.includes(
-      trackDragContext.dragState.draggedTrack
-    );
-    const isValid =
-      !isDuplicate &&
-      trackDragContext.dragState.sourceAnimation !== animationId;
-    // Set dropEffect for cursor feedback
-    e.dataTransfer.dropEffect = isValid ? "move" : "none";
-
-    setDragOverElement("animation-name");
-    setIsValidDrop(isValid);
-  };
-
-  const handleDragLeave = () => {
-    setDragOverElement(null);
-    setIsValidDrop(false);
-  };
-
-  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDragOverElement(null);
-    setIsValidDrop(false);
-
-    if (
-      !trackDragContext ||
-      !trackDragContext.dragState.draggedTrack ||
-      !trackDragContext.dragState.sourceAnimation
-    )
-      return;
-
-    // Prevent drop if track name already exists in target animation or same animation
-    const isDuplicate = trackNames.includes(
-      trackDragContext.dragState.draggedTrack
-    );
-    if (
-      isDuplicate ||
-      trackDragContext.dragState.sourceAnimation === animationId
-    ) {
-      trackDragContext.endDrag();
-      return;
-    }
-
-    trackDragContext.onMove?.(
-      {
-        track: trackDragContext.dragState.draggedTrack,
-        animation: trackDragContext.dragState.sourceAnimation,
-      },
-      { animation: animationId }
-    );
-
-    trackDragContext.endDrag();
-  };
+  const {
+    handleTrackDragStart,
+    handleTrackDrag,
+    handleTrackDragEnd,
+    handleDragOver,
+    handleDragLeave,
+    handleTrackDragOver,
+    handleTrackDragLeave,
+    handleTrackDrop,
+    handleDrop,
+    dragOverElement,
+    isValidDrop,
+    dropPosition,
+  } = useTrackDragDrop(animationId, trackNames);
 
   return (
     <>
@@ -152,7 +82,7 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
           <Row>
             <div
               className={clsx(
-                "box-content h-5 flex-1 px-2 text-base text-text",
+                "box-content h-5 flex-1 ps-4 pe-2 text-base text-text",
                 selected && "pb-1"
               )}
               onContextMenu={onLabelContextMenu}
@@ -162,9 +92,19 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
             {extraContent}
           </Row>
           {selected &&
-            trackNames.map((trackName) => (
+            trackNames.map((trackName, trackIndex) => (
               <div
-                className="h-5 cursor-grab px-2 pl-4 text-sm text-text hover:bg-control-highlight active:cursor-grabbing"
+                className={clsx(
+                  "relative h-5 cursor-grab px-2 pl-4 text-sm text-text hover:bg-control-highlight active:cursor-grabbing",
+                  dragOverElement === `track-${trackIndex}` &&
+                    isValidDrop &&
+                    dropPosition === "before" &&
+                    "border-t-2 border-t-control-focus",
+                  dragOverElement === `track-${trackIndex}` &&
+                    isValidDrop &&
+                    dropPosition === "after" &&
+                    "border-b-2 border-b-control-focus"
+                )}
                 draggable={!!trackDragContext}
                 key={trackName}
                 onContextMenu={(e) => {
@@ -172,7 +112,10 @@ export const AnimationTrack: FC<AnimationTrackProps> = ({
                 }}
                 onDrag={(e) => handleTrackDrag(e)}
                 onDragEnd={handleTrackDragEnd}
+                onDragLeave={() => handleTrackDragLeave(trackIndex)}
+                onDragOver={(e) => handleTrackDragOver(trackIndex, e)}
                 onDragStart={(e) => handleTrackDragStart(trackName, e)}
+                onDrop={(e) => handleTrackDrop(trackIndex, e)}
               >
                 {trackName}
               </div>

@@ -6,9 +6,11 @@ import { StartupScreen } from "@/application/modules/application-menu/ui/Startup
 import TextureMapCanvas, {
   type GridSettings,
 } from "@/application/modules/layers/ui/TextureMapCanvas";
+import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
 import { useFile } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useEvent } from "@/application/state/hooks/useEvent";
+import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import LayerMouseControl from "@/application/ui/LayerMouseControl";
@@ -175,6 +177,16 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
     }
   );
 
+  const fitToScreenAction = useFitToScreenAction();
+  const screenActions = useGlobalActionMap(
+    useCallback(
+      () => ({
+        fitToScreen: fitToScreenAction,
+      }),
+      [fitToScreenAction]
+    )
+  );
+
   const { actions, triggerKeyboardAction } = useActionMap(
     useCallback(
       () => ({
@@ -323,6 +335,7 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
           }, [])}
           tooltip="Toggle magnetic grid"
         />
+        <ActionToolButton action={screenActions.fitToScreen} />
         <ToolSpacer />
         <InstallToolButton />
       </ToolBar>

@@ -3,8 +3,8 @@ import { type GeppettoImage } from "@geppetto/types";
 export const newFile = (): GeppettoImage => ({
   version: "2.0",
   metadata: {
-    width: 2048,
-    height: 1536,
+    width: 1024,
+    height: 1024,
     zoom: 1.0,
     pan: [0, 0],
   },
@@ -16,9 +16,11 @@ export const newFile = (): GeppettoImage => ({
   controlHierarchy: { root: { type: "root", children: [] } },
   controlFolders: {},
   controls: {},
+
   defaultFrame: {},
   controlValues: {},
 
+  animationHierarchy: { root: { type: "root", children: [] } },
   animations: {},
 });
 

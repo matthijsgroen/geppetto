@@ -13,6 +13,7 @@ attribute vec2 coordinates;
 attribute vec2 aTextureCoord;
 
 varying lowp vec2 vTextureCoord;
+varying lowp vec2 vImagePosition;
 varying lowp float vOpacity;
 varying lowp float vBrightness;
 varying lowp float vSaturation;
@@ -124,6 +125,8 @@ void main() {
   vec4 pos = viewportScale * vec4((deformPos.xy + basePosition.xy) * scale.x, translate.z, 1.0);
   gl_Position = vec4((pos.xy + scale.ba) * scale.y, pos.z, 1.0);
   vTextureCoord = aTextureCoord.xy;
+  // Pass the position after mutations, in centered image coordinate space
+  vImagePosition = deformPos.xy;
 
   vOpacity = deformPos.z;
   vBrightness = deformColor.x;

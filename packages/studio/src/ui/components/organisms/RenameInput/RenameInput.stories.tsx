@@ -32,7 +32,7 @@ export const Default = meta.story({
   },
   play: async ({ canvas, args }) => {
     const button = await canvas.findByRole("button");
-    button.click();
+    await userEvent.dblClick(button);
 
     const input = await canvas.findByRole("textbox");
     expect(input).toHaveFocus();
@@ -53,7 +53,7 @@ export const BlurWithoutChange = meta.story({
   },
   play: async ({ canvas, args }) => {
     const button = await canvas.findByRole("button");
-    button.click();
+    await userEvent.dblClick(button);
 
     const input = await canvas.findByRole("textbox");
     expect(input).toHaveFocus();
@@ -76,7 +76,7 @@ export const BlurWithChange = meta.story({
   },
   play: async ({ canvas, args }) => {
     const button = await canvas.findByRole("button");
-    button.click();
+    await userEvent.dblClick(button);
 
     const input = await canvas.findByRole("textbox");
     expect(input).toHaveFocus();
@@ -102,7 +102,7 @@ export const EscapeCancels = meta.story({
   },
   play: async ({ canvas, args }) => {
     const button = await canvas.findByRole("button");
-    button.click();
+    await userEvent.dblClick(button);
 
     const input = await canvas.findByRole("textbox");
     expect(input).toHaveFocus();

@@ -1,5 +1,9 @@
-import { type FC, useState } from "react";
+import { type FC, useCallback, useState } from "react";
 
+import {
+  usePlayerControls,
+  usePlayerTimestamp,
+} from "@/application/modules/animation/state/PlayerControlsProvider";
 import ZoomContext from "@/application/modules/animation/state/ZoomContext";
 import { useFile } from "@/application/state/FileContext";
 import type { AddAnimationDetails } from "@/domain/animation/file2/animations";
@@ -7,7 +11,9 @@ import {
   addAnimation,
   createAnimationControlTrack,
   deleteAnimation,
+  getAnimationDuration,
   moveControlTrackToAnimation,
+  reorderControlTrackInAnimation,
 } from "@/domain/animation/file2/animations";
 import { getControlIdByName } from "@/domain/animation/file2/testFileBuilder";
 import {
@@ -22,7 +28,6 @@ import {
   ToolBar,
   ToolButton,
   ToolSeparator,
-  ToolSpacer,
 } from "@/ui/components";
 import { TrackDragProvider } from "@/ui/components/molecules/AnimationTrack/TrackDragContext";
 
@@ -34,38 +39,54 @@ const EXTRA_TIME = 2000; // milliseconds
 type AnimationTimelinesProps = {
   onFrameSelect?: (frame: AnimationFrame | null) => void;
   selectedFrame?: AnimationFrame | null;
-  onStartAnimation?: (animationId: string) => void;
-  onStopAnimation?: (animationId: string) => void;
+  onStartAnimations?: (animationIds: string[]) => void;
+  onStopAnimations?: (animationIds: string[]) => void;
+  selectedAnimation?: string | null;
+  onSelectAnimation?: (animationId: string | null) => void;
   animationsPlaying?: string[];
 };
 
 export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   onFrameSelect,
   selectedFrame,
-  onStartAnimation,
-  onStopAnimation,
+  selectedAnimation,
+  onStartAnimations,
+  onStopAnimations,
+  onSelectAnimation,
   animationsPlaying = [],
 }) => {
   const [file, setFile] = useFile();
-  const [selectedAnimation, setSelectedAnimation] = useState<string | null>(
-    null
-  );
   const [zoom, setZoom] = useState(2);
 
-  const maxTime = Object.values(file.animations).reduce((max, animation) => {
-    const animationMax = Math.max(
-      ...animation.tracks.map(
-        (track) => track.length / (animation.speedModifier ?? 1)
-      ),
-      ...animation.events.map(
-        (event) => event.start / (animation.speedModifier ?? 1)
-      )
-    );
-    return Math.max(max, animationMax);
-  }, 0);
+  const maxTime = Object.values(file.animations).reduce(
+    (max, animation) => Math.max(max, getAnimationDuration(animation)),
+    0
+  );
   const animation = selectedAnimation
     ? file.animations[selectedAnimation]
     : null;
+
+  const [timeline, setTimeline] = useState<number | null>(null);
+  const { setTimestamp } = usePlayerControls();
+
+  usePlayerTimestamp((timestamp) => {
+    setTimeline(timestamp);
+    if (selectedAnimation && timestamp !== null) {
+      onStopAnimations?.([selectedAnimation]);
+    }
+  });
+
+  const handleTimelineDrag = useCallback(
+    (time: number) => {
+      if (!selectedAnimation) return;
+
+      if (animationsPlaying.includes(selectedAnimation)) {
+        onStopAnimations?.([selectedAnimation]);
+      }
+      setTimestamp(time * 1000);
+    },
+    [selectedAnimation, animationsPlaying, onStopAnimations, setTimestamp]
+  );
 
   return (
     <TrackDragProvider
@@ -77,6 +98,15 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
             from.animation,
             to.animation,
             controlId
+          )(file);
+        });
+      }}
+      onReorder={(animationId, fromIndex, toIndex) => {
+        setFile((file) => {
+          return reorderControlTrackInAnimation(
+            animationId,
+            fromIndex,
+            toIndex
           )(file);
         });
       }}
@@ -93,7 +123,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                 const addDetails: AddAnimationDetails | Record<string, never> =
                   {};
                 setFile(addAnimation(addDetails));
-                setSelectedAnimation(addDetails.id);
+                onSelectAnimation?.(addDetails.id);
               }}
               tooltip="Add Animation"
             />
@@ -165,47 +195,80 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                 ))}
               </MenuRadioGroup>
             </Menu>
-            <ToolSpacer />
             <ToolButton
-              disabled
-              icon={<Icon colorize>?</Icon>}
-              tooltip="Help"
+              disabled={animationsPlaying.length === 0}
+              icon={<Icon colorize>⏹</Icon>}
+              onClick={() => {
+                onStopAnimations?.([...animationsPlaying]);
+              }}
+              tooltip="Stop all animations"
+            />
+            <ToolButton
+              disabled={!Object.values(file.animations).some((a) => a.autoplay)}
+              icon={<Icon colorize>▶</Icon>}
+              onClick={() => {
+                const autoPlayAnimations = Object.entries(file.animations)
+                  .filter(([_, a]) => a.autoplay)
+                  .map(([id]) => id);
+                onStartAnimations?.(autoPlayAnimations);
+                if (
+                  selectedAnimation &&
+                  autoPlayAnimations.includes(selectedAnimation)
+                ) {
+                  setTimestamp(null);
+                }
+              }}
+              tooltip="Start all autoplay animations"
             />
           </ToolBar>
           <AnimationsContainer
             duration={(maxTime + EXTRA_TIME) / 1000}
+            momentTimestamp={timeline !== null ? timeline / 1000 : 0}
+            onTimelineDrag={handleTimelineDrag}
             onZoomChange={setZoom}
+            showMomentMarker={timeline !== null}
             title="Timeline"
             zoom={zoom}
           >
-            {Object.keys(file.animations).map((animationId) => (
-              <AnimationTimeline
-                animationId={animationId}
-                isPlaying={animationsPlaying.includes(animationId)}
-                key={animationId}
-                onDelete={() => {
-                  setFile(deleteAnimation(animationId));
-                  setSelectedAnimation(null);
-                }}
-                onFrameSelect={onFrameSelect}
-                onPlay={() => {
-                  onStartAnimation?.(animationId);
-                }}
-                onSelect={() => {
-                  setSelectedAnimation(animationId);
-                  if (animationId !== selectedFrame?.animationId) {
+            {(file.animationHierarchy.root?.children ?? []).map(
+              (animationId) => (
+                <AnimationTimeline
+                  animationId={animationId}
+                  isPlaying={animationsPlaying.includes(animationId)}
+                  key={animationId}
+                  onDelete={() => {
+                    setFile(deleteAnimation(animationId));
+                    onSelectAnimation?.(null);
                     onFrameSelect?.(null);
+                  }}
+                  onFrameSelect={onFrameSelect}
+                  onPlay={() => {
+                    onStartAnimations?.([animationId]);
+                    if (animationId === selectedAnimation) {
+                      setTimestamp(null);
+                    }
+                  }}
+                  onSelect={() => {
+                    onSelectAnimation?.(animationId);
+                    if (!animationsPlaying.includes(animationId)) {
+                      setTimestamp(0);
+                    } else {
+                      setTimestamp(null);
+                    }
+                    if (animationId !== selectedFrame?.animationId) {
+                      onFrameSelect?.(null);
+                    }
+                  }}
+                  onStop={() => {
+                    onStopAnimations?.([animationId]);
+                  }}
+                  selected={selectedAnimation === animationId}
+                  selectedTimeBar={
+                    selectedAnimation === animationId ? selectedFrame : null
                   }
-                }}
-                onStop={() => {
-                  onStopAnimation?.(animationId);
-                }}
-                selected={selectedAnimation === animationId}
-                selectedTimeBar={
-                  selectedAnimation === animationId ? selectedFrame : null
-                }
-              />
-            ))}
+                />
+              )
+            )}
           </AnimationsContainer>
         </Panel>
       </ZoomContext.Provider>

@@ -32,7 +32,7 @@ const green = [0, 180, 0].map((v) => v / 256.0) as Color;
 const white = [240, 240, 240].map((v) => v / 256.0) as Color;
 
 const EPSILON = 0.00001;
-const MUTATION_DOT_SIZE = 3;
+const MUTATION_DOT_SIZE = 2.5;
 
 const colorMapping: Record<MutationVector["type"], Color> = {
   deform: orange,
@@ -59,6 +59,7 @@ export const showCompositionVectors = (
   setVectorValues(v: Keyframe): void;
   setActiveMutation(mutation: string | null): void;
   setLayerSelected(layers: string[]): void;
+  setImageBounds(width: number, height: number): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 6;
@@ -84,8 +85,11 @@ export const showCompositionVectors = (
     z: number;
   }[] = [];
   let mutMapping: Record<string, number> = {};
-  const screenTranslation = trans;
+  let activeMutation: string | null = null;
   let scale = 1.0;
+  const screenTranslation = trans;
+  let imageBoundsWidth = 0;
+  let imageBoundsHeight = 0;
 
   const populateShapes = () => {
     if (!shapes || !gl || !indexBuffer || !vertexBuffer || !program) return;
@@ -218,7 +222,6 @@ export const showCompositionVectors = (
   let cWidth = 0;
   let cHeight = 0;
   let basePosition = [0, 0, 0.1];
-  let activeMutation: string | null = null;
 
   let onChange: () => void = () => {};
 
@@ -253,6 +256,10 @@ export const showCompositionVectors = (
           ...collectChildIds(shapes.layerHierarchy, layerId)
         );
       }
+    },
+    setImageBounds(width: number, height: number) {
+      imageBoundsWidth = width;
+      imageBoundsHeight = height;
       onChange();
     },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
@@ -323,11 +330,11 @@ export const showCompositionVectors = (
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
             const landscape =
-              img.width / canvasWidth > img.height / canvasHeight;
+              imageBoundsWidth / canvasWidth > imageBoundsHeight / canvasHeight;
 
             scale = landscape
-              ? canvasWidth / img.width
-              : canvasHeight / img.height;
+              ? canvasWidth / imageBoundsWidth
+              : canvasHeight / imageBoundsHeight;
 
             gl.uniform2f(
               programInfo.uniforms.viewport,

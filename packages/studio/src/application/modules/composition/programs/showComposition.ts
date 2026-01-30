@@ -25,6 +25,7 @@ export const showComposition = (
   setImage(image: HTMLImageElement): void;
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
+  setImageBounds(width: number, height: number): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 4;
@@ -51,6 +52,8 @@ export const showComposition = (
   let mutMapping: Record<string, number> = {};
   let scale = 1.0;
   const screenTranslation = trans;
+  let imageBoundsWidth = 0;
+  let imageBoundsHeight = 0;
 
   const setImageTexture = (): void => {
     if (img === null || texture === null || gl === null || program === null) {
@@ -183,6 +186,11 @@ export const showComposition = (
       populateVectorValues();
       onChange();
     },
+    setImageBounds(width: number, height: number) {
+      imageBoundsWidth = width;
+      imageBoundsHeight = height;
+      onChange();
+    },
     renderer(initGl: WebGLRenderingContext, { getUnit, getSize }) {
       gl = initGl;
 
@@ -259,11 +267,11 @@ export const showComposition = (
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
             const landscape =
-              img.width / canvasWidth > img.height / canvasHeight;
+              imageBoundsWidth / canvasWidth > imageBoundsHeight / canvasHeight;
 
             scale = landscape
-              ? canvasWidth / img.width
-              : canvasHeight / img.height;
+              ? canvasWidth / imageBoundsWidth
+              : canvasHeight / imageBoundsHeight;
 
             gl.uniform2f(
               gl.getUniformLocation(shaderProgram, "viewport"),
@@ -291,6 +299,12 @@ export const showComposition = (
             screenTranslation.zoom,
             screenTranslation.panX,
             screenTranslation.panY
+          );
+
+          gl.uniform2f(
+            gl.getUniformLocation(shaderProgram, "uImageBounds"),
+            imageBoundsWidth,
+            imageBoundsHeight
           );
 
           gl.activeTexture(unit.unit);

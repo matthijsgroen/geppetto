@@ -11,11 +11,9 @@ import {
   type PlacementInfo,
 } from "@/domain/animation/file2/hierarchy";
 import { hasMutations } from "@/domain/animation/file2/mutation";
-import { type UseState } from "@/dtos/application.dto";
 import {
   EmptyTree,
   Icon,
-  Panel,
   PanelTitle,
   Paragraph,
   ToolBar,
@@ -24,18 +22,15 @@ import {
   Tree,
 } from "@/ui/components";
 
-import { ControlEdit } from "./ControlEdit";
-
 type ControlTreeProps = {
-  selectedControlsState: UseState<string[]>;
-  onEditControlSteps?: () => void;
+  selectedControls: string[];
+  onSelectControls?: (controlIds: string[]) => void;
 };
 
 export const ControlTree: React.FC<ControlTreeProps> = ({
-  selectedControlsState,
-  onEditControlSteps,
+  selectedControls,
+  onSelectControls,
 }) => {
-  const [selectedControls] = selectedControlsState;
   const [file, setFile] = useFile();
 
   const addControlAction = useToolAction(() => {
@@ -64,50 +59,45 @@ export const ControlTree: React.FC<ControlTreeProps> = ({
 
   return (
     <ControlTreeEnvironment
-      selectedItemsState={selectedControlsState}
+      onSelectItems={onSelectControls}
+      selectedItems={selectedControls}
       treeId="controls"
     >
-      <Panel padding="sm">
-        <PanelTitle>Controls</PanelTitle>
-        <ToolBar size="small">
-          <ToolButton
-            disabled={!doesHaveMutations}
-            icon={<Icon>⚙️</Icon>}
-            label="+"
-            onClick={addControlAction}
-            onKeyDown={addControlAction}
-            tooltip="Add control"
-          />
-          <ToolSeparator />
-          <ToolButton
-            disabled={selectedControls.length !== 1}
-            icon={<Icon>🗑</Icon>}
-            onClick={removeControlAction}
-            onKeyDown={removeControlAction}
-            tooltip="Remove control"
-          />
-        </ToolBar>
-        {doesHaveMutations && doesHaveControls ? (
-          <Tree treeId="controls" />
-        ) : (
-          <EmptyTree>
-            {!doesHaveMutations && (
-              <Paragraph selectable={false}>
-                Add mutators to layers or folders to create controls.
-              </Paragraph>
-            )}
-            {!doesHaveControls && doesHaveMutations && (
-              <Paragraph selectable={false}>
-                Add controls to manipulate mutators over time.
-              </Paragraph>
-            )}
-          </EmptyTree>
-        )}
-        <ControlEdit
-          onEditControlSteps={onEditControlSteps}
-          selectedControlIds={selectedControls}
+      <PanelTitle>Controls</PanelTitle>
+      <ToolBar size="small">
+        <ToolButton
+          disabled={!doesHaveMutations}
+          icon={<Icon>⚙️</Icon>}
+          label="+"
+          onClick={addControlAction}
+          onKeyDown={addControlAction}
+          tooltip="Add control"
         />
-      </Panel>
+        <ToolSeparator />
+        <ToolButton
+          disabled={selectedControls.length !== 1}
+          icon={<Icon>🗑</Icon>}
+          onClick={removeControlAction}
+          onKeyDown={removeControlAction}
+          tooltip="Remove control"
+        />
+      </ToolBar>
+      {doesHaveMutations && doesHaveControls ? (
+        <Tree treeId="controls" />
+      ) : (
+        <EmptyTree>
+          {!doesHaveMutations && (
+            <Paragraph selectable={false}>
+              Add mutators to layers or folders to create controls.
+            </Paragraph>
+          )}
+          {!doesHaveControls && doesHaveMutations && (
+            <Paragraph selectable={false}>
+              Add controls to manipulate mutators over time.
+            </Paragraph>
+          )}
+        </EmptyTree>
+      )}
     </ControlTreeEnvironment>
   );
 };

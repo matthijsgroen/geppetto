@@ -1,7 +1,7 @@
 import type { Vec2, Vec3, Vec4, PreparedFloatBuffer } from "./types";
 
 export const flatten = (vectors: Vec2[] | Vec3[] | Vec4[]): number[] =>
-  ((vectors as unknown) as number[][]).reduce<number[]>(
+  (vectors as unknown as number[][]).reduce<number[]>(
     (result, vec) => result.concat(vec),
     []
   );

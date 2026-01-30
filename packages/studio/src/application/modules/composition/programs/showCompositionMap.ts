@@ -26,6 +26,7 @@ export const showCompositionMap = (
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
   setLayerSelected(layers: string[]): void;
+  setImageBounds(width: number, height: number): void;
   renderer: WebGLRenderer;
 } => {
   const stride = 2;
@@ -51,6 +52,8 @@ export const showCompositionMap = (
   let mutMapping: Record<string, number> = {};
   let scale = 1.0;
   const screenTranslation = trans;
+  let imageBoundsWidth = 0;
+  let imageBoundsHeight = 0;
 
   const populateShapes = () => {
     if (!shapes || !gl || !vertexBuffer || !program) return;
@@ -186,6 +189,11 @@ export const showCompositionMap = (
       }
       onChange();
     },
+    setImageBounds(width: number, height: number) {
+      imageBoundsWidth = width;
+      imageBoundsHeight = height;
+      onChange();
+    },
     renderer(initGl: WebGLRenderingContext, { getSize }) {
       gl = initGl;
 
@@ -225,11 +233,11 @@ export const showCompositionMap = (
           const [canvasWidth, canvasHeight] = getSize();
           if (canvasWidth !== cWidth || canvasHeight !== cHeight) {
             const landscape =
-              img.width / canvasWidth > img.height / canvasHeight;
+              imageBoundsWidth / canvasWidth > imageBoundsHeight / canvasHeight;
 
             scale = landscape
-              ? canvasWidth / img.width
-              : canvasHeight / img.height;
+              ? canvasWidth / imageBoundsWidth
+              : canvasHeight / imageBoundsHeight;
 
             gl.uniform2f(
               gl.getUniformLocation(shaderProgram, "viewport"),

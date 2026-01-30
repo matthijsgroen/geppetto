@@ -46,9 +46,14 @@ describe("mutation calculation performance", () => {
       },
     };
 
-    const rawMutations: Record<string, MutationVector > = {
-      mut1: { type: "translate", name: "Translation", origin: [0, 0] as Vec2, radius: -1 },
-      mut2: { type: "stretch", name: "Stretch", origin: [0, 0] as Vec2, },
+    const rawMutations: Record<string, MutationVector> = {
+      mut1: {
+        type: "translate",
+        name: "Translation",
+        origin: [0, 0] as Vec2,
+        radius: -1,
+      },
+      mut2: { type: "stretch", name: "Stretch", origin: [0, 0] as Vec2 },
     };
 
     bench("interpolate small control (3 steps)", () => {
@@ -64,10 +69,7 @@ describe("mutation calculation performance", () => {
         ctrl1: {
           name: "Color",
           type: "slider" as const,
-          steps: [
-            { colorMut: [0.9, 0.5] },
-            { colorMut: [0.1, 0.8] },
-          ],
+          steps: [{ colorMut: [0.9, 0.5] }, { colorMut: [0.1, 0.8] }],
         },
       };
       const colorMutations: Record<string, MutationVector> = {

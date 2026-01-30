@@ -8,7 +8,6 @@ import {
   use,
 } from "react";
 
-import { Label } from "@/ui/components/atoms/Label/Label";
 import { type ToolBarSize } from "@/ui/components/molecules/ToolBar/ToolBar";
 import { ToolbarContext } from "@/ui/components/molecules/ToolBar/ToolBarContext";
 
@@ -21,6 +20,7 @@ type ToolButtonProps = {
   standAlone?: boolean;
   size?: ToolBarSize;
   tooltip?: string;
+  dangerous?: boolean;
   keyboardFocusOnly?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   onKeyDown?: KeyboardEventHandler<HTMLButtonElement>;
@@ -35,6 +35,7 @@ export const ToolButton: FC<ToolButtonProps> = ({
   size,
   standAlone = false,
   keyboardFocusOnly = false,
+  dangerous = false,
   disabled,
   tooltip,
   label,
@@ -53,11 +54,15 @@ export const ToolButton: FC<ToolButtonProps> = ({
       {...props}
       className={clsx(
         "relative inline-flex flex-row items-center justify-center gap-1 border-0 whitespace-nowrap outline-2 outline-transparent",
-        "focus:outline-control-focus hover:enabled:bg-control-highlight disabled:opacity-50",
+        "focus:outline-control-focus disabled:opacity-50",
         {
-          "bg-toolbar text-text": !active && !standAlone,
-          "bg-control-interaction text-text": !active && standAlone,
+          "hover:enabled:bg-control-highlight": !dangerous,
+          "bg-toolbar text-text": !active && !standAlone && !dangerous,
+          "bg-control-interaction text-text":
+            !active && standAlone && !dangerous,
           "bg-control-active text-active": active,
+          "bg-control-dangerous text-dangerous hover:enabled:bg-control-dangerous-highlight":
+            dangerous,
 
           "h-6 rounded-control-small text-xs":
             useSize === "small" || useSize === "minimal",
@@ -92,9 +97,16 @@ export const ToolButton: FC<ToolButtonProps> = ({
     >
       {icon}
       {label && (
-        <Label active={active} size={useSize}>
+        <span
+          className={clsx("contents py-1 font-caption", {
+            "text-text": !active && !dangerous,
+            "text-dangerous": dangerous,
+            "text-active": active,
+            "text-xs": useSize === "small" || useSize === "minimal",
+          })}
+        >
           {label}
-        </Label>
+        </span>
       )}
     </button>
   );

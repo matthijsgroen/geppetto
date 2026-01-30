@@ -4,12 +4,12 @@ import { mix, mixHue } from "../vertices";
 
 /**
  * Merges two mutation values based on the mutation type.
- * 
+ *
  * Different mutation types combine differently:
  * - Multiplicative (stretch, lightness, opacity, saturation): component-wise multiplication
  * - First-wins (colorize): returns first value unchanged
  * - Additive (translate, rotate, deform, others): component-wise addition
- * 
+ *
  * @param a First mutation value
  * @param b Second mutation value
  * @param mutationType Type of mutation (translate, stretch, colorize, etc.)
@@ -39,10 +39,10 @@ export const mergeMutationValue = (
 
 /**
  * Interpolates mutation values between control steps.
- * 
+ *
  * Handles fractional control values (e.g., 1.5 interpolates between step 1 and 2).
  * Uses circular interpolation for colorize mutations (hue wrapping).
- * 
+ *
  * @param rawControls Control definitions with steps
  * @param rawMutations Mutation type information
  * @param controlIds Ordered list of control IDs
@@ -62,8 +62,11 @@ export const interpolateControlStep = (
   if (!control) return {};
 
   // Clamp to valid range
-  const clampedValue = Math.max(0, Math.min(controlValue, control.steps.length - 1));
-  
+  const clampedValue = Math.max(
+    0,
+    Math.min(controlValue, control.steps.length - 1)
+  );
+
   const minStep = Math.floor(clampedValue);
   const maxStep = Math.ceil(clampedValue);
   const stepLimit = control.steps.length - 1;
@@ -97,14 +100,14 @@ export const interpolateControlStep = (
 
 /**
  * Recalculates all mutation values from scratch using defaultFrame + all control values.
- * 
+ *
  * This implements the same algorithm as studio's calculateVectorValues:
  * 1. Start with defaultFrame baseline values
  * 2. For each control, interpolate its current step
  * 3. Merge each control's mutations with existing values using type-specific logic
- * 
+ *
  * Mutates the mutationValues array in-place.
- * 
+ *
  * @param mutationValues Float32Array to update (modified in-place)
  * @param controlValues Current control values in step scale
  * @param rawControls Control definitions

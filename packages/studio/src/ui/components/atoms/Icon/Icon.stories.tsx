@@ -8,6 +8,7 @@ const meta = preview.meta({
   args: {
     children: "️💡",
     colorize: false,
+    active: false,
   },
 });
 export default meta;
@@ -17,5 +18,12 @@ export const Icon = meta.story();
 export const ColorizedIcon = meta.story({
   args: {
     colorize: true,
+  },
+});
+
+export const ColorizedActiveIcon = meta.story({
+  args: {
+    colorize: true,
+    active: true,
   },
 });

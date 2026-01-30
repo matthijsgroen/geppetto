@@ -70,17 +70,8 @@ export const usePanningAndZoom = (
     // Get current viewport from player
     const viewport = animationControlsRef.current.getViewport();
 
-    // Player's pan coordinate space: ±1 = half canvas width (independent of zoom/scale)
-    // deltaPan = deltaPixels / (canvasWidth / 2) = deltaPixels * 2 / canvasWidth
-    const newPanX = Math.min(
-      1.0,
-      Math.max(-1.0, viewport.panX + (deltaX * 2) / rect.width)
-    );
-
-    const newPanY = Math.min(
-      1.0,
-      Math.max(-1.0, viewport.panY - (deltaY * 2) / rect.height)
-    );
+    const newPanX = viewport.panX + (deltaX * 2) / rect.width;
+    const newPanY = viewport.panY - (deltaY * 2) / rect.height;
 
     // Update player directly
     animationControlsRef.current.setPanning(newPanX, newPanY);

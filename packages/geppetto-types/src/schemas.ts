@@ -74,7 +74,7 @@ export const colorizeSchema = baseMutationVectorSchema.extend({
 /**
  * Zod schema for any mutation vector
  */
-export const mutationVectorSchema = z.union([
+export const mutationVectorSchema = z.discriminatedUnion("type", [
   translationVectorSchema,
   deformationVectorSchema,
   stretchVectorSchema,
@@ -168,12 +168,20 @@ export const frameLayerVisibilityActionSchema = z.object({
 });
 
 /**
- * Zod schema for frame event
+ * Zod schema for frame callback event
  */
-export const frameEventSchema = z.object({
+export const frameCallbackEventSchema = z.object({
+  type: z.literal("callback"),
   start: z.number(),
   eventName: z.string(),
 });
+
+/**
+ * Zod schema for frame event
+ */
+export const frameEventSchema = z.discriminatedUnion("type", [
+  frameCallbackEventSchema,
+]);
 
 /**
  * Zod schema for animation control track
@@ -202,8 +210,12 @@ export const animationSchema = z.object({
   name: z.string(),
   looping: z.boolean(),
   speedModifier: z.number().optional(),
+  autoplay: z.boolean().optional(),
   tracks: z.array(
-    z.union([animationControlTrackSchema, animationVisibilityTrackSchema])
+    z.discriminatedUnion("type", [
+      animationControlTrackSchema,
+      animationVisibilityTrackSchema,
+    ])
   ),
   events: z.array(frameEventSchema),
 });
@@ -230,5 +242,6 @@ export const geppettoImageSchema = z.strictObject({
   controlFolders: z.record(folderSchema),
   controls: z.record(controlDefinitionSchema),
   controlValues: z.record(z.number()),
+  animationHierarchy: hierarchySchema,
   animations: z.record(animationSchema),
 });

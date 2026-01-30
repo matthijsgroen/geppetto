@@ -5,18 +5,35 @@ import type { FC } from "react";
 export const TimeCurve: FC<{
   size?: "flex" | "option";
   variant: EasingFunction;
-}> = ({ variant, size = "flex" }) => {
+  start?: number;
+  end?: number;
+}> = ({ variant, size = "flex", start = 0, end = 1 }) => {
+  const offsetTop = 1 - Math.max(start, end);
+  const offsetBottom = Math.min(start, end);
+
   return (
     <div
       className={clsx(
-        "pointer-events-none bg-control-focus/50",
-        size === "flex" && "h-full flex-1",
-        size === "option" && "me-1 inline-block h-4 w-8",
-        variant === "linear" && "clip-linear",
-        variant === "easeIn" && "clip-ease-in",
-        variant === "easeOut" && "clip-ease-out",
-        variant === "easeInOut" && "clip-ease-in-out"
+        "pointer-events-none flex-col gap-0 opacity-50",
+        size === "flex" && "flex h-full flex-1",
+        size === "option" && "me-1 inline-flex h-4 w-8"
       )}
-    ></div>
+    >
+      <div style={{ height: `${offsetTop * 100}%` }}></div>
+      <div
+        className={clsx(
+          "pointer-events-none -mb-px flex flex-1 bg-control-focus",
+          start > end && "scale-x-[-1]",
+          variant === "linear" && "clip-linear",
+          variant === "easeIn" && "clip-ease-in",
+          variant === "easeOut" && "clip-ease-out",
+          variant === "easeInOut" && "clip-ease-in-out"
+        )}
+      ></div>
+      <div
+        className="bg-control-focus"
+        style={{ height: `${offsetBottom * 100}%`, minHeight: "1px" }}
+      ></div>
+    </div>
   );
 };

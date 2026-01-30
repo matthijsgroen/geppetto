@@ -1,5 +1,5 @@
 import type { GeppettoImage } from "@geppetto/types";
-import { type RefObject, useMemo, useRef } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 
 import { newFile } from "@/domain/animation/file2/new";
 import {
@@ -116,10 +116,13 @@ const populateTree = (
 export const useControlTreeItems = (file: GeppettoImage) => {
   const treeItemsRef = useRef<Record<TreeItemIndex, ControlItem>>({});
   const fileRef = useRef<GeppettoImage>(newFile());
+  const [result, setResult] = useState<Record<TreeItemIndex, ControlItem>>({});
 
-  useMemo(() => {
+  useEffect(() => {
     populateTree(file, fileRef.current, treeItemsRef);
+    setResult(treeItemsRef.current);
     fileRef.current = file;
   }, [file]);
-  return treeItemsRef.current;
+
+  return result;
 };

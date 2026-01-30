@@ -7,7 +7,6 @@ import {
   isRootNode,
   moveInHierarchy,
 } from "@/domain/animation/file2/hierarchy";
-import { type UseState } from "@/dtos/application.dto";
 import {
   type TreeData,
   TreeEnvironment,
@@ -18,7 +17,8 @@ import {
 import { useControlTreeItems } from "./useControlTreeItems";
 
 type ControlTreeEnvironmentProps = {
-  selectedItemsState: UseState<string[]>;
+  selectedItems: string[];
+  onSelectItems?: (controlIds: string[]) => void;
   treeId: string;
   children: React.ReactElement | React.ReactElement[] | null;
 };
@@ -27,12 +27,12 @@ type ControlItem = TreeItem<TreeData<"control" | "controlFolder">>;
 const yes = () => true;
 
 export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
-  selectedItemsState,
+  selectedItems,
+  onSelectItems,
   treeId,
   children,
 }) => {
   const [file, setFile] = useFile();
-  const [selectedItems, setSelectedItems] = selectedItemsState;
   const [focusedItem, setFocusedItem] = useState<string | undefined>(undefined);
 
   const canDropAt = useCallback(
@@ -136,9 +136,9 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
       onSelectItems={useCallback(
         (items: TreeItemIndex[]) => {
           const ids = items.map((e) => `${e}`);
-          setSelectedItems(ids);
+          onSelectItems?.(ids);
         },
-        [setSelectedItems]
+        [onSelectItems]
       )}
       viewState={{
         [treeId]: {

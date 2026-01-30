@@ -1,4 +1,10 @@
-import type { PreparedFloatBuffer, PreparedIntBuffer, PreparedImageDefinition, EasingFunction, PreparedControlAction } from "./types";
+import type {
+  PreparedFloatBuffer,
+  PreparedIntBuffer,
+  PreparedImageDefinition,
+  EasingFunction,
+  PreparedControlAction,
+} from "./types";
 import animationFragmentShader from "./shaders/fragmentShader.frag";
 import { animationVertexShader } from "./shaders/vertexShader";
 import { applyEasing } from "./vertices";
@@ -72,6 +78,18 @@ export type AnimationControls = {
    * indicating what animation names are available.
    */
   stopAnimation(animationName: string): void;
+
+  /**
+   * Render the image at a specific timestamp for an animation track.
+   * This will stop the specified animation and render it at the given timestamp,
+   * considering looping for tracks shorter than the timestamp.
+   * Does not emit events or callbacks.
+   *
+   * @param animationName the name of the animation track to render.
+   * @param timestamp the timestamp in milliseconds to render at.
+   * @throws an error if the provided trackName does not exist
+   */
+  renderAtTimestamp(animationName: string, timestamp: number): void;
 
   /**
    * Manipulates a control. Will stop animations that are using this control as well.
@@ -192,7 +210,7 @@ export interface AnimationOptions {
    * @default window.devicePixelRatio || 1
    */
   pixelDensity?: number;
-  
+
   /**
    * How to scale the image to fit the canvas.
    * - 'contain': letterbox/pillarbox to fit entirely (default)
@@ -200,7 +218,7 @@ export interface AnimationOptions {
    * - 'none': no automatic scaling
    * @default 'contain'
    */
-  fitMode?: 'contain' | 'cover' | 'none';
+  fitMode?: "contain" | "cover" | "none";
   /**
    * Horizontal position of image in canvas. `0` = center, `-1` = left, `1` = right.
    *
@@ -226,6 +244,11 @@ export interface AnimationOptions {
    * @default 0
    */
   zIndex: number;
+  /**
+   * Disable auto-playing animation.
+   * @default false
+   */
+  disableAutoplay?: boolean;
 }
 
 type PlayStatus = {
@@ -404,37 +427,38 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
     render: () => {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
       gl.viewport(0, 0, element.width, element.height);
-      
+
       // Render all animations sorted by zIndex
       const sortedAnimations = animations.slice().sort(() => {
         // Access zIndex from the animation's options
         return 0; // For now, render in order they were added
       });
-      
+
       for (const animation of sortedAnimations) {
         animation.render();
       }
     },
     addAnimation: (animation, image, textureUnit, options) => {
       const id = ++animId;
-      
+
       // Calculate pixelDensity (default to devicePixelRatio)
-      const pixelDensity = options?.pixelDensity ?? (typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1);
-      
-      // Get fitMode (default to 'contain')
-      const fitMode = options?.fitMode ?? 'contain';
-      
+      const pixelDensity =
+        options?.pixelDensity ??
+        (typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1);
+
       // Use metadata from animation as defaults, merged with provided options
       // For zoom: if fitMode is 'none', use metadata zoom; otherwise start at 1 (auto-fit will handle scaling)
       const animationDefaults: AnimationOptions = {
-        zoom: fitMode === 'none' ? animation.metadata.zoom : 1,
+        zoom: options?.fitMode === "none" ? animation.metadata.zoom : 1,
         panX: animation.metadata.pan[0],
         panY: animation.metadata.pan[1],
         zIndex: 0,
         pixelDensity,
-        fitMode,
+        fitMode: "contain",
+        disableAutoplay: false,
       };
-      
+      const animationOptions = { ...animationDefaults, ...options };
+
       const unit = [
         gl.TEXTURE0,
         gl.TEXTURE1,
@@ -456,19 +480,26 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       // Upload mutation vectors and parent chain once at initialization
       const setBuffer = setProgramBuffer(gl, program);
       setBuffer("uMutationVectors", animation.mutators);
-      
+
       const parentLocation = gl.getUniformLocation(program, "uMutationParent");
       gl.uniform1iv(parentLocation, animation.mutatorParents.data);
-      
+
       // Mutation values will be uploaded before each render
-      const mutationValuesLocation = gl.getUniformLocation(program, "uMutationValues");
-      
+      const mutationValuesLocation = gl.getUniformLocation(
+        program,
+        "uMutationValues"
+      );
+
       // Save a copy of defaultFrame values for recalculation
-      const defaultFrameValues = new Float32Array(animation.mutationValues.data);
-      
+      const defaultFrameValues = new Float32Array(
+        animation.mutationValues.data
+      );
+
       // Initialize control values
       const controlValues = new Float32Array(animation.defaultControlValues);
-      const renderControlValues = new Float32Array(animation.defaultControlValues);
+      const renderControlValues = new Float32Array(
+        animation.defaultControlValues
+      );
 
       // Dirty tracking for performance optimization
       // Track which controls have changed to avoid unnecessary recalculation
@@ -529,14 +560,13 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
       let cWidth = 0,
         cHeight = 0;
 
-      const animationOptions = { ...animationDefaults, ...options };
       let { zoom, panX, panY, zIndex } = animationOptions;
       let basePosition = [0, 0];
       let scale = 1.0;
 
       const playingAnimations: PlayStatus[] = [];
       const looping: boolean[] = animation.animations.map((a) => a.looping);
-      
+
       // Track layer visibility (all visible by default)
       const layerVisibility: boolean[] = animation.layers.map(() => true);
 
@@ -554,7 +584,8 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         // Place current active control values in control values list
         // (preserve values when animation stops)
         for (const track of playingAnimation.tracks) {
-          controlValues[track.controlIndex] = renderControlValues[track.controlIndex];
+          controlValues[track.controlIndex] =
+            renderControlValues[track.controlIndex];
         }
 
         for (const listener of onTrackStoppedListeners) {
@@ -593,14 +624,14 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             `Control ${control} value should be between 0 and 1. ${value} is out of bounds.`
           );
         }
-        
+
         const controlIds = Object.keys(animation.rawControls);
         const controlId = controlIds[controlIndex];
         const maxSteps = animation.rawControls[controlId].steps.length - 1;
-        
+
         // Scale 0-1 input to actual step range (0 to steps.length-1)
         const scaledValue = value * maxSteps;
-        
+
         // Stop all conflicting animations
         for (const playing of playingAnimations) {
           const playingAnimation = animation.animations[playing.index];
@@ -612,7 +643,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             stopAnimation(playingAnimation.name);
           }
         }
-        
+
         // Stop any existing tween for this control
         const existingTweenIndex = controlTweens.findIndex(
           (t) => t.controlIndex === controlIndex
@@ -623,10 +654,10 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
         controlValues[controlIndex] = scaledValue;
         renderControlValues[controlIndex] = scaledValue;
-        
+
         // Mark control as dirty for recalculation
         controlChangeFlags[controlIndex] = 1;
-        
+
         // Recalculate all mutation values from defaultFrame + all control values
         recalculateMutationValues(
           animation.mutationValues.data,
@@ -636,11 +667,11 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           animation.mutatorMapping,
           defaultFrameValues
         );
-        
+
         // Clear dirty flags after recalculation
         controlChangeFlags.fill(0);
         lastControlValues.set(renderControlValues);
-        
+
         // Upload to GPU immediately
         gl.useProgram(program);
         gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
@@ -663,10 +694,10 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         const controlIds = Object.keys(animation.rawControls);
         const controlId = controlIds[controlIndex];
         const maxSteps = animation.rawControls[controlId].steps.length - 1;
-        
+
         // Scale 0-1 target to actual step range
         const scaledTarget = targetValue * maxSteps;
-        
+
         // Stop all conflicting animations
         for (const playing of playingAnimations) {
           const playingAnimation = animation.animations[playing.index];
@@ -731,7 +762,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               stopAnimation(playingAnimation.name);
             }
           }
-          
+
           // Stop any conflicting tweens
           for (const controlIndex of animationControls) {
             const existingTweenIndex = controlTweens.findIndex(
@@ -755,11 +786,114 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         stopAnimation,
         setControlValue,
         tweenControlTo,
+        renderAtTimestamp(animationName: string, timestamp: number) {
+          const trackIndex = nameToTrackIndex(animationName);
+          const playingAnimation = animation.animations[trackIndex];
+
+          const playSpeed = animation.animations[trackIndex].speed;
+          // Stop the animation if it's currently playing
+          const playingIndex = playingAnimations.findIndex(
+            (p) => p.index === trackIndex
+          );
+          if (playingIndex !== -1) {
+            playingAnimations.splice(playingIndex, 1);
+          }
+
+          // Process each track at the given timestamp
+          for (const track of playingAnimation.tracks) {
+            // Track position wraps at track.length (handles looping)
+            const trackPosition = (timestamp * playSpeed) % track.length;
+            const isInLoopIteration = timestamp * playSpeed >= track.length;
+
+            // Find active action at the timestamp
+            let activeAction: PreparedControlAction | null = null;
+            let lastCompletedAction: PreparedControlAction | null = null;
+
+            for (const action of track.actions) {
+              if (
+                trackPosition >= action.start &&
+                trackPosition < action.start + action.duration
+              ) {
+                activeAction = action;
+                break;
+              }
+              if (trackPosition >= action.start + action.duration) {
+                lastCompletedAction = action;
+              }
+            }
+
+            if (activeAction) {
+              // Calculate progress within this action
+              const actionProgress =
+                (trackPosition - activeAction.start) / activeAction.duration;
+              const easedProgress = applyEasing(
+                actionProgress,
+                activeAction.easingFunction
+              );
+
+              // Determine start value
+              let startValue: number;
+              if (activeAction.controlStartValue !== undefined) {
+                startValue = activeAction.controlStartValue;
+              } else {
+                // Find the previous action's end value
+                let previousActionEndValue: number | undefined;
+                for (const action of track.actions) {
+                  if (action.start + action.duration <= activeAction.start) {
+                    previousActionEndValue = action.controlEndValue;
+                  }
+                }
+                if (isInLoopIteration && previousActionEndValue === undefined) {
+                  // look for last action in previous iteration
+                  const lastAction = track.actions[track.actions.length - 1];
+                  previousActionEndValue = lastAction.controlEndValue;
+                }
+                startValue =
+                  previousActionEndValue !== undefined
+                    ? previousActionEndValue
+                    : controlValues[track.controlIndex];
+              }
+
+              // Interpolate from start to end
+              const interpolatedValue = mix(
+                startValue,
+                activeAction.controlEndValue,
+                easedProgress
+              );
+              controlValues[track.controlIndex] = interpolatedValue;
+              renderControlValues[track.controlIndex] = interpolatedValue;
+            } else if (lastCompletedAction) {
+              // No active action - hold at the end value of the last completed action
+              controlValues[track.controlIndex] =
+                lastCompletedAction.controlEndValue;
+              renderControlValues[track.controlIndex] =
+                lastCompletedAction.controlEndValue;
+            }
+          }
+
+          // Recalculate mutation values based on new control values
+          recalculateMutationValues(
+            animation.mutationValues.data,
+            renderControlValues,
+            animation.rawControls,
+            animation.rawMutations,
+            animation.mutatorMapping,
+            defaultFrameValues
+          );
+
+          // Update last control values
+          lastControlValues.set(renderControlValues);
+
+          // Upload to GPU
+          gl.useProgram(program);
+          gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
+        },
         getControlValue: (controlName) => {
           const controlIndex = nameToControlIndex(controlName);
           const controlIds = Object.keys(animation.rawControls);
           const controlId = controlIds[controlIndex];
           const maxSteps = animation.rawControls[controlId].steps.length - 1;
+          if (maxSteps === 0) return 0;
           // Return value in 0-1 range (scale from step range)
           return controlValues[controlIndex] / maxSteps;
         },
@@ -806,24 +940,24 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
           if (element.width !== cWidth || element.height !== cHeight) {
             const pixelDensity = animationOptions.pixelDensity || 1;
-            const fitMode = animationOptions.fitMode || 'contain';
-            
+            const fitMode = animationOptions.fitMode || "contain";
+
             // Calculate logical canvas dimensions (accounting for pixel density)
             const canvasWidth = element.width / pixelDensity;
             const canvasHeight = element.height / pixelDensity;
-            
+
             // Use metadata dimensions for image size (not texture dimensions)
             const imageWidth = animation.metadata.width;
             const imageHeight = animation.metadata.height;
-            
+
             // Calculate scale based on fitMode
             const scaleX = canvasWidth / imageWidth;
             const scaleY = canvasHeight / imageHeight;
-            
-            if (fitMode === 'contain') {
+
+            if (fitMode === "contain") {
               // Letterbox/pillarbox - use smaller scale to fit entirely
               scale = Math.min(scaleX, scaleY);
-            } else if (fitMode === 'cover') {
+            } else if (fitMode === "cover") {
               // Fill canvas - use larger scale, may crop
               scale = Math.max(scaleX, scaleY);
             } else {
@@ -840,31 +974,38 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           // Always recalculate basePosition with current zoom (for center-based zooming)
           const combinedScale = scale * zoom;
           const pixelDensity = animationOptions.pixelDensity || 1;
-          basePosition = [element.width / pixelDensity / 2 / combinedScale, element.height / pixelDensity / 2 / combinedScale];
-          
+          basePosition = [
+            element.width / pixelDensity / 2 / combinedScale,
+            element.height / pixelDensity / 2 / combinedScale,
+          ];
+
           // Calculate scissor rectangle based on metadata bounds (clip to logical image area)
           const canvasWidth = element.width / pixelDensity;
           const canvasHeight = element.height / pixelDensity;
-          
+
           // Image dimensions in logical space
           const imageWidth = animation.metadata.width;
           const imageHeight = animation.metadata.height;
-          
+
           // Calculate rendered image dimensions in canvas pixels
           const renderedWidth = imageWidth * combinedScale * pixelDensity;
           const renderedHeight = imageHeight * combinedScale * pixelDensity;
-          
+
           // Calculate position accounting for pan (pan is in clip space: -1 to +1 represents full viewport)
           // panX/panY are added in clip space, where ±1 = full viewport width/height
-          const centerX = (canvasWidth / 2 + panX * canvasWidth / 2) * pixelDensity;
-          const centerY = (canvasHeight / 2 - panY * canvasHeight / 2) * pixelDensity;
-          
+          const centerX =
+            (canvasWidth / 2 + (panX * canvasWidth) / 2) * pixelDensity;
+          const centerY =
+            (canvasHeight / 2 - (panY * canvasHeight) / 2) * pixelDensity;
+
           // Scissor rectangle (x, y from bottom-left corner in GL coordinates)
           let scissorX = Math.round(centerX - renderedWidth / 2);
-          let scissorY = Math.round(element.height - centerY - renderedHeight / 2);
+          let scissorY = Math.round(
+            element.height - centerY - renderedHeight / 2
+          );
           let scissorWidth = Math.round(renderedWidth);
           let scissorHeight = Math.round(renderedHeight);
-          
+
           // Clamp scissor to canvas bounds (gl.scissor doesn't auto-clip negative values)
           if (scissorX < 0) {
             scissorWidth += scissorX;
@@ -874,13 +1015,19 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             scissorHeight += scissorY;
             scissorY = 0;
           }
-          scissorWidth = Math.min(scissorWidth, element.width - scissorX);
-          scissorHeight = Math.min(scissorHeight, element.height - scissorY);
-          
+          scissorWidth = Math.max(
+            Math.min(scissorWidth, element.width - scissorX),
+            0
+          );
+          scissorHeight = Math.max(
+            Math.min(scissorHeight, element.height - scissorY),
+            0
+          );
+
           // Apply scissor test to clip to image bounds
           gl.enable(gl.SCISSOR_TEST);
           gl.scissor(scissorX, scissorY, scissorWidth, scissorHeight);
-          
+
           // Apply auto-fit scale and user zoom together
           gl.uniform4f(uScale, combinedScale, 1.0, panX, panY);
 
@@ -896,20 +1043,20 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           );
 
           const now = +new Date();
-          
+
           // Process control tweens
           const completedTweens: number[] = [];
           for (let i = 0; i < controlTweens.length; i++) {
             const tween = controlTweens[i];
             const elapsed = performance.now() - tween.startTime;
             const progress = Math.min(elapsed / tween.duration, 1);
-            
+
             if (progress >= 1) {
               // Tween complete
               controlValues[tween.controlIndex] = tween.targetValue;
               renderControlValues[tween.controlIndex] = tween.targetValue;
               completedTweens.push(i);
-              
+
               // Trigger completion callback if provided
               if (tween.onComplete) {
                 tween.onComplete();
@@ -917,17 +1064,21 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             } else {
               // Apply easing and interpolate
               const easedProgress = applyEasing(progress, tween.easing);
-              const currentValue = mix(tween.startValue, tween.targetValue, easedProgress);
+              const currentValue = mix(
+                tween.startValue,
+                tween.targetValue,
+                easedProgress
+              );
               controlValues[tween.controlIndex] = currentValue;
               renderControlValues[tween.controlIndex] = currentValue;
             }
           }
-          
+
           // Remove completed tweens (reverse order to maintain indices)
           for (let i = completedTweens.length - 1; i >= 0; i--) {
             controlTweens.splice(completedTweens[i], 1);
           }
-          
+
           // Update mutations for any controls changed by tweens
           if (controlTweens.length > 0) {
             const controlIds = Object.keys(animation.rawControls);
@@ -939,19 +1090,24 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                 tween.controlIndex,
                 renderControlValues[tween.controlIndex]
               );
-              
-              for (const [mutationId, mutationValue] of Object.entries(mutationUpdates)) {
+
+              for (const [mutationId, mutationValue] of Object.entries(
+                mutationUpdates
+              )) {
                 const mutationIndex = animation.mutatorMapping[mutationId];
                 if (mutationIndex !== undefined) {
-                  animation.mutationValues.data[mutationIndex * 2] = mutationValue[0];
-                  animation.mutationValues.data[mutationIndex * 2 + 1] = mutationValue[1];
+                  animation.mutationValues.data[mutationIndex * 2] =
+                    mutationValue[0];
+                  animation.mutationValues.data[mutationIndex * 2 + 1] =
+                    mutationValue[1];
                 }
               }
             }
           }
-          
+
           for (const playing of playingAnimations) {
-            const animationTime = (now - playing.iterationStartedAt) * playing.speed;
+            const animationTime =
+              (now - playing.iterationStartedAt) * playing.speed;
             const playingAnimation = animation.animations[playing.index];
 
             // Check if animation should stop (non-looping and reached end)
@@ -965,7 +1121,8 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
               // Store current values as start values for next iteration
               for (const track of playingAnimation.tracks) {
-                controlValues[track.controlIndex] = renderControlValues[track.controlIndex];
+                controlValues[track.controlIndex] =
+                  renderControlValues[track.controlIndex];
               }
             }
 
@@ -984,13 +1141,17 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             for (const track of playingAnimation.tracks) {
               // Track position wraps at track.length (independent per-track looping)
               const trackPosition = animationTime % track.length;
-              
+              const isInLoopIteration = animationTime >= track.length;
+
               // Find active action at current track position
               let activeAction: PreparedControlAction | null = null;
               let lastCompletedAction: PreparedControlAction | null = null;
-              
+
               for (const action of track.actions) {
-                if (trackPosition >= action.start && trackPosition < action.start + action.duration) {
+                if (
+                  trackPosition >= action.start &&
+                  trackPosition < action.start + action.duration
+                ) {
                   activeAction = action;
                   break;
                 }
@@ -999,12 +1160,16 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                   lastCompletedAction = action;
                 }
               }
-              
+
               if (activeAction) {
                 // Calculate progress within this action
-                const actionProgress = (trackPosition - activeAction.start) / activeAction.duration;
-                const easedProgress = applyEasing(actionProgress, activeAction.easingFunction);
-                
+                const actionProgress =
+                  (trackPosition - activeAction.start) / activeAction.duration;
+                const easedProgress = applyEasing(
+                  actionProgress,
+                  activeAction.easingFunction
+                );
+
                 // Determine start value
                 // If controlStartValue is defined, use it. Otherwise, find what value to use:
                 // - If we're at the very start of the action, use the previous action's end value
@@ -1016,29 +1181,49 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                   // Find the previous action's end value
                   let previousActionEndValue: number | undefined;
                   for (const action of track.actions) {
-                    if (action.start + action.duration === activeAction.start) {
+                    if (action.start + action.duration <= activeAction.start) {
                       previousActionEndValue = action.controlEndValue;
-                      break;
                     }
                   }
+                  if (
+                    isInLoopIteration &&
+                    previousActionEndValue === undefined
+                  ) {
+                    // look for last action in previous iteration
+                    const lastAction = track.actions[track.actions.length - 1];
+                    previousActionEndValue = lastAction.controlEndValue;
+                  }
                   // If we found a previous action, use its end value, otherwise use current control value
-                  startValue = previousActionEndValue !== undefined 
-                    ? previousActionEndValue 
-                    : controlValues[track.controlIndex];
+                  startValue =
+                    previousActionEndValue !== undefined
+                      ? previousActionEndValue
+                      : controlValues[track.controlIndex];
                 }
-                
+
                 // Interpolate from start to end
-                const interpolatedValue = mix(startValue, activeAction.controlEndValue, easedProgress);
+                const interpolatedValue = mix(
+                  startValue,
+                  activeAction.controlEndValue,
+                  easedProgress
+                );
                 renderControlValues[track.controlIndex] = interpolatedValue;
               } else if (lastCompletedAction) {
                 // No active action - hold at the end value of the last completed action
-                renderControlValues[track.controlIndex] = lastCompletedAction.controlEndValue;
+                renderControlValues[track.controlIndex] =
+                  lastCompletedAction.controlEndValue;
+                // update control value with held value, so that control tweens and other animations pick it up
+                // and the user can read the correct value via getControlValue
+                controlValues[track.controlIndex] =
+                  lastCompletedAction.controlEndValue;
               }
               // If no actions at all, keep the control at its current value
             }
 
             // Process visibility tracks
-            for (const [layerIndex, actions] of playingAnimation.visibilityTracks.entries()) {
+            for (const [
+              layerIndex,
+              actions,
+            ] of playingAnimation.visibilityTracks.entries()) {
               // Find the most recent visibility action at current animation time
               let currentVisibility: boolean | undefined;
               for (const [time, visible] of actions) {
@@ -1053,7 +1238,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               }
             }
           }
-          
+
           // Check if any controls have changed since last render
           let hasChanges = false;
           for (let i = 0; i < renderControlValues.length; i++) {
@@ -1062,7 +1247,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               hasChanges = true;
             }
           }
-          
+
           // Update mutation values only if any controls changed (animations or tweens)
           if (hasChanges) {
             recalculateMutationValues(
@@ -1073,12 +1258,12 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               animation.mutatorMapping,
               defaultFrameValues
             );
-            
+
             // Clear dirty flags and update last values
             controlChangeFlags.fill(0);
             lastControlValues.set(renderControlValues);
           }
-          
+
           // Upload mutation values to GPU
           gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
 
@@ -1086,7 +1271,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             const layer = animation.layers[i];
             // Skip invisible layers
             if (!layerVisibility[i]) continue;
-            
+
             gl.uniform3f(uTranslate, layer.x, layer.y, layer.z);
             gl.uniform1f(uMutation, layer.mutator);
             gl.drawElements(
@@ -1096,7 +1281,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               layer.start
             );
           }
-          
+
           // Disable scissor test after rendering
           gl.disable(gl.SCISSOR_TEST);
         },
@@ -1139,6 +1324,17 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         },
       };
       animations.push(newAnimation);
+
+      if (!animationOptions.disableAutoplay) {
+        animation.animations.forEach((anim) => {
+          if (anim.autoplay) {
+            newAnimation.startAnimation(anim.name, {
+              startAt: 0,
+              speed: 1,
+            });
+          }
+        });
+      }
 
       return newAnimation;
     },

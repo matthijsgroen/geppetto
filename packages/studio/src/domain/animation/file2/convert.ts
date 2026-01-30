@@ -34,6 +34,12 @@ const populateMutations = (
     target.mutations[id] = {
       ...mutation,
     };
+    if (
+      target.mutations[id].type === "translate" ||
+      target.mutations[id].type === "deform"
+    ) {
+      target.mutations[id].radius = target.mutations[id].radius ?? -1;
+    }
   }
   return ids;
 };
@@ -215,6 +221,7 @@ const convertEvents = (
   for (const keyframe of keyframes) {
     if (keyframe.event) {
       events.push({
+        type: "callback",
         start: keyframe.time,
         eventName: keyframe.event,
       });
@@ -227,19 +234,27 @@ const populateAnimations = (
   animations: ImageDefinition["animations"],
   target: GeppettoImage,
   createId: () => string
-): Record<string, Animation> => {
-  const result: Record<string, Animation> = {};
+): Hierarchy<"animation"> => {
+  const result: Hierarchy<"animation"> = {};
+  const newAnimations: Record<string, Animation> = {};
   const ids: string[] = [];
   for (const animation of animations) {
     const id = createId();
     ids.push(id);
     result[id] = {
+      type: "animation",
+      parentId: "root",
+    };
+    newAnimations[id] = {
       name: animation.name,
       looping: animation.looping,
       tracks: convertKeyframeToTracks(animation.keyframes, target),
       events: convertEvents(animation.keyframes, target),
     };
   }
+  target.animations = newAnimations;
+
+  result.root = { type: "root", children: ids };
   return result;
 };
 
@@ -280,7 +295,7 @@ export const convertFromV1 = (imageDef: ImageDefinition): GeppettoImage => {
 
   if (imageDef.animations) {
     id = 0;
-    result.animations = populateAnimations(
+    result.animationHierarchy = populateAnimations(
       imageDef.animations,
       result,
       createId

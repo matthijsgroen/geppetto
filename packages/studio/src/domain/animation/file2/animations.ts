@@ -4,8 +4,11 @@ import type {
   EasingFunction,
   FrameControlAction,
   GeppettoImage,
+  TreeNode,
 } from "@geppetto/types";
 import { produce } from "immer";
+
+import { addInHierarchy } from "@/domain/animation/file2/hierarchy";
 
 export const hasAnimations = (file: GeppettoImage) =>
   Object.keys(file.animations).length > 0;
@@ -14,14 +17,6 @@ export const hasAnimationsWithData = (file: GeppettoImage) =>
   Object.values(file.animations).some(
     (animation) => Object.keys(animation.tracks).length > 0
   );
-
-export const getNextAnimationId = (file: GeppettoImage): string => {
-  let id = 0;
-  while (`${id}` in file.animations) {
-    id++;
-  }
-  return `${id}`;
-};
 
 export const getAnimationName = (file: GeppettoImage) => {
   let id = 1;
@@ -32,9 +27,27 @@ export const getAnimationName = (file: GeppettoImage) => {
   return `animation ${id}`;
 };
 
+export const getAnimationDuration = (animation: Animation) => {
+  const trackDurations = animation.tracks.map(
+    (track) => track.length / (animation.speedModifier ?? 1)
+  );
+  const eventDurations = animation.events.map(
+    (event) => event.start / (animation.speedModifier ?? 1)
+  );
+  return Math.max(...trackDurations, ...eventDurations, 0);
+};
+
 export const updateLoopingAnimation = (animationId: string, looping: boolean) =>
   produce<GeppettoImage>((draft) => {
     draft.animations[animationId].looping = looping;
+  });
+
+export const updateAutoplayAnimation = (
+  animationId: string,
+  autoplay: boolean
+) =>
+  produce<GeppettoImage>((draft) => {
+    draft.animations[animationId].autoplay = autoplay;
   });
 
 export type AddAnimationDetails = {
@@ -46,19 +59,24 @@ export const addAnimation = (
   dataResult?: AddAnimationDetails | Record<string, never>
 ) =>
   produce<GeppettoImage>((draft) => {
-    const newAnimationId = getNextAnimationId(draft);
     const newAnimationName = getAnimationName(draft);
-
-    draft.animations[newAnimationId] = {
+    const [animationHierarchy, animationId] = addInHierarchy(
+      draft.animationHierarchy,
+      { type: "animation" },
+      { parent: "root" }
+    );
+    draft.animationHierarchy = animationHierarchy;
+    draft.animations[animationId] = {
       name: newAnimationName,
       tracks: [],
       events: [],
       looping: false,
+      autoplay: false,
     };
     if (dataResult) {
       Object.assign(dataResult, {
-        id: newAnimationId,
-        animation: draft.animations[newAnimationId],
+        id: animationId,
+        animation: draft.animations[animationId],
       });
     }
   });
@@ -155,6 +173,18 @@ export const addControlFrameToAnimation = (
 
 export const deleteAnimation = (animationId: string) =>
   produce<GeppettoImage>((draft) => {
+    const parentId = (
+      draft.animationHierarchy[animationId] as TreeNode<"animation">
+    )?.parentId;
+    if (parentId) {
+      const parentNode = draft.animationHierarchy[parentId];
+      if (parentNode && parentNode.children) {
+        parentNode.children = parentNode.children.filter(
+          (childId) => childId !== animationId
+        );
+      }
+    }
+    delete draft.animationHierarchy[animationId];
     delete draft.animations[animationId];
   });
 
@@ -194,6 +224,33 @@ export const moveControlTrackToAnimation = (
 
     const [track] = fromAnimation.tracks.splice(trackIndex, 1);
     toAnimation.tracks.push(track);
+  });
+
+export const reorderControlTrackInAnimation = (
+  animationId: string,
+  fromIndex: number,
+  toIndex: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    // Validate indices
+    if (
+      fromIndex < 0 ||
+      fromIndex >= animation.tracks.length ||
+      toIndex < 0 ||
+      toIndex >= animation.tracks.length ||
+      fromIndex === toIndex
+    ) {
+      return;
+    }
+
+    // Remove track from old position and insert at new position
+    const [track] = animation.tracks.splice(fromIndex, 1);
+    animation.tracks.splice(toIndex, 0, track);
   });
 
 export const updateAnimationSpeedModifier = (
@@ -317,3 +374,99 @@ export const resizeControlFrame = (
     action.start = newStart;
     action.duration = newDuration;
   });
+
+export const deleteControlFrame = (
+  animationId: string,
+  controlId: string,
+  actionIndex: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    const track = animation.tracks.find(
+      (t): t is AnimationControlTrack =>
+        t.type === "control" && t.controlId === controlId
+    );
+
+    if (!track) {
+      return;
+    }
+
+    track.actions.splice(actionIndex, 1);
+  });
+
+export const updateControlFrame = (
+  animationId: string,
+  controlId: string,
+  actionIndex: number,
+  update: {
+    newEasing?: EasingFunction;
+    startValue?: number | null;
+    endValue?: number;
+    easingFunction?: EasingFunction;
+  }
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    const track = animation.tracks.find(
+      (t): t is AnimationControlTrack =>
+        t.type === "control" && t.controlId === controlId
+    );
+
+    if (!track) {
+      return;
+    }
+
+    const action = track.actions[actionIndex];
+    if (!action) {
+      return;
+    }
+
+    if (update.newEasing !== undefined) {
+      action.easingFunction = update.newEasing;
+    }
+    if (update.endValue !== undefined) {
+      action.controlEndValue = update.endValue;
+    }
+    if (update.startValue !== undefined) {
+      action.controlStartValue =
+        update.startValue === null ? undefined : update.startValue;
+    }
+    if (update.easingFunction !== undefined) {
+      action.easingFunction = update.easingFunction;
+    }
+  });
+
+export const getAnimationControlFrame = (
+  file: GeppettoImage,
+  animationId: string,
+  controlId: string,
+  actionIndex: number
+): FrameControlAction | null => {
+  const animation = file.animations[animationId];
+  if (!animation) {
+    return null;
+  }
+  const track = animation.tracks.find(
+    (t): t is AnimationControlTrack =>
+      t.type === "control" && t.controlId === controlId
+  );
+
+  if (!track) {
+    return null;
+  }
+
+  const action = track.actions[actionIndex];
+  if (!action) {
+    return null;
+  }
+
+  return action;
+};

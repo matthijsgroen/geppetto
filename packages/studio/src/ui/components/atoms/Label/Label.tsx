@@ -23,8 +23,7 @@ export const Label: FC<LabelProps> = ({
   vertical = false,
 }) => (
   <label
-    className={clsx({
-      ["py-1 font-caption"]: true,
+    className={clsx("py-1 font-caption", {
       ["text-text"]: !active,
       ["text-active"]: active,
       ["text-xs"]: size === "small" || size === "minimal",

@@ -1,4 +1,4 @@
-import {  prepareAnimation } from "./prepareAnimation";
+import { prepareAnimation } from "./prepareAnimation";
 import type { GeppettoImage } from "@geppetto/types";
 import { describe, it, expect } from "vitest";
 
@@ -94,12 +94,22 @@ describe("prepareAnimation", () => {
       },
     },
     mutations: {
-      mut0: { name: "Mutation1",  type: "translate", origin: [30, 30], radius: -1 },
-      mut1: { name: "Mutation2", type: "opacity", origin: [30, 30], },
+      mut0: {
+        name: "Mutation1",
+        type: "translate",
+        origin: [30, 30],
+        radius: -1,
+      },
+      mut1: { name: "Mutation2", type: "opacity", origin: [30, 30] },
       mut2: { name: "Mutation3", type: "deform", origin: [15, 15], radius: 30 },
       mut3: { name: "Mutation4", type: "stretch", origin: [18, 12] },
       mut4: { name: "Mutation5", type: "rotate", origin: [40, 34] },
-      mut5: { name: "Mutation6", type: "translate", origin: [40, 34], radius: -1 },
+      mut5: {
+        name: "Mutation6",
+        type: "translate",
+        origin: [40, 34],
+        radius: -1,
+      },
     },
     defaultFrame: {
       mut0: [0, 0],
@@ -151,10 +161,7 @@ describe("prepareAnimation", () => {
       ctrl2: {
         name: "Control3",
         type: "slider",
-        steps: [
-          { mut5: [-500, 0] },
-          { mut5: [300, 0] },
-        ],
+        steps: [{ mut5: [-500, 0] }, { mut5: [300, 0] }],
       },
     },
     controlValues: {
@@ -172,9 +179,24 @@ describe("prepareAnimation", () => {
             controlId: "ctrl0",
             length: 6200,
             actions: [
-              { start: 0, duration: 2000, easingFunction: "linear" as const, controlEndValue: 0 },
-              { start: 2000, duration: 2000, easingFunction: "linear" as const, controlEndValue: 0.7 },
-              { start: 4000, duration: 2200, easingFunction: "linear" as const, controlEndValue: 1.0 },
+              {
+                start: 0,
+                duration: 2000,
+                easingFunction: "linear" as const,
+                controlEndValue: 0,
+              },
+              {
+                start: 2000,
+                duration: 2000,
+                easingFunction: "linear" as const,
+                controlEndValue: 0.7,
+              },
+              {
+                start: 4000,
+                duration: 2200,
+                easingFunction: "linear" as const,
+                controlEndValue: 1.0,
+              },
             ],
           },
           {
@@ -182,8 +204,18 @@ describe("prepareAnimation", () => {
             controlId: "ctrl1",
             length: 6200,
             actions: [
-              { start: 0, duration: 2000, easingFunction: "linear" as const, controlEndValue: 0.4 },
-              { start: 2000, duration: 4200, easingFunction: "linear" as const, controlEndValue: 1.0 },
+              {
+                start: 0,
+                duration: 2000,
+                easingFunction: "linear" as const,
+                controlEndValue: 0.4,
+              },
+              {
+                start: 2000,
+                duration: 4200,
+                easingFunction: "linear" as const,
+                controlEndValue: 1.0,
+              },
             ],
           },
         ],
@@ -260,7 +292,9 @@ describe("prepareAnimation", () => {
 
   describe("control administration", () => {
     it("reports what controls there are", () => {
-      const { controls } = prepareAnimation(imageDefinition, { validate: false });
+      const { controls } = prepareAnimation(imageDefinition, {
+        validate: false,
+      });
       expect(controls).toEqual([
         { name: "Control1", steps: 2 },
         { name: "Control2", steps: 2 },
@@ -271,24 +305,26 @@ describe("prepareAnimation", () => {
 
   describe("animations", () => {
     it("creates animation tracks for each control", () => {
-      const { animations } = prepareAnimation(imageDefinition, { validate: false });
+      const { animations } = prepareAnimation(imageDefinition, {
+        validate: false,
+      });
       expect(animations).toHaveLength(2);
-      
+
       const animationTrack = animations[0];
       expect(animationTrack.name).toBe("AnimationTrack");
       expect(animationTrack.duration).toBe(6200);
       expect(animationTrack.looping).toBe(false);
       expect(animationTrack.tracks).toHaveLength(2);
       expect(animationTrack.events).toEqual([[2500, "MyCustomEvent"]]);
-      
+
       // Check first track (Control1)
       expect(animationTrack.tracks[0].controlIndex).toBe(0);
       expect(animationTrack.tracks[0].actions).toHaveLength(3);
-      
+
       // Check second track (Control2)
       expect(animationTrack.tracks[1].controlIndex).toBe(1);
       expect(animationTrack.tracks[1].actions).toHaveLength(2);
-      
+
       const newAnimation = animations[1];
       expect(newAnimation.name).toBe("New Animation");
       expect(newAnimation.duration).toBe(0);

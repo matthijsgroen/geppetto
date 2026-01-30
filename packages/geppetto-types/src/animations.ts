@@ -25,7 +25,10 @@ export type FrameLayerVisibilityAction = {
 /**
  * Custom event triggered at a specific time
  */
-export type FrameEvent = {
+export type FrameEvent = CallbackEvent;
+
+export type CallbackEvent = {
+  type: "callback";
   start: number;
   eventName: string;
 };
@@ -69,7 +72,8 @@ export type AnimationTrack = AnimationControlTrack | AnimationVisibilityTrack;
 export type Animation = {
   name: string;
   looping: boolean;
-  speedModifier?: number
+  autoplay?: boolean;
+  speedModifier?: number;
   tracks: AnimationTrack[];
   events: FrameEvent[];
 };

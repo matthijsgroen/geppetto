@@ -1,6 +1,6 @@
 import type { Vec2 } from "@geppetto/types";
 import { produce } from "immer";
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 
 import {
   NumberControl,
@@ -20,6 +20,7 @@ import {
   updateMutationValue,
 } from "@/domain/animation/file2/mutation";
 import { toggleVisibility } from "@/domain/animation/file2/shapes";
+import { defaultValueForVector } from "@/infrastructure/webgl/lib/vertices";
 import {
   Control,
   ControlPanel,
@@ -130,14 +131,8 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
 
   const mutationValue: Vec2 = !itemId
     ? blankValue
-    : mutationValues.current[itemId];
+    : (mutationValues.current[itemId] ?? defaultValueForVector(mutation.type));
   const [slideValue, setSlideValue] = useState(mutationValue);
-
-  useEffect(() => {
-    if (itemId) {
-      setSlideValue(mutationValues.current[itemId]);
-    }
-  }, [itemId, mutationValues]);
 
   const radiusChange = useEvent((newRadius: number) => {
     setFile(
@@ -247,7 +242,7 @@ export const ItemEdit: React.FC<
   }
 
   if (activeShapeId !== null && hierarchyItem?.type === "mutation") {
-    return <MutationEdit itemId={activeShapeId} />;
+    return <MutationEdit itemId={activeShapeId} key={activeShapeId} />;
   }
   return (
     <>
@@ -272,25 +267,9 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
     ? blankValue
     : editingControlId !== undefined
       ? file.controls[editingControlId].steps[editingControlStep][activeMutator]
-      : mutationValues.current[activeMutator];
+      : (mutationValues.current[activeMutator] ??
+        defaultValueForVector(file.mutations[activeMutator].type));
   const [slideValue, setSlideValue] = useState(mutationValue);
-
-  useEffect(() => {
-    if (activeMutator) {
-      const mutationValue: Vec2 = editingControlId
-        ? file.controls[editingControlId].steps[editingControlStep][
-            activeMutator
-          ]
-        : mutationValues.current[activeMutator];
-      setSlideValue(mutationValue);
-    }
-  }, [
-    activeMutator,
-    mutationValues,
-    editingControlId,
-    editingControlStep,
-    file.controls,
-  ]);
 
   const valueChangeHandler = useEvent((newValue: Vec2) => {
     if (activeMutator === null) return;

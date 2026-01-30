@@ -234,6 +234,7 @@ describe("schemas", () => {
           {
             start: 500,
             eventName: "customEvent",
+            type: "callback",
           },
         ],
       };
@@ -289,6 +290,9 @@ describe("schemas", () => {
       controlFolders: {},
       controls: {},
       controlValues: {},
+      animationHierarchy: {
+        root: { type: "root", children: [] },
+      },
       animations: {},
     };
 

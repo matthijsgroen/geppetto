@@ -6,14 +6,15 @@ import {
   createAnimationControlTrack,
   deleteAnimation,
   deleteControlTrackFromAnimation,
-  getNextAnimationId,
   hasAnimations,
   hasAnimationsWithData,
   moveControlTrackToAnimation,
   renameAnimation,
+  reorderControlTrackInAnimation,
   resizeControlFrame,
   updateAnimationControlTrackLength,
   updateAnimationSpeedModifier,
+  updateAutoplayAnimation,
   updateLoopingAnimation,
 } from "@/domain/animation/file2/animations";
 import { newFile } from "@/domain/animation/file2/new";
@@ -64,22 +65,6 @@ describe("hasAnimationsWithData", () => {
   });
 });
 
-describe("getNextAnimationId", () => {
-  it("returns '0' for empty file", () => {
-    const file = newFile();
-
-    const result = getNextAnimationId(file);
-    expect(result).toBe("0");
-  });
-
-  it("returns next available id", () => {
-    const file = fileBuilder().addAnimation("walk").addAnimation("run").build();
-
-    const result = getNextAnimationId(file);
-    expect(result).toBe("2");
-  });
-});
-
 describe("updateLoopingAnimation", () => {
   it("updates the looping property of the specified animation", () => {
     const file = fileBuilder().addAnimation("walk").build();
@@ -88,6 +73,17 @@ describe("updateLoopingAnimation", () => {
 
     expect(file.animations["0"].looping).toBe(false);
     expect(updatedFile.animations["0"].looping).toBe(true);
+  });
+});
+
+describe("updateAutoplayAnimation", () => {
+  it("updates the autoplay property of the specified animation", () => {
+    const file = fileBuilder().addAnimation("walk").build();
+
+    const updatedFile = updateAutoplayAnimation("0", true)(file);
+
+    expect(file.animations["0"].autoplay).toBe(false);
+    expect(updatedFile.animations["0"].autoplay).toBe(true);
   });
 });
 
@@ -105,6 +101,19 @@ describe("addAnimation", () => {
     expect(addedAnimation.events).toEqual([]);
     expect(addedAnimation.looping).toBe(false);
   });
+
+  it("places the new animation in the animation hierarchy", () => {
+    const file = newFile();
+
+    const updatedFile = addAnimation()(file);
+
+    expect(updatedFile.animationHierarchy["0"]).toEqual({
+      type: "animation",
+      parentId: "root",
+    });
+    const rootChildren = updatedFile.animationHierarchy.root.children;
+    expect(rootChildren).toContain("0");
+  });
 });
 
 describe("deleteAnimation", () => {
@@ -115,6 +124,15 @@ describe("deleteAnimation", () => {
 
     expect(file.animations["0"]).toBeDefined();
     expect(updatedFile.animations["0"]).toBeUndefined();
+  });
+
+  it("removes the animation from the animation hierarchy", () => {
+    const file = fileBuilder().addAnimation("walk").build();
+
+    const updatedFile = deleteAnimation("0")(file);
+    expect(updatedFile.animationHierarchy["0"]).toBeUndefined();
+    const rootChildren = updatedFile.animationHierarchy.root.children;
+    expect(rootChildren).not.toContain("0");
   });
 });
 
@@ -510,5 +528,122 @@ describe("resizeControlFrame", () => {
 
     expect(adjacentAction.start).toBe(0);
     expect(adjacentAction.duration).toBe(1500);
+  });
+});
+
+describe("reorderControlTrackInAnimation", () => {
+  it("reorders tracks within an animation", () => {
+    const file = fileBuilder()
+      .addControl("move")
+      .addControl("jump")
+      .addControl("rotate")
+      .addAnimation("walk")
+      .addControlFrame("move", 0, 1000, 0.5)
+      .addControlFrame("jump", 0, 1000, 0.5)
+      .addControlFrame("rotate", 0, 1000, 0.5)
+      .build();
+
+    const moveId = getControlIdByName(file, "move");
+    const jumpId = getControlIdByName(file, "jump");
+    const rotateId = getControlIdByName(file, "rotate");
+
+    const originalAnimation = file.animations["0"];
+    expect(originalAnimation.tracks).toHaveLength(3);
+    expect(
+      (originalAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(moveId);
+    expect(
+      (originalAnimation.tracks[1] as AnimationControlTrack).controlId
+    ).toBe(jumpId);
+    expect(
+      (originalAnimation.tracks[2] as AnimationControlTrack).controlId
+    ).toBe(rotateId);
+
+    // Move first track to last position
+    const updatedFile = reorderControlTrackInAnimation("0", 0, 2)(file);
+    const updatedAnimation = updatedFile.animations["0"];
+
+    expect(updatedAnimation.tracks).toHaveLength(3);
+    expect(
+      (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(jumpId);
+    expect(
+      (updatedAnimation.tracks[1] as AnimationControlTrack).controlId
+    ).toBe(rotateId);
+    expect(
+      (updatedAnimation.tracks[2] as AnimationControlTrack).controlId
+    ).toBe(moveId);
+  });
+
+  it("handles moving a track backward", () => {
+    const file = fileBuilder()
+      .addControl("move")
+      .addControl("jump")
+      .addControl("rotate")
+      .addAnimation("walk")
+      .addControlFrame("move", 0, 1000, 0.5)
+      .addControlFrame("jump", 0, 1000, 0.5)
+      .addControlFrame("rotate", 0, 1000, 0.5)
+      .build();
+
+    const moveId = getControlIdByName(file, "move");
+    const jumpId = getControlIdByName(file, "jump");
+    const rotateId = getControlIdByName(file, "rotate");
+
+    // Move last track to first position
+    const updatedFile = reorderControlTrackInAnimation("0", 2, 0)(file);
+    const updatedAnimation = updatedFile.animations["0"];
+
+    expect(updatedAnimation.tracks).toHaveLength(3);
+    expect(
+      (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(rotateId);
+    expect(
+      (updatedAnimation.tracks[1] as AnimationControlTrack).controlId
+    ).toBe(moveId);
+    expect(
+      (updatedAnimation.tracks[2] as AnimationControlTrack).controlId
+    ).toBe(jumpId);
+  });
+
+  it("does nothing if fromIndex equals toIndex", () => {
+    const file = fileBuilder()
+      .addControl("move")
+      .addControl("jump")
+      .addAnimation("walk")
+      .addControlFrame("move", 0, 1000, 0.5)
+      .addControlFrame("jump", 0, 1000, 0.5)
+      .build();
+
+    const moveId = getControlIdByName(file, "move");
+    const jumpId = getControlIdByName(file, "jump");
+
+    const updatedFile = reorderControlTrackInAnimation("0", 0, 0)(file);
+    const updatedAnimation = updatedFile.animations["0"];
+
+    expect(
+      (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(moveId);
+    expect(
+      (updatedAnimation.tracks[1] as AnimationControlTrack).controlId
+    ).toBe(jumpId);
+  });
+
+  it("does nothing if indices are out of bounds", () => {
+    const file = fileBuilder()
+      .addControl("move")
+      .addAnimation("walk")
+      .addControlFrame("move", 0, 1000, 0.5)
+      .build();
+
+    const moveId = getControlIdByName(file, "move");
+
+    const updatedFile = reorderControlTrackInAnimation("0", 0, 5)(file);
+    const updatedAnimation = updatedFile.animations["0"];
+
+    expect(updatedAnimation.tracks).toHaveLength(1);
+    expect(
+      (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
+    ).toBe(moveId);
   });
 });

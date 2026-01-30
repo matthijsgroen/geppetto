@@ -83,6 +83,17 @@ describe("from version 1 to 2", () => {
           ],
         },
       ]);
+
+      expect(v2.animationHierarchy).toEqual({
+        root: {
+          type: "root",
+          children: [animationIds[0]],
+        },
+        "0": {
+          type: "animation",
+          parentId: "root",
+        },
+      });
     });
 
     it("turns control action resets in control transitions", () => {
