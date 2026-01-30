@@ -82,7 +82,7 @@ describe("updateAutoplayAnimation", () => {
 
     const updatedFile = updateAutoplayAnimation("0", true)(file);
 
-    expect(file.animations["0"].autoplay).toBeUndefined();
+    expect(file.animations["0"].autoplay).toBe(false);
     expect(updatedFile.animations["0"].autoplay).toBe(true);
   });
 });
