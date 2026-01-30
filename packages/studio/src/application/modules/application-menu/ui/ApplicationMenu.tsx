@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useEffect, useRef } from "react";
 
 import { useLightModePreference } from "@/application/modules/application-menu/hooks/useLightModePreference";
 import { ApplicationContext } from "@/application/state/ApplicationContext";
-import { useFile } from "@/application/state/FileContext";
+import { useFileUndoRedo } from "@/application/state/FileContext";
 import type { ActionHandlers } from "@/application/state/hooks/useActionMap";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useAppInstall } from "@/application/state/hooks/useAppInstall";
@@ -80,7 +80,14 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
   const textureFileRef = useRef<null | FileSystemFileHandle>(null);
   const [hasAppUpdate, updater] = useAppUpdate();
   const [canInstall, installer] = useAppInstall();
-  const [file, setFile] = useFile();
+  const {
+    state: file,
+    set: setFile,
+    canRedo,
+    canUndo,
+    undo,
+    redo,
+  } = useFileUndoRedo();
   const [, setTextureFile] = textureFileState;
   const [, setTextureFileName] = textureFileNameState;
   const controlUpdate = useUpdateControlValues();
@@ -239,6 +246,16 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
               respectOSColorScheme();
             },
           },
+          undo: {
+            caption: "Undo",
+            shortcut: { interaction: "Undo" },
+            handler: undo,
+          },
+          redo: {
+            caption: "Redo",
+            shortcut: { interaction: "Redo" },
+            handler: redo,
+          },
         }) satisfies ActionHandlers<string>,
       [
         fileNameState,
@@ -248,6 +265,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         setTextureFileName,
         controlUpdate,
         mutationUpdate,
+        undo,
+        redo,
       ]
     )
   );
@@ -333,19 +352,15 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
         <MenuItem disabled>Revert file</MenuItem>
       </SubMenu>
       <SubMenu label="Edit">
-        <MenuItem disabled shortcut={{ interaction: "Undo" }}>
-          Undo
-        </MenuItem>
-        <MenuItem disabled shortcut={{ interaction: "Redo" }}>
-          Redo
-        </MenuItem>
-        <MenuDivider />
+        <ActionMenuItem action={actions.undo} disabled={!canUndo} />
+        <ActionMenuItem action={actions.redo} disabled={!canRedo} />
+        {/* <MenuDivider />
         <MenuItem disabled>Cut</MenuItem>
         <MenuItem disabled>Copy</MenuItem>
         <MenuItem disabled>Paste</MenuItem>
         <MenuItem disabled>Delete</MenuItem>
         <MenuDivider />
-        <MenuItem disabled>Select all</MenuItem>
+        <MenuItem disabled>Select all</MenuItem> */}
       </SubMenu>
       <SubMenu label="Preferences">
         <MenuHeader>Color mode</MenuHeader>
