@@ -269,20 +269,39 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     file.layerFolders,
   ]);
 
+  const getImageConvert = useEvent(() => {
+    if (!containerRef.current) return null;
+
+    const rect = containerRef.current.getBoundingClientRect();
+
+    // Calculate the fit scale the same way the shader does
+    const landscape =
+      file.metadata.width / rect.width > file.metadata.height / rect.height;
+    const fitScale = landscape
+      ? rect.width / file.metadata.width
+      : rect.height / file.metadata.height;
+
+    return imageToPixels(translation, rect, fitScale);
+  });
+
   const handleClick = useEvent((event: React.MouseEvent<HTMLElement>) => {
     if (selectedItems.length === 1 && containerRef.current) {
+      const imageConvert = getImageConvert();
+      if (!imageConvert) return;
+
+      const hitRadius = 5; // Scaled to match MUTATION_DOT_SIZE of 2.5
       const rect = containerRef.current.getBoundingClientRect();
-      const imageConvert = imageToPixels(translation, rect);
+
       for (const mutatorId of visibleMutators) {
         const position = imageConvert(mutatorMap[mutatorId]);
 
         const elementX = event.pageX - rect.left;
         const elementY = event.pageY - rect.top - 2;
         if (
-          elementX > position[0] - 6 &&
-          elementX < position[0] + 6 &&
-          elementY > position[1] - 6 &&
-          elementY < position[1] + 6
+          elementX > position[0] - hitRadius &&
+          elementX < position[0] + hitRadius &&
+          elementY > position[1] - hitRadius &&
+          elementY < position[1] + hitRadius
         ) {
           setActiveMutator(mutatorId);
           setFocusedLayer(mutatorId);
@@ -294,19 +313,24 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
 
   const hoverCursor = useEvent(
     (event: React.MouseEvent<HTMLElement>): MouseMode => {
-      if (selectedItems.length === 1 && containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        const imageConvert = imageToPixels(translation, rect);
+      if (selectedItems.length === 1) {
+        const imageConvert = getImageConvert();
+        if (!imageConvert)
+          return event.shiftKey ? MouseMode.Grab : MouseMode.Normal;
+
+        const hitRadius = 5; // Scaled to match MUTATION_DOT_SIZE of 2.5
+
         for (const mutatorId of visibleMutators) {
           const position = imageConvert(mutatorMap[mutatorId]);
 
+          const rect = containerRef.current!.getBoundingClientRect();
           const elementX = event.pageX - rect.left;
           const elementY = event.pageY - rect.top - 2;
           if (
-            elementX > position[0] - 6 &&
-            elementX < position[0] + 6 &&
-            elementY > position[1] - 6 &&
-            elementY < position[1] + 6
+            elementX > position[0] - hitRadius &&
+            elementX < position[0] + hitRadius &&
+            elementY > position[1] - hitRadius &&
+            elementY < position[1] + hitRadius
           ) {
             return MouseMode.Target;
           }

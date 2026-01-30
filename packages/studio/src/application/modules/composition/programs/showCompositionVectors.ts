@@ -32,7 +32,7 @@ const green = [0, 180, 0].map((v) => v / 256.0) as Color;
 const white = [240, 240, 240].map((v) => v / 256.0) as Color;
 
 const EPSILON = 0.00001;
-const MUTATION_DOT_SIZE = 3;
+const MUTATION_DOT_SIZE = 2.5;
 
 const colorMapping: Record<MutationVector["type"], Color> = {
   deform: orange,
