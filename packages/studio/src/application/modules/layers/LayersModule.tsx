@@ -7,7 +7,7 @@ import TextureMapCanvas, {
   type GridSettings,
 } from "@/application/modules/layers/ui/TextureMapCanvas";
 import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
-import { useFile } from "@/application/state/FileContext";
+import { useFileUndoRedo } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useEvent } from "@/application/state/hooks/useEvent";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
@@ -89,7 +89,12 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
 
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
-  const [file, setFile] = useFile();
+  const {
+    state: file,
+    set: setFile,
+    setGrouped: setFileGrouped,
+    endGrouping: endFileGrouping,
+  } = useFileUndoRedo();
 
   const layers = file.layers;
   const maxZoom = maxZoomFactor(texture);
@@ -101,6 +106,7 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
   const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
   if (!activeLayer && activeCoord) {
     setActiveCoord(null);
+    endFileGrouping();
   }
 
   const getClosestPoint = useEvent(
@@ -141,11 +147,14 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
         const closePoint = getClosestPoint(event.currentTarget, coord, shape);
 
         if (!closePoint && mouseMode === MouseMode.Aim) {
+          // add
           const gridCoord = alignOnGrid(gridSettings, coord);
-          setFile((image) => addPoint(image, activeLayer, gridCoord));
+          setFile(addPoint(activeLayer, gridCoord));
           setActiveCoord(gridCoord);
+          endFileGrouping();
         } else if (closePoint) {
           setActiveCoord(closePoint);
+          endFileGrouping();
         }
       }
     }
@@ -196,7 +205,7 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
           shortcut: DELETE_POINT,
           handler: () => {
             if (!activeCoord || !activeLayer) return;
-            setFile((image) => deletePoint(image, activeLayer, activeCoord));
+            setFile(deletePoint(activeLayer, activeCoord));
             setActiveCoord(null);
           },
         },
@@ -241,8 +250,9 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
         }
       }
       if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
-        setFile((image) =>
-          movePoint(image, activeLayer, activeCoord, newValue)
+        setFileGrouped(
+          "move-point",
+          movePoint(activeLayer, activeCoord, newValue)
         );
         setActiveCoord(newValue);
       }

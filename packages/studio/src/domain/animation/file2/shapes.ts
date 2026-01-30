@@ -114,21 +114,13 @@ export const rename = (itemId: string, itemType: NodeType, newName: string) =>
     draft[groupKey][itemId].name = newName;
   });
 
-export const addPoint = (
-  image: GeppettoImage,
-  layerId: string,
-  point: Vec2
-): GeppettoImage =>
-  produce(image, (draft) => {
+export const addPoint = (layerId: string, point: Vec2) =>
+  produce<GeppettoImage>((draft) => {
     draft.layers[layerId].points.push(point);
   });
 
-export const deletePoint = (
-  image: GeppettoImage,
-  layerId: string,
-  point: Vec2
-): GeppettoImage =>
-  produce(image, (draft) => {
+export const deletePoint = (layerId: string, point: Vec2) =>
+  produce<GeppettoImage>((draft) => {
     const array = draft.layers[layerId].points;
     const index = array.findIndex(
       (p) => p[0] === point[0] && p[1] === point[1]
@@ -137,13 +129,8 @@ export const deletePoint = (
     array.splice(index, 1);
   });
 
-export const movePoint = (
-  image: GeppettoImage,
-  layerId: string,
-  point: Vec2,
-  newPoint: Vec2
-) =>
-  produce(image, (draft) => {
+export const movePoint = (layerId: string, point: Vec2, newPoint: Vec2) =>
+  produce<GeppettoImage>((draft) => {
     const array = draft.layers[layerId].points;
     const index = array.findIndex(
       (p) => p[0] === point[0] && p[1] === point[1]
