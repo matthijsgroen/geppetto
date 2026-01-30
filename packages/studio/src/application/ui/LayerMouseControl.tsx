@@ -26,6 +26,7 @@ export type LayerMouseControlProps = PropsWithChildren<{
   mode: MouseMode;
 
   maxZoomFactor: number;
+  fitScale?: number;
 
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
   onContextMenu?: (event: React.MouseEvent<HTMLElement>) => void;
@@ -47,6 +48,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
   onKeyDown,
   hoverCursor,
   maxZoomFactor,
+  fitScale,
 }) => {
   const [cursorMode, setCursorMode] = useState(mode);
 
@@ -89,7 +91,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
     if (handleDrag) {
       handleDrag(
         event,
-        pixelsToImage(translation, canvasRect)([elementX, elementY]),
+        pixelsToImage(translation, canvasRect, fitScale)([elementX, elementY]),
         "start"
       );
     }
@@ -142,7 +144,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
         if (
           handleDrag(
             event,
-            pixelsToImage(trans, canvasRect)([elementX, elementY]),
+            pixelsToImage(trans, canvasRect, fitScale)([elementX, elementY]),
             "move"
           )
         ) {
@@ -168,7 +170,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
       const elementY = event.pageY - canvasRect.top;
       handleDrag(
         event,
-        pixelsToImage(translation, canvasRect)([elementX, elementY]),
+        pixelsToImage(translation, canvasRect, fitScale)([elementX, elementY]),
         "start"
       );
     }

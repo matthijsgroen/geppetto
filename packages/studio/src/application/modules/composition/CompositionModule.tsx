@@ -284,6 +284,17 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
     return imageToPixels(translation, rect, fitScale);
   });
 
+  const getFitScale = useCallback((): number => {
+    if (!containerRef.current) return 1;
+
+    const rect = containerRef.current.getBoundingClientRect();
+    const landscape =
+      file.metadata.width / rect.width > file.metadata.height / rect.height;
+    return landscape
+      ? rect.width / file.metadata.width
+      : rect.height / file.metadata.height;
+  }, [file.metadata.height, file.metadata.width]);
+
   const handleClick = useEvent((event: React.MouseEvent<HTMLElement>) => {
     if (selectedItems.length === 1 && containerRef.current) {
       const imageConvert = getImageConvert();
@@ -520,6 +531,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
         <Panel center workspace>
           {texture && hasPoints(file) ? (
             <LayerMouseControl
+              fitScale={getFitScale()}
               handleDrag={handleDrag}
               hoverCursor={hoverCursor}
               maxZoomFactor={maxZoom}
