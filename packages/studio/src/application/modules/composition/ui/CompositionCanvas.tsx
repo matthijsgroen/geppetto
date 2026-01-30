@@ -150,7 +150,7 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
 
   useEffect(() => {
     compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);
-    vectorMap.setVisibleMutations(activeLayers);
+    vectorMap.setLayerSelected(activeLayers);
   }, [activeLayers, compositionMap, vectorMap, showWireFrames]);
 
   useEffect(() => {

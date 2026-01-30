@@ -7,7 +7,7 @@ import {
   type TranslationVector,
 } from "@geppetto/types";
 
-import { visit } from "@/domain/animation/file2/hierarchy";
+import { collectChildIds, visit } from "@/domain/animation/file2/hierarchy";
 import { type ScreenTranslation } from "@/dtos/application.dto";
 import { flatten } from "@/infrastructure/webgl/lib/vertices";
 import {
@@ -58,7 +58,7 @@ export const showCompositionVectors = (
   setShapes(s: GeppettoImage): void;
   setVectorValues(v: Keyframe): void;
   setActiveMutation(mutation: string | null): void;
-  setVisibleMutations(mutations: string[]): void;
+  setLayerSelected(layers: string[]): void;
   setImageBounds(width: number, height: number): void;
   renderer: WebGLRenderer;
 } => {
@@ -71,7 +71,7 @@ export const showCompositionVectors = (
   let indexBuffer: WebGLBuffer | null = null;
   let img: HTMLImageElement | null = null;
   let program: WebGLProgram | null = null;
-  const vectorsSelected: string[] = [];
+  let vectorsSelected: string[] = [];
   let vectorValues: Keyframe = {};
 
   let vectors: {
@@ -86,7 +86,6 @@ export const showCompositionVectors = (
   }[] = [];
   let mutMapping: Record<string, number> = {};
   let activeMutation: string | null = null;
-  let visibleMutations: string[] = [];
   let scale = 1.0;
   const screenTranslation = trans;
   let imageBoundsWidth = 0;
@@ -245,10 +244,18 @@ export const showCompositionVectors = (
       activeMutation = mutation;
       onChange();
     },
-    setVisibleMutations(mutations) {
-      visibleMutations = mutations;
-      populateShapes();
-      onChange();
+    setLayerSelected(layers) {
+      if (layers === null || shapes === null) {
+        vectorsSelected = [];
+        return;
+      }
+      vectorsSelected = [];
+      for (const layerId of layers) {
+        vectorsSelected.push(layerId);
+        vectorsSelected.push(
+          ...collectChildIds(shapes.layerHierarchy, layerId)
+        );
+      }
     },
     setImageBounds(width: number, height: number) {
       imageBoundsWidth = width;
