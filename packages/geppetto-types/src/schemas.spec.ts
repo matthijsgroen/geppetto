@@ -234,6 +234,7 @@ describe("schemas", () => {
           {
             start: 500,
             eventName: "customEvent",
+            type: "callback",
           },
         ],
       };
