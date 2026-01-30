@@ -221,7 +221,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           </ToolBar>
         }
         key={animationId}
-        length={animationDuration / 1000 / speed}
+        length={animationDuration / 1000}
         loop={animation.looping}
         name={
           <RenameInput
@@ -335,7 +335,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           />
         ))}
         <TimePlayIndicator
-          duration={animationDuration / 1000 / speed}
+          duration={animationDuration / 1000}
           key="total-indicator"
           loop={animation.looping}
           playing={isPlaying}
