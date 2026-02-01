@@ -86,15 +86,31 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
     magnetic: false,
     size: 32,
   });
-
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
   const {
     state: file,
     set: setFile,
     setGrouped: setFileGrouped,
     endGrouping: endFileGrouping,
   } = useFileUndoRedo();
+
+  const [selectedItemsState, setSelectedItems] = useState<string[]>([]);
+  const selectedItems = useMemo(
+    () =>
+      selectedItemsState.filter((id) => file.layerHierarchy[id] !== undefined),
+    [selectedItemsState, file.layerHierarchy]
+  );
+
+  const [activeCoordState, setActiveCoord] = useState<Vec2 | null>(null);
+  // Verify if activeCoord is still valid when activeLayer changes
+  const activeCoord = useMemo(
+    () =>
+      file.layers[selectedItems[0]]?.points.find((p) =>
+        activeCoordState
+          ? p[0] === activeCoordState[0] && p[1] === activeCoordState[1]
+          : false
+      ) || null,
+    [file.layers, selectedItems, activeCoordState]
+  );
 
   const layers = file.layers;
   const maxZoom = maxZoomFactor(texture);
@@ -206,11 +222,10 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
           handler: () => {
             if (!activeCoord || !activeLayer) return;
             setFile(deletePoint(activeLayer, activeCoord));
-            setActiveCoord(null);
           },
         },
       }),
-      [activeCoord, setFile, setActiveCoord, activeLayer]
+      [activeCoord, setFile, activeLayer]
     )
   );
 

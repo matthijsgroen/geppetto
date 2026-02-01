@@ -146,9 +146,20 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
 
   const maxZoom = maxZoomFactor(texture);
 
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItemsState, setSelectedItems] = useState<string[]>([]);
+  // Verify that UI state matches file state
+  const selectedItems = selectedItemsState.filter(
+    (id) => file.layerHierarchy[id] !== undefined
+  );
+
   const [focusedLayer, setFocusedLayer] = useState<string | undefined>();
-  const [activeMutator, setActiveMutator] = useState<string | null>(null);
+  const [activeMutatorState, setActiveMutator] = useState<string | null>(null);
+  // Verify that UI state matches file state
+  const activeMutator =
+    activeMutatorState && file.mutations[activeMutatorState]
+      ? activeMutatorState
+      : null;
+
   const [selectedControls, setSelectedControls] = useState<string[]>([]);
   const updateMutationValues = useUpdateMutationValues();
   const dragDropStatus = useRef<{
@@ -340,6 +351,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       return event.shiftKey ? MouseMode.Grab : MouseMode.Normal;
     }
   );
+
   const handleDrag = useEvent(
     (
       event: React.MouseEvent<HTMLElement>,
@@ -366,6 +378,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       return true;
     }
   );
+
   const [menuProps, toggleMenu] = useMenuState();
   const [anchorPoint, setAnchorPoint] = useState({
     x: 0,
@@ -443,6 +456,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       setSelectedItems([addDetails.id]);
     }
   );
+
   const editingControl = controlEditMode ? selectedControls[0] : undefined;
   const activeControlId =
     selectedControls.length === 1 ? selectedControls[0] : undefined;
