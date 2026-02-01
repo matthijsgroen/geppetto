@@ -4,11 +4,13 @@ import type {
   EasingFunction,
   FrameControlAction,
   GeppettoImage,
-  TreeNode,
 } from "@geppetto/types";
 import { produce } from "immer";
 
-import { addInHierarchy } from "@/domain/animation/file2/hierarchy";
+import {
+  addInHierarchy,
+  removeFromHierarchy,
+} from "@/domain/animation/file2/hierarchy";
 
 export const hasAnimations = (file: GeppettoImage) =>
   Object.keys(file.animations).length > 0;
@@ -173,18 +175,8 @@ export const addControlFrameToAnimation = (
 
 export const deleteAnimation = (animationId: string) =>
   produce<GeppettoImage>((draft) => {
-    const parentId = (
-      draft.animationHierarchy[animationId] as TreeNode<"animation">
-    )?.parentId;
-    if (parentId) {
-      const parentNode = draft.animationHierarchy[parentId];
-      if (parentNode && parentNode.children) {
-        parentNode.children = parentNode.children.filter(
-          (childId) => childId !== animationId
-        );
-      }
-    }
-    delete draft.animationHierarchy[animationId];
+    const [result] = removeFromHierarchy(draft.animationHierarchy, animationId);
+    draft.animationHierarchy = result;
     delete draft.animations[animationId];
   });
 
