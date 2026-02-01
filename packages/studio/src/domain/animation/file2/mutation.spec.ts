@@ -27,12 +27,13 @@ describe("addMutation", () => {
         const shapeId = getShapeIdByName(startFile, "shape1");
         const folderId = getShapeFolderIdByName(startFile, "folder1");
 
-        const addDetails = {} as AddMutationDetails<"translate">;
-        const result = addMutation(
+        type MutationType = MutationVector["type"];
+        const addDetails = {} as AddMutationDetails<MutationType>;
+        const result = addMutation<MutationType>(
           startFile,
           "Mutation1",
           "translate",
-          { radius: -1 },
+          {},
           { parent: shapeId },
           addDetails
         );

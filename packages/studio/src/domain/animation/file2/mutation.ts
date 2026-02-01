@@ -76,6 +76,9 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
     name: newName,
     type: mutationType,
     origin: [0, 0],
+    ...(mutationType === "translate" || mutationType === "deform"
+      ? { radius: -1 }
+      : {}),
     ...setupProperties,
   };
   const [layerHierarchy, mutationId] = addInHierarchy(

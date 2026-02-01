@@ -433,9 +433,6 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       const settings: MutationSettings<typeof mutationType> = {
         origin,
       };
-      if (mutationType === "deform" || mutationType === "translate") {
-        (settings as MutationSettings<"deform">).radius = -1;
-      }
 
       const addDetails = {} as AddMutationDetails<typeof mutationType>;
       const updatedImage = addMutation(
