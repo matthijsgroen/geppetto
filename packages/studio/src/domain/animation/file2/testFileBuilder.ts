@@ -65,7 +65,7 @@ export const fileBuilder = () => {
         return builder;
       }
       for (const point of points) {
-        file = addPoint(file, lastShapeId, point);
+        file = addPoint(lastShapeId, point)(file);
       }
       return builder;
     },

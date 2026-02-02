@@ -1,3 +1,4 @@
+import type { TranslationVector } from "@geppetto/types";
 import { type MutationVector } from "@geppetto/types";
 
 import {
@@ -6,6 +7,9 @@ import {
   hasMutations,
   hasRadius,
   isShapeMutationVector,
+  setMutationOrigin,
+  toggleMutationRadius,
+  updateMutationRadius,
   updateMutationValue,
 } from "./mutation";
 import {
@@ -182,5 +186,123 @@ describe("hasMutations", () => {
       .addMutation("mutation1", "translate", { radius: -1 }, "shape1")
       .build();
     expect(hasMutations(file)).toBe(true);
+  });
+});
+
+describe("updateMutationValue", () => {
+  it("updates the mutation value", () => {
+    const file = fileBuilder()
+      .addShape("shape1")
+      .addMutation("mutation1", "translate", { radius: -1 }, "shape1")
+      .build();
+    const mutationId = getMutationIdByName(file, "mutation1");
+
+    const updatedFile = updateMutationValue(mutationId, [10, 20])(file);
+
+    expect(updatedFile.defaultFrame[mutationId]).toEqual([10, 20]);
+  });
+
+  describe("when mutation does not exist", () => {
+    it("does not update the file", () => {
+      const file = fileBuilder()
+        .addShape("shape1")
+        .addMutation("mutation1", "translate", { radius: -1 }, "shape1")
+        .build();
+
+      const updatedFile = updateMutationValue(
+        "non-existing-mutation",
+        [10, 20]
+      )(file);
+
+      expect(updatedFile).toBe(file);
+    });
+  });
+});
+
+describe("updateMutationRadius", () => {
+  it("updates the mutation radius", () => {
+    const file = fileBuilder()
+      .addShape("shape1")
+      .addMutation("mutation1", "translate", { radius: 5 }, "shape1")
+      .build();
+    const mutationId = getMutationIdByName(file, "mutation1");
+
+    const updatedFile = updateMutationRadius(mutationId, 15)(file);
+
+    expect(
+      (updatedFile.mutations[mutationId] as TranslationVector).radius
+    ).toBe(15);
+  });
+
+  describe("when mutation does not have a radius", () => {
+    it("does not update the file", () => {
+      const file = fileBuilder()
+        .addShape("shape1")
+        .addMutation("mutation1", "opacity", {}, "shape1")
+        .build();
+      const mutationId = getMutationIdByName(file, "mutation1");
+
+      const updatedFile = updateMutationRadius(mutationId, 15)(file);
+
+      expect(updatedFile).toBe(file);
+    });
+  });
+});
+
+describe("toggleMutationRadius", () => {
+  it("enables the mutation radius", () => {
+    const file = fileBuilder()
+      .addShape("shape1")
+      .addMutation("mutation1", "translate", { radius: -1 }, "shape1")
+      .build();
+    const mutationId = getMutationIdByName(file, "mutation1");
+
+    const updatedFile = toggleMutationRadius(mutationId, true)(file);
+
+    expect(
+      (updatedFile.mutations[mutationId] as TranslationVector).radius
+    ).toBe(10);
+  });
+
+  it("disables the mutation radius", () => {
+    const file = fileBuilder()
+      .addShape("shape1")
+      .addMutation("mutation1", "translate", { radius: 20 }, "shape1")
+      .build();
+    const mutationId = getMutationIdByName(file, "mutation1");
+
+    const updatedFile = toggleMutationRadius(mutationId, false)(file);
+
+    expect(
+      (updatedFile.mutations[mutationId] as TranslationVector).radius
+    ).toBe(-1);
+  });
+
+  describe("when mutation does not have a radius", () => {
+    it("does not update the file", () => {
+      const file = fileBuilder()
+        .addShape("shape1")
+        .addMutation("mutation1", "opacity", {}, "shape1")
+        .build();
+      const mutationId = getMutationIdByName(file, "mutation1");
+
+      const updatedFile = toggleMutationRadius(mutationId, true)(file);
+
+      expect(updatedFile).toBe(file);
+    });
+  });
+});
+
+describe("setMutationOrigin", () => {
+  it("sets the mutation origin", () => {
+    const file = fileBuilder()
+      .addShape("shape1")
+      .addMutation("mutation1", "translate", { radius: -1 }, "shape1")
+      .build();
+    const mutationId = getMutationIdByName(file, "mutation1");
+
+    const updatedFile = setMutationOrigin(mutationId, [15, 25])(file);
+
+    expect(updatedFile.mutations[mutationId].origin).toEqual([15, 25]);
   });
 });

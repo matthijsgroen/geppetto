@@ -102,6 +102,9 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
 
 export const updateMutationValue = (itemId: string, newValue: Vec2) =>
   produce((draft) => {
+    if (draft.mutations[itemId] === undefined) {
+      return;
+    }
     draft.defaultFrame[itemId] = newValue;
   });
 
