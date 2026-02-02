@@ -173,6 +173,11 @@ export const removeShape = (shapeId: string) =>
     }
   });
 
+export const setLayerOffset = (layerId: string, offset: Vec2) =>
+  produce<GeppettoImage>((draft) => {
+    draft.layers[layerId].translate = offset;
+  });
+
 export const hasPoints = (file: GeppettoImage) =>
   Object.values(file.layers).some((l) => l.points.length > 2);
 

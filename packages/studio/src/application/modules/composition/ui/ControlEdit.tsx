@@ -1,4 +1,3 @@
-import { produce } from "immer";
 import {
   type ChangeEvent,
   type KeyboardEvent,
@@ -17,6 +16,7 @@ import {
 import {
   insertControlStep,
   removeControlStep,
+  setControlValue,
 } from "@/domain/animation/file2/controls";
 import {
   Column,
@@ -83,11 +83,7 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
       [controlId]: value,
     }));
     startTransition(() => {
-      setFile(
-        produce((draft) => {
-          draft.controlValues[controlId] = value;
-        })
-      );
+      setFile(setControlValue(controlId, value));
     });
   });
 

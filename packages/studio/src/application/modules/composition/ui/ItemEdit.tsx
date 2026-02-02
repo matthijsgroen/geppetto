@@ -17,9 +17,15 @@ import {
   hasRadius,
   iconMapping,
   isShapeMutationVector,
+  setMutationOrigin,
+  toggleMutationRadius,
+  updateMutationRadius,
   updateMutationValue,
 } from "@/domain/animation/file2/mutation";
-import { toggleVisibility } from "@/domain/animation/file2/shapes";
+import {
+  setLayerOffset,
+  toggleVisibility,
+} from "@/domain/animation/file2/shapes";
 import { defaultValueForVector } from "@/infrastructure/webgl/lib/vertices";
 import {
   Control,
@@ -90,11 +96,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   });
 
   const offsetChangeHandler = useEvent((newValue: Vec2) => {
-    setFile(
-      produce((draft) => {
-        draft.layers[itemId].translate = newValue;
-      })
-    );
+    setFile(setLayerOffset(itemId, newValue));
   });
 
   return (
@@ -135,34 +137,15 @@ const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
   const [slideValue, setSlideValue] = useState(mutationValue);
 
   const radiusChange = useEvent((newRadius: number) => {
-    setFile(
-      produce((draft) => {
-        const mutation = draft.mutations[itemId];
-        if (hasRadius(mutation)) {
-          mutation.radius = newRadius;
-        }
-      })
-    );
+    setFile(updateMutationRadius(itemId, newRadius));
   });
 
   const toggleRadius = useEvent((newValue: boolean) => {
-    setFile(
-      produce((draft) => {
-        const mutation = draft.mutations[itemId];
-        if (hasRadius(mutation)) {
-          mutation.radius = newValue ? 10 : -1;
-        }
-      })
-    );
+    setFile(toggleMutationRadius(itemId, newValue));
   });
 
   const originChangeHandler = useEvent((newValue: Vec2) => {
-    setFile(
-      produce((draft) => {
-        const mutation = draft.mutations[itemId];
-        mutation.origin = newValue;
-      })
-    );
+    setFile(setMutationOrigin(itemId, newValue));
   });
 
   const valueChangeHandler = useEvent((newValue: Vec2) => {
@@ -280,11 +263,7 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
         [activeMutator]: newValue,
       }));
       startTransition(() => {
-        setFile(
-          produce((draft) => {
-            draft.defaultFrame[activeMutator] = newValue;
-          })
-        );
+        setFile(updateMutationValue(activeMutator, newValue));
       });
     } else {
       setFile(
