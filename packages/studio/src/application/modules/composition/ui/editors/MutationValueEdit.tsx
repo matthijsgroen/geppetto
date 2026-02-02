@@ -1,10 +1,9 @@
 import type { Vec2 } from "@geppetto/types";
-import React, { Fragment } from "react";
+import React from "react";
 
 import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl";
-import { useFile } from "@/application/state/FileContext";
 import { type MutationVectorTypes } from "@/dtos/animation-file1.dto";
-import { ColorPreview, Control, Paragraph, TextButton } from "@/ui/components";
+import { ColorPreview, Control, Paragraph } from "@/ui/components";
 
 import { ValueSlider } from "./ValueSlider";
 
@@ -111,42 +110,4 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
     );
   }
   return <VectorControl label="Value" onChange={onValueChange} value={value} />;
-};
-
-export const MutationControlled: React.FC<{
-  mutationId: string;
-  editingControlId?: string;
-  onSelectControl?: (controlId: string) => void;
-}> = ({ mutationId, editingControlId, onSelectControl }) => {
-  const [file] = useFile();
-
-  const affectingControls = Object.entries(file.controls).filter(
-    ([, control]) =>
-      control.steps.some((frame) =>
-        Object.keys(frame).some((key) => key === mutationId)
-      )
-  );
-  if (affectingControls.length > 0) {
-    return (
-      <Control label="Controlled by">
-        <p>
-          {affectingControls.map(([id, c], idx, list) =>
-            idx === list.length - 1 ? (
-              <TextButton key={id} onClick={() => onSelectControl?.(id)}>
-                {id === editingControlId ? <strong>{c.name}</strong> : c.name}
-              </TextButton>
-            ) : (
-              <Fragment key={id}>
-                <TextButton onClick={() => onSelectControl?.(id)}>
-                  {id === editingControlId ? <strong>{c.name}</strong> : c.name}
-                </TextButton>
-                {", "}
-              </Fragment>
-            )
-          )}
-        </p>
-      </Control>
-    );
-  }
-  return null;
 };
