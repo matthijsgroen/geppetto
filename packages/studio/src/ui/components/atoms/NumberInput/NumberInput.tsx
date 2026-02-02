@@ -27,6 +27,8 @@ type NumberInputProps = {
   maxValue?: number;
   htmlId?: string;
   onChange?: (newValue: number) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 };
 
 const stepSizes: Record<StepSize, number> = {
@@ -72,6 +74,8 @@ export const NumberInput: FC<NumberInputProps> = ({
   minValue,
   maxValue,
   onChange,
+  onFocus,
+  onBlur,
 }) => {
   const handleChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
@@ -94,7 +98,9 @@ export const NumberInput: FC<NumberInputProps> = ({
         id={htmlId}
         max={maxValue}
         min={minValue}
+        onBlur={onBlur}
         onChange={handleChange}
+        onFocus={onFocus}
         onKeyDown={handleKeyDown}
         type="number"
         value={value}

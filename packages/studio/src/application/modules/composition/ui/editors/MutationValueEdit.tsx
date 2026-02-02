@@ -16,12 +16,16 @@ type MutationValueEditProps = {
   mutationType: MutationVectorTypes;
   value: Vec2;
   onValueChange: (newValue: Vec2) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 };
 
 export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
   mutationType,
   value,
   onValueChange,
+  onFocus,
+  onBlur,
 }) => {
   if (!value) {
     return (
@@ -36,6 +40,8 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
         label="Opacity"
         max={1}
         min={0}
+        onBlur={onBlur}
+        onFocus={onFocus}
         onValueChange={onValueChange}
         step={0.01}
         value={value}
@@ -49,6 +55,8 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
         label="Saturation"
         max={1}
         min={0}
+        onBlur={onBlur}
+        onFocus={onFocus}
         onValueChange={onValueChange}
         step={0.01}
         value={value}
@@ -62,6 +70,8 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
         label="Lightness"
         max={2}
         min={0}
+        onBlur={onBlur}
+        onFocus={onFocus}
         onValueChange={onValueChange}
         step={0.01}
         value={value}
@@ -75,6 +85,8 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
         label="Rotation"
         max={360}
         min={-360}
+        onBlur={onBlur}
+        onFocus={onFocus}
         onValueChange={onValueChange}
         step={0}
         value={value}
@@ -91,6 +103,8 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
           label="Hue"
           max={1}
           min={0}
+          onBlur={onBlur}
+          onFocus={onFocus}
           onValueChange={onValueChange}
           step={0.01}
           value={value}
@@ -100,6 +114,8 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
           label="Saturation"
           max={1}
           min={0}
+          onBlur={onBlur}
+          onFocus={onFocus}
           onValueChange={onValueChange}
           step={0.01}
           value={value}
@@ -109,5 +125,13 @@ export const MutationValueEdit: React.FC<MutationValueEditProps> = ({
       </>
     );
   }
-  return <VectorControl label="Value" onChange={onValueChange} value={value} />;
+  return (
+    <VectorControl
+      label="Value"
+      onBlur={onBlur}
+      onChange={onValueChange}
+      onFocus={onFocus}
+      value={value}
+    />
+  );
 };

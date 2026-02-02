@@ -7,12 +7,16 @@ type VectorControlProps = {
   label?: string;
   value?: Vec2;
   onChange?: (newValue: Vec2) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 };
 
 export const VectorControl: React.FC<VectorControlProps> = ({
   label,
   value = [0, 0],
   onChange,
+  onFocus,
+  onBlur,
 }) => {
   const xChangeHandler = useCallback(
     (val: number) => {
@@ -35,11 +39,19 @@ export const VectorControl: React.FC<VectorControlProps> = ({
     <Control htmlFor={`${label}_Field`} label={label}>
       <NumberInput
         htmlId={`${label}_Field`}
+        onBlur={onBlur}
         onChange={xChangeHandler}
+        onFocus={onFocus}
         prefix="x:"
         value={value[0]}
       />
-      <NumberInput onChange={yChangeHandler} prefix="y:" value={value[1]} />
+      <NumberInput
+        onBlur={onBlur}
+        onChange={yChangeHandler}
+        onFocus={onFocus}
+        prefix="y:"
+        value={value[1]}
+      />
     </Control>
   );
 };

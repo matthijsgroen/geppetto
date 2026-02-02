@@ -15,6 +15,8 @@ type ValueSliderProps = {
   valueFormatter?: (value: number) => string;
   value: Vec2;
   onValueChange: (newValue: Vec2) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 };
 
 export const ValueSlider: React.FC<ValueSliderProps> = ({
@@ -26,6 +28,8 @@ export const ValueSlider: React.FC<ValueSliderProps> = ({
   valueFormatter = defaultFormatter,
   value,
   onValueChange,
+  onFocus,
+  onBlur,
 }) => {
   const sliderChangeHandler = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +48,9 @@ export const ValueSlider: React.FC<ValueSliderProps> = ({
         <RangeInput
           max={max}
           min={min}
+          onBlur={onBlur}
           onChange={sliderChangeHandler}
+          onFocus={onFocus}
           step={step}
           value={value[vectorIndex]}
         />
