@@ -102,13 +102,25 @@ type RenameableItems<O> = Pick<
   }[keyof O]
 >;
 
-const typeToGroupKey: Record<NodeType, keyof RenameableItems<GeppettoImage>> = {
+type HierarchyNodeTypes = NodeType | "control" | "controlFolder" | "animation";
+
+const typeToGroupKey: Record<
+  HierarchyNodeTypes,
+  keyof RenameableItems<GeppettoImage>
+> = {
   layer: "layers",
   layerFolder: "layerFolders",
   mutation: "mutations",
+  control: "controls",
+  controlFolder: "controlFolders",
+  animation: "animations",
 };
 
-export const rename = (itemId: string, itemType: NodeType, newName: string) =>
+export const rename = (
+  itemId: string,
+  itemType: HierarchyNodeTypes,
+  newName: string
+) =>
   produce<GeppettoImage>((draft) => {
     const groupKey = typeToGroupKey[itemType];
     draft[groupKey][itemId].name = newName;
