@@ -135,3 +135,27 @@ export const useDirectMutationValues = (): [
 
   return [mutationValues, updateMutationValues];
 };
+
+export const useDirectControlValues = (): [
+  ControlValues,
+  (updater: (current: ControlValues) => ControlValues) => void,
+] => {
+  const {
+    controlValues: initialControlValues,
+    updateControlValues,
+    onUpdate,
+  } = use(ImageCtrlContext);
+
+  const [controlValues, setControlValues] = useState<ControlValues>(
+    initialControlValues.current
+  );
+
+  useEffect(() => {
+    const unsubscribe = onUpdate((updatedControlValues) => {
+      setControlValues(updatedControlValues);
+    });
+    return unsubscribe;
+  }, [setControlValues, onUpdate]);
+
+  return [controlValues, updateControlValues];
+};
