@@ -171,7 +171,7 @@ const LayerMouseControl: FC<LayerMouseControlProps> = ({
       handleDrag(
         event,
         pixelsToImage(translation, canvasRect, fitScale)([elementX, elementY]),
-        "start"
+        "end"
       );
     }
   });

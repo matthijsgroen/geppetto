@@ -45,7 +45,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
   onSectionChange,
 }) => {
   const [file, setFile] = useFile();
-  const [selectedItems, setSelectedItems] = selectedItemsState;
+  const [selectedItems] = selectedItemsState;
   const activeMutation =
     (selectedItems.length === 1 && file.mutations[selectedItems[0]]) || null;
   const selectedEmptyFolder =
@@ -73,7 +73,6 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
 
   const removeItemAction = useToolAction(() => {
     const item = selectedItems[0];
-    setSelectedItems([]);
     setFile(removeShape(item));
   });
 

@@ -13,7 +13,7 @@ import { InstallToolButton } from "@/application/modules/application-menu/ui/Ins
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
 import { useInfoPanel } from "@/application/shared/actions/useInfoPanel";
-import { useFile } from "@/application/state/FileContext";
+import { useFileUndoRedo } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { useUpdateMutationValues } from "@/application/state/ImageControlContext";
@@ -139,7 +139,12 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
   texture,
   onSectionChange,
 }) => {
-  const [file, setFile] = useFile();
+  const {
+    state: file,
+    set: setFile,
+    setGrouped: setFileGrouped,
+    endGrouping,
+  } = useFileUndoRedo();
   const [showWireFrames, setShowWireFrames] = useState(true);
   const [controlEditMode, setControlEditMode] = useState(false);
   const [activeControlStep, setActiveControlStep] = useState<number>(0);
@@ -373,7 +378,10 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
         ];
         const origin = dragDropStatus.current.fileDragStart;
 
-        setFile(dragItem(origin, dragged, itemId));
+        setFileGrouped("dragOrigin", dragItem(origin, dragged, itemId));
+        if (dragState === "end") {
+          endGrouping();
+        }
       }
       return true;
     }
@@ -602,16 +610,24 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 <ControlPanel>
                   <Control label="Width">
                     <NumberInput
+                      onBlur={() => endGrouping()}
                       onChange={(newWidth) => {
-                        setFile(updateImageWidth(newWidth));
+                        setFileGrouped(
+                          "imageWidth",
+                          updateImageWidth(newWidth)
+                        );
                       }}
                       value={file.metadata.width}
                     />
                   </Control>
                   <Control label="Height">
                     <NumberInput
+                      onBlur={() => endGrouping()}
                       onChange={(newHeight) => {
-                        setFile(updateImageHeight(newHeight));
+                        setFileGrouped(
+                          "imageHeight",
+                          updateImageHeight(newHeight)
+                        );
                       }}
                       value={file.metadata.height}
                     />
