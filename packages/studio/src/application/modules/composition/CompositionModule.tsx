@@ -165,7 +165,10 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       ? activeMutatorState
       : null;
 
-  const [selectedControls, setSelectedControls] = useState<string[]>([]);
+  const [selectedControlsState, setSelectedControls] = useState<string[]>([]);
+  const selectedControls = selectedControlsState.filter(
+    (id) => file.controls[id] !== undefined
+  );
   const updateMutationValues = useUpdateMutationValues();
   const dragDropStatus = useRef<{
     fileDragStart: GeppettoImage;
