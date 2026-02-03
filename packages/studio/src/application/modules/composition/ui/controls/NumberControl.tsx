@@ -6,6 +6,8 @@ type NumberControlProps = {
   minValue?: number;
   maxValue?: number;
   onChange?: (newValue: number) => void;
+  onBlur?: () => void;
+  onFocus?: () => void;
 };
 
 export const NumberControl: React.FC<NumberControlProps> = ({
@@ -14,12 +16,16 @@ export const NumberControl: React.FC<NumberControlProps> = ({
   minValue,
   maxValue,
   onChange,
+  onBlur,
+  onFocus,
 }) => (
   <Control label={label}>
     <NumberInput
       maxValue={maxValue}
       minValue={minValue}
+      onBlur={onBlur}
       onChange={onChange}
+      onFocus={onFocus}
       value={value}
     />
   </Control>

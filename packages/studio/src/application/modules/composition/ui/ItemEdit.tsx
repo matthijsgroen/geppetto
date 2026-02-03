@@ -1,13 +1,10 @@
 import type { Vec2 } from "@geppetto/types";
 import { produce } from "immer";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 
-import { useFile } from "@/application/state/FileContext";
+import { useFile, useFileUndoRedo } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
-import {
-  useMutationValues,
-  useUpdateMutationValues,
-} from "@/application/state/ImageControlContext";
+import { useDirectMutationValues } from "@/application/state/ImageControlContext";
 import { updateMutationValue } from "@/domain/animation/file2/mutation";
 import {
   setLayerOffset,
@@ -143,33 +140,31 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
   onSelectControl,
   editingControlStep = 0,
 }) => {
-  const [file, setFile] = useFile();
+  const { state: file, setGrouped: setFile, endGrouping } = useFileUndoRedo();
   const [, startTransition] = useTransition();
 
-  const mutationValues = useMutationValues();
-  const updateMutationValues = useUpdateMutationValues();
+  const [mutationValues, updateMutationValues] = useDirectMutationValues();
 
   const mutationValue: Vec2 = !activeMutator
     ? blankValue
     : editingControlId !== undefined
       ? file.controls[editingControlId].steps[editingControlStep][activeMutator]
-      : (mutationValues.current[activeMutator] ??
+      : (mutationValues[activeMutator] ??
         defaultValueForVector(file.mutations[activeMutator].type));
-  const [slideValue, setSlideValue] = useState(mutationValue);
 
   const valueChangeHandler = useEvent((newValue: Vec2) => {
     if (activeMutator === null) return;
-    setSlideValue(newValue);
     if (editingControlId === undefined) {
       updateMutationValues((mutations) => ({
         ...mutations,
         [activeMutator]: newValue,
       }));
       startTransition(() => {
-        setFile(updateMutationValue(activeMutator, newValue));
+        setFile("mutationUpdate", updateMutationValue(activeMutator, newValue));
       });
     } else {
       setFile(
+        "controlStepUpdate",
         produce((draft) => {
           draft.controls[editingControlId].steps[editingControlStep][
             activeMutator
@@ -190,8 +185,11 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
         />
         <MutationValueEdit
           mutationType={mutationType}
+          onBlur={() => {
+            endGrouping();
+          }}
           onValueChange={valueChangeHandler}
-          value={slideValue}
+          value={mutationValue}
         />
       </ControlPanel>
     );

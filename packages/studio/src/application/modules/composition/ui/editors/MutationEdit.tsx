@@ -1,15 +1,12 @@
 import type { Vec2 } from "@geppetto/types";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 
 import { NumberControl } from "@/application/modules/composition/ui/controls/NumberControl";
 import { ToggleControl } from "@/application/modules/composition/ui/controls/ToggleControl";
 import { VectorControl } from "@/application/modules/composition/ui/controls/VectorControl";
-import { useFile } from "@/application/state/FileContext";
+import { useFileUndoRedo } from "@/application/state/FileContext";
 import { useEvent } from "@/application/state/hooks/useEvent";
-import {
-  useMutationValues,
-  useUpdateMutationValues,
-} from "@/application/state/ImageControlContext";
+import { useDirectMutationValues } from "@/application/state/ImageControlContext";
 import {
   hasRadius,
   iconMapping,
@@ -42,20 +39,23 @@ export const MutationEdit: React.FC<EditProps> = ({
   itemId,
   onSelectControl,
 }) => {
-  const [file, setFile] = useFile();
+  const {
+    state: file,
+    setGrouped: setFileGrouped,
+    set: setFile,
+    endGrouping,
+  } = useFileUndoRedo();
   const mutation = file.mutations[itemId];
-  const updateMutations = useUpdateMutationValues();
   const [, startTransition] = useTransition();
 
-  const mutationValues = useMutationValues();
+  const [mutationValues, updateMutationValues] = useDirectMutationValues();
 
   const mutationValue: Vec2 = !itemId
     ? blankValue
-    : (mutationValues.current[itemId] ?? defaultValueForVector(mutation.type));
-  const [slideValue, setSlideValue] = useState(mutationValue);
+    : (mutationValues[itemId] ?? defaultValueForVector(mutation.type));
 
   const radiusChange = useEvent((newRadius: number) => {
-    setFile(updateMutationRadius(itemId, newRadius));
+    setFileGrouped("radiusUpdate", updateMutationRadius(itemId, newRadius));
   });
 
   const toggleRadius = useEvent((newValue: boolean) => {
@@ -63,14 +63,13 @@ export const MutationEdit: React.FC<EditProps> = ({
   });
 
   const originChangeHandler = useEvent((newValue: Vec2) => {
-    setFile(setMutationOrigin(itemId, newValue));
+    setFileGrouped("originUpdate", setMutationOrigin(itemId, newValue));
   });
 
   const valueChangeHandler = useEvent((newValue: Vec2) => {
-    updateMutations((mutations) => ({ ...mutations, [itemId]: newValue }));
-    setSlideValue(newValue);
+    updateMutationValues((mutations) => ({ ...mutations, [itemId]: newValue }));
     startTransition(() => {
-      setFile(updateMutationValue(itemId, newValue));
+      setFileGrouped("mutationUpdate", updateMutationValue(itemId, newValue));
     });
   });
 
@@ -83,6 +82,7 @@ export const MutationEdit: React.FC<EditProps> = ({
         {isShapeMutationVector(mutation) && (
           <VectorControl
             label="Origin"
+            onBlur={() => endGrouping()}
             onChange={originChangeHandler}
             value={mutation.origin}
           />
@@ -98,6 +98,7 @@ export const MutationEdit: React.FC<EditProps> = ({
               <NumberControl
                 label="Radius"
                 minValue={0}
+                onBlur={() => endGrouping()}
                 onChange={radiusChange}
                 value={mutation.radius}
               />
@@ -110,8 +111,9 @@ export const MutationEdit: React.FC<EditProps> = ({
         />
         <MutationValueEdit
           mutationType={mutation.type}
+          onBlur={() => endGrouping()}
           onValueChange={valueChangeHandler}
-          value={slideValue}
+          value={mutationValue}
         />
       </ControlPanel>
       {isShapeMutationVector(mutation) && (

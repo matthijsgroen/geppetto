@@ -6,7 +6,9 @@ import {
   type RefObject,
   use,
   useCallback,
+  useEffect,
   useRef,
+  useState,
 } from "react";
 
 import useEvent from "./hooks/useEvent";
@@ -42,7 +44,7 @@ const ImageCtrlContext = createContext<{
   },
 });
 
-export const ImageControlContext: FC<PropsWithChildren> = ({ children }) => {
+export const ImageControlProvider: FC<PropsWithChildren> = ({ children }) => {
   const listenersRef = useRef<
     ((controlValues: ControlValues, mutationValues: MutationValues) => void)[]
   >([]);
@@ -109,3 +111,27 @@ export const useUpdateControlValues = () =>
 
 export const useUpdateMutationValues = () =>
   use(ImageCtrlContext).updateMutationValues;
+
+export const useDirectMutationValues = (): [
+  MutationValues,
+  (updater: (current: MutationValues) => MutationValues) => void,
+] => {
+  const {
+    mutationValues: initialMutationValues,
+    updateMutationValues,
+    onUpdate,
+  } = use(ImageCtrlContext);
+
+  const [mutationValues, setMutationValues] = useState<MutationValues>(
+    initialMutationValues.current
+  );
+
+  useEffect(() => {
+    const unsubscribe = onUpdate((_, updatedMutationValues) => {
+      setMutationValues(updatedMutationValues);
+    });
+    return unsubscribe;
+  }, [setMutationValues, onUpdate]);
+
+  return [mutationValues, updateMutationValues];
+};
