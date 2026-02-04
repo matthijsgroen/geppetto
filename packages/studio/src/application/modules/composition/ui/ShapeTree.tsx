@@ -46,12 +46,6 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
 }) => {
   const [file, setFile] = useFile();
   const [selectedItems] = selectedItemsState;
-  const activeMutation =
-    (selectedItems.length === 1 && file.mutations[selectedItems[0]]) || null;
-  const selectedEmptyFolder =
-    selectedItems.length === 1 &&
-    file.layerFolders[selectedItems[0]] &&
-    (file.layerHierarchy[selectedItems[0]].children || []).length === 0;
   const updateMutationValues = useUpdateMutationValues();
 
   const addFolderAction = useToolAction(() => {
@@ -157,7 +151,7 @@ export const ShapeTree: React.FC<ShapeTreeProps> = ({
         </Menu>
         <ToolSeparator />
         <ToolButton
-          disabled={!(activeMutation || selectedEmptyFolder)}
+          disabled={selectedItems.length !== 1}
           icon={<Icon>🗑</Icon>}
           onClick={removeItemAction}
           onKeyDown={removeItemAction}
