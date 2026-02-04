@@ -2,14 +2,19 @@ import {
   AnimationControls as GeppettoAnimationControls,
   PreparedImageDefinition,
 } from "geppetto-player";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, {
+  type FC,
+  type PropsWithChildren,
+  useEffect,
+  useState,
+} from "react";
 import styled, { css } from "styled-components";
 
-type Props = {
+type Props = PropsWithChildren<{
   controls?: GeppettoAnimationControls;
   animation?: PreparedImageDefinition;
   width: number;
-};
+}>;
 
 const AnimationGrid = styled.ul`
   display: grid;
@@ -114,7 +119,7 @@ const createInitialControlValues = (
   return initialControlValues;
 };
 
-const AnimationControls: FunctionComponent<Props> = ({
+const AnimationControls: FC<Props> = ({
   animation,
   controls,
   width,
