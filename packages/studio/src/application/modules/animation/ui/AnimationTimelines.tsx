@@ -238,7 +238,6 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                   key={animationId}
                   onDelete={() => {
                     setFile(deleteAnimation(animationId));
-                    onSelectAnimation?.(null);
                     onFrameSelect?.(null);
                   }}
                   onFrameSelect={onFrameSelect}

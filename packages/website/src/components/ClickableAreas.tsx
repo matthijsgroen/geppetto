@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useRef } from "react";
+import React, { FunctionComponent, PropsWithChildren, useRef } from "react";
 import styled from "styled-components";
 
 type Area = {
@@ -11,13 +11,13 @@ type Area = {
   cursor: string;
 };
 
-type Props = {
+type Props = PropsWithChildren<{
   width: number;
   height: number;
   onClick?: (percX: number, percY: number) => void;
   areas: Area[];
   allowFullscreen?: boolean;
-};
+}>;
 
 const ClickableArea = styled.div<Omit<Area, "id">>`
   position: absolute;
@@ -58,7 +58,7 @@ const ClickableAreas: FunctionComponent<Props> = ({
   onClick,
   allowFullscreen = false,
 }) => {
-  const containerRef = useRef<HTMLDivElement>();
+  const containerRef = useRef<HTMLDivElement>(null);
   return (
     <ClickableContainer
       ref={containerRef}
@@ -87,7 +87,9 @@ const ClickableAreas: FunctionComponent<Props> = ({
           onClick={() => {
             if (document.fullscreenElement) {
               document.exitFullscreen();
-            } else containerRef.current.requestFullscreen();
+            } else if (containerRef.current) {
+              containerRef.current.requestFullscreen();
+            }
           }}
         >
           📺

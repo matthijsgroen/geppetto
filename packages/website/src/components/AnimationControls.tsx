@@ -131,7 +131,7 @@ const AnimationControls: FunctionComponent<Props> = ({
     if (!controls) return;
     setControlValues(createInitialControlValues(animation, controls));
 
-    return controls.onTrackStopped((trackName) => {
+    return controls.onAnimationStopped((trackName) => {
       setTrackStates((state) => ({ ...state, [trackName]: false }));
     });
   }, [controls]);
@@ -168,7 +168,7 @@ const AnimationControls: FunctionComponent<Props> = ({
                   }
                   onClick={() => {
                     if (trackStates[a.name] === true) {
-                      controls.stopAnimation (a.name);
+                      controls.stopAnimation(a.name);
                       setTrackStates((state) => ({
                         ...state,
                         [a.name]: false,
@@ -195,16 +195,15 @@ const AnimationControls: FunctionComponent<Props> = ({
                   value={
                     controlValues[c.name] === undefined
                       ? 0
-                      : (controlValues[c.name] ?? 0.0) / (c.steps - 1)
+                      : controlValues[c.name]
                   }
                   onChange={(value) => {
                     const sliderValue = value.currentTarget.valueAsNumber;
-                    const controlValue = sliderValue * (c.steps - 1);
                     setControlValues((state) => ({
                       ...state,
-                      [c.name]: controlValue,
+                      [c.name]: sliderValue,
                     }));
-                    controls.setControlValue(c.name, controlValue);
+                    controls.setControlValue(c.name, sliderValue);
                   }}
                 />
               </AnimationControl>

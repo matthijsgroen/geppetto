@@ -66,8 +66,14 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
 }) => {
   const [file, setFile] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
-  const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
+  const [activeAnimationState, setActiveAnimation] = useState<string | null>(
+    null
+  );
   const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
+  const activeAnimation =
+    activeAnimationState && file.animations[activeAnimationState]
+      ? activeAnimationState
+      : null;
 
   const stopAnimationState = useCallback((animationId: string) => {
     setAnimationsPlaying((prev) =>
