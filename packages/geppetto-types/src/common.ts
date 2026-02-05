@@ -12,3 +12,6 @@ export type Vec3 = [x: number, y: number, z: number];
  * A 4D vector represented as [x, y, z, w]
  */
 export type Vec4 = [x: number, y: number, z: number, w: number];
+
+export const GEP_MAGIC = "GEP1";
+export const HEADER_SIZE = 32;
