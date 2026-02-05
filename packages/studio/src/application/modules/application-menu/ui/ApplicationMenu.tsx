@@ -1,3 +1,4 @@
+import type { FileEntry } from "@geppetto/types";
 import { type GeppettoImage } from "@geppetto/types";
 import React, { useCallback, useContext, useEffect, useRef } from "react";
 
@@ -17,7 +18,11 @@ import sceneryDemoImg from "@/demos/scenery.json";
 import sceneryDemoImage from "@/demos/scenery.png";
 import { verifyFile as verifyVersion2 } from "@/domain/animation/file2/verifyFile";
 import { type UseState } from "@/dtos/application.dto";
-import { loadGeppettoFile, saveGeppettoFile } from "@/dtos/geppetto-file";
+import {
+  imageToUint8Array,
+  loadGeppettoFile,
+  saveGeppettoFile,
+} from "@/dtos/geppettoFile";
 import {
   preferDarkMode,
   preferLightMode,
@@ -45,14 +50,14 @@ type ApplicationMenuProps = {
 
 const loadTextureImage = async (
   file: FileSystemFileHandle
-): Promise<[filename: string, image: HTMLImageElement]> => {
+): Promise<{ filename: string; image: HTMLImageElement }> => {
   const fileData = await file.getFile();
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => {
       const image = new Image();
       image.src = reader.result as string;
-      resolve([file.name, image]);
+      resolve({ filename: file.name, image });
     });
     reader.readAsDataURL(fileData);
   });
@@ -88,8 +93,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
     undo,
     redo,
   } = useFileUndoRedo();
-  const [, setTextureFile] = textureFileState;
-  const [, setTextureFileName] = textureFileNameState;
+  const [textureFile, setTextureFile] = textureFileState;
+  const [textureFileName, setTextureFileName] = textureFileNameState;
   const controlUpdate = useUpdateControlValues();
   const mutationUpdate = useUpdateMutationValues();
   const lightModePreference = useLightModePreference();
@@ -109,6 +114,10 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                     excludeAcceptAllOption: true,
                     types: [
                       {
+                        description: "GEPPETTO File",
+                        accept: { "application/octet-stream": [".gep"] },
+                      },
+                      {
                         description: "JSON File",
                         accept: { "application/json": [".json"] },
                       },
@@ -120,11 +129,28 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                   return;
                 }
                 try {
-                  const [filename, image] = await loadGeppettoFile(
-                    fileRef.current
-                  );
+                  const { filename, image, fileEntries, getFile } =
+                    await loadGeppettoFile(fileRef.current);
+
                   fileNameState[1](filename);
                   setFile(image);
+
+                  const hasTexture = fileEntries.find((fe) =>
+                    fe.mime.startsWith("image/")
+                  );
+                  if (hasTexture) {
+                    const textureArrayBuffer = getFile(hasTexture);
+                    const blob = new Blob([textureArrayBuffer], {
+                      type: hasTexture.mime,
+                    });
+                    const image = new Image();
+                    image.addEventListener("load", () => {
+                      setTextureFileName(hasTexture.name);
+                      setTextureFile(image);
+                    });
+                    image.src = URL.createObjectURL(blob);
+                  }
+
                   controlUpdate(() => image.controlValues);
                   mutationUpdate(() => image.defaultFrame);
                 } catch (e) {
@@ -146,9 +172,13 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
               if (window.showSaveFilePicker) {
                 try {
                   const fileHandle = await window.showSaveFilePicker({
-                    suggestedName: "animation.json",
+                    suggestedName: "animation.gep",
                     excludeAcceptAllOption: true,
                     types: [
+                      {
+                        description: "GEPPETTO File",
+                        accept: { "application/octet-stream": [".gep"] },
+                      },
                       {
                         description: "JSON File",
                         accept: { "application/json": [".json"] },
@@ -157,7 +187,16 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                   });
                   fileRef.current = fileHandle;
                   fileNameState[1](fileHandle.name);
-                  await saveGeppettoFile(fileHandle, file);
+                  const fileEntries: FileEntry[] = [];
+                  if (textureFile && textureFileName) {
+                    fileEntries.push({
+                      name: textureFileName,
+                      mime: "image/png",
+                      data: await imageToUint8Array(textureFile, "image/png"),
+                    });
+                  }
+
+                  await saveGeppettoFile(fileHandle, file, fileEntries);
                 } catch (_e) {
                   // user abort
                 }
@@ -173,9 +212,13 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
               if (!fileRef.current && window.showSaveFilePicker) {
                 try {
                   const fileHandle = await window.showSaveFilePicker({
-                    suggestedName: "animation.json",
+                    suggestedName: "animation.gep",
                     excludeAcceptAllOption: true,
                     types: [
+                      {
+                        description: "GEPPETTO File",
+                        accept: { "application/octet-stream": [".gep"] },
+                      },
                       {
                         description: "JSON File",
                         accept: { "application/json": [".json"] },
@@ -190,7 +233,15 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
               }
               if (fileRef.current) {
                 try {
-                  await saveGeppettoFile(fileRef.current, file);
+                  const fileEntries: FileEntry[] = [];
+                  if (textureFile && textureFileName) {
+                    fileEntries.push({
+                      name: textureFileName,
+                      mime: "image/png",
+                      data: await imageToUint8Array(textureFile, "image/png"),
+                    });
+                  }
+                  await saveGeppettoFile(fileRef.current, file, fileEntries);
                 } catch (_e) {
                   // user abort
                 }
@@ -214,7 +265,7 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                     ],
                   });
                   textureFileRef.current = file;
-                  const [filename, image] = await loadTextureImage(file);
+                  const { filename, image } = await loadTextureImage(file);
                   setTextureFileName(filename);
                   setTextureFile(image);
                 } catch (_e) {
@@ -260,6 +311,8 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       [
         fileNameState,
         file,
+        textureFile,
+        textureFileName,
         setFile,
         setTextureFile,
         setTextureFileName,

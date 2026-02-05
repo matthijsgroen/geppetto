@@ -1,9 +1,10 @@
 import { GEP_MAGIC, HEADER_SIZE } from "./common";
+import { FileEntry } from "./fileEntry";
 import { GeppettoImage, GeppettoImageWithFiles } from "./image";
 
 export const writeGep = async (
   json: GeppettoImage,
-  files: { name: string; mime: string; data: Uint8Array }[]
+  files: FileEntry[]
 ): Promise<ArrayBuffer> => {
   const encoder = new TextEncoder();
 
@@ -48,9 +49,9 @@ export const writeGep = async (
 
   // ---- BIN chunk ----
   let ptr = binOffset;
-  for (const blob of files) {
-    u8.set(blob.data, ptr);
-    ptr += blob.data.byteLength;
+  for (const file of files) {
+    u8.set(file.data, ptr);
+    ptr += file.data.byteLength;
   }
 
   return buffer;

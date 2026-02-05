@@ -4,7 +4,7 @@ import { type Hierarchy } from "./hierarchy";
 import { type Folder, type Layer, type LayerFolder } from "./layers";
 import { type MutationVector } from "./mutations";
 import { type Vec2 } from "./common";
-import { FileEntry } from "./fileEntry";
+import { FileReference } from "./fileEntry";
 
 /**
  * Canvas metadata
@@ -65,5 +65,5 @@ export type GeppettoImage = {
 };
 
 export type GeppettoImageWithFiles = GeppettoImage & {
-  fileEntries: FileEntry[];
+  fileEntries: FileReference[];
 };

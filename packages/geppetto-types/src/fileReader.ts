@@ -1,13 +1,13 @@
 import { GEP_MAGIC } from "./common";
-import { FileEntry } from "./fileEntry";
+import { FileReference } from "./fileEntry";
 import { GeppettoImage } from "./image";
 
 export const readGep = (
   buffer: ArrayBuffer
 ): {
   json: GeppettoImage;
-  fileEntries: FileEntry[];
-  getFile(fileEntry: FileEntry): ArrayBuffer;
+  fileEntries: FileReference[];
+  getFile(fileEntry: FileReference): ArrayBuffer;
 } => {
   const view = new DataView(buffer);
   const u8 = new Uint8Array(buffer);
@@ -24,7 +24,7 @@ export const readGep = (
 
   const jsonBytes = u8.slice(jsonOffset, jsonOffset + jsonLength);
   const json = JSON.parse(new TextDecoder().decode(jsonBytes));
-  const fileEntries: FileEntry[] = json.fileEntries || [];
+  const fileEntries: FileReference[] = json.fileEntries || [];
 
   // Remove fileEntries if present
   if (json && typeof json === "object" && "fileEntries" in json) {
@@ -33,7 +33,7 @@ export const readGep = (
   return {
     json,
     fileEntries,
-    getFile(fileEntry: FileEntry) {
+    getFile(fileEntry: FileReference) {
       return buffer.slice(
         binOffset + fileEntry.offset,
         binOffset + fileEntry.offset + fileEntry.length

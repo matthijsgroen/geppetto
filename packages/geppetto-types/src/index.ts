@@ -24,3 +24,8 @@ export * from "./schemas";
 
 // Validators
 export * from "./validators";
+
+// File reading / writing
+export * from "./fileEntry";
+export * from "./fileReader";
+export * from "./fileWriter";
