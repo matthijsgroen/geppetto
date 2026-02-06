@@ -98,8 +98,17 @@ export const imageToUint8Array = async (
   if (!ctx) throw new Error("No canvas context");
   ctx.drawImage(image, 0, 0);
 
-  const blob = await new Promise<Blob>((resolve) =>
-    canvas.toBlob((b) => resolve(b as Blob), format)
+  const blob = await new Promise<Blob>((resolve, reject) =>
+    canvas.toBlob(
+      (b) => {
+        if (!b) {
+          reject(new Error("Failed to encode image (canvas.toBlob returned null)"));
+          return;
+        }
+        resolve(b);
+      },
+      format
+    )
   );
 
   const buffer = await blob.arrayBuffer();
