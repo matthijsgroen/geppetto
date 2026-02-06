@@ -400,14 +400,15 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
       <SubMenu label="File">
         {/* <MenuItem>New</MenuItem> */}
         <ActionMenuItem action={actions.openImageFile} />
-        <ActionMenuItem action={actions.openTextureFile} />
-        <MenuDivider />
-        <MenuItem disabled>Reload texture</MenuItem>
         <MenuDivider />
         <ActionMenuItem action={actions.saveImageFile} />
         <ActionMenuItem action={actions.saveImageFileAs} />
         <MenuDivider />
         <MenuItem disabled>Revert file</MenuItem>
+        <SubMenu label="Texture">
+          <ActionMenuItem action={actions.openTextureFile} />
+          <MenuItem disabled>Save texture as...</MenuItem>
+        </SubMenu>
       </SubMenu>
       <SubMenu label="Edit">
         <ActionMenuItem action={actions.undo} disabled={!canUndo} />
