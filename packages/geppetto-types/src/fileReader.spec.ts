@@ -21,4 +21,12 @@ describe("File Reader", () => {
     const extractedFile = new Uint8Array(getFile(fileEntries[0]));
     expect(extractedFile).toEqual(fileData);
   });
+
+  it("throws an error for invalid files", () => {
+    const invalidBuffer = new ArrayBuffer(4);
+    const view = new DataView(invalidBuffer);
+    view.setUint32(0, 0x12345678, true); // Invalid magic number
+
+    expect(() => readGep(invalidBuffer)).toThrow("Invalid GEP file");
+  });
 });

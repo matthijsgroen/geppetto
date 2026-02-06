@@ -24,12 +24,9 @@ export const readGep = (
 
   const jsonBytes = u8.slice(jsonOffset, jsonOffset + jsonLength);
   const json = JSON.parse(new TextDecoder().decode(jsonBytes));
-  const fileEntries: FileReference[] = json.fileEntries || [];
+  const fileEntries: FileReference[] = json.fileEntries;
 
-  // Remove fileEntries if present
-  if (json && typeof json === "object" && "fileEntries" in json) {
-    delete json.fileEntries;
-  }
+  delete json.fileEntries;
   return {
     json,
     fileEntries,
