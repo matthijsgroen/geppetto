@@ -176,7 +176,7 @@ export const removeShape = (shapeId: string) =>
       if (!isRootNode(item)) {
         const parent = draft.layerHierarchy[item.parentId];
         if (parent?.children) {
-          const selfIndex = parent.children.indexOf(shapeId);
+          const selfIndex = parent.children.indexOf(itemId);
           if (selfIndex > -1) {
             parent.children.splice(selfIndex, 1);
           }
