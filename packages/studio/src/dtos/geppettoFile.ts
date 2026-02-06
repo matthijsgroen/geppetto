@@ -99,16 +99,15 @@ export const imageToUint8Array = async (
   ctx.drawImage(image, 0, 0);
 
   const blob = await new Promise<Blob>((resolve, reject) =>
-    canvas.toBlob(
-      (b) => {
-        if (!b) {
-          reject(new Error("Failed to encode image (canvas.toBlob returned null)"));
-          return;
-        }
-        resolve(b);
-      },
-      format
-    )
+    canvas.toBlob((b) => {
+      if (!b) {
+        reject(
+          new Error("Failed to encode image (canvas.toBlob returned null)")
+        );
+        return;
+      }
+      resolve(b);
+    }, format)
   );
 
   const buffer = await blob.arrayBuffer();
