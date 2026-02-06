@@ -144,11 +144,16 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                       type: hasTexture.mime,
                     });
                     const image = new Image();
+                    const objectUrl = URL.createObjectURL(blob);
+                    const cleanup = () => URL.revokeObjectURL(objectUrl);
+
                     image.addEventListener("load", () => {
                       setTextureFileName(hasTexture.name);
                       setTextureFile(image);
+                      cleanup();
                     });
-                    image.src = URL.createObjectURL(blob);
+                    image.addEventListener("error", cleanup);
+                    image.src = objectUrl;
                   }
 
                   controlUpdate(() => image.controlValues);

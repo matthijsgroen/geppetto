@@ -112,11 +112,11 @@ export const ControlFrameEdit: FC<{
               }}
               onMouseUp={updateStartValue}
               step={0.01}
-              value={startValue / controlMaxValue}
+              value={controlMaxValue === 0 ? 0 : startValue / controlMaxValue}
             />
             <RangeValue
               formatter={(v) => v.toFixed(2)}
-              value={startValue / controlMaxValue}
+              value={controlMaxValue === 0 ? 0 : startValue / controlMaxValue}
             />
           </Column>
         </Control>

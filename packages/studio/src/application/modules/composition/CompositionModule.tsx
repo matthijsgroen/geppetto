@@ -1,6 +1,5 @@
 import type { GeppettoImage, MutationVector, Vec2 } from "@geppetto/types";
 import {
-  type RefObject,
   type SetStateAction,
   useCallback,
   useEffect,
@@ -17,10 +16,7 @@ import { useFileUndoRedo } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { useUpdateMutationValues } from "@/application/state/ImageControlContext";
-import {
-  useScreenTranslation,
-  useUpdateScreenTranslation,
-} from "@/application/state/ScreenTranslationContext";
+import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import LayerMouseControl, {
   type DragState,
@@ -46,7 +42,7 @@ import {
   type MutationSettings,
 } from "@/domain/animation/file2/mutation";
 import { hasPoints } from "@/domain/animation/file2/shapes";
-import { type AppSection, type Size } from "@/dtos/application.dto";
+import { type AppSection } from "@/dtos/application.dto";
 import { maxZoomFactor } from "@/infrastructure/webgl/lib/canvas";
 import {
   imageToPixels,
@@ -82,42 +78,6 @@ import { ControlEdit, ControlEditSteps } from "./ui/ControlEdit";
 import { ControlTree } from "./ui/ControlTree";
 import { InlayControlPanel, ItemEdit } from "./ui/ItemEdit";
 import { ShapeTree } from "./ui/ShapeTree";
-
-const calculateScale = (element: Size, texture: Size) => {
-  const landscape =
-    texture.width / element.width > texture.height / element.height;
-  return landscape
-    ? element.width / texture.width
-    : element.height / texture.height;
-};
-
-const useScaleUpdater = (
-  containerRef: RefObject<HTMLDivElement | null>,
-  texture: HTMLImageElement | null
-) => {
-  const updater = useUpdateScreenTranslation();
-  useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current && texture) {
-        const img = texture;
-        const rect = containerRef.current.getBoundingClientRect();
-        updater((current) => {
-          return {
-            ...current,
-            scale: calculateScale(rect, img),
-          };
-        });
-      }
-    };
-
-    const ref = containerRef.current;
-    if (ref === null) return;
-    ref.addEventListener("resize", handleResize);
-    return () => {
-      ref.removeEventListener("resize", handleResize);
-    };
-  }, [containerRef, updater, texture]);
-};
 
 const useMutatorMap = (
   file: GeppettoImage,
@@ -227,7 +187,6 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
-  useScaleUpdater(containerRef, texture);
 
   const mutatorMap = useMutatorMap(file, vectorValues);
   const translation = useScreenTranslation();

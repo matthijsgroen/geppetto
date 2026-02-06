@@ -147,6 +147,7 @@ export const movePoint = (layerId: string, point: Vec2, newPoint: Vec2) =>
     const index = array.findIndex(
       (p) => p[0] === point[0] && p[1] === point[1]
     );
+    if (index === -1) return;
     array[index] = newPoint;
   });
 
