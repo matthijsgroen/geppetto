@@ -18,6 +18,7 @@ import { formatTime } from "@/application/shared/timeFormatter";
 import { useFile } from "@/application/state/FileContext";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
+import { ErrorBoundary } from "@/application/ui/ErrorBoundary";
 import { SectionSelector } from "@/application/ui/SectionSelector";
 import {
   getAnimationControlFrame,
@@ -166,7 +167,9 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
             >
               <Panel padding="sm" scrollable>
                 {activeFrame && isControlFrame(activeFrame) && frame && (
-                  <>
+                  <ErrorBoundary
+                    fallback={<div>Error loading control frame edit</div>}
+                  >
                     <PanelTitle>
                       {file.controls[activeFrame.track.controlId].name} Frame
                     </PanelTitle>
@@ -177,13 +180,15 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                       key={`${activeFrame.animationId}-${activeFrame.track.controlId}-${activeFrame.actionIndex}`}
                       track={activeFrame.track}
                     />
-                  </>
+                  </ErrorBoundary>
                 )}
 
                 {activeFrame &&
                   activeFrame.track &&
                   isControlTrack(activeFrame.track) && (
-                    <>
+                    <ErrorBoundary
+                      fallback={<div>Error loading track details</div>}
+                    >
                       <PanelTitle>Track Details</PanelTitle>
                       <ControlPanel>
                         <Control label="Name">
@@ -200,11 +205,13 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                           </Label>
                         </Control>
                       </ControlPanel>
-                    </>
+                    </ErrorBoundary>
                   )}
 
                 {currentSelectedAnimation && activeAnimation && (
-                  <>
+                  <ErrorBoundary
+                    fallback={<div>Error loading animation details</div>}
+                  >
                     <PanelTitle>Animation Details</PanelTitle>
                     <ControlPanel>
                       <Control label="Name">
@@ -257,7 +264,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                         </Menu>
                       </Control>
                     </ControlPanel>
-                  </>
+                  </ErrorBoundary>
                 )}
 
                 {!activeAnimation && (

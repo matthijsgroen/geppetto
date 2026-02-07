@@ -1,5 +1,5 @@
 import type { Layer, Vec2 } from "@geppetto/types";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
@@ -13,6 +13,7 @@ import { useEvent } from "@/application/state/hooks/useEvent";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
+import { ErrorBoundary } from "@/application/ui/ErrorBoundary";
 import LayerMouseControl from "@/application/ui/LayerMouseControl";
 import { MouseMode } from "@/application/ui/MouseControl";
 import { SectionSelector } from "@/application/ui/SectionSelector";
@@ -119,11 +120,16 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
     [layers]
   );
 
-  const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
-  if (!activeLayer && activeCoord) {
-    setActiveCoord(null);
-    endFileGrouping();
-  }
+  const activeLayer = useMemo(
+    () => (selectedItems.length === 1 ? selectedItems[0] : undefined),
+    [selectedItems]
+  );
+
+  useEffect(() => {
+    if (!activeLayer && activeCoord) {
+      endFileGrouping();
+    }
+  }, [activeLayer, activeCoord, endFileGrouping]);
 
   const getClosestPoint = useEvent(
     (element: HTMLElement, coord: Vec2, shape: Layer): Vec2 | undefined => {
@@ -371,7 +377,13 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
           minSize={150}
         >
           <Column>
-            <ShapeTree selectedItemsState={[selectedItems, setSelectedItems]} />
+            <ErrorBoundary
+              fallback={<div style={{ padding: 16 }}>Error loading layers</div>}
+            >
+              <ShapeTree
+                selectedItemsState={[selectedItems, setSelectedItems]}
+              />
+            </ErrorBoundary>
           </Column>
         </ResizePanel>
         <Panel center workspace>

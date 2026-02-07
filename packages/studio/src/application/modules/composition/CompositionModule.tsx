@@ -18,6 +18,7 @@ import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap
 import { useUpdateMutationValues } from "@/application/state/ImageControlContext";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
+import { ErrorBoundary } from "@/application/ui/ErrorBoundary";
 import LayerMouseControl, {
   type DragState,
 } from "@/application/ui/LayerMouseControl";
@@ -107,7 +108,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
   } = useFileUndoRedo();
   const [showWireFrames, setShowWireFrames] = useState(true);
   const [controlEditMode, setControlEditMode] = useState(false);
-  const [activeControlStep, setActiveControlStep] = useState<number>(0);
+  const [activeControlStepState, setActiveControlStep] = useState<number>(0);
 
   const maxZoom = maxZoomFactor(texture);
 
@@ -428,6 +429,13 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
   const activeControlId =
     selectedControls.length === 1 ? selectedControls[0] : undefined;
 
+  const activeControlStep = activeControlId
+    ? Math.min(
+        file.controls[activeControlId].steps.length - 1,
+        activeControlStepState
+      )
+    : 0;
+
   return (
     <Column>
       <ToolBar>
@@ -458,12 +466,14 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
         >
           <Column>
             <Panel padding="sm">
-              <ShapeTree
-                editControlId={editingControl}
-                focusedItemState={[focusedLayer, setFocusedLayer]}
-                onSectionChange={onSectionChange}
-                selectedItemsState={[selectedItems, updateSelectedItems]}
-              />
+              <ErrorBoundary fallback={<div>Error loading shapes</div>}>
+                <ShapeTree
+                  editControlId={editingControl}
+                  focusedItemState={[focusedLayer, setFocusedLayer]}
+                  onSectionChange={onSectionChange}
+                  selectedItemsState={[selectedItems, updateSelectedItems]}
+                />
+              </ErrorBoundary>
             </Panel>
             {!controlEditMode && (
               <ResizePanel
@@ -472,29 +482,33 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 minSize={300}
               >
                 <Panel padding="sm">
-                  <ControlTree
-                    onSelectControls={(controlIds: string[]) => {
-                      setSelectedControls(controlIds);
-                    }}
-                    selectedControls={selectedControls}
-                  />
-                  {activeControlId && !controlEditMode && (
-                    <ControlEdit
-                      controlId={activeControlId}
-                      onEditControlSteps={() => setControlEditMode(true)}
+                  <ErrorBoundary fallback={<div>Error loading controls</div>}>
+                    <ControlTree
+                      onSelectControls={(controlIds: string[]) => {
+                        setSelectedControls(controlIds);
+                      }}
+                      selectedControls={selectedControls}
                     />
-                  )}
+                    {activeControlId && !controlEditMode && (
+                      <ControlEdit
+                        controlId={activeControlId}
+                        onEditControlSteps={() => setControlEditMode(true)}
+                      />
+                    )}
+                  </ErrorBoundary>
                 </Panel>
               </ResizePanel>
             )}
             {controlEditMode && (
               <Panel fitContent padding="sm">
-                <ControlEditSteps
-                  activeControlStep={activeControlStep}
-                  onControlEditDone={() => setControlEditMode(false)}
-                  onControlStepSelect={setActiveControlStep}
-                  selectedControlIds={selectedControls}
-                />
+                <ErrorBoundary fallback={<div>Error loading control edit</div>}>
+                  <ControlEditSteps
+                    activeControlStep={activeControlStep}
+                    onControlEditDone={() => setControlEditMode(false)}
+                    onControlStepSelect={setActiveControlStep}
+                    selectedControlIds={selectedControls}
+                  />
+                </ErrorBoundary>
               </Panel>
             )}
           </Column>
@@ -543,15 +557,21 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
 
                 {!showItemDetails && activeMutator && (
                   <Inlay>
-                    <InlayControlPanel
-                      activeMutator={activeMutator}
-                      editingControlId={editingControl}
-                      editingControlStep={activeControlStep}
-                      key={editingControl ? activeControlStep : activeMutator}
-                      onSelectControl={(controlId) => {
-                        setSelectedControls([controlId]);
-                      }}
-                    />
+                    <ErrorBoundary
+                      fallback={
+                        <ControlPanel>Error loading control panel</ControlPanel>
+                      }
+                    >
+                      <InlayControlPanel
+                        activeMutator={activeMutator}
+                        editingControlId={editingControl}
+                        editingControlStep={activeControlStep}
+                        key={editingControl ? activeControlStep : activeMutator}
+                        onSelectControl={(controlId) => {
+                          setSelectedControls([controlId]);
+                        }}
+                      />
+                    </ErrorBoundary>
                   </Inlay>
                 )}
               </CompositionCanvas>
