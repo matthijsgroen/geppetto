@@ -4,8 +4,8 @@ import type { Ref } from "react";
 import { type FC, use } from "react";
 
 import { TimeCurve } from "@/ui/components/atoms/TimeCurve/TimeCurve";
-import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { AnimationTrackContext } from "@/ui/components/molecules/AnimationTrack/AnimationTrackContext";
+import type { TimeStamp } from "@/ui/components/support/timeDrag";
 
 import { TimeStretchHandle } from "./TimeStretchHandle";
 
