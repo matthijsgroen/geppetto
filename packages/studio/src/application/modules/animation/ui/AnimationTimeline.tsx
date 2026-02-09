@@ -163,6 +163,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   );
   const speed = animation.speedModifier ?? 1;
   const { zoom } = use(ZoomContext);
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
 
   return (
     <>
@@ -327,11 +328,18 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
             />
           ) : null;
         })}
-        {animation.events.map((event, eventIndex) => (
+        {animation.events.map((event) => (
           <TimePin
-            key={`event-${eventIndex}`}
+            key={`event-${event.type}-${event.eventName}`}
             label={event.eventName}
             location={event.start / 1000 / speed}
+            onClick={() => {
+              setSelectedEvent(`event-${event.type}-${event.eventName}`);
+            }}
+            selected={
+              selectedEvent === `event-${event.type}-${event.eventName}`
+            }
+            zoom={zoom}
           />
         ))}
         <TimePlayIndicator
