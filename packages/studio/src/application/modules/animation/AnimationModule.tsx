@@ -11,23 +11,20 @@ import { ControlFrameEdit } from "@/application/modules/animation/ui/ControlFram
 import { AnimationPane } from "@/application/modules/animation/ui/infoPanes/AnimationPane";
 import { ControlFramePane } from "@/application/modules/animation/ui/infoPanes/ConrolFramePane";
 import { ControlTrackPane } from "@/application/modules/animation/ui/infoPanes/ControlTrackPane";
+import { EventPanel } from "@/application/modules/animation/ui/infoPanes/EventPanel";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
 import { useInfoPanel } from "@/application/shared/actions/useInfoPanel";
 import { useFile } from "@/application/state/FileContext";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
-import { ErrorBoundary } from "@/application/ui/ErrorBoundary";
 import { SectionSelector } from "@/application/ui/SectionSelector";
 import { getAnimationControlFrame } from "@/domain/animation/file2/animations";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import {
   Column,
-  Control,
-  ControlPanel,
   Inlay,
-  Label,
   Panel,
   PanelTitle,
   ResizeDirection,
@@ -158,17 +155,11 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                 {activeFrame && isControlFrame(activeFrame) && frame && (
                   <ControlFramePane activeFrame={activeFrame} />
                 )}
-                {activeEvent && (
-                  <ErrorBoundary
-                    fallback={<div>Error loading event details</div>}
-                  >
-                    <PanelTitle>Event Details</PanelTitle>
-                    <ControlPanel>
-                      <Control label="Name">
-                        <Label>{activeEvent.replace(/event-\w+-/, "")}</Label>
-                      </Control>
-                    </ControlPanel>
-                  </ErrorBoundary>
+                {activeEvent && activeAnimationId && (
+                  <EventPanel
+                    activeAnimationId={activeAnimationId}
+                    eventId={activeEvent}
+                  />
                 )}
 
                 {activeFrame &&
