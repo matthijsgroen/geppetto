@@ -99,5 +99,30 @@ describe("useUndoRedo", () => {
       act(() => result.current.undo());
       expect(result.current.state).toBe(0);
     });
+
+    it("keeps grouped updates deterministic with history cropping", () => {
+      const { result } = renderHook(() => useUndoRedo(0, 2));
+
+      act(() => {
+        result.current.setGrouped("drag", (s) => s + 1);
+        result.current.setGrouped("drag", (s) => s + 1);
+        result.current.setGrouped("drag", (s) => s + 1);
+      });
+
+      expect(result.current.state).toBe(3);
+      expect(result.current.canUndo).toBe(true);
+      expect(result.current.canRedo).toBe(false);
+
+      act(() => result.current.setGrouped("snap", (s) => s + 1));
+
+      expect(result.current.state).toBe(4);
+      expect(result.current.canUndo).toBe(true);
+      expect(result.current.canRedo).toBe(false);
+
+      act(() => result.current.undo());
+      expect(result.current.state).toBe(3);
+      expect(result.current.canUndo).toBe(false);
+      expect(result.current.canRedo).toBe(true);
+    });
   });
 });

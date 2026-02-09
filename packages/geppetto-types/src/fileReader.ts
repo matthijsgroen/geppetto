@@ -9,6 +9,15 @@ export const readGep = (
   fileEntries: FileReference[];
   getFile(fileEntry: FileReference): ArrayBuffer;
 } => {
+  const HEADER_SIZE = 20;
+  const fail = () => {
+    throw new Error("Invalid GEP file");
+  };
+
+  if (buffer.byteLength < 4) {
+    fail();
+  }
+
   const view = new DataView(buffer);
   const u8 = new Uint8Array(buffer);
 
@@ -18,13 +27,31 @@ export const readGep = (
     throw new Error("Invalid GEP file");
   }
 
+  if (buffer.byteLength < HEADER_SIZE) {
+    fail();
+  }
+
   const jsonOffset = view.getUint32(8, true);
   const jsonLength = view.getUint32(12, true);
   const binOffset = view.getUint32(16, true);
 
+  if (jsonOffset + jsonLength > buffer.byteLength) {
+    fail();
+  }
+
+  if (binOffset > buffer.byteLength) {
+    fail();
+  }
+
   const jsonBytes = u8.slice(jsonOffset, jsonOffset + jsonLength);
   const json = JSON.parse(new TextDecoder().decode(jsonBytes));
-  const fileEntries: FileReference[] = json.fileEntries;
+  const fileEntries: FileReference[] = json.fileEntries ?? [];
+
+  for (const fileEntry of fileEntries) {
+    if (binOffset + fileEntry.offset + fileEntry.length > buffer.byteLength) {
+      fail();
+    }
+  }
 
   delete json.fileEntries;
   return {

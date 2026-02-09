@@ -15,81 +15,161 @@ export const useUndoRedo = <T>(
   initialState: T,
   historyLength = 100
 ): UndoRedoHookResult<T> => {
-  const [history, setHistory] = useState<T[]>([initialState]);
-  const [pointer, setPointer] = useState(0);
-  const [transaction, setTransaction] = useState<
-    [name: string, pointer: number] | null
-  >(null);
+  const [state, setState] = useState<{
+    history: T[];
+    pointer: number;
+    transaction: [name: string, pointer: number] | null;
+  }>(() => ({
+    history: [initialState],
+    pointer: 0,
+    transaction: null,
+  }));
+
+  const cropHistory = useCallback(
+    (
+      history: T[],
+      pointer: number,
+      transaction: [name: string, pointer: number] | null
+    ) => {
+      if (history.length <= historyLength) {
+        return { history, pointer, transaction };
+      }
+
+      const start = history.length - historyLength;
+      const croppedHistory = history.slice(-historyLength);
+      const croppedPointer = Math.max(0, pointer - start);
+      const croppedTransaction =
+        transaction && transaction[1] >= start
+          ? ([transaction[0], transaction[1] - start] as [
+              name: string,
+              pointer: number,
+            ])
+          : null;
+
+      return {
+        history: croppedHistory,
+        pointer: croppedPointer,
+        transaction: croppedTransaction,
+      };
+    },
+    [historyLength]
+  );
 
   const set = useCallback(
     (newState: T | ((prevState: T) => T)) => {
-      const resolvedState =
-        typeof newState === "function"
-          ? (newState as (prevState: T) => T)(history[pointer])
-          : newState;
+      setState((prev) => {
+        const resolvedState =
+          typeof newState === "function"
+            ? (newState as (prevState: T) => T)(prev.history[prev.pointer])
+            : newState;
 
-      if (transaction) {
-        setTransaction(null);
-      }
-      const newHistory = history.slice(0, pointer + 1);
-      newHistory.push(resolvedState);
-      const croppedHistory = newHistory.slice(-historyLength);
-      setHistory(croppedHistory);
-      setPointer(croppedHistory.length - 1);
+        const newHistory = prev.history.slice(0, prev.pointer + 1);
+        newHistory.push(resolvedState);
+
+        const next = cropHistory(newHistory, newHistory.length - 1, null);
+
+        return {
+          history: next.history,
+          pointer: next.pointer,
+          transaction: null,
+        };
+      });
     },
-    [history, pointer, transaction, historyLength]
+    [cropHistory]
   );
 
   const setGrouped = useCallback(
     (groupName: string, newState: T | ((prevState: T) => T)) => {
-      const resolvedState =
-        typeof newState === "function"
-          ? (newState as (prevState: T) => T)(history[pointer])
-          : newState;
+      setState((prev) => {
+        const resolvedState =
+          typeof newState === "function"
+            ? (newState as (prevState: T) => T)(prev.history[prev.pointer])
+            : newState;
 
-      if (transaction && transaction[0] === groupName) {
-        // Replace the state at the transaction pointer
-        const newHistory = [...history];
-        newHistory[transaction[1]] = resolvedState;
-        setHistory(newHistory);
-        setPointer(transaction[1]);
-      } else {
-        // Start a new transaction
-        const newHistory = history.slice(0, pointer + 1);
+        if (prev.transaction && prev.transaction[0] === groupName) {
+          const transactionPointer = prev.transaction[1];
+          const newHistory = prev.history.slice(0, transactionPointer + 1);
+          newHistory[transactionPointer] = resolvedState;
+
+          const next = cropHistory(newHistory, transactionPointer, [
+            groupName,
+            transactionPointer,
+          ]);
+
+          return {
+            history: next.history,
+            pointer: next.pointer,
+            transaction: next.transaction,
+          };
+        }
+
+        const newHistory = prev.history.slice(0, prev.pointer + 1);
         newHistory.push(resolvedState);
-        const croppedHistory = newHistory.slice(-historyLength);
-        setHistory(croppedHistory);
-        setPointer(croppedHistory.length - 1);
-        setTransaction([groupName, croppedHistory.length - 1]);
-      }
+
+        const nextPointer = newHistory.length - 1;
+        const next = cropHistory(newHistory, nextPointer, [
+          groupName,
+          nextPointer,
+        ]);
+
+        return {
+          history: next.history,
+          pointer: next.pointer,
+          transaction: next.transaction,
+        };
+      });
     },
-    [history, pointer, transaction, historyLength]
+    [cropHistory]
   );
 
   const undo = useCallback(() => {
-    if (pointer > 0) {
-      setPointer(pointer - 1);
-      setTransaction(null);
-    }
-  }, [pointer]);
+    setState((prev) => {
+      if (prev.pointer === 0) {
+        return prev;
+      }
+
+      return {
+        history: prev.history,
+        pointer: prev.pointer - 1,
+        transaction: null,
+      };
+    });
+  }, []);
 
   const redo = useCallback(() => {
-    if (pointer < history.length - 1) {
-      setPointer(pointer + 1);
-      setTransaction(null);
-    }
-  }, [pointer, history.length]);
+    setState((prev) => {
+      if (prev.pointer >= prev.history.length - 1) {
+        return prev;
+      }
+
+      return {
+        history: prev.history,
+        pointer: prev.pointer + 1,
+        transaction: null,
+      };
+    });
+  }, []);
 
   const endGrouping = useCallback(() => {
-    setTransaction(null);
+    setState((prev) => {
+      if (!prev.transaction) {
+        return prev;
+      }
+
+      return {
+        history: prev.history,
+        pointer: prev.pointer,
+        transaction: null,
+      };
+    });
   }, []);
 
   return useMemo(() => {
-    const canUndo = pointer > 0;
-    const canRedo = pointer < history.length - 1;
+    const canUndo = state.pointer > 0;
+    const canRedo = state.pointer < state.history.length - 1;
 
     return {
-      state: history[pointer],
+      state: state.history[state.pointer],
       canUndo,
       canRedo,
       undo,
@@ -98,5 +178,5 @@ export const useUndoRedo = <T>(
       set,
       endGrouping,
     };
-  }, [history, pointer, set, undo, redo, setGrouped, endGrouping]);
+  }, [state, set, undo, redo, setGrouped, endGrouping]);
 };
