@@ -39,6 +39,8 @@ const EXTRA_TIME = 2000; // milliseconds
 type AnimationTimelinesProps = {
   onFrameSelect?: (frame: AnimationFrame | null) => void;
   selectedFrame?: AnimationFrame | null;
+  onEventSelect?: (eventId: string | null) => void;
+  selectedEvent?: string | null;
   onStartAnimations?: (animationIds: string[]) => void;
   onStopAnimations?: (animationIds: string[]) => void;
   selectedAnimation?: string | null;
@@ -49,6 +51,8 @@ type AnimationTimelinesProps = {
 export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   onFrameSelect,
   selectedFrame,
+  onEventSelect,
+  selectedEvent,
   selectedAnimation,
   onStartAnimations,
   onStopAnimations,
@@ -240,6 +244,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                     setFile(deleteAnimation(animationId));
                     onFrameSelect?.(null);
                   }}
+                  onEventSelect={onEventSelect}
                   onFrameSelect={onFrameSelect}
                   onPlay={() => {
                     onStartAnimations?.([animationId]);
@@ -262,6 +267,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                     onStopAnimations?.([animationId]);
                   }}
                   selected={selectedAnimation === animationId}
+                  selectedEvent={selectedEvent}
                   selectedTimeBar={
                     selectedAnimation === animationId ? selectedFrame : null
                   }

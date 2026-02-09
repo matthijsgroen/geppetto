@@ -2,30 +2,24 @@ import { useCallback, useState } from "react";
 
 import { PlayerControlsProvider } from "@/application/modules/animation/state/PlayerControlsProvider";
 import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
-import { AnimationSpeedOptions } from "@/application/modules/animation/ui/AnimationSpeedOptions";
 import type {
   AnimationControlFrame,
   AnimationFrame,
 } from "@/application/modules/animation/ui/AnimationTimeline";
 import { AnimationTimelines } from "@/application/modules/animation/ui/AnimationTimelines";
 import { ControlFrameEdit } from "@/application/modules/animation/ui/ControlFrameEdit";
+import { AnimationPane } from "@/application/modules/animation/ui/infoPanes/AnimationPane";
+import { ControlFramePane } from "@/application/modules/animation/ui/infoPanes/ConrolFramePane";
+import { ControlTrackPane } from "@/application/modules/animation/ui/infoPanes/ControlTrackPane";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
-import { ToggleControl } from "@/application/modules/composition/ui/controls";
 import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
 import { useInfoPanel } from "@/application/shared/actions/useInfoPanel";
-import { formatSpeed } from "@/application/shared/speedFormatter";
-import { formatTime } from "@/application/shared/timeFormatter";
 import { useFile } from "@/application/state/FileContext";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import { ErrorBoundary } from "@/application/ui/ErrorBoundary";
 import { SectionSelector } from "@/application/ui/SectionSelector";
-import {
-  getAnimationControlFrame,
-  getAnimationDuration,
-  updateAutoplayAnimation,
-  updateLoopingAnimation,
-} from "@/domain/animation/file2/animations";
+import { getAnimationControlFrame } from "@/domain/animation/file2/animations";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import {
@@ -34,14 +28,12 @@ import {
   ControlPanel,
   Inlay,
   Label,
-  Menu,
   Panel,
   PanelTitle,
   ResizeDirection,
   ResizePanel,
   Row,
   ToolBar,
-  ToolButton,
   ToolSeparator,
   ToolSpacer,
 } from "@/ui/components";
@@ -65,13 +57,14 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
   texture,
   onSectionChange,
 }) => {
-  const [file, setFile] = useFile();
+  const [file] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
-  const [activeAnimationState, setActiveAnimation] = useState<string | null>(
+  const [activeEvent, setActiveEvent] = useState<string | null>(null);
+  const [activeAnimationState, setActiveAnimationId] = useState<string | null>(
     null
   );
   const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
-  const activeAnimation =
+  const activeAnimationId =
     activeAnimationState && file.animations[activeAnimationState]
       ? activeAnimationState
       : null;
@@ -105,10 +98,6 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
         )
       : null;
 
-  const currentSelectedAnimation = activeAnimation
-    ? file.animations[activeAnimation]
-    : null;
-
   return (
     <Column>
       <ToolBar>
@@ -131,7 +120,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           <Panel center workspace>
             {texture && hasControls(file) && (
               <AnimationCanvas
-                activeAnimation={activeAnimation}
+                activeAnimation={activeAnimationId}
                 animationsPlaying={animationsPlaying}
                 file={file}
                 image={texture}
@@ -167,107 +156,32 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
             >
               <Panel padding="sm" scrollable>
                 {activeFrame && isControlFrame(activeFrame) && frame && (
-                  <ErrorBoundary
-                    fallback={<div>Error loading control frame edit</div>}
-                  >
-                    <PanelTitle>
-                      {file.controls[activeFrame.track.controlId].name} Frame
-                    </PanelTitle>
-                    <ControlFrameEdit
-                      actionIndex={activeFrame.actionIndex}
-                      animationId={activeFrame.animationId}
-                      control={file.controls[activeFrame.track.controlId]}
-                      key={`${activeFrame.animationId}-${activeFrame.track.controlId}-${activeFrame.actionIndex}`}
-                      track={activeFrame.track}
-                    />
-                  </ErrorBoundary>
+                  <ControlFramePane activeFrame={activeFrame} />
                 )}
-
-                {activeFrame &&
-                  activeFrame.track &&
-                  isControlTrack(activeFrame.track) && (
-                    <ErrorBoundary
-                      fallback={<div>Error loading track details</div>}
-                    >
-                      <PanelTitle>Track Details</PanelTitle>
-                      <ControlPanel>
-                        <Control label="Name">
-                          <Label>
-                            {file.controls[activeFrame.track.controlId].name}
-                          </Label>
-                        </Control>
-                        <Control label="Duration">
-                          <Label>
-                            {formatTime(
-                              activeFrame.track.length /
-                                (currentSelectedAnimation?.speedModifier ?? 1)
-                            )}
-                          </Label>
-                        </Control>
-                      </ControlPanel>
-                    </ErrorBoundary>
-                  )}
-
-                {currentSelectedAnimation && activeAnimation && (
+                {activeEvent && (
                   <ErrorBoundary
-                    fallback={<div>Error loading animation details</div>}
+                    fallback={<div>Error loading event details</div>}
                   >
-                    <PanelTitle>Animation Details</PanelTitle>
+                    <PanelTitle>Event Details</PanelTitle>
                     <ControlPanel>
                       <Control label="Name">
-                        <Label>{currentSelectedAnimation.name}</Label>
-                      </Control>
-                      <Control label="Duration">
-                        <Label>
-                          {formatTime(
-                            getAnimationDuration(currentSelectedAnimation)
-                          )}
-                        </Label>
-                      </Control>
-                      <ToggleControl
-                        label="Looping"
-                        onChange={(value) =>
-                          setFile(
-                            updateLoopingAnimation(activeAnimation, value)
-                          )
-                        }
-                        value={currentSelectedAnimation.looping}
-                      />
-                      <ToggleControl
-                        label="Autoplay"
-                        onChange={(value) =>
-                          setFile(
-                            updateAutoplayAnimation(activeAnimation, value)
-                          )
-                        }
-                        value={currentSelectedAnimation.autoplay ?? false}
-                      />
-                      <Control label="Speed Modifier">
-                        <Menu
-                          align="center"
-                          arrow
-                          direction="bottom"
-                          menuButton={({ open }) => (
-                            <ToolButton
-                              active={open}
-                              label={formatSpeed(
-                                currentSelectedAnimation.speedModifier ?? 1
-                              )}
-                            />
-                          )}
-                          portal
-                          transition
-                        >
-                          <AnimationSpeedOptions
-                            animationId={activeAnimation}
-                          />
-                        </Menu>
+                        <Label>{activeEvent.replace(/event-\w+-/, "")}</Label>
                       </Control>
                     </ControlPanel>
                   </ErrorBoundary>
                 )}
 
-                {!activeAnimation && (
+                {activeFrame &&
+                  activeFrame.track &&
+                  isControlFrame(activeFrame) && (
+                    <ControlTrackPane activeFrame={activeFrame} />
+                  )}
+
+                {activeAnimationId && (
+                  <AnimationPane activeAnimationId={activeAnimationId} />
+                )}
+
+                {!activeAnimationId && (
                   <PanelTitle>No animation selected</PanelTitle>
                 )}
               </Panel>
@@ -282,10 +196,14 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           >
             <AnimationTimelines
               animationsPlaying={animationsPlaying}
+              onEventSelect={(eventId) => {
+                setActiveEvent(eventId);
+                setActiveFrame(null);
+              }}
               onFrameSelect={(frame) => {
                 setActiveFrame(frame);
               }}
-              onSelectAnimation={setActiveAnimation}
+              onSelectAnimation={setActiveAnimationId}
               onStartAnimations={(ids) =>
                 setAnimationsPlaying((prev) => [...prev, ...ids])
               }
@@ -294,7 +212,8 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                   prev.filter((animId) => !ids.includes(animId))
                 )
               }
-              selectedAnimation={activeAnimation}
+              selectedAnimation={activeAnimationId}
+              selectedEvent={activeEvent}
               selectedFrame={activeFrame}
             />
           </ResizePanel>

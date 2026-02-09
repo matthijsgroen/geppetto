@@ -65,6 +65,8 @@ type AnimationTimelineProps = {
   onPlay?: () => void;
   onStop?: () => void;
   onFrameSelect?: (frame: AnimationFrame | null) => void;
+  onEventSelect?: (eventId: string | null) => void;
+  selectedEvent?: string | null;
   onDelete?: () => void;
   selected: boolean;
   selectedTimeBar?: AnimationFrame | null;
@@ -79,8 +81,10 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   onSelect,
   onDelete,
   onFrameSelect,
+  onEventSelect,
   selected,
   selectedTimeBar,
+  selectedEvent,
 }) => {
   const [file, setFile] = useFile();
   const animation = file.animations[animationId];
@@ -163,7 +167,6 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   );
   const speed = animation.speedModifier ?? 1;
   const { zoom } = use(ZoomContext);
-  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
 
   return (
     <>
@@ -334,7 +337,7 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
             label={event.eventName}
             location={event.start / 1000 / speed}
             onClick={() => {
-              setSelectedEvent(`event-${event.type}-${event.eventName}`);
+              onEventSelect?.(`event-${event.type}-${event.eventName}`);
             }}
             selected={
               selectedEvent === `event-${event.type}-${event.eventName}`
