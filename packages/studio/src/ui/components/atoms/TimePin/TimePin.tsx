@@ -18,6 +18,7 @@ import {
 export const TimePin: FC<{
   location: TimeStamp;
   activeTrack?: boolean;
+  selected?: boolean;
   label?: string;
   zoom?: number;
   ref?: React.Ref<HTMLDivElement>;
@@ -31,6 +32,7 @@ export const TimePin: FC<{
   activeTrack,
   label,
   zoom = 1,
+  selected = false,
   ref,
   onClick,
   onContextMenu,
@@ -86,7 +88,6 @@ export const TimePin: FC<{
 
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", onMouseUp);
-      e.preventDefault();
     },
     [onDrag, onDragRelease, location, zoom]
   );
@@ -98,7 +99,9 @@ export const TimePin: FC<{
     >
       <div
         className={clsx(
-          "relative rounded-full border border-control-edge bg-control-interaction",
+          "relative rounded-full border",
+          !selected && "border-control-edge bg-control-interaction",
+          selected && "border-control-focus bg-control-active",
           !isActiveTrack && "-ms-1 size-2",
           isActiveTrack && "-ms-2 size-4 hover:bg-control-highlight",
           !showTooltip && "cursor-pointer"

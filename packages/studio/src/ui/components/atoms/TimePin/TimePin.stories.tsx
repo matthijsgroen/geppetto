@@ -13,6 +13,7 @@ const meta = preview.meta({
     activeTrack: false,
     label: "Marker",
     zoom: 2,
+    selected: false,
     onClick: fn(),
     onContextMenu: fn(),
     onKeyDown: fn(),
