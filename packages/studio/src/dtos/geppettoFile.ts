@@ -23,6 +23,11 @@ export const loadGeppettoFile = async (
   if (file.name.endsWith(".gep")) {
     const arrayBuffer = await fileData.arrayBuffer();
     const { json, fileEntries, getFile } = readGep(arrayBuffer);
+    if (!verifyVersion2(json)) {
+      throw new Error(
+        "Unsupported file format or invalid file structure. Please check that this is a valid Geppetto animation file."
+      );
+    }
     return {
       filename: file.name,
       image: json,
@@ -120,12 +125,17 @@ export const saveGeppettoFile = async (
   files: FileEntry[] = []
 ): Promise<void> => {
   const writable = await fileHandle.createWritable();
-  if (fileHandle.name.endsWith(".json")) {
-    await writable.write(JSON.stringify(image));
-  } else if (fileHandle.name.endsWith(".gep")) {
-    await writable.write(await writeGep(image, files));
-  } else {
-    throw new Error("Unsupported file extension. Please use .json or .gep");
+  try {
+    if (fileHandle.name.endsWith(".json")) {
+      await writable.write(JSON.stringify(image));
+    } else if (fileHandle.name.endsWith(".gep")) {
+      await writable.write(await writeGep(image, files));
+    } else {
+      throw new Error("Unsupported file extension. Please use .json or .gep");
+    }
+    await writable.close();
+  } catch (error) {
+    await writable.abort();
+    throw error;
   }
-  await writable.close();
 };
