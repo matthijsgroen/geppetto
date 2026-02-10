@@ -5,7 +5,8 @@ export type StepSize =
   | "extraSmall"
   | "small"
   | "large"
-  | "extraLarge";
+  | "extraLarge"
+  | "superLarge";
 
 /** In Seconds */
 export type TimeStamp = number;
@@ -13,6 +14,7 @@ export type TimeStamp = number;
 export const getStepSize = (e: globalThis.MouseEvent): StepSize => {
   if (e.altKey && e.shiftKey) return "extraSmall";
   if (e.altKey) return "small";
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey) return "superLarge";
   if (e.ctrlKey || e.metaKey) return "extraLarge";
   if (e.shiftKey) return "large";
   return "default";
@@ -35,6 +37,7 @@ export const calculateNewLocation = (
     default: 0,
     large: 0.5,
     extraLarge: 1,
+    superLarge: 5,
   };
   const step = stepSizes[stepSize] ?? 0;
   if (step > 0) {

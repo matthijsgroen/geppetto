@@ -156,8 +156,8 @@ export const v2Format: GeppettoImage = {
         },
       ],
       events: [
-        { start: 2500, eventName: "Breathing", type: "callback" },
-        { start: 3500, eventName: "Blink", type: "callback" },
+        { id: "1", start: 2500, eventName: "Breathing", type: "callback" },
+        { id: "2", start: 3500, eventName: "Blink", type: "callback" },
       ],
     },
   },

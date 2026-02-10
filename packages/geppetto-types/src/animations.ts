@@ -28,6 +28,7 @@ export type FrameLayerVisibilityAction = {
 export type FrameEvent = CallbackEvent;
 
 export type CallbackEvent = {
+  id: string;
   type: "callback";
   start: number;
   eventName: string;

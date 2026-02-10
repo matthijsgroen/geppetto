@@ -217,10 +217,12 @@ const convertEvents = (
   keyframes: ImageDefinition["animations"][0]["keyframes"],
   _target: GeppettoImage
 ): FrameEvent[] => {
+  let eventId = 1;
   const events: FrameEvent[] = [];
   for (const keyframe of keyframes) {
     if (keyframe.event) {
       events.push({
+        id: `${eventId++}`,
         type: "callback",
         start: keyframe.time,
         eventName: keyframe.event,

@@ -103,7 +103,8 @@ export const TimePin: FC<{
           !selected && "border-control-edge bg-control-interaction",
           selected && "border-control-focus bg-control-active",
           !isActiveTrack && "-ms-1 size-2",
-          isActiveTrack && "-ms-2 size-4 hover:bg-control-highlight",
+          isActiveTrack && "-ms-2 size-4",
+          isActiveTrack && !selected && "hover:bg-control-highlight",
           !showTooltip && "cursor-pointer"
         )}
         onClick={onClick}

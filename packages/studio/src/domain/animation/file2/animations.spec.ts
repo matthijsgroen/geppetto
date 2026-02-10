@@ -8,6 +8,7 @@ import {
   deleteControlTrackFromAnimation,
   hasAnimations,
   hasAnimationsWithData,
+  moveCallbackEvent,
   moveControlTrackToAnimation,
   renameAnimation,
   renameCallbackEvent,
@@ -675,5 +676,18 @@ describe("renameCallbackEvent", () => {
     expect(file.animations["0"].events[1].eventName).toBe("greeting");
     expect(updatedFile.animations["0"].events[0].eventName).toBe("greeting");
     expect(updatedFile.animations["0"].events[1].eventName).toBe("run");
+  });
+});
+
+describe("moveCallbackEvent", () => {
+  it("moves a callback event to a new time", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addCallbackEvent("greeting", 1000)
+      .build();
+
+    const updatedFile = moveCallbackEvent("0", "1", 1500)(file);
+    expect(file.animations["0"].events[0].start).toBe(1000);
+    expect(updatedFile.animations["0"].events[0].start).toBe(1500);
   });
 });

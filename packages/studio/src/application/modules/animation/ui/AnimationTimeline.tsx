@@ -9,6 +9,7 @@ import { use, useEffect, useRef, useState } from "react";
 
 import ZoomContext from "@/application/modules/animation/state/ZoomContext";
 import { AnimationSpeedOptions } from "@/application/modules/animation/ui/AnimationSpeedOptions";
+import { EventPin } from "@/application/modules/animation/ui/EventPin";
 import { TrackControlFrame } from "@/application/modules/animation/ui/TrackControlFrame";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
@@ -16,6 +17,7 @@ import {
   addControlFrameToAnimation,
   deleteControlFrame,
   getAnimationDuration,
+  moveCallbackEvent,
   renameAnimation,
   resizeControlFrame,
   updateAnimationControlTrackLength,
@@ -30,7 +32,6 @@ import {
   MenuItem,
   RenameInput,
   SubMenu,
-  TimePin,
   TimePlayIndicator,
   ToolBar,
   ToolButton,
@@ -332,14 +333,17 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           ) : null;
         })}
         {animation.events.map((event) => (
-          <TimePin
+          <EventPin
+            event={event}
             key={event.id}
-            label={event.eventName}
-            location={event.start / 1000 / speed}
-            onClick={() => {
+            onEventSelect={() => {
               onEventSelect?.(event.id);
             }}
+            onMoveEvent={(newStart) => {
+              setFile(moveCallbackEvent(animationId, event.id, newStart));
+            }}
             selected={selectedEvent === event.id}
+            speed={speed}
             zoom={zoom}
           />
         ))}

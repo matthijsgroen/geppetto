@@ -508,3 +508,20 @@ export const renameCallbackEvent = (
       eventToRename.eventName = newName;
     }
   });
+
+export const moveCallbackEvent = (
+  animationId: string,
+  eventId: string,
+  newStart: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const eventToMove = draft.animations[animationId]?.events.find(
+      (e) => e.id === eventId
+    );
+    if (eventToMove) {
+      eventToMove.start = newStart;
+      draft.animations[animationId].events = draft.animations[
+        animationId
+      ].events.toSorted((a, b) => a.start - b.start);
+    }
+  });
