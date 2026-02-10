@@ -72,17 +72,17 @@ export const AnimationCanvas: FC<PropsWithChildren<AnimationCanvasProps>> = ({
     }
   );
 
-  usePlayerTimestamp((time: number | null) => {
+  usePlayerTimestamp((data: { time: number; trackId: string } | null) => {
     if (
       !animationControlsRef.current ||
       activeAnimation === null ||
       activeAnimation === undefined ||
-      time === null
+      data === null
     )
       return;
     const name = file.animations[activeAnimation]?.name;
     if (!name) return;
-    animationControlsRef.current.renderAtTimestamp(name, time);
+    animationControlsRef.current.renderAtTimestamp(name, data.time);
   });
 
   const controlValuesRef = useControlValues();

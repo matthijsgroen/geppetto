@@ -17,10 +17,10 @@ type Subscription<T> = (handler: DataHandler<T>) => Unsubscribe;
 type ControlValue = { controlId: string; value: number | null };
 
 type ContextValue = {
-  setTimestamp: (time: number | null) => void;
+  setTimestamp: (time: { time: number; trackId: string } | null) => void;
   showControlValue: (controlId: string, value: number | null) => void;
   subscribeToControlValue: Subscription<ControlValue>;
-  subscribeToTimestamp: Subscription<number | null>;
+  subscribeToTimestamp: Subscription<{ time: number; trackId: string } | null>;
 };
 
 const PlayerControlsContext = createContext<ContextValue>({
@@ -33,21 +33,25 @@ const PlayerControlsContext = createContext<ContextValue>({
 export const PlayerControlsProvider: FC<PlayerControlsProviderProps> = ({
   children,
 }) => {
-  const timestamp = useRef<number | null>(0);
-  const timestampSubscribers = useRef<DataHandler<number | null>[]>([]);
+  const timestamp = useRef<{ time: number; trackId: string } | null>(null);
+  const timestampSubscribers = useRef<
+    DataHandler<{ time: number; trackId: string } | null>[]
+  >([]);
   const latestControlValue = useRef<ControlValue | null>(null);
   const controlValueSubscribers = useRef<DataHandler<ControlValue>[]>([]);
 
   // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const value: ContextValue = useMemo(
     () => ({
-      setTimestamp: (time: number | null) => {
+      setTimestamp: (time: { time: number; trackId: string } | null) => {
         timestamp.current = time;
         timestampSubscribers.current.forEach((handler) =>
           handler(timestamp.current)
         );
       },
-      subscribeToTimestamp: (handler: (time: number | null) => void) => {
+      subscribeToTimestamp: (
+        handler: (time: { time: number; trackId: string } | null) => void
+      ) => {
         timestampSubscribers.current.push(handler);
         return () => {
           timestampSubscribers.current = timestampSubscribers.current.filter(
@@ -84,7 +88,9 @@ export const PlayerControlsProvider: FC<PlayerControlsProviderProps> = ({
 
 export const usePlayerControls = () => use(PlayerControlsContext);
 
-export const usePlayerTimestamp = (handler: DataHandler<number | null>) => {
+export const usePlayerTimestamp = (
+  handler: DataHandler<{ time: number; trackId: string } | null>
+) => {
   const { subscribeToTimestamp } = usePlayerControls();
   useEffect(
     () => subscribeToTimestamp(handler),
