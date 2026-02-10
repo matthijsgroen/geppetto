@@ -15,6 +15,7 @@ import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   addControlFrameToAnimation,
+  deleteCallbackEvent,
   deleteControlFrame,
   getAnimationDuration,
   moveCallbackEvent,
@@ -336,6 +337,9 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
           <EventPin
             event={event}
             key={event.id}
+            onDeleteEvent={() => {
+              setFile(deleteCallbackEvent(animationId, event.id));
+            }}
             onEventSelect={() => {
               onEventSelect?.(event.id);
             }}

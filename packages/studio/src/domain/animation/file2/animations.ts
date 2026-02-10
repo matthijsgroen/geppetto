@@ -525,3 +525,13 @@ export const moveCallbackEvent = (
       ].events.toSorted((a, b) => a.start - b.start);
     }
   });
+
+export const deleteCallbackEvent = (animationId: string, eventId: string) =>
+  produce<GeppettoImage>((draft) => {
+    const events = draft.animations[animationId]?.events;
+    if (events) {
+      draft.animations[animationId].events = events.filter(
+        (e) => e.id !== eventId
+      );
+    }
+  });
