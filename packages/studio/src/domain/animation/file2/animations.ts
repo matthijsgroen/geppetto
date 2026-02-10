@@ -1,6 +1,7 @@
 import type {
   Animation,
   AnimationControlTrack,
+  CallbackEvent,
   EasingFunction,
   FrameControlAction,
   GeppettoImage,
@@ -27,6 +28,15 @@ export const getAnimationName = (file: GeppettoImage) => {
     id++;
   }
   return `animation ${id}`;
+};
+
+export const getNewEventId = (animation: Animation) => {
+  let id = 1;
+  const takenIds = animation.events.map((e) => e.id);
+  while (takenIds.includes(`${id}`)) {
+    id++;
+  }
+  return `${id}`;
 };
 
 export const getAnimationDuration = (animation: Animation) => {
@@ -462,3 +472,39 @@ export const getAnimationControlFrame = (
 
   return action;
 };
+
+export const addCallbackEventToAnimation = (
+  animationId: string,
+  eventName: string,
+  start: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    const newEvent: CallbackEvent = {
+      id: getNewEventId(animation),
+      type: "callback",
+      eventName,
+      start,
+    };
+
+    animation.events.push(newEvent);
+    animation.events = animation.events.toSorted((a, b) => a.start - b.start);
+  });
+
+export const renameCallbackEvent = (
+  animationId: string,
+  eventId: string,
+  newName: string
+) =>
+  produce<GeppettoImage>((draft) => {
+    const eventToRename = draft.animations[animationId]?.events.find(
+      (e) => e.id === eventId
+    );
+    if (eventToRename) {
+      eventToRename.eventName = newName;
+    }
+  });

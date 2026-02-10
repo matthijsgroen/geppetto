@@ -8,11 +8,12 @@ import type {
 import type { AddAnimationDetails } from "@/domain/animation/file2/animations";
 import {
   addAnimation,
+  addCallbackEventToAnimation,
   addControlFrameToAnimation,
   renameAnimation,
 } from "@/domain/animation/file2/animations";
 import { chain } from "@/shared/utils/chain";
-import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
+import type { TimeStamp } from "@/ui/components/support/timeDrag";
 
 import { addControl } from "./controls";
 import { addMutation, updateMutationValue } from "./mutation";
@@ -131,6 +132,17 @@ export const fileBuilder = () => {
       )(file);
 
       lastAnimationId = details.id;
+      return builder;
+    },
+    addCallbackEvent: (eventName: string, start: TimeStamp) => {
+      if (lastAnimationId === null) {
+        return builder;
+      }
+      file = addCallbackEventToAnimation(
+        lastAnimationId,
+        eventName,
+        start
+      )(file);
       return builder;
     },
     addControlFrame: (

@@ -333,15 +333,13 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
         })}
         {animation.events.map((event) => (
           <TimePin
-            key={`event-${event.type}-${event.eventName}`}
+            key={event.id}
             label={event.eventName}
             location={event.start / 1000 / speed}
             onClick={() => {
-              onEventSelect?.(`event-${event.type}-${event.eventName}`);
+              onEventSelect?.(event.id);
             }}
-            selected={
-              selectedEvent === `event-${event.type}-${event.eventName}`
-            }
+            selected={selectedEvent === event.id}
             zoom={zoom}
           />
         ))}

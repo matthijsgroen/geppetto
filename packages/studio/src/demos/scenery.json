@@ -1792,9 +1792,24 @@
         }
       ],
       "events": [
-        { "type": "callback", "start": 6000, "eventName": "evening" },
-        { "type": "callback", "start": 16000, "eventName": "endNight" },
-        { "type": "callback", "start": 21000, "eventName": "morning" }
+        {
+          "id": "1",
+          "type": "callback",
+          "start": 6000,
+          "eventName": "evening"
+        },
+        {
+          "id": "2",
+          "type": "callback",
+          "start": 16000,
+          "eventName": "endNight"
+        },
+        {
+          "id": "3",
+          "type": "callback",
+          "start": 21000,
+          "eventName": "morning"
+        }
       ],
       "speedModifier": 0.125,
       "autoplay": true

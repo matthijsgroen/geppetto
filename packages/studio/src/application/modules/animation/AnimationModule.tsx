@@ -193,6 +193,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
               }}
               onFrameSelect={(frame) => {
                 setActiveFrame(frame);
+                setActiveEvent(null);
               }}
               onSelectAnimation={setActiveAnimationId}
               onStartAnimations={(ids) =>
