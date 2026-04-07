@@ -143,17 +143,17 @@ export const ApplicationMenu: React.FC<ApplicationMenuProps> = ({
                     const blob = new Blob([textureArrayBuffer], {
                       type: hasTexture.mime,
                     });
-                    const image = new Image();
+                    const textureImage = new Image();
                     const objectUrl = URL.createObjectURL(blob);
                     const cleanup = () => URL.revokeObjectURL(objectUrl);
 
-                    image.addEventListener("load", () => {
+                    textureImage.addEventListener("load", () => {
                       setTextureFileName(hasTexture.name);
-                      setTextureFile(image);
+                      setTextureFile(textureImage);
                       cleanup();
                     });
-                    image.addEventListener("error", cleanup);
-                    image.src = objectUrl;
+                    textureImage.addEventListener("error", cleanup);
+                    textureImage.src = objectUrl;
                   }
 
                   controlUpdate(() => image.controlValues);

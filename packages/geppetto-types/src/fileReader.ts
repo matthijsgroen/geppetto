@@ -1,4 +1,4 @@
-import { GEP_MAGIC } from "./common";
+import { GEP_MAGIC, HEADER_SIZE } from "./common";
 import { FileReference } from "./fileEntry";
 import { GeppettoImage } from "./image";
 
@@ -9,7 +9,6 @@ export const readGep = (
   fileEntries: FileReference[];
   getFile(fileEntry: FileReference): ArrayBuffer;
 } => {
-  const HEADER_SIZE = 20;
   const fail = () => {
     throw new Error("Invalid GEP file");
   };

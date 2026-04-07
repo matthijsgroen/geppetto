@@ -1230,7 +1230,8 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
             // Process events
             for (const [time, event] of playingAnimation.events) {
-              const absTime = playing.iterationStartedAt + time / playing.speed;
+              const absTime =
+                playing.iterationStartedAt + time / (playing.speed * trackSpeed);
               if (absTime < now && absTime > playing.lastRender) {
                 for (const handler of onCustomEventListeners) {
                   handler(event, playing.name, time);
@@ -1274,9 +1275,11 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               actions,
             ] of playingAnimation.visibilityTracks.entries()) {
               // Find the most recent visibility action at current animation time
+              // Scale animationTime by trackSpeed to match the stored track times
+              const scaledAnimationTime = animationTime * trackSpeed;
               let currentVisibility: boolean | undefined;
               for (const [time, visible] of actions) {
-                if (animationTime >= time) {
+                if (scaledAnimationTime >= time) {
                   currentVisibility = visible;
                 } else {
                   break; // Actions are ordered by time
