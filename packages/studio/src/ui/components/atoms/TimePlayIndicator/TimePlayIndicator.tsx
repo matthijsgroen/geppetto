@@ -3,6 +3,7 @@ import type { CSSProperties, FC } from "react";
 
 export type TimePlayIndicatorProps = {
   playing?: boolean;
+  startedAt?: number;
   loop?: boolean;
   duration: number;
   trackIndex?: number;
@@ -11,6 +12,7 @@ export type TimePlayIndicatorProps = {
 
 export const TimePlayIndicator: FC<TimePlayIndicatorProps> = ({
   playing = false,
+  startedAt = 0,
   loop = false,
   trackIndex,
   duration,
@@ -33,6 +35,7 @@ export const TimePlayIndicator: FC<TimePlayIndicatorProps> = ({
               ? 0
               : `calc(${6 + trackIndex * 5} * var(--spacing))`,
           "--length": `${duration}`,
+          animationDelay: `-${startedAt}s`,
         } as CSSProperties
       }
     ></div>

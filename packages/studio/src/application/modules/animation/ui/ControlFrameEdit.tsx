@@ -62,7 +62,7 @@ export const ControlFrameEdit: FC<{
       })
     );
     setTimeout(() => {
-      setTimestamp(frame.start / speed);
+      setTimestamp({ time: frame.start / speed, trackId: animationId });
     }, 0);
   };
 
@@ -74,7 +74,10 @@ export const ControlFrameEdit: FC<{
       })
     );
     setTimeout(() => {
-      setTimestamp((frame.start + frame.duration) / speed);
+      setTimestamp({
+        time: (frame.start + frame.duration) / speed,
+        trackId: animationId,
+      });
     }, 0);
   };
 
@@ -108,7 +111,10 @@ export const ControlFrameEdit: FC<{
                 );
               }}
               onFocus={() => {
-                setTimestamp(frame.start / speed);
+                setTimestamp({
+                  time: frame.start / speed,
+                  trackId: animationId,
+                });
               }}
               onMouseUp={updateStartValue}
               step={0.01}
@@ -135,7 +141,10 @@ export const ControlFrameEdit: FC<{
               );
             }}
             onFocus={() => {
-              setTimestamp((frame.start + frame.duration) / speed);
+              setTimestamp({
+                time: (frame.start + frame.duration) / speed,
+                trackId: animationId,
+              });
             }}
             onMouseUp={updateEndValue}
             step={0.01}
