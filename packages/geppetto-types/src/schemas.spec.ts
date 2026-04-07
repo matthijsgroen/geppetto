@@ -232,6 +232,7 @@ describe("schemas", () => {
         tracks: [],
         events: [
           {
+            id: "event-1",
             start: 500,
             eventName: "customEvent",
             type: "callback",

@@ -171,6 +171,7 @@ export const frameLayerVisibilityActionSchema = z.object({
  * Zod schema for frame callback event
  */
 export const frameCallbackEventSchema = z.object({
+  id: z.string(),
   type: z.literal("callback"),
   start: z.number(),
   eventName: z.string(),
