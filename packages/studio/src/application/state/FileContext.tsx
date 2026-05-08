@@ -18,6 +18,7 @@ export const FileHistoryContext = createContext<
   undo: () => {},
   redo: () => {},
   setGrouped: () => {},
+  setWithoutHistory: () => {},
   endGrouping: () => {},
 });
 

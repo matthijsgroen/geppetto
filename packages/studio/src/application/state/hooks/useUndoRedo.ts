@@ -9,6 +9,7 @@ export type UndoRedoHookResult<T> = {
   endGrouping: () => void;
   setGrouped: (groupName: string, newState: T | ((prevState: T) => T)) => void;
   set: (newState: T | ((prevState: T) => T)) => void;
+  setWithoutHistory: (newState: T | ((prevState: T) => T)) => void;
 };
 
 export const useUndoRedo = <T>(
@@ -150,6 +151,27 @@ export const useUndoRedo = <T>(
     });
   }, []);
 
+  const setWithoutHistory = useCallback(
+    (newState: T | ((prevState: T) => T)) => {
+      setState((prev) => {
+        const resolvedState =
+          typeof newState === "function"
+            ? (newState as (prevState: T) => T)(prev.history[prev.pointer])
+            : newState;
+
+        const newHistory = [...prev.history];
+        newHistory[prev.pointer] = resolvedState;
+
+        return {
+          history: newHistory,
+          pointer: prev.pointer,
+          transaction: prev.transaction,
+        };
+      });
+    },
+    []
+  );
+
   const endGrouping = useCallback(() => {
     setState((prev) => {
       if (!prev.transaction) {
@@ -176,7 +198,8 @@ export const useUndoRedo = <T>(
       redo,
       setGrouped,
       set,
+      setWithoutHistory,
       endGrouping,
     };
-  }, [state, set, undo, redo, setGrouped, endGrouping]);
+  }, [state, set, setWithoutHistory, undo, redo, setGrouped, endGrouping]);
 };

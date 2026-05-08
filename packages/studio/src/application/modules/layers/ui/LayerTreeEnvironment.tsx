@@ -3,7 +3,7 @@ import { produce } from "immer";
 import { useMemo, useState } from "react";
 import { type DraggingPosition } from "react-complex-tree";
 
-import { useFile } from "@/application/state/FileContext";
+import { useFile, useFileUndoRedo } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   addMutationToControl,
@@ -67,6 +67,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
   showVisibilityToggle = false,
 }) => {
   const [file, setFile] = useFile();
+  const { setWithoutHistory } = useFileUndoRedo();
   const [selectedItems, setSelectedItems] = selectedItemsState;
   const [focusedItem, setFocusedItem] = focusedItemState;
 
@@ -233,7 +234,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         onCollapseItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
           const treeNode = file.layerHierarchy[item.index];
           if (treeNode.type === "layerFolder") {
-            setFile(
+            setWithoutHistory(
               produce((draft) => {
                 draft.layerFolders[item.index].collapsed = true;
               })
@@ -249,7 +250,7 @@ export const LayerTreeEnvironment: React.FC<LayerTreeEnvironmentProps> = ({
         onExpandItem={useEvent((item: TreeItem<TreeData<NodeType>>) => {
           const treeNode = file.layerHierarchy[item.index];
           if (treeNode.type === "layerFolder") {
-            setFile(
+            setWithoutHistory(
               produce((draft) => {
                 draft.layerFolders[item.index].collapsed = false;
               })
