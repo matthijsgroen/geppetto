@@ -1231,7 +1231,8 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             // Process events
             for (const [time, event] of playingAnimation.events) {
               const absTime =
-                playing.iterationStartedAt + time / (playing.speed * trackSpeed);
+                playing.iterationStartedAt +
+                time / (playing.speed * trackSpeed);
               if (absTime < now && absTime > playing.lastRender) {
                 for (const handler of onCustomEventListeners) {
                   handler(event, playing.name, time);
