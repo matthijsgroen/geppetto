@@ -73,6 +73,7 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
 
 const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
+  const { setGrouped, endGrouping } = useFileUndoRedo();
   const layer = file.layers[itemId];
 
   const handleClick = useEvent(() => {
@@ -80,7 +81,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   });
 
   const offsetChangeHandler = useEvent((newValue: Vec2) => {
-    setFile(setLayerOffset(itemId, newValue));
+    setGrouped(`layerOffset-${itemId}`, setLayerOffset(itemId, newValue));
   });
 
   return (
@@ -91,6 +92,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
       <ControlPanel>
         <VectorControl
           label="Offset"
+          onBlur={endGrouping}
           onChange={offsetChangeHandler}
           value={layer.translate}
         />
