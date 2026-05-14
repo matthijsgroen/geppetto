@@ -2,7 +2,7 @@ import {
   PreparedImageDefinition,
   AnimationControls as GeppettoAnimationControls,
   AnimationOptions,
-  ImageDefinition,
+  GeppettoImage,
 } from "geppetto-player";
 import React, {
   FunctionComponent,
@@ -17,7 +17,7 @@ import { Player, Animation } from "./Player";
 
 type Props = {
   textureUrl: string;
-  animation: ImageDefinition;
+  animation: GeppettoImage;
   options: Partial<AnimationOptions>;
   width: number;
   height: number;

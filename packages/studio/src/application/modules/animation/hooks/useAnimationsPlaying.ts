@@ -2,6 +2,8 @@ import type { AnimationControls, GeppettoImage } from "geppetto-player";
 import type { RefObject } from "react";
 import { useEffect, useRef } from "react";
 
+import { usePlayerTimestamp } from "@/application/modules/animation/state/PlayerControlsProvider";
+
 export const useAnimationsPlaying = (
   animationControlsRef: RefObject<AnimationControls | null>,
   file: GeppettoImage,
@@ -9,6 +11,17 @@ export const useAnimationsPlaying = (
   onStop?: (animationId: string) => void
 ) => {
   const animationsPlayingRef = useRef<string[]>([]);
+  const trackTimestampRef = useRef<{ time: number; trackId: string } | null>(
+    null
+  );
+
+  usePlayerTimestamp((data) => {
+    if (data === null) {
+      return;
+    }
+    trackTimestampRef.current = data;
+  });
+
   useEffect(() => {
     if (!animationControlsRef.current) return;
     const unsubscribe = animationControlsRef.current.onAnimationStopped(
@@ -43,7 +56,17 @@ export const useAnimationsPlaying = (
       .map((id) => file.animations[id].name);
 
     toStart.forEach((animationName) => {
-      animationControlsRef.current?.startAnimation(animationName);
+      if (
+        trackTimestampRef.current &&
+        file.animations[trackTimestampRef.current.trackId].name ===
+          animationName
+      ) {
+        animationControlsRef.current?.startAnimation(animationName, {
+          startAt: trackTimestampRef.current.time,
+        });
+      } else {
+        animationControlsRef.current?.startAnimation(animationName);
+      }
     });
     toStop.forEach((animationName) => {
       animationControlsRef.current?.stopAnimation(animationName);

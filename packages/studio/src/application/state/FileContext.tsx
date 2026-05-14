@@ -1,31 +1,46 @@
 import type { GeppettoImage } from "@geppetto/types";
+import type { Dispatch, PropsWithChildren, SetStateAction } from "react";
+import { createContext, useContext } from "react";
+
 import {
-  createContext,
-  type PropsWithChildren,
-  useContext,
-  useState,
-} from "react";
-
+  type UndoRedoHookResult,
+  useUndoRedo,
+} from "@/application/state/hooks/useUndoRedo";
 import { newFile } from "@/domain/animation/file2/new";
-import { type UpdateState, type UseState } from "@/dtos/application.dto";
 
-export const ImageFileContext = createContext<{
-  file: GeppettoImage;
-  setFile: UpdateState<GeppettoImage>;
-}>({ file: newFile(), setFile: () => {} });
+export const FileHistoryContext = createContext<
+  UndoRedoHookResult<GeppettoImage>
+>({
+  state: newFile(),
+  set: () => {},
+  canUndo: false,
+  canRedo: false,
+  undo: () => {},
+  redo: () => {},
+  setGrouped: () => {},
+  setWithoutHistory: () => {},
+  endGrouping: () => {},
+});
 
 export const FileContext: React.FC<
   PropsWithChildren<{ startFile?: GeppettoImage }>
 > = ({ children, startFile = newFile() }) => {
-  const [file, setFile] = useState<GeppettoImage>(startFile);
+  const undoState = useUndoRedo<GeppettoImage>(startFile);
   return (
-    <ImageFileContext.Provider value={{ file, setFile }}>
+    <FileHistoryContext.Provider value={undoState}>
       {children}
-    </ImageFileContext.Provider>
+    </FileHistoryContext.Provider>
   );
 };
 
-export const useFile = (): UseState<GeppettoImage> => {
-  const value = useContext(ImageFileContext);
-  return [value.file, value.setFile];
+export const useFile = (): [
+  GeppettoImage,
+  Dispatch<SetStateAction<GeppettoImage>>,
+] => {
+  const value = useContext(FileHistoryContext);
+  return [value.state, value.set];
+};
+
+export const useFileUndoRedo = (): UndoRedoHookResult<GeppettoImage> => {
+  return useContext(FileHistoryContext);
 };

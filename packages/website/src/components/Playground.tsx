@@ -1,4 +1,4 @@
-import { AnimationOptions, ImageDefinition } from "geppetto-player";
+import { AnimationOptions, GeppettoImage } from "geppetto-player";
 import React, { FunctionComponent, useState } from "react";
 
 import scenery from "@site/static/demo-assets/scenery.json";
@@ -13,7 +13,7 @@ export type AnimationSelection = {
   id: string;
   label: string;
   textureUrl: string;
-  animation: ImageDefinition;
+  animation: GeppettoImage;
   options: Partial<AnimationOptions>;
   width: number;
   height: number;
@@ -25,7 +25,7 @@ export const animations: AnimationSelection[] = [
     label: "Scenery",
     animation: scenery,
     textureUrl: sceneryTextureUrl,
-    options: { "fitMode": "contain"},
+    options: { fitMode: "contain" },
     width: 2048,
     height: 1024,
   },
@@ -34,7 +34,7 @@ export const animations: AnimationSelection[] = [
     label: "Innkeeper",
     animation: innkeeper,
     textureUrl: innkeeperTextureUrl,
-    options: { "fitMode": "contain" },
+    options: { fitMode: "contain" },
     width: 800,
     height: 800,
   },

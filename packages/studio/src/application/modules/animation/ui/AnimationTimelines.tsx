@@ -39,6 +39,8 @@ const EXTRA_TIME = 2000; // milliseconds
 type AnimationTimelinesProps = {
   onFrameSelect?: (frame: AnimationFrame | null) => void;
   selectedFrame?: AnimationFrame | null;
+  onEventSelect?: (eventId: string | null) => void;
+  selectedEvent?: string | null;
   onStartAnimations?: (animationIds: string[]) => void;
   onStopAnimations?: (animationIds: string[]) => void;
   selectedAnimation?: string | null;
@@ -49,6 +51,8 @@ type AnimationTimelinesProps = {
 export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   onFrameSelect,
   selectedFrame,
+  onEventSelect,
+  selectedEvent,
   selectedAnimation,
   onStartAnimations,
   onStopAnimations,
@@ -69,11 +73,10 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
   const [timeline, setTimeline] = useState<number | null>(null);
   const { setTimestamp } = usePlayerControls();
 
-  usePlayerTimestamp((timestamp) => {
-    setTimeline(timestamp);
-    if (selectedAnimation && timestamp !== null) {
-      onStopAnimations?.([selectedAnimation]);
-    }
+  usePlayerTimestamp((data) => {
+    setTimeline(data === null ? null : data.time);
+    if (data === null) return;
+    onStopAnimations?.([data.trackId]);
   });
 
   const handleTimelineDrag = useCallback(
@@ -83,7 +86,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
       if (animationsPlaying.includes(selectedAnimation)) {
         onStopAnimations?.([selectedAnimation]);
       }
-      setTimestamp(time * 1000);
+      setTimestamp({ time: time * 1000, trackId: selectedAnimation });
     },
     [selectedAnimation, animationsPlaying, onStopAnimations, setTimestamp]
   );
@@ -238,9 +241,8 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                   key={animationId}
                   onDelete={() => {
                     setFile(deleteAnimation(animationId));
-                    onSelectAnimation?.(null);
-                    onFrameSelect?.(null);
                   }}
+                  onEventSelect={onEventSelect}
                   onFrameSelect={onFrameSelect}
                   onPlay={() => {
                     onStartAnimations?.([animationId]);
@@ -251,7 +253,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                   onSelect={() => {
                     onSelectAnimation?.(animationId);
                     if (!animationsPlaying.includes(animationId)) {
-                      setTimestamp(0);
+                      setTimestamp({ time: 0, trackId: animationId });
                     } else {
                       setTimestamp(null);
                     }
@@ -263,6 +265,7 @@ export const AnimationTimelines: FC<AnimationTimelinesProps> = ({
                     onStopAnimations?.([animationId]);
                   }}
                   selected={selectedAnimation === animationId}
+                  selectedEvent={selectedEvent}
                   selectedTimeBar={
                     selectedAnimation === animationId ? selectedFrame : null
                   }

@@ -730,6 +730,94 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
         });
       };
 
+      /**
+       * Helper function to process a track at a given position and update control values.
+       * Returns the interpolated value for the control at the given track position.
+       */
+      const processTrackAtPosition = (
+        track: {
+          actions: PreparedControlAction[];
+          controlIndex: number;
+          length: number;
+        },
+        trackPosition: number,
+        isInLoopIteration: boolean,
+        updateControlValues: boolean
+      ): number | undefined => {
+        // Find active action at the track position
+        let activeAction: PreparedControlAction | null = null;
+        let lastCompletedAction: PreparedControlAction | null = null;
+
+        for (const action of track.actions) {
+          if (
+            trackPosition >= action.start &&
+            trackPosition < action.start + action.duration
+          ) {
+            activeAction = action;
+            break;
+          }
+          if (trackPosition >= action.start + action.duration) {
+            lastCompletedAction = action;
+          }
+        }
+
+        if (activeAction) {
+          // Calculate progress within this action
+          const actionProgress =
+            (trackPosition - activeAction.start) / activeAction.duration;
+          const easedProgress = applyEasing(
+            actionProgress,
+            activeAction.easingFunction
+          );
+
+          // Determine start value
+          let startValue: number;
+          if (activeAction.controlStartValue !== undefined) {
+            startValue = activeAction.controlStartValue;
+          } else {
+            // Find the previous action's end value
+            let previousActionEndValue: number | undefined;
+            for (const action of track.actions) {
+              if (action.start + action.duration <= activeAction.start) {
+                previousActionEndValue = action.controlEndValue;
+              }
+            }
+            if (isInLoopIteration && previousActionEndValue === undefined) {
+              // look for last action in previous iteration
+              const lastAction = track.actions[track.actions.length - 1];
+              previousActionEndValue = lastAction.controlEndValue;
+            }
+            startValue =
+              previousActionEndValue !== undefined
+                ? previousActionEndValue
+                : controlValues[track.controlIndex];
+          }
+
+          // Interpolate from start to end
+          const interpolatedValue = mix(
+            startValue,
+            activeAction.controlEndValue,
+            easedProgress
+          );
+
+          if (updateControlValues) {
+            controlValues[track.controlIndex] = interpolatedValue;
+          }
+          renderControlValues[track.controlIndex] = interpolatedValue;
+          return interpolatedValue;
+        } else if (lastCompletedAction) {
+          // No active action - hold at the end value of the last completed action
+          const endValue = lastCompletedAction.controlEndValue;
+          if (updateControlValues) {
+            controlValues[track.controlIndex] = endValue;
+          }
+          renderControlValues[track.controlIndex] = endValue;
+          return endValue;
+        }
+
+        return undefined;
+      };
+
       const newAnimation: AnimationControls = {
         destroy() {
           gl.deleteShader(vs);
@@ -749,7 +837,7 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
           const animationControls = animation.animations[trackIndex].tracks.map(
             (track) => track.controlIndex
           );
-          const playSpeed = speed * animation.animations[trackIndex].speed;
+          const animationSpeed = animation.animations[trackIndex].speed;
 
           // Stop all conflicting animations and tweens
           for (const playing of playingAnimations) {
@@ -773,19 +861,74 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             }
           }
 
+          const now = +new Date();
+
+          const playingAnimation = animation.animations[trackIndex];
+
           playingAnimations.push({
             name: animationName,
             index: trackIndex,
             startAt,
-            speed: playSpeed,
-            startedAt: +new Date(),
-            iterationStartedAt: +new Date() - startAt / playSpeed,
+            speed, // Store user speed only, not playSpeed
+            startedAt: now,
+            iterationStartedAt: now - startAt / speed, // Use speed, not playSpeed
             lastRender: 0,
           });
+
+          // Immediately render the animation at the startAt position
+          // Use the EXACT same formula as renderAtTimestamp for consistency
+          for (const track of playingAnimation.tracks) {
+            const trackPosition = (startAt * animationSpeed) % track.length;
+            const isInLoopIteration = startAt * animationSpeed >= track.length;
+            processTrackAtPosition(
+              track,
+              trackPosition,
+              isInLoopIteration,
+              true
+            );
+          }
+
+          // Process visibility tracks for the initial position
+          for (const [
+            layerIndex,
+            actions,
+          ] of playingAnimation.visibilityTracks.entries()) {
+            // Find the most recent visibility action at the startAt time
+            let currentVisibility: boolean | undefined;
+            const scaledStartAt = startAt * animationSpeed;
+            for (const [time, visible] of actions) {
+              if (scaledStartAt >= time) {
+                currentVisibility = visible;
+              } else {
+                break; // Actions are ordered by time
+              }
+            }
+            if (currentVisibility !== undefined) {
+              layerVisibility[layerIndex] = currentVisibility;
+            }
+          }
+
+          // Recalculate mutations for the initial position
+          recalculateMutationValues(
+            animation.mutationValues.data,
+            renderControlValues,
+            animation.rawControls,
+            animation.rawMutations,
+            animation.mutatorMapping,
+            defaultFrameValues
+          );
+
+          // Update last control values so render loop knows they haven't changed
+          lastControlValues.set(renderControlValues);
+
+          // Upload mutations to GPU immediately
+          gl.useProgram(program);
+          gl.uniform2fv(mutationValuesLocation, animation.mutationValues.data);
         },
         stopAnimation,
         setControlValue,
         tweenControlTo,
+
         renderAtTimestamp(animationName: string, timestamp: number) {
           const trackIndex = nameToTrackIndex(animationName);
           const playingAnimation = animation.animations[trackIndex];
@@ -805,70 +948,12 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
             const trackPosition = (timestamp * playSpeed) % track.length;
             const isInLoopIteration = timestamp * playSpeed >= track.length;
 
-            // Find active action at the timestamp
-            let activeAction: PreparedControlAction | null = null;
-            let lastCompletedAction: PreparedControlAction | null = null;
-
-            for (const action of track.actions) {
-              if (
-                trackPosition >= action.start &&
-                trackPosition < action.start + action.duration
-              ) {
-                activeAction = action;
-                break;
-              }
-              if (trackPosition >= action.start + action.duration) {
-                lastCompletedAction = action;
-              }
-            }
-
-            if (activeAction) {
-              // Calculate progress within this action
-              const actionProgress =
-                (trackPosition - activeAction.start) / activeAction.duration;
-              const easedProgress = applyEasing(
-                actionProgress,
-                activeAction.easingFunction
-              );
-
-              // Determine start value
-              let startValue: number;
-              if (activeAction.controlStartValue !== undefined) {
-                startValue = activeAction.controlStartValue;
-              } else {
-                // Find the previous action's end value
-                let previousActionEndValue: number | undefined;
-                for (const action of track.actions) {
-                  if (action.start + action.duration <= activeAction.start) {
-                    previousActionEndValue = action.controlEndValue;
-                  }
-                }
-                if (isInLoopIteration && previousActionEndValue === undefined) {
-                  // look for last action in previous iteration
-                  const lastAction = track.actions[track.actions.length - 1];
-                  previousActionEndValue = lastAction.controlEndValue;
-                }
-                startValue =
-                  previousActionEndValue !== undefined
-                    ? previousActionEndValue
-                    : controlValues[track.controlIndex];
-              }
-
-              // Interpolate from start to end
-              const interpolatedValue = mix(
-                startValue,
-                activeAction.controlEndValue,
-                easedProgress
-              );
-              controlValues[track.controlIndex] = interpolatedValue;
-              renderControlValues[track.controlIndex] = interpolatedValue;
-            } else if (lastCompletedAction) {
-              // No active action - hold at the end value of the last completed action
-              controlValues[track.controlIndex] =
-                lastCompletedAction.controlEndValue;
-              renderControlValues[track.controlIndex] =
-                lastCompletedAction.controlEndValue;
-            }
+            processTrackAtPosition(
+              track,
+              trackPosition,
+              isInLoopIteration,
+              true
+            );
           }
 
           // Recalculate mutation values based on new control values
@@ -1110,8 +1195,25 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               (now - playing.iterationStartedAt) * playing.speed;
             const playingAnimation = animation.animations[playing.index];
 
-            // Check if animation should stop (non-looping and reached end)
-            if (playingAnimation.duration < animationTime) {
+            // Calculate the time since last render to detect boundary crossing
+            const prevAnimationTime =
+              playing.lastRender === 0
+                ? animationTime // First frame - no previous time
+                : (playing.lastRender - playing.iterationStartedAt) *
+                  playing.speed;
+
+            // Convert to animation time scale for duration comparison
+            // animationTime is in timeline scale, duration is in animation scale
+            const trackSpeed = animation.animations[playing.index].speed;
+            const animationTimeScaled = animationTime * trackSpeed;
+            const prevAnimationTimeScaled = prevAnimationTime * trackSpeed;
+
+            // Check if animation should stop (non-looping and completed a full iteration)
+            // Only reset when we CROSS the duration boundary during playback, not just when beyond it
+            if (
+              prevAnimationTimeScaled < playingAnimation.duration &&
+              animationTimeScaled >= playingAnimation.duration
+            ) {
               if (!looping[playing.index]) {
                 stopAnimation(playingAnimation.name);
                 continue;
@@ -1128,93 +1230,42 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
 
             // Process events
             for (const [time, event] of playingAnimation.events) {
-              const absTime = playing.iterationStartedAt + time / playing.speed;
+              const absTime =
+                playing.iterationStartedAt +
+                time / (playing.speed * trackSpeed);
               if (absTime < now && absTime > playing.lastRender) {
                 for (const handler of onCustomEventListeners) {
                   handler(event, playing.name, time);
                 }
               }
             }
-            playing.lastRender = now;
 
             // Process each track (each track loops independently)
+            const isFirstFrame = playing.lastRender === 0;
+            // trackSpeed already defined above for duration check
             for (const track of playingAnimation.tracks) {
-              // Track position wraps at track.length (independent per-track looping)
-              const trackPosition = animationTime % track.length;
-              const isInLoopIteration = animationTime >= track.length;
-
-              // Find active action at current track position
-              let activeAction: PreparedControlAction | null = null;
-              let lastCompletedAction: PreparedControlAction | null = null;
-
-              for (const action of track.actions) {
-                if (
-                  trackPosition >= action.start &&
-                  trackPosition < action.start + action.duration
-                ) {
-                  activeAction = action;
-                  break;
-                }
-                // Track the most recent completed action
-                if (trackPosition >= action.start + action.duration) {
-                  lastCompletedAction = action;
-                }
+              // On first frame after startAnimation, skip recalculation since we already set up the correct values
+              if (isFirstFrame) {
+                // First frame - values were already set in startAnimation, don't recalculate
+                continue;
               }
 
-              if (activeAction) {
-                // Calculate progress within this action
-                const actionProgress =
-                  (trackPosition - activeAction.start) / activeAction.duration;
-                const easedProgress = applyEasing(
-                  actionProgress,
-                  activeAction.easingFunction
-                );
+              // Track position wraps at track.length (independent per-track looping)
+              // Scale by trackSpeed to match startAnimation and renderAtTimestamp
+              const trackPosition = (animationTime * trackSpeed) % track.length;
+              const isInLoopIteration =
+                animationTime * trackSpeed >= track.length;
 
-                // Determine start value
-                // If controlStartValue is defined, use it. Otherwise, find what value to use:
-                // - If we're at the very start of the action, use the previous action's end value
-                // - Otherwise use the control value from the previous frame (stored in controlValues)
-                let startValue: number;
-                if (activeAction.controlStartValue !== undefined) {
-                  startValue = activeAction.controlStartValue;
-                } else {
-                  // Find the previous action's end value
-                  let previousActionEndValue: number | undefined;
-                  for (const action of track.actions) {
-                    if (action.start + action.duration <= activeAction.start) {
-                      previousActionEndValue = action.controlEndValue;
-                    }
-                  }
-                  if (
-                    isInLoopIteration &&
-                    previousActionEndValue === undefined
-                  ) {
-                    // look for last action in previous iteration
-                    const lastAction = track.actions[track.actions.length - 1];
-                    previousActionEndValue = lastAction.controlEndValue;
-                  }
-                  // If we found a previous action, use its end value, otherwise use current control value
-                  startValue =
-                    previousActionEndValue !== undefined
-                      ? previousActionEndValue
-                      : controlValues[track.controlIndex];
-                }
+              const interpolatedValue = processTrackAtPosition(
+                track,
+                trackPosition,
+                isInLoopIteration,
+                false
+              );
 
-                // Interpolate from start to end
-                const interpolatedValue = mix(
-                  startValue,
-                  activeAction.controlEndValue,
-                  easedProgress
-                );
-                renderControlValues[track.controlIndex] = interpolatedValue;
-              } else if (lastCompletedAction) {
-                // No active action - hold at the end value of the last completed action
-                renderControlValues[track.controlIndex] =
-                  lastCompletedAction.controlEndValue;
-                // update control value with held value, so that control tweens and other animations pick it up
-                // and the user can read the correct value via getControlValue
-                controlValues[track.controlIndex] =
-                  lastCompletedAction.controlEndValue;
+              // Update control value if we got a value back
+              if (interpolatedValue !== undefined) {
+                controlValues[track.controlIndex] = interpolatedValue;
               }
               // If no actions at all, keep the control at its current value
             }
@@ -1225,9 +1276,11 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
               actions,
             ] of playingAnimation.visibilityTracks.entries()) {
               // Find the most recent visibility action at current animation time
+              // Scale animationTime by trackSpeed to match the stored track times
+              const scaledAnimationTime = animationTime * trackSpeed;
               let currentVisibility: boolean | undefined;
               for (const [time, visible] of actions) {
-                if (animationTime >= time) {
+                if (scaledAnimationTime >= time) {
                   currentVisibility = visible;
                 } else {
                   break; // Actions are ordered by time
@@ -1237,6 +1290,9 @@ export const createPlayer = (element: HTMLCanvasElement): GeppettoPlayer => {
                 layerVisibility[layerIndex] = currentVisibility;
               }
             }
+
+            // Update lastRender after all processing for this animation
+            playing.lastRender = now;
           }
 
           // Check if any controls have changed since last render

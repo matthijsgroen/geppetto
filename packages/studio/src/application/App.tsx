@@ -9,7 +9,7 @@ import { CompositionModule } from "./modules/composition/CompositionModule";
 import { LayersModule } from "./modules/layers/LayersModule";
 import { AppContext } from "./state/ApplicationContext";
 import { FileContext } from "./state/FileContext";
-import { ImageControlContext } from "./state/ImageControlContext";
+import { ImageControlProvider } from "./state/ImageControlContext";
 import { ScreenTranslationContext } from "./state/ScreenTranslationContext";
 
 const updateWindowTitle = (
@@ -50,7 +50,7 @@ const App: React.FC = () => {
   return (
     <FileContext>
       <Curves />
-      <ImageControlContext>
+      <ImageControlProvider>
         <AppContext>
           <ScreenTranslationContext>
             {appSection === "layers" && (
@@ -80,7 +80,7 @@ const App: React.FC = () => {
             )}
           </ScreenTranslationContext>
         </AppContext>
-      </ImageControlContext>
+      </ImageControlProvider>
     </FileContext>
   );
 };

@@ -1,1 +1,1812 @@
-{"animations":[{"name":"Eye blink","looping":true,"keyframes":[{"time":2500,"controlValues":{"LeftEyeClose":0,"RightEyeClose":0}},{"time":2750,"controlValues":{"LeftEyeClose":1,"RightEyeClose":1}},{"time":3000,"controlValues":{"RightEyeClose":0,"LeftEyeClose":0}}]},{"name":"Look around","looping":true,"keyframes":[{"time":1000,"controlValues":{"LeftEye-x":0.18,"RightEye-x":0.24}},{"time":2000,"controlValues":{"LeftEye-x":1,"RightEye-x":1.02}},{"time":3980,"controlValues":{"LeftEye-x":1.02,"RightEye-x":1}},{"time":5000,"controlValues":{"RightEye-x":1.8,"LeftEye-x":1.84}},{"time":6000,"controlValues":{"LeftEye-x":0.98,"RightEye-x":1.06}},{"time":8000,"controlValues":{"RightEye-x":1,"LeftEye-x":1}}]},{"name":"Talking","looping":true,"keyframes":[{"time":1000,"controlValues":{"Mouth":0}},{"time":1340,"controlValues":{"Mouth":0.62}},{"time":1670,"controlValues":{"Mouth":0}},{"time":2120,"controlValues":{"Mouth":0}},{"time":2430,"controlValues":{"Mouth":0.68}},{"time":2790,"controlValues":{"Mouth":0.24}},{"time":3160,"controlValues":{"Mouth":1}},{"time":3470,"controlValues":{"Mouth":0}}]},{"name":"No","looping":false,"keyframes":[{"time":510,"controlValues":{"HeadTurn":0.38}},{"time":1270,"controlValues":{"HeadTurn":0}},{"time":2180,"controlValues":{"HeadTurn":1}},{"time":2990,"controlValues":{"HeadTurn":0}},{"time":3980,"controlValues":{"HeadTurn":0.48}}]},{"name":"HeadTilt","looping":true,"keyframes":[{"time":1000,"controlValues":{"HeadTilt":0.42}},{"time":6000,"controlValues":{"HeadTilt":0.53}},{"time":9000,"controlValues":{"HeadTilt":0.14}},{"time":12000,"controlValues":{"HeadTilt":0.43}}]},{"name":"EyeWink","looping":false,"keyframes":[{"time":500,"controlValues":{"RightEyeClose":0,"LeftEyeClose":0}},{"time":800,"controlValues":{"RightEyeClose":1}},{"time":1200,"controlValues":{"RightEyeClose":1}},{"time":1500,"controlValues":{"RightEyeClose":0}}]},{"name":"Eyebrows","looping":true,"keyframes":[{"time":990,"controlValues":{"Eyebrows":1.32}},{"time":3940,"controlValues":{"Eyebrows":0.92}},{"time":6820,"controlValues":{"Eyebrows":1.88}},{"time":10220,"controlValues":{"Eyebrows":0.88}}]},{"name":"Sweeping","looping":true,"keyframes":[{"time":1000,"controlValues":{"Broom":0.69,"ArmRightBottom":0.46,"ArmRightTop":0.14,"ArmLeftBottom":0.19,"ArmLeftTop":0.9,"Dust":1}},{"time":2000,"controlValues":{"Broom":1,"ArmRightBottom":0.79,"ArmRightTop":0.09,"ArmLeftBottom":0.13,"ArmLeftTop":0.71}},{"time":2499,"controlValues":{"Dust":1}},{"time":2500,"controlValues":{"ArmLeftTop":0.92,"ArmLeftBottom":0.18,"ArmRightTop":0.1,"ArmRightBottom":0.59,"Broom":0.69,"Dust":0}},{"time":3000,"controlValues":{"Broom":0,"ArmRightBottom":0.58,"ArmRightTop":0,"ArmLeftBottom":0.26,"ArmLeftTop":1,"Dust":1}}]},{"name":"StopTalking","looping":false,"keyframes":[{"time":470,"controlValues":{"Mouth":0}}]},{"name":"EyebrowReset","looping":false,"keyframes":[{"time":560,"controlValues":{"Eyebrows":1}}]},{"name":"PauseSweeping","looping":false,"keyframes":[{"time":1460,"controlValues":{"Broom":0.86,"ArmRightBottom":0.22,"ArmRightTop":0.13,"ArmLeftBottom":0.48,"ArmLeftTop":0.96}}]},{"name":"Breathing","looping":true,"keyframes":[{"time":2000,"controlValues":{"Breathing":0}},{"time":4000,"controlValues":{"Breathing":1}},{"time":6000,"controlValues":{"Breathing":0.5}}]}],"controlValues":{"Eyebrows":1,"HeadTilt":0.55,"HeadTurn":0.44,"Mouth":0,"RightEye-y":0.5,"LeftEye-y":0.5,"RightEye-x":1,"LeftEye-x":1,"RightEyeClose":0,"LeftEyeClose":0,"ArmTop":0,"ArmBottom":1,"ArmLeftTop":0.83,"ArmLeftBottom":0.31,"ArmRightTop":0.07,"ArmRightBottom":0.58,"Broom":1,"Dust":1,"Breathing":1},"controls":[{"name":"Breathing","type":"slider","steps":[{"Translation (2)":[0,0],"New Mutator (15)":[0,0],"New Mutator (17)":[0,0],"Translation (3)":[0,0],"Translation (4)":[0,0],"New Mutator (21)":[0,0],"New Mutator (20)":[0,0]},{"Translation (2)":[0,-8],"New Mutator (15)":[0,-4],"New Mutator (17)":[0,-3],"Translation (3)":[0,-8],"Translation (4)":[0,-8],"New Mutator (21)":[4,0],"New Mutator (20)":[-5,0]}]},{"name":"Dust","type":"slider","steps":[{"Stretch":[0.35,0.05],"Translation (1)":[143,0],"Opacity":[1,1]},{"Stretch":[1,1],"Translation (1)":[-1110,0],"Opacity":[0,0]}]},{"name":"Broom","type":"slider","steps":[{"New Mutator (33)":[-29,0],"Translation":[-131,-39]},{"New Mutator (33)":[8,0],"Translation":[0,0]}]},{"name":"ArmRightBottom","type":"slider","steps":[{"Rotation (4)":[-122,0]},{"Rotation (4)":[9,0]}]},{"name":"ArmRightTop","type":"slider","steps":[{"Rotation (2)":[-18,0],"Rotation (3)":[-18,0]},{"Rotation (2)":[100,0],"Rotation (3)":[100,0]}]},{"name":"ArmLeftBottom","type":"slider","steps":[{"New Mutator (31)":[52,0]},{"New Mutator (31)":[-108,0]}]},{"name":"ArmLeftTop","type":"slider","steps":[{"Rotation":[-85,0],"Rotation (1)":[-84,0]},{"Rotation":[8,0],"Rotation (1)":[8,0]}]},{"name":"Eyebrows","type":"slider","steps":[{"New Mutator (3)":[0,6],"New Mutator (2)":[-10,0],"New Mutator (23)":[0,6],"New Mutator (24)":[10,0]},{"New Mutator (3)":[0,0],"New Mutator (2)":[0,0],"New Mutator (23)":[0,0],"New Mutator (24)":[0,0]},{"New Mutator (3)":[0,0],"New Mutator (2)":[9,0],"New Mutator (23)":[0,0],"New Mutator (24)":[-9,0]}]},{"name":"HeadTilt","type":"slider","steps":[{"New Mutator (19)":[15,0],"New Mutator (18)":[15,0],"New Mutator (20)":[-34,0],"New Mutator (21)":[-29,0],"New Mutator (22)":[-75,0]},{"New Mutator (18)":[-15,0],"New Mutator (19)":[-15,0],"New Mutator (20)":[32,0],"New Mutator (21)":[42,0],"New Mutator (22)":[103,0]}]},{"name":"HeadTurn","type":"slider","steps":[{"New Mutator (12)":[-9,0],"New Mutator (13)":[-2,0],"New Mutator (14)":[7,0],"New Mutator (15)":[3,0],"New Mutator (16)":[2,0],"New Mutator (17)":[-7,0],"New Mutator (6)":[1,0],"New Mutator":[1,0]},{"New Mutator (14)":[-5,0],"New Mutator (12)":[3,0],"New Mutator (13)":[7,0],"New Mutator (15)":[-3,0],"New Mutator (16)":[-2,0],"New Mutator (17)":[10,0],"New Mutator":[-1,0],"New Mutator (6)":[-1,0]}]},{"name":"Mouth","type":"slider","steps":[{"New Mutator (8)":[1,1],"New Mutator (10)":[1,1],"New Mutator (9)":[0,0],"New Mutator (11)":[0,0]},{"New Mutator (8)":[1,1.1],"New Mutator (10)":[1,3.85],"New Mutator (9)":[0,-20],"New Mutator (11)":[0,3]}]},{"name":"RightEye-y","type":"slider","steps":[{"New Mutator":[0,-8]},{"New Mutator":[0,11]}]},{"name":"LeftEye-y","type":"slider","steps":[{"New Mutator (6)":[0,-7]},{"New Mutator (6)":[0,11]}]},{"name":"RightEye-x","type":"slider","steps":[{"New Mutator":[-7,0],"New Mutator (4)":[0.85,1]},{"New Mutator":[1,0],"New Mutator (4)":[1,1]},{"New Mutator":[13,0],"New Mutator (4)":[0.85,1]}]},{"name":"LeftEye-x","type":"slider","steps":[{"New Mutator (6)":[-12,0],"New Mutator (7)":[0.85,1]},{"New Mutator (7)":[1,1],"New Mutator (6)":[0,0]},{"New Mutator (6)":[9,0],"New Mutator (7)":[0.85,1]}]},{"name":"RightEyeClose","type":"slider","steps":[{"RightEyeLashes":[1,1],"New Mutator (1)":[0,0]},{"New Mutator (1)":[0,48],"RightEyeLashes":[1,-1.2]}]},{"name":"LeftEyeClose","type":"slider","steps":[{"New Mutator (5)":[0,0],"LeftEyeLashes":[1,1]},{"LeftEyeLashes":[1,-1.1],"New Mutator (5)":[0,50]}]}],"defaultFrame":{"New Mutator (1)":[0,-29],"RightEyeLashes":[1,1],"New Mutator (4)":[1,1],"New Mutator":[0,0],"New Mutator (5)":[0,-25],"LeftEyeLashes":[1,1],"New Mutator (7)":[1,1],"New Mutator (6)":[0,0],"New Mutator (8)":[1,1],"New Mutator (10)":[1,0.25],"New Mutator (9)":[0,0],"New Mutator (18)":[-1,0],"New Mutator (19)":[0,0],"New Mutator (20)":[0,0],"New Mutator (21)":[0,0],"New Mutator (22)":[0,0],"New Mutator (2)":[0,0],"New Mutator (3)":[0,0],"New Mutator (24)":[0,0],"New Mutator (23)":[0,0],"New Mutator (31)":[97,0],"New Mutator (33)":[16,0],"Rotation":[0,0],"Rotation (1)":[0,0],"Rotation (2)":[0,0],"Rotation (3)":[0,0],"Rotation (4)":[0,0],"Opacity":[1,1],"Stretch":[1,1],"Translation (2)":[0,0]},"shapes":[{"name":"Colorize","type":"folder","items":[{"type":"sprite","points":[[1408,224],[1216,32],[1984,32],[1984,224]],"translate":[141,1666],"mutationVectors":[{"name":"Translation (1)","type":"translate","origin":[228,0],"radius":-1},{"type":"opacity","origin":[228,0],"name":"Opacity"},{"type":"stretch","origin":[236,1751],"name":"Stretch"}],"name":"Dust"},{"name":"ArmRight","type":"folder","items":[{"type":"sprite","points":[[92,688],[139,676],[186,690],[173,869],[70,764],[144,904],[94,908]],"translate":[277,593],"mutationVectors":[],"name":"BottomArmRight"},{"type":"sprite","points":[[452,597],[529,600],[413,697],[435,747],[516,759],[537,704]],"translate":[271,719],"mutationVectors":[],"name":"HandRight"}],"mutationVectors":[{"type":"rotate","origin":[192,279],"name":"Rotation (3)"},{"type":"rotate","origin":[282,489],"name":"Rotation (4)"}]},{"name":"ArmLeft","type":"folder","items":[{"type":"sprite","points":[[80,1054],[183,1046],[202,1203],[182,1283],[123,1289],[83,1174]],"translate":[-230,584],"mutationVectors":[],"name":"BottomArmLeft"},{"type":"sprite","points":[[212,1432],[229,1591],[94,1596],[109,1435]],"translate":[-224,748],"mutationVectors":[],"name":"HandLeft"}],"mutationVectors":[{"type":"rotate","origin":[-148,286],"name":"Rotation (1)"},{"type":"rotate","origin":[-245,483],"name":"New Mutator (31)"}]},{"type":"sprite","points":[[552,363],[633,363],[635,1808],[770,2028],[725,2040],[552,2010],[503,1913]],"translate":[157,958],"mutationVectors":[{"name":"Translation","type":"translate","origin":[0,0],"radius":-1},{"type":"rotate","origin":[128,682],"name":"New Mutator (33)"}],"name":"Broom"},{"name":"Head","type":"folder","items":[{"type":"sprite","points":[[1013,495],[1023,467],[1021,419],[1024,374],[1023,323],[1000,281],[955,263],[888,267],[836,303],[817,354],[813,412],[811,457],[822,473],[840,459],[847,431],[854,398],[856,368],[912,338],[917,361],[934,337],[971,345],[998,363],[998,409],[994,435],[999,471]],"translate":[-6,-36],"mutationVectors":[{"type":"deform","origin":[-98,48],"name":"New Mutator (21)","radius":96},{"type":"deform","origin":[87,54],"name":"New Mutator (20)","radius":101},{"name":"New Mutator (16)","type":"translate","origin":[0,0],"radius":-1}],"name":"HairFront"},{"type":"sprite","points":[[221,213],[265,212],[266,230],[223,233]],"translate":[2,46],"mutationVectors":[{"name":"New Mutator (14)","type":"translate","origin":[0,0],"radius":-1}],"name":"Nose"},{"type":"sprite","points":[[776,110],[780,98],[793,90],[805,91],[818,92],[830,95],[842,106],[833,114],[818,110],[795,108]],"translate":[-42,-46],"mutationVectors":[{"name":"New Mutator (3)","type":"translate","origin":[0,0],"radius":-1},{"type":"rotate","origin":[-55,-48],"name":"New Mutator (2)"}],"name":"LeftEyebrow"},{"type":"sprite","points":[[774,139],[783,154],[794,148],[810,146],[824,148],[837,150],[837,139],[825,132],[808,129],[788,132]],"translate":[41,-43],"mutationVectors":[{"name":"New Mutator (23)","type":"translate","origin":[0,0],"radius":-1},{"type":"rotate","origin":[54,-44],"name":"New Mutator (24)"}],"name":"RightEyebrow"},{"name":"LeftEyeLashes","type":"sprite","points":[[679,86],[679,108],[738,111],[736,86]],"translate":[-47,-13],"mutationVectors":[{"type":"stretch","origin":[-47,-6],"name":"LeftEyeLashes","radius":-1}]},{"name":"RightEyeLashes","type":"sprite","points":[[613,106],[668,108],[667,86],[611,84]],"translate":[43,-14],"mutationVectors":[{"type":"stretch","origin":[37,-6],"name":"RightEyeLashes","radius":-1}]},{"name":"Face","type":"sprite","points":[[431,266],[485,277],[509,270],[507,259],[435,255],[481,248],[462,248],[462,277],[572,54],[373,52],[572,272],[375,277]],"translate":[2,-34],"mutationVectors":[{"type":"deform","origin":[2,79],"name":"New Mutator (9)","radius":26}]},{"type":"sprite","points":[[128,165],[135,173],[145,170],[162,129],[160,113],[151,102],[134,113],[130,121]],"translate":[93,-3],"mutationVectors":[{"name":"New Mutator (12)","type":"translate","origin":[0,0],"radius":-1}],"name":"RightEar"},{"type":"sprite","points":[[103,111],[112,168],[103,176],[92,174],[74,110],[86,104]],"translate":[-91,-6],"mutationVectors":[{"name":"New Mutator (13)","type":"translate","origin":[0,0],"radius":-1}],"name":"LeftEar"},{"name":"UpperTeeth","type":"sprite","points":[[636,235],[717,236],[717,247],[694,256],[653,256],[636,245]],"translate":[0,65],"mutationVectors":[{"name":"New Mutator (11)","type":"translate","origin":[0,0]}]},{"name":"Mouth","type":"sprite","points":[[759,189],[761,210],[770,228],[785,235],[814,235],[833,232],[844,218],[847,194]],"translate":[0,83],"mutationVectors":[{"type":"stretch","origin":[1,65],"name":"New Mutator (10)","radius":-1}]},{"name":"Jaw","type":"sprite","points":[[612,266],[787,262],[777,310],[737,355],[701,362],[662,352],[622,313]],"translate":[0,87],"mutationVectors":[{"type":"stretch","origin":[0,40],"name":"New Mutator (8)","radius":-1}]},{"name":"RightEye","type":"folder","items":[{"name":"RightEyeLid","type":"sprite","points":[[618,149],[664,142],[657,131],[646,128],[630,128],[620,138],[634,149],[645,148]],"translate":[41,-11],"mutationVectors":[{"type":"deform","origin":[38,-6],"name":"New Mutator (1)","radius":15}]},{"name":"RightEyeWhite (1)","type":"sprite","points":[[624,79],[630,79],[630,71],[621,71]],"translate":[30,-10],"mutationVectors":[]},{"name":"RightIrisPupil","type":"sprite","points":[[653,186],[653,160],[627,160],[627,186]],"translate":[37,-9],"mutationVectors":[{"name":"New Mutator","type":"translate","origin":[0,0]},{"type":"stretch","origin":[38,-9],"name":"New Mutator (4)","radius":-1}]},{"name":"RightEyeWhite","type":"sprite","points":[[621,197],[620,228],[667,197],[666,227]],"translate":[40,-6],"mutationVectors":[]}],"mutationVectors":[]},{"name":"LeftEye","type":"folder","items":[{"name":"LeftEyeLid","type":"sprite","points":[[688,143],[695,131],[709,127],[721,129],[731,136],[736,151],[704,146],[716,148]],"translate":[-42,-12],"mutationVectors":[{"type":"deform","origin":[-42,-9],"name":"New Mutator (5)","radius":15}]},{"name":"LeftEyeWhite","type":"sprite","points":[[697,77],[705,78],[706,70],[697,70]],"translate":[-48,-12],"mutationVectors":[]},{"name":"LeftIrisPupil","type":"sprite","points":[[698,161],[698,186],[724,186],[724,161]],"translate":[-42,-11],"mutationVectors":[{"name":"New Mutator (6)","type":"translate","origin":[0,0]},{"type":"stretch","origin":[-41,-10],"name":"New Mutator (7)","radius":-1}]},{"name":"LeftEyeWhite (1)","type":"sprite","points":[[685,197],[685,227],[734,229],[733,197]],"translate":[-43,-6],"mutationVectors":[]}],"mutationVectors":[]}],"mutationVectors":[{"type":"rotate","origin":[-5,98],"name":"New Mutator (18)"},{"name":"New Mutator (15)","type":"translate","origin":[0,0],"radius":-1}]},{"type":"sprite","points":[[1214,246],[2027,1820],[1738,244],[961,1842],[1620,334],[1681,336],[1678,350],[1629,369],[1234,679],[1735,666]],"translate":[14,896],"mutationVectors":[{"name":"Translation (2)","type":"translate","origin":[-5,17],"radius":279}],"name":"Body2"},{"type":"sprite","points":[[325,586],[430,939],[384,658],[320,941],[198,687],[197,654],[269,585]],"translate":[227,359],"mutationVectors":[{"name":"Translation (3)","type":"translate","origin":[0,0],"radius":-1},{"type":"rotate","origin":[192,279],"name":"Rotation (2)"}],"name":"TopArmRight"},{"type":"sprite","points":[[415,1020],[482,1105],[434,1125],[335,1373],[268,1384],[238,1331],[284,1061],[346,1031]],"translate":[-173,354],"mutationVectors":[{"name":"Translation (4)","type":"translate","origin":[0,0],"radius":-1},{"type":"rotate","origin":[-148,286],"name":"Rotation"}],"name":"TopArmLeft"},{"type":"sprite","points":[[779,611],[822,582],[864,568],[921,567],[979,582],[1013,632],[1042,707],[1038,813],[1028,847],[1040,912],[1030,948],[1027,1024],[990,1103],[954,1120],[907,1064],[867,1106],[822,1083],[779,1105],[750,1084],[754,992],[743,934],[759,844],[753,753],[761,709],[747,660]],"translate":[-2,108],"mutationVectors":[{"type":"deform","origin":[-7,263],"name":"New Mutator (22)","radius":331},{"type":"rotate","origin":[-3,106],"name":"New Mutator (19)"},{"name":"New Mutator (17)","type":"translate","origin":[0,0],"radius":-1}],"name":"HairBack"}],"mutationVectors":[]}],"version":"1.1"}
+{
+  "version": "2.0",
+  "metadata": { "width": 2024, "height": 2024, "zoom": 1, "pan": [0, 0] },
+  "layerHierarchy": {
+    "0": {
+      "type": "layerFolder",
+      "parentId": "root",
+      "children": ["1", "5", "10", "15", "18", "65", "67", "70", "73"]
+    },
+    "1": { "type": "layer", "parentId": "0", "children": ["2", "3", "4"] },
+    "2": { "parentId": "1", "type": "mutation" },
+    "3": { "parentId": "1", "type": "mutation" },
+    "4": { "parentId": "1", "type": "mutation" },
+    "5": {
+      "type": "layerFolder",
+      "parentId": "0",
+      "children": ["6", "7", "8", "9"]
+    },
+    "6": { "parentId": "5", "type": "mutation" },
+    "7": { "parentId": "5", "type": "mutation" },
+    "8": { "type": "layer", "parentId": "5" },
+    "9": { "type": "layer", "parentId": "5" },
+    "10": {
+      "type": "layerFolder",
+      "parentId": "0",
+      "children": ["11", "12", "13", "14"]
+    },
+    "11": { "parentId": "10", "type": "mutation" },
+    "12": { "parentId": "10", "type": "mutation" },
+    "13": { "type": "layer", "parentId": "10" },
+    "14": { "type": "layer", "parentId": "10" },
+    "15": { "type": "layer", "parentId": "0", "children": ["16", "17"] },
+    "16": { "parentId": "15", "type": "mutation" },
+    "17": { "parentId": "15", "type": "mutation" },
+    "18": {
+      "type": "layerFolder",
+      "parentId": "0",
+      "children": [
+        "19",
+        "20",
+        "21",
+        "25",
+        "27",
+        "30",
+        "33",
+        "35",
+        "37",
+        "39",
+        "41",
+        "43",
+        "45",
+        "47",
+        "49",
+        "57"
+      ]
+    },
+    "19": { "parentId": "18", "type": "mutation" },
+    "20": { "parentId": "18", "type": "mutation" },
+    "21": { "type": "layer", "parentId": "18", "children": ["22", "23", "24"] },
+    "22": { "parentId": "21", "type": "mutation" },
+    "23": { "parentId": "21", "type": "mutation" },
+    "24": { "parentId": "21", "type": "mutation" },
+    "25": { "type": "layer", "parentId": "18", "children": ["26"] },
+    "26": { "parentId": "25", "type": "mutation" },
+    "27": { "type": "layer", "parentId": "18", "children": ["28", "29"] },
+    "28": { "parentId": "27", "type": "mutation" },
+    "29": { "parentId": "27", "type": "mutation" },
+    "30": { "type": "layer", "parentId": "18", "children": ["31", "32"] },
+    "31": { "parentId": "30", "type": "mutation" },
+    "32": { "parentId": "30", "type": "mutation" },
+    "33": { "type": "layer", "parentId": "18", "children": ["34"] },
+    "34": { "parentId": "33", "type": "mutation" },
+    "35": { "type": "layer", "parentId": "18", "children": ["36"] },
+    "36": { "parentId": "35", "type": "mutation" },
+    "37": { "type": "layer", "parentId": "18", "children": ["38"] },
+    "38": { "parentId": "37", "type": "mutation" },
+    "39": { "type": "layer", "parentId": "18", "children": ["40"] },
+    "40": { "parentId": "39", "type": "mutation" },
+    "41": { "type": "layer", "parentId": "18", "children": ["42"] },
+    "42": { "parentId": "41", "type": "mutation" },
+    "43": { "type": "layer", "parentId": "18", "children": ["44"] },
+    "44": { "parentId": "43", "type": "mutation" },
+    "45": { "type": "layer", "parentId": "18", "children": ["46"] },
+    "46": { "parentId": "45", "type": "mutation" },
+    "47": { "type": "layer", "parentId": "18", "children": ["48"] },
+    "48": { "parentId": "47", "type": "mutation" },
+    "49": {
+      "type": "layerFolder",
+      "parentId": "18",
+      "children": ["50", "52", "53", "56"]
+    },
+    "50": { "type": "layer", "parentId": "49", "children": ["51"] },
+    "51": { "parentId": "50", "type": "mutation" },
+    "52": { "type": "layer", "parentId": "49" },
+    "53": { "type": "layer", "parentId": "49", "children": ["54", "55"] },
+    "54": { "parentId": "53", "type": "mutation" },
+    "55": { "parentId": "53", "type": "mutation" },
+    "56": { "type": "layer", "parentId": "49" },
+    "57": {
+      "type": "layerFolder",
+      "parentId": "18",
+      "children": ["58", "60", "61", "64"]
+    },
+    "58": { "type": "layer", "parentId": "57", "children": ["59"] },
+    "59": { "parentId": "58", "type": "mutation" },
+    "60": { "type": "layer", "parentId": "57" },
+    "61": { "type": "layer", "parentId": "57", "children": ["62", "63"] },
+    "62": { "parentId": "61", "type": "mutation" },
+    "63": { "parentId": "61", "type": "mutation" },
+    "64": { "type": "layer", "parentId": "57" },
+    "65": { "type": "layer", "parentId": "0", "children": ["66"] },
+    "66": { "parentId": "65", "type": "mutation" },
+    "67": { "type": "layer", "parentId": "0", "children": ["68", "69"] },
+    "68": { "parentId": "67", "type": "mutation" },
+    "69": { "parentId": "67", "type": "mutation" },
+    "70": { "type": "layer", "parentId": "0", "children": ["71", "72"] },
+    "71": { "parentId": "70", "type": "mutation" },
+    "72": { "parentId": "70", "type": "mutation" },
+    "73": { "type": "layer", "parentId": "0", "children": ["74", "75", "76"] },
+    "74": { "parentId": "73", "type": "mutation" },
+    "75": { "parentId": "73", "type": "mutation" },
+    "76": { "parentId": "73", "type": "mutation" },
+    "root": { "type": "root", "children": ["0"] }
+  },
+  "layerFolders": {
+    "0": { "name": "Colorize", "visible": true, "collapsed": false },
+    "5": { "name": "ArmRight", "visible": true, "collapsed": false },
+    "10": { "name": "ArmLeft", "visible": true, "collapsed": false },
+    "18": { "name": "Head", "visible": true, "collapsed": false },
+    "49": { "name": "RightEye", "visible": true, "collapsed": false },
+    "57": { "name": "LeftEye", "visible": true, "collapsed": false }
+  },
+  "layers": {
+    "1": {
+      "name": "Dust",
+      "visible": true,
+      "points": [
+        [1408, 224],
+        [1216, 32],
+        [1984, 32],
+        [1984, 224]
+      ],
+      "translate": [467.2445240939869, 904.7627771140304]
+    },
+    "8": {
+      "name": "BottomArmRight",
+      "visible": true,
+      "points": [
+        [92, 688],
+        [139, 676],
+        [186, 690],
+        [173, 869],
+        [70, 764],
+        [144, 904],
+        [94, 908]
+      ],
+      "translate": [603.2445240939869, -168.23722288596957]
+    },
+    "9": {
+      "name": "HandRight",
+      "visible": true,
+      "points": [
+        [452, 597],
+        [529, 600],
+        [413, 697],
+        [435, 747],
+        [516, 759],
+        [537, 704]
+      ],
+      "translate": [597.2445240939869, -42.23722288596957]
+    },
+    "13": {
+      "name": "BottomArmLeft",
+      "visible": true,
+      "points": [
+        [80, 1054],
+        [183, 1046],
+        [202, 1203],
+        [182, 1283],
+        [123, 1289],
+        [83, 1174]
+      ],
+      "translate": [96.24452409398691, -177.23722288596957]
+    },
+    "14": {
+      "name": "HandLeft",
+      "visible": true,
+      "points": [
+        [212, 1432],
+        [229, 1591],
+        [94, 1596],
+        [109, 1435]
+      ],
+      "translate": [102.24452409398691, -13.237222885969572]
+    },
+    "15": {
+      "name": "Broom",
+      "visible": true,
+      "points": [
+        [552, 363],
+        [633, 363],
+        [635, 1808],
+        [770, 2028],
+        [725, 2040],
+        [552, 2010],
+        [503, 1913]
+      ],
+      "translate": [483.2445240939869, 196.76277711403043]
+    },
+    "21": {
+      "name": "HairFront",
+      "visible": true,
+      "points": [
+        [1013, 495],
+        [1023, 467],
+        [1021, 419],
+        [1024, 374],
+        [1023, 323],
+        [1000, 281],
+        [955, 263],
+        [888, 267],
+        [836, 303],
+        [817, 354],
+        [813, 412],
+        [811, 457],
+        [822, 473],
+        [840, 459],
+        [847, 431],
+        [854, 398],
+        [856, 368],
+        [912, 338],
+        [917, 361],
+        [934, 337],
+        [971, 345],
+        [998, 363],
+        [998, 409],
+        [994, 435],
+        [999, 471]
+      ],
+      "translate": [320.2445240939869, -797.2372228859696]
+    },
+    "25": {
+      "name": "Nose",
+      "visible": true,
+      "points": [
+        [221, 213],
+        [265, 212],
+        [266, 230],
+        [223, 233]
+      ],
+      "translate": [328.2445240939869, -715.2372228859696]
+    },
+    "27": {
+      "name": "LeftEyebrow",
+      "visible": true,
+      "points": [
+        [776, 110],
+        [780, 98],
+        [793, 90],
+        [805, 91],
+        [818, 92],
+        [830, 95],
+        [842, 106],
+        [833, 114],
+        [818, 110],
+        [795, 108]
+      ],
+      "translate": [284.2445240939869, -807.2372228859696]
+    },
+    "30": {
+      "name": "RightEyebrow",
+      "visible": true,
+      "points": [
+        [774, 139],
+        [783, 154],
+        [794, 148],
+        [810, 146],
+        [824, 148],
+        [837, 150],
+        [837, 139],
+        [825, 132],
+        [808, 129],
+        [788, 132]
+      ],
+      "translate": [367.2445240939869, -804.2372228859696]
+    },
+    "33": {
+      "name": "LeftEyeLashes",
+      "visible": true,
+      "points": [
+        [679, 86],
+        [679, 108],
+        [738, 111],
+        [736, 86]
+      ],
+      "translate": [279.2445240939869, -774.2372228859696]
+    },
+    "35": {
+      "name": "RightEyeLashes",
+      "visible": true,
+      "points": [
+        [613, 106],
+        [668, 108],
+        [667, 86],
+        [611, 84]
+      ],
+      "translate": [369.2445240939869, -775.2372228859696]
+    },
+    "37": {
+      "name": "Face",
+      "visible": true,
+      "points": [
+        [431, 266],
+        [485, 277],
+        [509, 270],
+        [507, 259],
+        [435, 255],
+        [481, 248],
+        [462, 248],
+        [462, 277],
+        [572, 54],
+        [373, 52],
+        [572, 272],
+        [375, 277]
+      ],
+      "translate": [328.2445240939869, -795.2372228859696]
+    },
+    "39": {
+      "name": "RightEar",
+      "visible": true,
+      "points": [
+        [128, 165],
+        [135, 173],
+        [145, 170],
+        [162, 129],
+        [160, 113],
+        [151, 102],
+        [134, 113],
+        [130, 121]
+      ],
+      "translate": [419.2445240939869, -764.2372228859696]
+    },
+    "41": {
+      "name": "LeftEar",
+      "visible": true,
+      "points": [
+        [103, 111],
+        [112, 168],
+        [103, 176],
+        [92, 174],
+        [74, 110],
+        [86, 104]
+      ],
+      "translate": [235.2445240939869, -767.2372228859696]
+    },
+    "43": {
+      "name": "UpperTeeth",
+      "visible": true,
+      "points": [
+        [636, 235],
+        [717, 236],
+        [717, 247],
+        [694, 256],
+        [653, 256],
+        [636, 245]
+      ],
+      "translate": [326.2445240939869, -696.2372228859696]
+    },
+    "45": {
+      "name": "Mouth",
+      "visible": true,
+      "points": [
+        [759, 189],
+        [761, 210],
+        [770, 228],
+        [785, 235],
+        [814, 235],
+        [833, 232],
+        [844, 218],
+        [847, 194]
+      ],
+      "translate": [326.2445240939869, -678.2372228859696]
+    },
+    "47": {
+      "name": "Jaw",
+      "visible": true,
+      "points": [
+        [612, 266],
+        [787, 262],
+        [777, 310],
+        [737, 355],
+        [701, 362],
+        [662, 352],
+        [622, 313]
+      ],
+      "translate": [326.2445240939869, -674.2372228859696]
+    },
+    "50": {
+      "name": "RightEyeLid",
+      "visible": true,
+      "points": [
+        [618, 149],
+        [664, 142],
+        [657, 131],
+        [646, 128],
+        [630, 128],
+        [620, 138],
+        [634, 149],
+        [645, 148]
+      ],
+      "translate": [367.2445240939869, -772.2372228859696]
+    },
+    "52": {
+      "name": "RightEyeWhite (1)",
+      "visible": true,
+      "points": [
+        [624, 79],
+        [630, 79],
+        [630, 71],
+        [621, 71]
+      ],
+      "translate": [356.2445240939869, -771.2372228859696]
+    },
+    "53": {
+      "name": "RightIrisPupil",
+      "visible": true,
+      "points": [
+        [653, 186],
+        [653, 160],
+        [627, 160],
+        [627, 186]
+      ],
+      "translate": [363.2445240939869, -770.2372228859696]
+    },
+    "56": {
+      "name": "RightEyeWhite",
+      "visible": true,
+      "points": [
+        [621, 197],
+        [620, 228],
+        [667, 197],
+        [666, 227]
+      ],
+      "translate": [366.2445240939869, -767.2372228859696]
+    },
+    "58": {
+      "name": "LeftEyeLid",
+      "visible": true,
+      "points": [
+        [688, 143],
+        [695, 131],
+        [709, 127],
+        [721, 129],
+        [731, 136],
+        [736, 151],
+        [704, 146],
+        [716, 148]
+      ],
+      "translate": [284.2445240939869, -773.2372228859696]
+    },
+    "60": {
+      "name": "LeftEyeWhite",
+      "visible": true,
+      "points": [
+        [697, 77],
+        [705, 78],
+        [706, 70],
+        [697, 70]
+      ],
+      "translate": [278.2445240939869, -773.2372228859696]
+    },
+    "61": {
+      "name": "LeftIrisPupil",
+      "visible": true,
+      "points": [
+        [698, 161],
+        [698, 186],
+        [724, 186],
+        [724, 161]
+      ],
+      "translate": [284.2445240939869, -772.2372228859696]
+    },
+    "64": {
+      "name": "LeftEyeWhite (1)",
+      "visible": true,
+      "points": [
+        [685, 197],
+        [685, 227],
+        [734, 229],
+        [733, 197]
+      ],
+      "translate": [283.2445240939869, -767.2372228859696]
+    },
+    "65": {
+      "name": "Body2",
+      "visible": true,
+      "points": [
+        [1214, 246],
+        [2027, 1820],
+        [1738, 244],
+        [961, 1842],
+        [1620, 334],
+        [1681, 336],
+        [1678, 350],
+        [1629, 369],
+        [1234, 679],
+        [1735, 666]
+      ],
+      "translate": [340.2445240939869, 134.76277711403043]
+    },
+    "67": {
+      "name": "TopArmRight",
+      "visible": true,
+      "points": [
+        [325, 586],
+        [430, 939],
+        [384, 658],
+        [320, 941],
+        [198, 687],
+        [197, 654],
+        [269, 585]
+      ],
+      "translate": [553.2445240939869, -402.2372228859696]
+    },
+    "70": {
+      "name": "TopArmLeft",
+      "visible": true,
+      "points": [
+        [415, 1020],
+        [482, 1105],
+        [434, 1125],
+        [335, 1373],
+        [268, 1384],
+        [238, 1331],
+        [284, 1061],
+        [346, 1031]
+      ],
+      "translate": [153.2445240939869, -407.2372228859696]
+    },
+    "73": {
+      "name": "HairBack",
+      "visible": true,
+      "points": [
+        [779, 611],
+        [822, 582],
+        [864, 568],
+        [921, 567],
+        [979, 582],
+        [1013, 632],
+        [1042, 707],
+        [1038, 813],
+        [1028, 847],
+        [1040, 912],
+        [1030, 948],
+        [1027, 1024],
+        [990, 1103],
+        [954, 1120],
+        [907, 1064],
+        [867, 1106],
+        [822, 1083],
+        [779, 1105],
+        [750, 1084],
+        [754, 992],
+        [743, 934],
+        [759, 844],
+        [753, 753],
+        [761, 709],
+        [747, 660]
+      ],
+      "translate": [324.2445240939869, -653.2372228859696]
+    }
+  },
+  "mutations": {
+    "2": {
+      "name": "Translation (1)",
+      "type": "translate",
+      "origin": [554.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "3": {
+      "type": "opacity",
+      "origin": [554.2445240939869, -761.2372228859696],
+      "name": "Opacity"
+    },
+    "4": {
+      "type": "stretch",
+      "origin": [562.2445240939869, 989.7627771140304],
+      "name": "Stretch"
+    },
+    "6": {
+      "type": "rotate",
+      "origin": [518.2445240939869, -482.2372228859696],
+      "name": "Rotation (3)"
+    },
+    "7": {
+      "type": "rotate",
+      "origin": [608.2445240939869, -272.2372228859696],
+      "name": "Rotation (4)"
+    },
+    "11": {
+      "type": "rotate",
+      "origin": [178.2445240939869, -475.2372228859696],
+      "name": "Rotation (1)"
+    },
+    "12": {
+      "type": "rotate",
+      "origin": [81.24452409398691, -278.2372228859696],
+      "name": "New Mutator (31)"
+    },
+    "16": {
+      "name": "Translation",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "17": {
+      "type": "rotate",
+      "origin": [454.2445240939869, -79.23722288596957],
+      "name": "New Mutator (33)"
+    },
+    "19": {
+      "type": "rotate",
+      "origin": [321.2445240939869, -663.2372228859696],
+      "name": "New Mutator (18)"
+    },
+    "20": {
+      "name": "New Mutator (15)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "22": {
+      "type": "deform",
+      "origin": [228.2445240939869, -713.2372228859696],
+      "name": "New Mutator (21)",
+      "radius": 96
+    },
+    "23": {
+      "type": "deform",
+      "origin": [413.2445240939869, -707.2372228859696],
+      "name": "New Mutator (20)",
+      "radius": 101
+    },
+    "24": {
+      "name": "New Mutator (16)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "26": {
+      "name": "New Mutator (14)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "28": {
+      "name": "New Mutator (3)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "29": {
+      "type": "rotate",
+      "origin": [271.2445240939869, -809.2372228859696],
+      "name": "New Mutator (2)"
+    },
+    "31": {
+      "name": "New Mutator (23)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "32": {
+      "type": "rotate",
+      "origin": [380.2445240939869, -805.2372228859696],
+      "name": "New Mutator (24)"
+    },
+    "34": {
+      "type": "stretch",
+      "origin": [279.2445240939869, -767.2372228859696],
+      "name": "LeftEyeLashes",
+      "radius": -1
+    },
+    "36": {
+      "type": "stretch",
+      "origin": [363.2445240939869, -767.2372228859696],
+      "name": "RightEyeLashes",
+      "radius": -1
+    },
+    "38": {
+      "type": "deform",
+      "origin": [328.2445240939869, -682.2372228859696],
+      "name": "New Mutator (9)",
+      "radius": 26
+    },
+    "40": {
+      "name": "New Mutator (12)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "42": {
+      "name": "New Mutator (13)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "44": {
+      "name": "New Mutator (11)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "46": {
+      "type": "stretch",
+      "origin": [327.2445240939869, -696.2372228859696],
+      "name": "New Mutator (10)",
+      "radius": -1
+    },
+    "48": {
+      "type": "stretch",
+      "origin": [326.2445240939869, -721.2372228859696],
+      "name": "New Mutator (8)",
+      "radius": -1
+    },
+    "51": {
+      "type": "deform",
+      "origin": [364.2445240939869, -767.2372228859696],
+      "name": "New Mutator (1)",
+      "radius": 15
+    },
+    "54": {
+      "name": "New Mutator",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "55": {
+      "type": "stretch",
+      "origin": [364.2445240939869, -770.2372228859696],
+      "name": "New Mutator (4)",
+      "radius": -1
+    },
+    "59": {
+      "type": "deform",
+      "origin": [284.2445240939869, -770.2372228859696],
+      "name": "New Mutator (5)",
+      "radius": 15
+    },
+    "62": {
+      "name": "New Mutator (6)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "63": {
+      "type": "stretch",
+      "origin": [285.2445240939869, -771.2372228859696],
+      "name": "New Mutator (7)",
+      "radius": -1
+    },
+    "66": {
+      "name": "Translation (2)",
+      "type": "translate",
+      "origin": [321.2445240939869, -744.2372228859696],
+      "radius": 279
+    },
+    "68": {
+      "name": "Translation (3)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "69": {
+      "type": "rotate",
+      "origin": [518.2445240939869, -482.2372228859696],
+      "name": "Rotation (2)"
+    },
+    "71": {
+      "name": "Translation (4)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    },
+    "72": {
+      "type": "rotate",
+      "origin": [178.2445240939869, -475.2372228859696],
+      "name": "Rotation"
+    },
+    "74": {
+      "type": "deform",
+      "origin": [319.2445240939869, -498.2372228859696],
+      "name": "New Mutator (22)",
+      "radius": 331
+    },
+    "75": {
+      "type": "rotate",
+      "origin": [323.2445240939869, -655.2372228859696],
+      "name": "New Mutator (19)"
+    },
+    "76": {
+      "name": "New Mutator (17)",
+      "type": "translate",
+      "origin": [326.2445240939869, -761.2372228859696],
+      "radius": -1
+    }
+  },
+  "controlHierarchy": {
+    "0": { "type": "control", "parentId": "root" },
+    "1": { "type": "control", "parentId": "root" },
+    "2": { "type": "control", "parentId": "root" },
+    "3": { "type": "control", "parentId": "root" },
+    "4": { "type": "control", "parentId": "root" },
+    "5": { "type": "control", "parentId": "root" },
+    "6": { "type": "control", "parentId": "root" },
+    "7": { "type": "control", "parentId": "root" },
+    "8": { "type": "control", "parentId": "root" },
+    "9": { "type": "control", "parentId": "root" },
+    "10": { "type": "control", "parentId": "root" },
+    "11": { "type": "control", "parentId": "root" },
+    "12": { "type": "control", "parentId": "root" },
+    "13": { "type": "control", "parentId": "root" },
+    "14": { "type": "control", "parentId": "root" },
+    "15": { "type": "control", "parentId": "root" },
+    "16": { "type": "control", "parentId": "root" },
+    "root": {
+      "type": "root",
+      "children": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16"
+      ]
+    }
+  },
+  "controlFolders": {},
+  "controls": {
+    "0": {
+      "name": "Breathing",
+      "type": "slider",
+      "steps": [
+        {
+          "20": [0, 0],
+          "22": [0, 0],
+          "23": [0, 0],
+          "66": [0, 0],
+          "68": [0, 0],
+          "71": [0, 0],
+          "76": [0, 0]
+        },
+        {
+          "20": [0, -4],
+          "22": [4, 0],
+          "23": [-5, 0],
+          "66": [0, -8],
+          "68": [0, -8],
+          "71": [0, -8],
+          "76": [0, -3]
+        }
+      ]
+    },
+    "1": {
+      "name": "Dust",
+      "type": "slider",
+      "steps": [
+        { "2": [143, 0], "3": [1, 1], "4": [0.35, 0.05] },
+        { "2": [-1110, 0], "3": [0, 0], "4": [1, 1] }
+      ]
+    },
+    "2": {
+      "name": "Broom",
+      "type": "slider",
+      "steps": [
+        { "16": [-131, -39], "17": [-29, 0] },
+        { "16": [0, 0], "17": [8, 0] }
+      ]
+    },
+    "3": {
+      "name": "ArmRightBottom",
+      "type": "slider",
+      "steps": [{ "7": [-122, 0] }, { "7": [9, 0] }]
+    },
+    "4": {
+      "name": "ArmRightTop",
+      "type": "slider",
+      "steps": [
+        { "6": [-18, 0], "69": [-18, 0] },
+        { "6": [100, 0], "69": [100, 0] }
+      ]
+    },
+    "5": {
+      "name": "ArmLeftBottom",
+      "type": "slider",
+      "steps": [{ "12": [52, 0] }, { "12": [-108, 0] }]
+    },
+    "6": {
+      "name": "ArmLeftTop",
+      "type": "slider",
+      "steps": [
+        { "11": [-84, 0], "72": [-85, 0] },
+        { "11": [8, 0], "72": [8, 0] }
+      ]
+    },
+    "7": {
+      "name": "Eyebrows",
+      "type": "slider",
+      "steps": [
+        { "28": [0, 6], "29": [-10, 0], "31": [0, 6], "32": [10, 0] },
+        { "28": [0, 0], "29": [0, 0], "31": [0, 0], "32": [0, 0] },
+        { "28": [0, 0], "29": [9, 0], "31": [0, 0], "32": [-9, 0] }
+      ]
+    },
+    "8": {
+      "name": "HeadTilt",
+      "type": "slider",
+      "steps": [
+        {
+          "19": [15, 0],
+          "22": [-29, 0],
+          "23": [-34, 0],
+          "74": [-75, 0],
+          "75": [15, 0]
+        },
+        {
+          "19": [-15, 0],
+          "22": [42, 0],
+          "23": [32, 0],
+          "74": [103, 0],
+          "75": [-15, 0]
+        }
+      ]
+    },
+    "9": {
+      "name": "HeadTurn",
+      "type": "slider",
+      "steps": [
+        {
+          "20": [3, 0],
+          "24": [2, 0],
+          "26": [7, 0],
+          "40": [-9, 0],
+          "42": [-2, 0],
+          "54": [1, 0],
+          "62": [1, 0],
+          "76": [-7, 0]
+        },
+        {
+          "20": [-3, 0],
+          "24": [-2, 0],
+          "26": [-5, 0],
+          "40": [3, 0],
+          "42": [7, 0],
+          "54": [-1, 0],
+          "62": [-1, 0],
+          "76": [10, 0]
+        }
+      ]
+    },
+    "10": {
+      "name": "Mouth",
+      "type": "slider",
+      "steps": [
+        { "38": [0, 0], "44": [0, 0], "46": [1, 1], "48": [1, 1] },
+        { "38": [0, -20], "44": [0, 3], "46": [1, 3.85], "48": [1, 1.1] }
+      ]
+    },
+    "11": {
+      "name": "RightEye-y",
+      "type": "slider",
+      "steps": [{ "54": [0, -8] }, { "54": [0, 11] }]
+    },
+    "12": {
+      "name": "LeftEye-y",
+      "type": "slider",
+      "steps": [{ "62": [0, -7] }, { "62": [0, 11] }]
+    },
+    "13": {
+      "name": "RightEye-x",
+      "type": "slider",
+      "steps": [
+        { "54": [-7, 0], "55": [0.85, 1] },
+        { "54": [1, 0], "55": [1, 1] },
+        { "54": [13, 0], "55": [0.85, 1] }
+      ]
+    },
+    "14": {
+      "name": "LeftEye-x",
+      "type": "slider",
+      "steps": [
+        { "62": [-12, 0], "63": [0.85, 1] },
+        { "62": [0, 0], "63": [1, 1] },
+        { "62": [9, 0], "63": [0.85, 1] }
+      ]
+    },
+    "15": {
+      "name": "RightEyeClose",
+      "type": "slider",
+      "steps": [
+        { "36": [1, 1], "51": [0, 0] },
+        { "36": [1, -1.2], "51": [0, 48] }
+      ]
+    },
+    "16": {
+      "name": "LeftEyeClose",
+      "type": "slider",
+      "steps": [
+        { "34": [1, 1], "59": [0, 0] },
+        { "34": [1, -1.1], "59": [0, 50] }
+      ]
+    }
+  },
+  "defaultFrame": {
+    "3": [1, 1],
+    "4": [1, 1],
+    "6": [0, 0],
+    "7": [0, 0],
+    "11": [0, 0],
+    "12": [97, 0],
+    "17": [16, 0],
+    "19": [-1, 0],
+    "22": [0, 0],
+    "23": [0, 0],
+    "28": [0, 0],
+    "29": [0, 0],
+    "31": [0, 0],
+    "32": [0, 0],
+    "34": [1, 1],
+    "36": [1, 1],
+    "38": [0, 0],
+    "46": [1, 0.25],
+    "48": [1, 1],
+    "51": [0, -29],
+    "54": [0, 0],
+    "55": [1, 1],
+    "59": [0, -25],
+    "62": [0, 0],
+    "63": [1, 1],
+    "66": [0, 0],
+    "69": [0, 0],
+    "72": [0, 0],
+    "74": [0, 0],
+    "75": [0, 0]
+  },
+  "controlValues": {
+    "0": 1,
+    "1": 1,
+    "2": 1,
+    "3": 0.58,
+    "4": 0.07,
+    "5": 0.31,
+    "6": 0.83,
+    "7": 1,
+    "8": 0.55,
+    "9": 0.44,
+    "10": 0,
+    "11": 0.5,
+    "12": 0.5,
+    "13": 1,
+    "14": 1,
+    "15": 0,
+    "16": 0,
+    "error": 1
+  },
+  "animationHierarchy": {
+    "0": { "type": "animation", "parentId": "root" },
+    "1": { "type": "animation", "parentId": "root" },
+    "2": { "type": "animation", "parentId": "root" },
+    "3": { "type": "animation", "parentId": "root" },
+    "4": { "type": "animation", "parentId": "root" },
+    "5": { "type": "animation", "parentId": "root" },
+    "6": { "type": "animation", "parentId": "root" },
+    "7": { "type": "animation", "parentId": "root" },
+    "8": { "type": "animation", "parentId": "root" },
+    "9": { "type": "animation", "parentId": "root" },
+    "10": { "type": "animation", "parentId": "root" },
+    "11": { "type": "animation", "parentId": "root" },
+    "root": {
+      "type": "root",
+      "children": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
+    }
+  },
+  "animations": {
+    "0": {
+      "name": "Eye blink",
+      "looping": true,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "15",
+          "length": 3000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 2500,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 2500,
+              "duration": 250,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 2750,
+              "duration": 250,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "16",
+          "length": 3000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 2500,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 2500,
+              "duration": 250,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 2750,
+              "duration": 250,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "1": {
+      "name": "Look around",
+      "looping": true,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "13",
+          "length": 8000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.24
+            },
+            {
+              "start": 1000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 1.02
+            },
+            {
+              "start": 2000,
+              "duration": 1980,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 3980,
+              "duration": 1020,
+              "easingFunction": "linear",
+              "controlEndValue": 1.8
+            },
+            {
+              "start": 5000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 1.06
+            },
+            {
+              "start": 6000,
+              "duration": 2000,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "14",
+          "length": 8000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.18
+            },
+            {
+              "start": 1000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 2000,
+              "duration": 1980,
+              "easingFunction": "linear",
+              "controlEndValue": 1.02
+            },
+            {
+              "start": 3980,
+              "duration": 1020,
+              "easingFunction": "linear",
+              "controlEndValue": 1.84
+            },
+            {
+              "start": 5000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.98
+            },
+            {
+              "start": 6000,
+              "duration": 2000,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "2": {
+      "name": "Talking",
+      "looping": true,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "10",
+          "length": 3470,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 1000,
+              "duration": 340,
+              "easingFunction": "linear",
+              "controlEndValue": 0.62
+            },
+            {
+              "start": 1340,
+              "duration": 330,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 1670,
+              "duration": 450,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 2120,
+              "duration": 310,
+              "easingFunction": "linear",
+              "controlEndValue": 0.68
+            },
+            {
+              "start": 2430,
+              "duration": 360,
+              "easingFunction": "linear",
+              "controlEndValue": 0.24
+            },
+            {
+              "start": 2790,
+              "duration": 370,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 3160,
+              "duration": 310,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "3": {
+      "name": "No",
+      "looping": false,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "9",
+          "length": 3980,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 510,
+              "easingFunction": "linear",
+              "controlEndValue": 0.38
+            },
+            {
+              "start": 510,
+              "duration": 760,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 1270,
+              "duration": 910,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 2180,
+              "duration": 810,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 2990,
+              "duration": 990,
+              "easingFunction": "linear",
+              "controlEndValue": 0.48
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "4": {
+      "name": "HeadTilt",
+      "looping": true,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "8",
+          "length": 12000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.42
+            },
+            {
+              "start": 1000,
+              "duration": 5000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.53
+            },
+            {
+              "start": 6000,
+              "duration": 3000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.14
+            },
+            {
+              "start": 9000,
+              "duration": 3000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.43
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "5": {
+      "name": "EyeWink",
+      "looping": false,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "15",
+          "length": 1500,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 500,
+              "duration": 300,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 800,
+              "duration": 400,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 1200,
+              "duration": 300,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "16",
+          "length": 1500,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "6": {
+      "name": "Eyebrows",
+      "looping": true,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "7",
+          "length": 10220,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 990,
+              "easingFunction": "linear",
+              "controlEndValue": 1.32
+            },
+            {
+              "start": 990,
+              "duration": 2950,
+              "easingFunction": "linear",
+              "controlEndValue": 0.92
+            },
+            {
+              "start": 3940,
+              "duration": 2880,
+              "easingFunction": "linear",
+              "controlEndValue": 1.88
+            },
+            {
+              "start": 6820,
+              "duration": 3400,
+              "easingFunction": "linear",
+              "controlEndValue": 0.88
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "7": {
+      "name": "Sweeping",
+      "looping": true,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "1",
+          "length": 3000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 1000,
+              "duration": 1499,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 2499,
+              "duration": 501,
+              "easingFunction": "linear",
+              "controlEndValue": 1,
+              "controlStartValue": 0
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "2",
+          "length": 3000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.69
+            },
+            {
+              "start": 1000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 2000,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.69
+            },
+            {
+              "start": 2500,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "3",
+          "length": 3000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.46
+            },
+            {
+              "start": 1000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.79
+            },
+            {
+              "start": 2000,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.59
+            },
+            {
+              "start": 2500,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.58
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "4",
+          "length": 3000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.14
+            },
+            {
+              "start": 1000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.09
+            },
+            {
+              "start": 2000,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.1
+            },
+            {
+              "start": 2500,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "5",
+          "length": 3000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.19
+            },
+            {
+              "start": 1000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.13
+            },
+            {
+              "start": 2000,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.18
+            },
+            {
+              "start": 2500,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.26
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "6",
+          "length": 3000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.9
+            },
+            {
+              "start": 1000,
+              "duration": 1000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.71
+            },
+            {
+              "start": 2000,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 0.92
+            },
+            {
+              "start": 2500,
+              "duration": 500,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "8": {
+      "name": "StopTalking",
+      "looping": false,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "10",
+          "length": 470,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 470,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "9": {
+      "name": "EyebrowReset",
+      "looping": false,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "7",
+          "length": 560,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 560,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "10": {
+      "name": "PauseSweeping",
+      "looping": false,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "2",
+          "length": 1460,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1460,
+              "easingFunction": "linear",
+              "controlEndValue": 0.86
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "3",
+          "length": 1460,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1460,
+              "easingFunction": "linear",
+              "controlEndValue": 0.22
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "4",
+          "length": 1460,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1460,
+              "easingFunction": "linear",
+              "controlEndValue": 0.13
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "5",
+          "length": 1460,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1460,
+              "easingFunction": "linear",
+              "controlEndValue": 0.48
+            }
+          ]
+        },
+        {
+          "type": "control",
+          "controlId": "6",
+          "length": 1460,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 1460,
+              "easingFunction": "linear",
+              "controlEndValue": 0.96
+            }
+          ]
+        }
+      ],
+      "events": []
+    },
+    "11": {
+      "name": "Breathing",
+      "looping": true,
+      "tracks": [
+        {
+          "type": "control",
+          "controlId": "0",
+          "length": 6000,
+          "actions": [
+            {
+              "start": 0,
+              "duration": 2000,
+              "easingFunction": "linear",
+              "controlEndValue": 0
+            },
+            {
+              "start": 2000,
+              "duration": 2000,
+              "easingFunction": "linear",
+              "controlEndValue": 1
+            },
+            {
+              "start": 4000,
+              "duration": 2000,
+              "easingFunction": "linear",
+              "controlEndValue": 0.5
+            }
+          ]
+        }
+      ],
+      "events": []
+    }
+  }
+}

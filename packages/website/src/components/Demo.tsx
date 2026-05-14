@@ -171,7 +171,7 @@ const playDialog = async (
   }
 };
 
-const Demo: React.VFC = () => {
+const Demo: React.FC = () => {
   const animationRef = useRef<AnimationControls>(null);
   const characterRef = useRef<AnimationControls>(null);
   const [dialogText, setDialogText] = useState<string | null>(null);
@@ -196,23 +196,23 @@ const Demo: React.VFC = () => {
     (animationControl: AnimationControls) => {
       animationRef.current = animationControl;
 
-      animationControl.startAnimation("Wheel");
-      animationControl.startAnimation("WheelBlades");
-      animationControl.startAnimation("Tree");
-      animationControl.startAnimation("Bird");
-      animationControl.startAnimation("Cloud1", { speed: 0.15 });
-      animationControl.startAnimation("Cloud2", { speed: 0.1 });
-      animationControl.startAnimation("Cloud3", { speed: 0.15 });
-      animationControl.startAnimation("Day night", { speed: 0.125 });
-      animationControl.startAnimation("Eyes");
-      animationControl.startAnimation("Smoke");
-      animationControl.startAnimation("Water");
+      // animationControl.startAnimation("Wheel");
+      // animationControl.startAnimation("WheelBlades");
+      // animationControl.startAnimation("Tree");
+      // animationControl.startAnimation("Bird");
+      // animationControl.startAnimation("Cloud1", { speed: 0.15 });
+      // animationControl.startAnimation("Cloud2", { speed: 0.1 });
+      // animationControl.startAnimation("Cloud3", { speed: 0.15 });
+      // animationControl.startAnimation("Day night", { speed: 0.125 });
+      // animationControl.startAnimation("Eyes");
+      // animationControl.startAnimation("Smoke");
+      // animationControl.startAnimation("Water");
       butterFly(animationControl);
 
       animationControl.onEvent((eventName) => {
         if (eventName === "evening") {
           animationControl.startAnimation("LightFlicker");
-          animationControl.stopAnimation ("Bird");
+          animationControl.stopAnimation("Bird");
         }
         if (eventName === "endNight") {
           animationControl.startAnimation("LightOff");
@@ -249,7 +249,9 @@ const Demo: React.VFC = () => {
                 characterRef.current.startAnimation("PauseSweeping");
 
                 const say = async (text: string) => {
-                  characterRef.current.startAnimation("Talking", { startAt: 800 });
+                  characterRef.current.startAnimation("Talking", {
+                    startAt: 800,
+                  });
                   characterRef.current.startAnimation("Eyebrows");
                   await new Promise<void>((resolve) => {
                     dialogDoneRef.current = resolve;

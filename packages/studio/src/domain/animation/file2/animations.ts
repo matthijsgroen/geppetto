@@ -1,14 +1,17 @@
 import type {
   Animation,
   AnimationControlTrack,
+  CallbackEvent,
   EasingFunction,
   FrameControlAction,
   GeppettoImage,
-  TreeNode,
 } from "@geppetto/types";
 import { produce } from "immer";
 
-import { addInHierarchy } from "@/domain/animation/file2/hierarchy";
+import {
+  addInHierarchy,
+  removeFromHierarchy,
+} from "@/domain/animation/file2/hierarchy";
 
 export const hasAnimations = (file: GeppettoImage) =>
   Object.keys(file.animations).length > 0;
@@ -25,6 +28,15 @@ export const getAnimationName = (file: GeppettoImage) => {
     id++;
   }
   return `animation ${id}`;
+};
+
+export const getNewEventId = (animation: Animation) => {
+  let id = 1;
+  const takenIds = animation.events.map((e) => e.id);
+  while (takenIds.includes(`${id}`)) {
+    id++;
+  }
+  return `${id}`;
 };
 
 export const getAnimationDuration = (animation: Animation) => {
@@ -173,18 +185,8 @@ export const addControlFrameToAnimation = (
 
 export const deleteAnimation = (animationId: string) =>
   produce<GeppettoImage>((draft) => {
-    const parentId = (
-      draft.animationHierarchy[animationId] as TreeNode<"animation">
-    )?.parentId;
-    if (parentId) {
-      const parentNode = draft.animationHierarchy[parentId];
-      if (parentNode && parentNode.children) {
-        parentNode.children = parentNode.children.filter(
-          (childId) => childId !== animationId
-        );
-      }
-    }
-    delete draft.animationHierarchy[animationId];
+    const [result] = removeFromHierarchy(draft.animationHierarchy, animationId);
+    draft.animationHierarchy = result;
     delete draft.animations[animationId];
   });
 
@@ -470,3 +472,66 @@ export const getAnimationControlFrame = (
 
   return action;
 };
+
+export const addCallbackEventToAnimation = (
+  animationId: string,
+  eventName: string,
+  start: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const animation = draft.animations[animationId];
+    if (!animation) {
+      return;
+    }
+
+    const newEvent: CallbackEvent = {
+      id: getNewEventId(animation),
+      type: "callback",
+      eventName,
+      start,
+    };
+
+    animation.events.push(newEvent);
+    animation.events = animation.events.toSorted((a, b) => a.start - b.start);
+  });
+
+export const renameCallbackEvent = (
+  animationId: string,
+  eventId: string,
+  newName: string
+) =>
+  produce<GeppettoImage>((draft) => {
+    const eventToRename = draft.animations[animationId]?.events.find(
+      (e) => e.id === eventId
+    );
+    if (eventToRename) {
+      eventToRename.eventName = newName;
+    }
+  });
+
+export const moveCallbackEvent = (
+  animationId: string,
+  eventId: string,
+  newStart: number
+) =>
+  produce<GeppettoImage>((draft) => {
+    const eventToMove = draft.animations[animationId]?.events.find(
+      (e) => e.id === eventId
+    );
+    if (eventToMove) {
+      eventToMove.start = newStart;
+      draft.animations[animationId].events = draft.animations[
+        animationId
+      ].events.toSorted((a, b) => a.start - b.start);
+    }
+  });
+
+export const deleteCallbackEvent = (animationId: string, eventId: string) =>
+  produce<GeppettoImage>((draft) => {
+    const events = draft.animations[animationId]?.events;
+    if (events) {
+      draft.animations[animationId].events = events.filter(
+        (e) => e.id !== eventId
+      );
+    }
+  });

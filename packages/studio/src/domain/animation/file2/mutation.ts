@@ -76,6 +76,9 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
     name: newName,
     type: mutationType,
     origin: [0, 0],
+    ...(mutationType === "translate" || mutationType === "deform"
+      ? { radius: -1 }
+      : {}),
     ...setupProperties,
   };
   const [layerHierarchy, mutationId] = addInHierarchy(
@@ -99,5 +102,32 @@ export const addMutation = <MutationType extends MutationVector["type"]>(
 
 export const updateMutationValue = (itemId: string, newValue: Vec2) =>
   produce((draft) => {
+    if (draft.mutations[itemId] === undefined) {
+      return;
+    }
     draft.defaultFrame[itemId] = newValue;
+  });
+
+export const updateMutationRadius = (itemId: string, newRadius: number) =>
+  produce<GeppettoImage>((draft) => {
+    const mutation = draft.mutations[itemId];
+    if (hasRadius(mutation)) {
+      mutation.radius = newRadius;
+    }
+  });
+
+export const toggleMutationRadius = (itemId: string, useRadius: boolean) =>
+  produce<GeppettoImage>((draft) => {
+    const mutation = draft.mutations[itemId];
+    if (hasRadius(mutation)) {
+      mutation.radius = useRadius ? 10 : -1;
+    }
+  });
+
+export const setMutationOrigin = (itemId: string, newOrigin: Vec2) =>
+  produce<GeppettoImage>((draft) => {
+    const mutation = draft.mutations[itemId];
+    if (isShapeMutationVector(mutation)) {
+      mutation.origin = newOrigin;
+    }
   });

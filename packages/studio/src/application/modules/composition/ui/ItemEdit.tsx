@@ -1,25 +1,15 @@
 import type { Vec2 } from "@geppetto/types";
 import { produce } from "immer";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 
-import {
-  NumberControl,
-  ToggleControl,
-  VectorControl,
-} from "@/application/modules/composition/ui/controls";
-import { useFile } from "@/application/state/FileContext";
+import { useFile, useFileUndoRedo } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
+import { useDirectMutationValues } from "@/application/state/ImageControlContext";
+import { updateMutationValue } from "@/domain/animation/file2/mutation";
 import {
-  useMutationValues,
-  useUpdateMutationValues,
-} from "@/application/state/ImageControlContext";
-import {
-  hasRadius,
-  iconMapping,
-  isShapeMutationVector,
-  updateMutationValue,
-} from "@/domain/animation/file2/mutation";
-import { toggleVisibility } from "@/domain/animation/file2/shapes";
+  setLayerOffset,
+  toggleVisibility,
+} from "@/domain/animation/file2/shapes";
 import { defaultValueForVector } from "@/infrastructure/webgl/lib/vertices";
 import {
   Control,
@@ -31,10 +21,10 @@ import {
   ToggleInput,
 } from "@/ui/components";
 
-import {
-  MutationControlled,
-  MutationValueEdit,
-} from "./editors/MutationValueEdit";
+import { VectorControl } from "./controls";
+import { MutationControlled } from "./editors/MutationControlled";
+import { MutationEdit } from "./editors/MutationEdit";
+import { MutationValueEdit } from "./editors/MutationValueEdit";
 
 type ItemEditProps = {
   activeMutator: string | null;
@@ -83,6 +73,7 @@ const LayerFolderEdit: React.FC<EditProps> = ({ itemId }) => {
 
 const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   const [file, setFile] = useFile();
+  const { setGrouped, endGrouping } = useFileUndoRedo();
   const layer = file.layers[itemId];
 
   const handleClick = useEvent(() => {
@@ -90,11 +81,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
   });
 
   const offsetChangeHandler = useEvent((newValue: Vec2) => {
-    setFile(
-      produce((draft) => {
-        draft.layers[itemId].translate = newValue;
-      })
-    );
+    setGrouped(`layerOffset-${itemId}`, setLayerOffset(itemId, newValue));
   });
 
   return (
@@ -105,6 +92,7 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
       <ControlPanel>
         <VectorControl
           label="Offset"
+          onBlur={endGrouping}
           onChange={offsetChangeHandler}
           value={layer.translate}
         />
@@ -117,109 +105,6 @@ const LayerEdit: React.FC<EditProps> = ({ itemId }) => {
         <Kbd shortcut={{ interaction: "MouseDrag", shift: true }} /> to change
         the layer offset
       </Paragraph>
-    </>
-  );
-};
-
-const MutationEdit: React.FC<EditProps> = ({ itemId, onSelectControl }) => {
-  const [file, setFile] = useFile();
-  const mutation = file.mutations[itemId];
-  const updateMutations = useUpdateMutationValues();
-  const [, startTransition] = useTransition();
-
-  const mutationValues = useMutationValues();
-
-  const mutationValue: Vec2 = !itemId
-    ? blankValue
-    : (mutationValues.current[itemId] ?? defaultValueForVector(mutation.type));
-  const [slideValue, setSlideValue] = useState(mutationValue);
-
-  const radiusChange = useEvent((newRadius: number) => {
-    setFile(
-      produce((draft) => {
-        const mutation = draft.mutations[itemId];
-        if (hasRadius(mutation)) {
-          mutation.radius = newRadius;
-        }
-      })
-    );
-  });
-
-  const toggleRadius = useEvent((newValue: boolean) => {
-    setFile(
-      produce((draft) => {
-        const mutation = draft.mutations[itemId];
-        if (hasRadius(mutation)) {
-          mutation.radius = newValue ? 10 : -1;
-        }
-      })
-    );
-  });
-
-  const originChangeHandler = useEvent((newValue: Vec2) => {
-    setFile(
-      produce((draft) => {
-        const mutation = draft.mutations[itemId];
-        mutation.origin = newValue;
-      })
-    );
-  });
-
-  const valueChangeHandler = useEvent((newValue: Vec2) => {
-    updateMutations((mutations) => ({ ...mutations, [itemId]: newValue }));
-    setSlideValue(newValue);
-    startTransition(() => {
-      setFile(updateMutationValue(itemId, newValue));
-    });
-  });
-
-  return (
-    <>
-      <PanelTitle>
-        <Icon>{iconMapping[mutation.type]}</Icon> {mutation.name}
-      </PanelTitle>
-      <ControlPanel>
-        {isShapeMutationVector(mutation) && (
-          <VectorControl
-            label="Origin"
-            onChange={originChangeHandler}
-            value={mutation.origin}
-          />
-        )}
-        {hasRadius(mutation) && (
-          <>
-            <ToggleControl
-              label="Use radius"
-              onChange={toggleRadius}
-              value={mutation.radius !== -1}
-            />
-            {mutation.radius !== -1 && (
-              <NumberControl
-                label="Radius"
-                minValue={0}
-                onChange={radiusChange}
-                value={mutation.radius}
-              />
-            )}
-          </>
-        )}
-        <MutationControlled
-          mutationId={itemId}
-          onSelectControl={onSelectControl}
-        />
-        <MutationValueEdit
-          mutationType={mutation.type}
-          onValueChange={valueChangeHandler}
-          value={slideValue}
-        />
-      </ControlPanel>
-      {isShapeMutationVector(mutation) && (
-        <Paragraph size="small">
-          Use
-          <Kbd shortcut={{ interaction: "MouseDrag", shift: true }} /> to move
-          the mutator origin
-        </Paragraph>
-      )}
     </>
   );
 };
@@ -257,37 +142,31 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
   onSelectControl,
   editingControlStep = 0,
 }) => {
-  const [file, setFile] = useFile();
+  const { state: file, setGrouped: setFile, endGrouping } = useFileUndoRedo();
   const [, startTransition] = useTransition();
 
-  const mutationValues = useMutationValues();
-  const updateMutationValues = useUpdateMutationValues();
+  const [mutationValues, updateMutationValues] = useDirectMutationValues();
 
   const mutationValue: Vec2 = !activeMutator
     ? blankValue
     : editingControlId !== undefined
       ? file.controls[editingControlId].steps[editingControlStep][activeMutator]
-      : (mutationValues.current[activeMutator] ??
+      : (mutationValues[activeMutator] ??
         defaultValueForVector(file.mutations[activeMutator].type));
-  const [slideValue, setSlideValue] = useState(mutationValue);
 
   const valueChangeHandler = useEvent((newValue: Vec2) => {
     if (activeMutator === null) return;
-    setSlideValue(newValue);
     if (editingControlId === undefined) {
       updateMutationValues((mutations) => ({
         ...mutations,
         [activeMutator]: newValue,
       }));
       startTransition(() => {
-        setFile(
-          produce((draft) => {
-            draft.defaultFrame[activeMutator] = newValue;
-          })
-        );
+        setFile("mutationUpdate", updateMutationValue(activeMutator, newValue));
       });
     } else {
       setFile(
+        "controlStepUpdate",
         produce((draft) => {
           draft.controls[editingControlId].steps[editingControlStep][
             activeMutator
@@ -308,8 +187,11 @@ export const InlayControlPanel: React.FC<ItemEditProps> = ({
         />
         <MutationValueEdit
           mutationType={mutationType}
+          onBlur={() => {
+            endGrouping();
+          }}
           onValueChange={valueChangeHandler}
-          value={slideValue}
+          value={mutationValue}
         />
       </ControlPanel>
     );

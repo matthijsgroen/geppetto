@@ -102,33 +102,37 @@ type RenameableItems<O> = Pick<
   }[keyof O]
 >;
 
-const typeToGroupKey: Record<NodeType, keyof RenameableItems<GeppettoImage>> = {
+type HierarchyNodeTypes = NodeType | "control" | "controlFolder" | "animation";
+
+const typeToGroupKey: Record<
+  HierarchyNodeTypes,
+  keyof RenameableItems<GeppettoImage>
+> = {
   layer: "layers",
   layerFolder: "layerFolders",
   mutation: "mutations",
+  control: "controls",
+  controlFolder: "controlFolders",
+  animation: "animations",
 };
 
-export const rename = (itemId: string, itemType: NodeType, newName: string) =>
+export const rename = (
+  itemId: string,
+  itemType: HierarchyNodeTypes,
+  newName: string
+) =>
   produce<GeppettoImage>((draft) => {
     const groupKey = typeToGroupKey[itemType];
     draft[groupKey][itemId].name = newName;
   });
 
-export const addPoint = (
-  image: GeppettoImage,
-  layerId: string,
-  point: Vec2
-): GeppettoImage =>
-  produce(image, (draft) => {
+export const addPoint = (layerId: string, point: Vec2) =>
+  produce<GeppettoImage>((draft) => {
     draft.layers[layerId].points.push(point);
   });
 
-export const deletePoint = (
-  image: GeppettoImage,
-  layerId: string,
-  point: Vec2
-): GeppettoImage =>
-  produce(image, (draft) => {
+export const deletePoint = (layerId: string, point: Vec2) =>
+  produce<GeppettoImage>((draft) => {
     const array = draft.layers[layerId].points;
     const index = array.findIndex(
       (p) => p[0] === point[0] && p[1] === point[1]
@@ -137,17 +141,13 @@ export const deletePoint = (
     array.splice(index, 1);
   });
 
-export const movePoint = (
-  image: GeppettoImage,
-  layerId: string,
-  point: Vec2,
-  newPoint: Vec2
-) =>
-  produce(image, (draft) => {
+export const movePoint = (layerId: string, point: Vec2, newPoint: Vec2) =>
+  produce<GeppettoImage>((draft) => {
     const array = draft.layers[layerId].points;
     const index = array.findIndex(
       (p) => p[0] === point[0] && p[1] === point[1]
     );
+    if (index === -1) return;
     array[index] = newPoint;
   });
 
@@ -176,7 +176,7 @@ export const removeShape = (shapeId: string) =>
       if (!isRootNode(item)) {
         const parent = draft.layerHierarchy[item.parentId];
         if (parent?.children) {
-          const selfIndex = parent.children.indexOf(shapeId);
+          const selfIndex = parent.children.indexOf(itemId);
           if (selfIndex > -1) {
             parent.children.splice(selfIndex, 1);
           }
@@ -184,6 +184,11 @@ export const removeShape = (shapeId: string) =>
       }
       delete draft.layerHierarchy[itemId];
     }
+  });
+
+export const setLayerOffset = (layerId: string, offset: Vec2) =>
+  produce<GeppettoImage>((draft) => {
+    draft.layers[layerId].translate = offset;
   });
 
 export const hasPoints = (file: GeppettoImage) =>

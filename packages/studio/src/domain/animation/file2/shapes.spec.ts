@@ -254,7 +254,7 @@ describe("addPoint", () => {
     const file = fileBuild.addShape("My Layer").build();
     const layerId = getShapeIdByName(file, "My Layer");
 
-    const result = addPoint(file, layerId, [50, 10]);
+    const result = addPoint(layerId, [50, 10])(file);
     expect(result.layers[layerId].points).toEqual([[50, 10]]);
   });
 });
@@ -265,7 +265,7 @@ const addPoints = (
   points: Vec2[]
 ): GeppettoImage =>
   points.reduce<GeppettoImage>(
-    (image, current) => addPoint(image, layerId, current),
+    (image, current) => addPoint(layerId, current)(image),
     file
   );
 
@@ -281,7 +281,7 @@ describe("deletePoint", () => {
       [30, 10],
     ]);
 
-    const result = deletePoint(startFile, layerId, [40, 10]);
+    const result = deletePoint(layerId, [40, 10])(startFile);
 
     expect(result.layers[layerId].points).toEqual([
       [50, 10],
@@ -302,7 +302,7 @@ describe("movePoint", () => {
       [30, 10],
     ]);
 
-    const result = movePoint(startFile, layerId, [40, 10], [45, 6]);
+    const result = movePoint(layerId, [40, 10], [45, 6])(startFile);
 
     expect(result.layers[layerId].points).toEqual([
       [50, 10],

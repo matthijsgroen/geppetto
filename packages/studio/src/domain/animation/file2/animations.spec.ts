@@ -5,11 +5,14 @@ import {
   addControlFrameToAnimation,
   createAnimationControlTrack,
   deleteAnimation,
+  deleteCallbackEvent,
   deleteControlTrackFromAnimation,
   hasAnimations,
   hasAnimationsWithData,
+  moveCallbackEvent,
   moveControlTrackToAnimation,
   renameAnimation,
+  renameCallbackEvent,
   reorderControlTrackInAnimation,
   resizeControlFrame,
   updateAnimationControlTrackLength,
@@ -645,5 +648,60 @@ describe("reorderControlTrackInAnimation", () => {
     expect(
       (updatedAnimation.tracks[0] as AnimationControlTrack).controlId
     ).toBe(moveId);
+  });
+});
+
+describe("renameCallbackEvent", () => {
+  it("renames a callback event and updates its id", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addCallbackEvent("greeting", 1000)
+      .build();
+
+    const updatedFile = renameCallbackEvent("0", "1", "run")(file);
+
+    expect(file.animations["0"].events[0].eventName).toBe("greeting");
+    expect(updatedFile.animations["0"].events[0].eventName).toBe("run");
+  });
+
+  it("allows multiple events to trigger same event name", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addCallbackEvent("greeting", 1000)
+      .addCallbackEvent("greeting", 2000)
+      .build();
+
+    const updatedFile = renameCallbackEvent("0", "2", "run")(file);
+
+    expect(file.animations["0"].events[0].eventName).toBe("greeting");
+    expect(file.animations["0"].events[1].eventName).toBe("greeting");
+    expect(updatedFile.animations["0"].events[0].eventName).toBe("greeting");
+    expect(updatedFile.animations["0"].events[1].eventName).toBe("run");
+  });
+});
+
+describe("moveCallbackEvent", () => {
+  it("moves a callback event to a new time", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addCallbackEvent("greeting", 1000)
+      .build();
+
+    const updatedFile = moveCallbackEvent("0", "1", 1500)(file);
+    expect(file.animations["0"].events[0].start).toBe(1000);
+    expect(updatedFile.animations["0"].events[0].start).toBe(1500);
+  });
+});
+
+describe("deleteCallbackEvent", () => {
+  it("deletes a callback event", () => {
+    const file = fileBuilder()
+      .addAnimation("walk")
+      .addCallbackEvent("greeting", 1000)
+      .build();
+
+    const updatedFile = deleteCallbackEvent("0", "1")(file);
+    expect(file.animations["0"].events).toHaveLength(1);
+    expect(updatedFile.animations["0"].events).toHaveLength(0);
   });
 });

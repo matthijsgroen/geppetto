@@ -1,5 +1,5 @@
 import type { Layer, Vec2 } from "@geppetto/types";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { InstallToolButton } from "@/application/modules/application-menu/ui/InstallToolButton";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
@@ -7,12 +7,13 @@ import TextureMapCanvas, {
   type GridSettings,
 } from "@/application/modules/layers/ui/TextureMapCanvas";
 import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
-import { useFile } from "@/application/state/FileContext";
+import { useFileUndoRedo } from "@/application/state/FileContext";
 import { useActionMap } from "@/application/state/hooks/useActionMap";
 import { useEvent } from "@/application/state/hooks/useEvent";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
+import { ErrorBoundary } from "@/application/ui/ErrorBoundary";
 import LayerMouseControl from "@/application/ui/LayerMouseControl";
 import { MouseMode } from "@/application/ui/MouseControl";
 import { SectionSelector } from "@/application/ui/SectionSelector";
@@ -86,10 +87,31 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
     magnetic: false,
     size: 32,
   });
+  const {
+    state: file,
+    set: setFile,
+    setGrouped: setFileGrouped,
+    endGrouping: endFileGrouping,
+  } = useFileUndoRedo();
 
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [activeCoord, setActiveCoord] = useState<Vec2 | null>(null);
-  const [file, setFile] = useFile();
+  const [selectedItemsState, setSelectedItems] = useState<string[]>([]);
+  const selectedItems = useMemo(
+    () =>
+      selectedItemsState.filter((id) => file.layerHierarchy[id] !== undefined),
+    [selectedItemsState, file.layerHierarchy]
+  );
+
+  const [activeCoordState, setActiveCoord] = useState<Vec2 | null>(null);
+  // Verify if activeCoord is still valid when activeLayer changes
+  const activeCoord = useMemo(
+    () =>
+      file.layers[selectedItems[0]]?.points.find((p) =>
+        activeCoordState
+          ? p[0] === activeCoordState[0] && p[1] === activeCoordState[1]
+          : false
+      ) || null,
+    [file.layers, selectedItems, activeCoordState]
+  );
 
   const layers = file.layers;
   const maxZoom = maxZoomFactor(texture);
@@ -98,10 +120,16 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
     [layers]
   );
 
-  const activeLayer = selectedItems.length === 1 ? selectedItems[0] : undefined;
-  if (!activeLayer && activeCoord) {
-    setActiveCoord(null);
-  }
+  const activeLayer = useMemo(
+    () => (selectedItems.length === 1 ? selectedItems[0] : undefined),
+    [selectedItems]
+  );
+
+  useEffect(() => {
+    if (!activeLayer && activeCoord) {
+      endFileGrouping();
+    }
+  }, [activeLayer, activeCoord, endFileGrouping]);
 
   const getClosestPoint = useEvent(
     (element: HTMLElement, coord: Vec2, shape: Layer): Vec2 | undefined => {
@@ -141,11 +169,14 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
         const closePoint = getClosestPoint(event.currentTarget, coord, shape);
 
         if (!closePoint && mouseMode === MouseMode.Aim) {
+          // add
           const gridCoord = alignOnGrid(gridSettings, coord);
-          setFile((image) => addPoint(image, activeLayer, gridCoord));
+          setFile(addPoint(activeLayer, gridCoord));
           setActiveCoord(gridCoord);
+          endFileGrouping();
         } else if (closePoint) {
           setActiveCoord(closePoint);
+          endFileGrouping();
         }
       }
     }
@@ -196,12 +227,11 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
           shortcut: DELETE_POINT,
           handler: () => {
             if (!activeCoord || !activeLayer) return;
-            setFile((image) => deletePoint(image, activeLayer, activeCoord));
-            setActiveCoord(null);
+            setFile(deletePoint(activeLayer, activeCoord));
           },
         },
       }),
-      [activeCoord, setFile, setActiveCoord, activeLayer]
+      [activeCoord, setFile, activeLayer]
     )
   );
 
@@ -241,8 +271,9 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
         }
       }
       if (newValue[0] !== activeCoord[0] || newValue[1] !== activeCoord[1]) {
-        setFile((image) =>
-          movePoint(image, activeLayer, activeCoord, newValue)
+        setFileGrouped(
+          "move-point",
+          movePoint(activeLayer, activeCoord, newValue)
         );
         setActiveCoord(newValue);
       }
@@ -346,7 +377,13 @@ export const LayersModule: React.FC<LayersModuleProps> = ({
           minSize={150}
         >
           <Column>
-            <ShapeTree selectedItemsState={[selectedItems, setSelectedItems]} />
+            <ErrorBoundary
+              fallback={<div style={{ padding: 16 }}>Error loading layers</div>}
+            >
+              <ShapeTree
+                selectedItemsState={[selectedItems, setSelectedItems]}
+              />
+            </ErrorBoundary>
           </Column>
         </ResizePanel>
         <Panel center workspace>

@@ -1,4 +1,5 @@
 import preview from "@sb/preview";
+import { fn } from "storybook/test";
 
 import { AnimationsContainer, AnimationTrack } from "@/ui/components";
 
@@ -11,10 +12,17 @@ const meta = preview.meta({
     location: 3.5,
     activeTrack: false,
     label: "Marker",
+    zoom: 2,
+    selected: false,
+    onClick: fn(),
+    onContextMenu: fn(),
+    onKeyDown: fn(),
+    onDrag: fn(),
+    onDragRelease: fn(),
   },
   decorators: [
     (Story, { args }) => (
-      <AnimationsContainer duration={30} title="Timeline" zoom={2}>
+      <AnimationsContainer duration={30} title="Timeline" zoom={args.zoom}>
         <AnimationTrack
           length={20}
           name={`Track 1`}
@@ -33,6 +41,7 @@ const meta = preview.meta({
             activeTrack={false}
             label={"Shadow Marker"}
             location={5}
+            zoom={args.zoom}
           />
         </AnimationTrack>
       </AnimationsContainer>

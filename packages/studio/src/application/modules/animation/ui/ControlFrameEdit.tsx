@@ -62,7 +62,7 @@ export const ControlFrameEdit: FC<{
       })
     );
     setTimeout(() => {
-      setTimestamp(frame.start / speed);
+      setTimestamp({ time: frame.start / speed, trackId: animationId });
     }, 0);
   };
 
@@ -74,7 +74,10 @@ export const ControlFrameEdit: FC<{
       })
     );
     setTimeout(() => {
-      setTimestamp((frame.start + frame.duration) / speed);
+      setTimestamp({
+        time: (frame.start + frame.duration) / speed,
+        trackId: animationId,
+      });
     }, 0);
   };
 
@@ -108,15 +111,18 @@ export const ControlFrameEdit: FC<{
                 );
               }}
               onFocus={() => {
-                setTimestamp(frame.start / speed);
+                setTimestamp({
+                  time: frame.start / speed,
+                  trackId: animationId,
+                });
               }}
               onMouseUp={updateStartValue}
               step={0.01}
-              value={startValue / controlMaxValue}
+              value={controlMaxValue === 0 ? 0 : startValue / controlMaxValue}
             />
             <RangeValue
               formatter={(v) => v.toFixed(2)}
-              value={startValue / controlMaxValue}
+              value={controlMaxValue === 0 ? 0 : startValue / controlMaxValue}
             />
           </Column>
         </Control>
@@ -135,15 +141,18 @@ export const ControlFrameEdit: FC<{
               );
             }}
             onFocus={() => {
-              setTimestamp((frame.start + frame.duration) / speed);
+              setTimestamp({
+                time: (frame.start + frame.duration) / speed,
+                trackId: animationId,
+              });
             }}
             onMouseUp={updateEndValue}
             step={0.01}
-            value={endValue / controlMaxValue}
+            value={controlMaxValue === 0 ? 0 : endValue / controlMaxValue}
           />
           <RangeValue
             formatter={(v) => v.toFixed(2)}
-            value={endValue / controlMaxValue}
+            value={controlMaxValue === 0 ? 0 : endValue / controlMaxValue}
           />
         </Column>
       </Control>

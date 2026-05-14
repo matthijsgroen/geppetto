@@ -2,14 +2,19 @@ import {
   AnimationControls as GeppettoAnimationControls,
   PreparedImageDefinition,
 } from "geppetto-player";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, {
+  type FC,
+  type PropsWithChildren,
+  useEffect,
+  useState,
+} from "react";
 import styled, { css } from "styled-components";
 
-type Props = {
+type Props = PropsWithChildren<{
   controls?: GeppettoAnimationControls;
   animation?: PreparedImageDefinition;
   width: number;
-};
+}>;
 
 const AnimationGrid = styled.ul`
   display: grid;
@@ -114,7 +119,7 @@ const createInitialControlValues = (
   return initialControlValues;
 };
 
-const AnimationControls: FunctionComponent<Props> = ({
+const AnimationControls: FC<Props> = ({
   animation,
   controls,
   width,
@@ -131,7 +136,7 @@ const AnimationControls: FunctionComponent<Props> = ({
     if (!controls) return;
     setControlValues(createInitialControlValues(animation, controls));
 
-    return controls.onTrackStopped((trackName) => {
+    return controls.onAnimationStopped((trackName) => {
       setTrackStates((state) => ({ ...state, [trackName]: false }));
     });
   }, [controls]);
@@ -168,7 +173,7 @@ const AnimationControls: FunctionComponent<Props> = ({
                   }
                   onClick={() => {
                     if (trackStates[a.name] === true) {
-                      controls.stopAnimation (a.name);
+                      controls.stopAnimation(a.name);
                       setTrackStates((state) => ({
                         ...state,
                         [a.name]: false,
@@ -195,16 +200,15 @@ const AnimationControls: FunctionComponent<Props> = ({
                   value={
                     controlValues[c.name] === undefined
                       ? 0
-                      : (controlValues[c.name] ?? 0.0) / (c.steps - 1)
+                      : controlValues[c.name]
                   }
                   onChange={(value) => {
                     const sliderValue = value.currentTarget.valueAsNumber;
-                    const controlValue = sliderValue * (c.steps - 1);
                     setControlValues((state) => ({
                       ...state,
-                      [c.name]: controlValue,
+                      [c.name]: sliderValue,
                     }));
-                    controls.setControlValue(c.name, controlValue);
+                    controls.setControlValue(c.name, sliderValue);
                   }}
                 />
               </AnimationControl>

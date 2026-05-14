@@ -13,6 +13,8 @@ import {
   useControlValues,
   useControlValueSubscription,
   useMutationValues,
+  useUpdateControlValues,
+  useUpdateMutationValues,
 } from "@/application/state/ImageControlContext";
 import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { newFile } from "@/domain/animation/file2/new";
@@ -43,7 +45,10 @@ const shapesChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
   fileA.mutations !== fileB.mutations;
 
 const mutationsControlsChanged = (fileA: GeppettoImage, fileB: GeppettoImage) =>
-  fileA.controls !== fileB.controls || fileA.mutations !== fileB.mutations;
+  fileA.controls !== fileB.controls ||
+  fileA.mutations !== fileB.mutations ||
+  fileA.defaultFrame !== fileB.defaultFrame ||
+  fileA.controlValues !== fileB.controlValues;
 
 const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
   image,
@@ -93,7 +98,7 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
 
   const fileRef = useRef(newFile());
 
-  const updateControlValues = useEvent(
+  const updateRenderControlValues = useEvent(
     (
       controlValues: GeppettoImage["controlValues"],
       mutationValues: GeppettoImage["defaultFrame"]
@@ -111,6 +116,9 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
 
   const controlValuesRef = useControlValues();
   const mutationValuesRef = useMutationValues();
+  const updateMutationValues = useUpdateMutationValues();
+  const updateControlValues = useUpdateControlValues();
+
   const subscribe = useControlValueSubscription();
 
   useEffect(() => {
@@ -126,9 +134,9 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
       vectorMap.setShapes(file);
     }
     if (mutationsControlsChanged(file, fileRef.current)) {
-      updateControlValues(file.controlValues, file.defaultFrame);
-      mutationValuesRef.current = file.defaultFrame;
-      controlValuesRef.current = file.controlValues;
+      updateRenderControlValues(file.controlValues, file.defaultFrame);
+      updateMutationValues(() => file.defaultFrame);
+      updateControlValues(() => file.controlValues);
     }
     fileRef.current = file;
   }, [
@@ -137,16 +145,25 @@ const CompositionCanvas: FC<PropsWithChildren<CompositionCanvasProps>> = ({
     composition,
     compositionMap,
     vectorMap,
+    updateRenderControlValues,
+    updateMutationValues,
     updateControlValues,
-    mutationValuesRef,
     controlValuesRef,
   ]);
 
   useEffect(() => {
-    const unsubscribe = subscribe(updateControlValues);
-    updateControlValues(controlValuesRef.current, mutationValuesRef.current);
+    const unsubscribe = subscribe(updateRenderControlValues);
+    updateRenderControlValues(
+      controlValuesRef.current,
+      mutationValuesRef.current
+    );
     return unsubscribe;
-  }, [controlValuesRef, mutationValuesRef, subscribe, updateControlValues]);
+  }, [
+    controlValuesRef,
+    mutationValuesRef,
+    subscribe,
+    updateRenderControlValues,
+  ]);
 
   useEffect(() => {
     compositionMap.setLayerSelected(showWireFrames ? activeLayers : []);

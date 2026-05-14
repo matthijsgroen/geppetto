@@ -2,9 +2,9 @@ import { clsx } from "clsx";
 import type { FC, MouseEvent, PropsWithChildren, Ref } from "react";
 
 import { isEvent } from "@/ui/components";
-import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { Column } from "@/ui/components/molecules/Column/Column";
 import { Row } from "@/ui/components/molecules/Row/Row";
+import type { TimeStamp } from "@/ui/components/support/timeDrag";
 
 import { AnimationTrackContext } from "./AnimationTrackContext";
 import { useTrackDrag } from "./TrackDragContext";

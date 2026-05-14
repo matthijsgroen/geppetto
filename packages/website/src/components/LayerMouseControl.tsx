@@ -2,6 +2,7 @@ import MouseControl, { MouseMode } from "./MouseControl";
 import React, {
   Dispatch,
   FC,
+  PropsWithChildren,
   SetStateAction,
   useCallback,
   useRef,
@@ -12,7 +13,7 @@ type State<T> = [T, Dispatch<SetStateAction<T>>];
 const MAX_ZOOM_FACTOR = 4.0;
 const MIN_ZOOM_FACTOR = 0.8;
 
-export interface LayerMouseControlProps {
+export type LayerMouseControlProps = PropsWithChildren<{
   mode: MouseMode;
   width: number;
   initialZoom: number;
@@ -27,7 +28,7 @@ export interface LayerMouseControlProps {
     deltaX: number,
     deltaY: number
   ) => boolean;
-}
+}>;
 
 const LayerMouseControl: FC<LayerMouseControlProps> = ({
   children,

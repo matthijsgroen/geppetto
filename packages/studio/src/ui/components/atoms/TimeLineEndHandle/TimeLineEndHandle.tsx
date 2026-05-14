@@ -2,8 +2,8 @@ import type { MouseEventHandler } from "react";
 import { type FC, use } from "react";
 
 import { TimeStretchHandle } from "@/ui/components/atoms/TimeBar/TimeStretchHandle";
-import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
 import { AnimationTrackContext } from "@/ui/components/molecules/AnimationTrack/AnimationTrackContext";
+import type { TimeStamp } from "@/ui/components/support/timeDrag";
 
 export const TimeLineEndHandle: FC<{
   location: TimeStamp;

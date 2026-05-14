@@ -9,13 +9,16 @@ import { use, useEffect, useRef, useState } from "react";
 
 import ZoomContext from "@/application/modules/animation/state/ZoomContext";
 import { AnimationSpeedOptions } from "@/application/modules/animation/ui/AnimationSpeedOptions";
+import { EventPin } from "@/application/modules/animation/ui/EventPin";
 import { TrackControlFrame } from "@/application/modules/animation/ui/TrackControlFrame";
 import { useFile } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
   addControlFrameToAnimation,
+  deleteCallbackEvent,
   deleteControlFrame,
   getAnimationDuration,
+  moveCallbackEvent,
   renameAnimation,
   resizeControlFrame,
   updateAnimationControlTrackLength,
@@ -30,7 +33,6 @@ import {
   MenuItem,
   RenameInput,
   SubMenu,
-  TimePin,
   TimePlayIndicator,
   ToolBar,
   ToolButton,
@@ -65,6 +67,8 @@ type AnimationTimelineProps = {
   onPlay?: () => void;
   onStop?: () => void;
   onFrameSelect?: (frame: AnimationFrame | null) => void;
+  onEventSelect?: (eventId: string | null) => void;
+  selectedEvent?: string | null;
   onDelete?: () => void;
   selected: boolean;
   selectedTimeBar?: AnimationFrame | null;
@@ -79,8 +83,10 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
   onSelect,
   onDelete,
   onFrameSelect,
+  onEventSelect,
   selected,
   selectedTimeBar,
+  selectedEvent,
 }) => {
   const [file, setFile] = useFile();
   const animation = file.animations[animationId];
@@ -327,11 +333,22 @@ export const AnimationTimeline: FC<AnimationTimelineProps> = ({
             />
           ) : null;
         })}
-        {animation.events.map((event, eventIndex) => (
-          <TimePin
-            key={`event-${eventIndex}`}
-            label={event.eventName}
-            location={event.start / 1000 / speed}
+        {animation.events.map((event) => (
+          <EventPin
+            event={event}
+            key={event.id}
+            onDeleteEvent={() => {
+              setFile(deleteCallbackEvent(animationId, event.id));
+            }}
+            onEventSelect={() => {
+              onEventSelect?.(event.id);
+            }}
+            onMoveEvent={(newStart) => {
+              setFile(moveCallbackEvent(animationId, event.id, newStart));
+            }}
+            selected={selectedEvent === event.id}
+            speed={speed}
+            zoom={zoom}
           />
         ))}
         <TimePlayIndicator

@@ -7,6 +7,7 @@ import {
   isRootNode,
   moveInHierarchy,
 } from "@/domain/animation/file2/hierarchy";
+import { rename } from "@/domain/animation/file2/shapes";
 import {
   type TreeData,
   TreeEnvironment,
@@ -119,20 +120,17 @@ export const ControlTreeEnvironment: React.FC<ControlTreeEnvironmentProps> = ({
       canDropOnItemWithoutChildren
       canRename
       canReorderItems
-      //   onRenameItem={useCallback(
-      // (item: ControlItem, newName: string) => {
-      //   setFile((fileData) =>
-      //     rename(fileData, `${item.index}`, item.data.type, newName)
-      //   );
-      //   treeData.addChangedId && treeData.addChangedId(`${item.index}`);
-      // },
-      // [setFile, treeData]
-      //   )}
       items={items}
       onDrop={onDrop}
       onFocusItem={useEvent((item: ControlItem) => {
         setFocusedItem(`${item.index}`);
       })}
+      onRenameItem={useCallback(
+        (item: ControlItem, newName: string) => {
+          setFile(rename(`${item.index}`, item.data.type, newName));
+        },
+        [setFile]
+      )}
       onSelectItems={useCallback(
         (items: TreeItemIndex[]) => {
           const ids = items.map((e) => `${e}`);

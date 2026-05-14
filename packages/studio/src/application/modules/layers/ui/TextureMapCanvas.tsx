@@ -70,15 +70,6 @@ const TextureMapCanvas: React.FC<TextureMapCanvasProps> = ({
     pointsProgram.setLayers(layers);
   }, [layers, textureMapProgram, pointsProgram]);
 
-  // textureMapProgram.setZoom(zoom);
-  // textureProgram.setZoom(zoom);
-  // pointsProgram.setZoom(zoom);
-  // gridProgram.setZoom(zoom);
-  // textureMapProgram.setPan(panX, panY);
-  // textureProgram.setPan(panX, panY);
-  // pointsProgram.setPan(panX, panY);
-  // gridProgram.setPan(panX, panY);
-
   gridProgram.setGrid(grid.enabled ? grid.size : 0);
   pointsProgram.setLayerSelected(activeLayer);
   pointsProgram.setActiveCoord(activeCoord);

@@ -1,6 +1,5 @@
 import type { GeppettoImage, MutationVector, Vec2 } from "@geppetto/types";
 import {
-  type RefObject,
   type SetStateAction,
   useCallback,
   useEffect,
@@ -13,15 +12,13 @@ import { InstallToolButton } from "@/application/modules/application-menu/ui/Ins
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
 import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
 import { useInfoPanel } from "@/application/shared/actions/useInfoPanel";
-import { useFile } from "@/application/state/FileContext";
+import { useFileUndoRedo } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { useUpdateMutationValues } from "@/application/state/ImageControlContext";
-import {
-  useScreenTranslation,
-  useUpdateScreenTranslation,
-} from "@/application/state/ScreenTranslationContext";
+import { useScreenTranslation } from "@/application/state/ScreenTranslationContext";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
+import { ErrorBoundary } from "@/application/ui/ErrorBoundary";
 import LayerMouseControl, {
   type DragState,
 } from "@/application/ui/LayerMouseControl";
@@ -46,7 +43,7 @@ import {
   type MutationSettings,
 } from "@/domain/animation/file2/mutation";
 import { hasPoints } from "@/domain/animation/file2/shapes";
-import { type AppSection, type Size } from "@/dtos/application.dto";
+import { type AppSection } from "@/dtos/application.dto";
 import { maxZoomFactor } from "@/infrastructure/webgl/lib/canvas";
 import {
   imageToPixels,
@@ -83,42 +80,6 @@ import { ControlTree } from "./ui/ControlTree";
 import { InlayControlPanel, ItemEdit } from "./ui/ItemEdit";
 import { ShapeTree } from "./ui/ShapeTree";
 
-const calculateScale = (element: Size, texture: Size) => {
-  const landscape =
-    texture.width / element.width > texture.height / element.height;
-  return landscape
-    ? element.width / texture.width
-    : element.height / texture.height;
-};
-
-const useScaleUpdater = (
-  containerRef: RefObject<HTMLDivElement | null>,
-  texture: HTMLImageElement | null
-) => {
-  const updater = useUpdateScreenTranslation();
-  useEffect(() => {
-    const handleResize = () => {
-      if (containerRef.current && texture) {
-        const img = texture;
-        const rect = containerRef.current.getBoundingClientRect();
-        updater((current) => {
-          return {
-            ...current,
-            scale: calculateScale(rect, img),
-          };
-        });
-      }
-    };
-
-    const ref = containerRef.current;
-    if (ref === null) return;
-    ref.addEventListener("resize", handleResize);
-    return () => {
-      ref.removeEventListener("resize", handleResize);
-    };
-  }, [containerRef, updater, texture]);
-};
-
 const useMutatorMap = (
   file: GeppettoImage,
   vectorValues: Record<string, Vec2>
@@ -139,17 +100,36 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
   texture,
   onSectionChange,
 }) => {
-  const [file, setFile] = useFile();
+  const {
+    state: file,
+    set: setFile,
+    setGrouped: setFileGrouped,
+    endGrouping,
+  } = useFileUndoRedo();
   const [showWireFrames, setShowWireFrames] = useState(true);
   const [controlEditMode, setControlEditMode] = useState(false);
-  const [activeControlStep, setActiveControlStep] = useState<number>(0);
+  const [activeControlStepState, setActiveControlStep] = useState<number>(0);
 
   const maxZoom = maxZoomFactor(texture);
 
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItemsState, setSelectedItems] = useState<string[]>([]);
+  // Verify that UI state matches file state
+  const selectedItems = selectedItemsState.filter(
+    (id) => file.layerHierarchy[id] !== undefined
+  );
+
   const [focusedLayer, setFocusedLayer] = useState<string | undefined>();
-  const [activeMutator, setActiveMutator] = useState<string | null>(null);
-  const [selectedControls, setSelectedControls] = useState<string[]>([]);
+  const [activeMutatorState, setActiveMutator] = useState<string | null>(null);
+  // Verify that UI state matches file state
+  const activeMutator =
+    activeMutatorState && file.mutations[activeMutatorState]
+      ? activeMutatorState
+      : null;
+
+  const [selectedControlsState, setSelectedControls] = useState<string[]>([]);
+  const selectedControls = selectedControlsState.filter(
+    (id) => file.controls[id] !== undefined
+  );
   const updateMutationValues = useUpdateMutationValues();
   const dragDropStatus = useRef<{
     fileDragStart: GeppettoImage;
@@ -208,7 +188,6 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
-  useScaleUpdater(containerRef, texture);
 
   const mutatorMap = useMutatorMap(file, vectorValues);
   const translation = useScreenTranslation();
@@ -340,6 +319,7 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       return event.shiftKey ? MouseMode.Grab : MouseMode.Normal;
     }
   );
+
   const handleDrag = useEvent(
     (
       event: React.MouseEvent<HTMLElement>,
@@ -361,11 +341,15 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
         ];
         const origin = dragDropStatus.current.fileDragStart;
 
-        setFile(dragItem(origin, dragged, itemId));
+        setFileGrouped("dragOrigin", dragItem(origin, dragged, itemId));
+        if (dragState === "end") {
+          endGrouping();
+        }
       }
       return true;
     }
   );
+
   const [menuProps, toggleMenu] = useMenuState();
   const [anchorPoint, setAnchorPoint] = useState({
     x: 0,
@@ -420,9 +404,6 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       const settings: MutationSettings<typeof mutationType> = {
         origin,
       };
-      if (mutationType === "deform" || mutationType === "translate") {
-        (settings as MutationSettings<"deform">).radius = -1;
-      }
 
       const addDetails = {} as AddMutationDetails<typeof mutationType>;
       const updatedImage = addMutation(
@@ -443,9 +424,17 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
       setSelectedItems([addDetails.id]);
     }
   );
+
   const editingControl = controlEditMode ? selectedControls[0] : undefined;
   const activeControlId =
     selectedControls.length === 1 ? selectedControls[0] : undefined;
+
+  const activeControlStep = activeControlId
+    ? Math.min(
+        file.controls[activeControlId].steps.length - 1,
+        activeControlStepState
+      )
+    : 0;
 
   return (
     <Column>
@@ -477,12 +466,14 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
         >
           <Column>
             <Panel padding="sm">
-              <ShapeTree
-                editControlId={editingControl}
-                focusedItemState={[focusedLayer, setFocusedLayer]}
-                onSectionChange={onSectionChange}
-                selectedItemsState={[selectedItems, updateSelectedItems]}
-              />
+              <ErrorBoundary fallback={<div>Error loading shapes</div>}>
+                <ShapeTree
+                  editControlId={editingControl}
+                  focusedItemState={[focusedLayer, setFocusedLayer]}
+                  onSectionChange={onSectionChange}
+                  selectedItemsState={[selectedItems, updateSelectedItems]}
+                />
+              </ErrorBoundary>
             </Panel>
             {!controlEditMode && (
               <ResizePanel
@@ -491,29 +482,33 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 minSize={300}
               >
                 <Panel padding="sm">
-                  <ControlTree
-                    onSelectControls={(controlIds: string[]) => {
-                      setSelectedControls(controlIds);
-                    }}
-                    selectedControls={selectedControls}
-                  />
-                  {activeControlId && !controlEditMode && (
-                    <ControlEdit
-                      controlId={activeControlId}
-                      onEditControlSteps={() => setControlEditMode(true)}
+                  <ErrorBoundary fallback={<div>Error loading controls</div>}>
+                    <ControlTree
+                      onSelectControls={(controlIds: string[]) => {
+                        setSelectedControls(controlIds);
+                      }}
+                      selectedControls={selectedControls}
                     />
-                  )}
+                    {activeControlId && !controlEditMode && (
+                      <ControlEdit
+                        controlId={activeControlId}
+                        onEditControlSteps={() => setControlEditMode(true)}
+                      />
+                    )}
+                  </ErrorBoundary>
                 </Panel>
               </ResizePanel>
             )}
             {controlEditMode && (
               <Panel fitContent padding="sm">
-                <ControlEditSteps
-                  activeControlStep={activeControlStep}
-                  onControlEditDone={() => setControlEditMode(false)}
-                  onControlStepSelect={setActiveControlStep}
-                  selectedControlIds={selectedControls}
-                />
+                <ErrorBoundary fallback={<div>Error loading control edit</div>}>
+                  <ControlEditSteps
+                    activeControlStep={activeControlStep}
+                    onControlEditDone={() => setControlEditMode(false)}
+                    onControlStepSelect={setActiveControlStep}
+                    selectedControlIds={selectedControls}
+                  />
+                </ErrorBoundary>
               </Panel>
             )}
           </Column>
@@ -562,15 +557,21 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
 
                 {!showItemDetails && activeMutator && (
                   <Inlay>
-                    <InlayControlPanel
-                      activeMutator={activeMutator}
-                      editingControlId={editingControl}
-                      editingControlStep={activeControlStep}
-                      key={editingControl ? activeControlStep : activeMutator}
-                      onSelectControl={(controlId) => {
-                        setSelectedControls([controlId]);
-                      }}
-                    />
+                    <ErrorBoundary
+                      fallback={
+                        <ControlPanel>Error loading control panel</ControlPanel>
+                      }
+                    >
+                      <InlayControlPanel
+                        activeMutator={activeMutator}
+                        editingControlId={editingControl}
+                        editingControlStep={activeControlStep}
+                        key={editingControl ? activeControlStep : activeMutator}
+                        onSelectControl={(controlId) => {
+                          setSelectedControls([controlId]);
+                        }}
+                      />
+                    </ErrorBoundary>
                   </Inlay>
                 )}
               </CompositionCanvas>
@@ -591,16 +592,24 @@ export const CompositionModule: React.FC<CompositionModuleProps> = ({
                 <ControlPanel>
                   <Control label="Width">
                     <NumberInput
+                      onBlur={() => endGrouping()}
                       onChange={(newWidth) => {
-                        setFile(updateImageWidth(newWidth));
+                        setFileGrouped(
+                          "imageWidth",
+                          updateImageWidth(newWidth)
+                        );
                       }}
                       value={file.metadata.width}
                     />
                   </Control>
                   <Control label="Height">
                     <NumberInput
+                      onBlur={() => endGrouping()}
                       onChange={(newHeight) => {
-                        setFile(updateImageHeight(newHeight));
+                        setFileGrouped(
+                          "imageHeight",
+                          updateImageHeight(newHeight)
+                        );
                       }}
                       value={file.metadata.height}
                     />

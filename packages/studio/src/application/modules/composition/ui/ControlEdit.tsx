@@ -1,22 +1,21 @@
-import { produce } from "immer";
 import {
   type ChangeEvent,
   type KeyboardEvent,
   type MouseEvent,
-  useEffect,
   useState,
   useTransition,
 } from "react";
 
-import { useFile } from "@/application/state/FileContext";
+import { useFile, useFileUndoRedo } from "@/application/state/FileContext";
 import useEvent from "@/application/state/hooks/useEvent";
 import {
-  useControlValues,
+  useDirectControlValues,
   useUpdateControlValues,
 } from "@/application/state/ImageControlContext";
 import {
   insertControlStep,
   removeControlStep,
+  setControlValue,
 } from "@/domain/animation/file2/controls";
 import {
   Column,
@@ -55,46 +54,37 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
   controlId,
   onEditControlSteps,
 }) => {
-  const [file, setFile] = useFile();
+  const {
+    state: file,
+    setGrouped: setFileGrouped,
+    endGrouping,
+  } = useFileUndoRedo();
   const hierarchyItem =
     controlId !== null ? file.controlHierarchy[controlId] : null;
   const [, startTransition] = useTransition();
 
   const isNoControl = controlId === null || hierarchyItem?.type !== "control";
-  const controlValues = useControlValues();
-  const updateControlValues = useUpdateControlValues();
+  const [controlValues, setControlValues] = useDirectControlValues();
 
-  const controlValue = isNoControl ? 0 : controlValues.current[controlId];
-  const [slideValue, setSlideValue] = useState(controlValue);
-  useEffect(() => {
-    if (controlId) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSlideValue(controlValue);
-    }
-  }, [controlId, controlValue]);
+  const controlValue = isNoControl ? 0 : (controlValues[controlId] ?? 0);
 
   const onChange = useEvent((e: ChangeEvent<HTMLInputElement>) => {
     if (controlId === null) return;
     const value = e.currentTarget.valueAsNumber;
 
-    setSlideValue(value);
-    updateControlValues((current) => ({
+    setControlValues((current) => ({
       ...current,
       [controlId]: value,
     }));
     startTransition(() => {
-      setFile(
-        produce((draft) => {
-          draft.controlValues[controlId] = value;
-        })
-      );
+      setFileGrouped("controlUpdate", setControlValue(controlId, value));
     });
   });
 
   const handleEditControlSteps = useEvent(() => {
     if (controlId === null) return;
 
-    updateControlValues((current) => ({
+    setControlValues((current) => ({
       ...current,
       [controlId]: 0,
     }));
@@ -116,11 +106,14 @@ export const ControlEdit: React.FC<ControlEditProps> = ({
             <RangeInput
               max={control.steps.length - 1}
               min={0}
+              onBlur={() => {
+                endGrouping();
+              }}
               onChange={onChange}
               step={0.01}
-              value={slideValue}
+              value={controlValue}
             />
-            <RangeValue value={slideValue} />
+            <RangeValue value={controlValue} />
           </Column>
         </Control>
         {onEditControlSteps && (

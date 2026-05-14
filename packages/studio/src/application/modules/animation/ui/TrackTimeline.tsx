@@ -4,7 +4,7 @@ import { type FC, type MouseEvent, useCallback, useState } from "react";
 import { AnimationContextMenu } from "@/application/modules/animation/ui/AnimationContextMenu";
 import useEvent from "@/application/state/hooks/useEvent";
 import { TimeLineEndHandle, useMenuState } from "@/ui/components";
-import type { TimeStamp } from "@/ui/components/atoms/TimePin/TimePin";
+import type { TimeStamp } from "@/ui/components/support/timeDrag";
 import { BASE_FONT_SIZE_PIXELS } from "@/ui/foundations/fontSize";
 
 type TrackTimelineProps = {

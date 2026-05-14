@@ -2,45 +2,35 @@ import { useCallback, useState } from "react";
 
 import { PlayerControlsProvider } from "@/application/modules/animation/state/PlayerControlsProvider";
 import { AnimationCanvas } from "@/application/modules/animation/ui/AnimationCanvas";
-import { AnimationSpeedOptions } from "@/application/modules/animation/ui/AnimationSpeedOptions";
 import type {
   AnimationControlFrame,
   AnimationFrame,
 } from "@/application/modules/animation/ui/AnimationTimeline";
 import { AnimationTimelines } from "@/application/modules/animation/ui/AnimationTimelines";
 import { ControlFrameEdit } from "@/application/modules/animation/ui/ControlFrameEdit";
+import { AnimationPane } from "@/application/modules/animation/ui/infoPanes/AnimationPane";
+import { ControlFramePane } from "@/application/modules/animation/ui/infoPanes/ConrolFramePane";
+import { ControlTrackPane } from "@/application/modules/animation/ui/infoPanes/ControlTrackPane";
+import { EventPanel } from "@/application/modules/animation/ui/infoPanes/EventPanel";
 import { StartupScreen } from "@/application/modules/application-menu/ui/Startup";
-import { ToggleControl } from "@/application/modules/composition/ui/controls";
 import { useFitToScreenAction } from "@/application/shared/actions/useFitToScreen";
 import { useInfoPanel } from "@/application/shared/actions/useInfoPanel";
-import { formatSpeed } from "@/application/shared/speedFormatter";
-import { formatTime } from "@/application/shared/timeFormatter";
 import { useFile } from "@/application/state/FileContext";
 import { useGlobalActionMap } from "@/application/state/hooks/useGlobalActionMap";
 import { ActionToolButton } from "@/application/ui/ActionToolButton";
 import { SectionSelector } from "@/application/ui/SectionSelector";
-import {
-  getAnimationControlFrame,
-  getAnimationDuration,
-  updateAutoplayAnimation,
-  updateLoopingAnimation,
-} from "@/domain/animation/file2/animations";
+import { getAnimationControlFrame } from "@/domain/animation/file2/animations";
 import { hasControls } from "@/domain/animation/file2/controls";
 import type { AppSection } from "@/dtos/application.dto";
 import {
   Column,
-  Control,
-  ControlPanel,
   Inlay,
-  Label,
-  Menu,
   Panel,
   PanelTitle,
   ResizeDirection,
   ResizePanel,
   Row,
   ToolBar,
-  ToolButton,
   ToolSeparator,
   ToolSpacer,
 } from "@/ui/components";
@@ -64,10 +54,17 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
   texture,
   onSectionChange,
 }) => {
-  const [file, setFile] = useFile();
+  const [file] = useFile();
   const [activeFrame, setActiveFrame] = useState<AnimationFrame | null>(null);
-  const [activeAnimation, setActiveAnimation] = useState<string | null>(null);
+  const [activeEvent, setActiveEvent] = useState<string | null>(null);
+  const [activeAnimationState, setActiveAnimationId] = useState<string | null>(
+    null
+  );
   const [animationsPlaying, setAnimationsPlaying] = useState<string[]>([]);
+  const activeAnimationId =
+    activeAnimationState && file.animations[activeAnimationState]
+      ? activeAnimationState
+      : null;
 
   const stopAnimationState = useCallback((animationId: string) => {
     setAnimationsPlaying((prev) =>
@@ -98,10 +95,6 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
         )
       : null;
 
-  const currentSelectedAnimation = activeAnimation
-    ? file.animations[activeAnimation]
-    : null;
-
   return (
     <Column>
       <ToolBar>
@@ -124,7 +117,7 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           <Panel center workspace>
             {texture && hasControls(file) && (
               <AnimationCanvas
-                activeAnimation={activeAnimation}
+                activeAnimation={activeAnimationId}
                 animationsPlaying={animationsPlaying}
                 file={file}
                 image={texture}
@@ -160,101 +153,26 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
             >
               <Panel padding="sm" scrollable>
                 {activeFrame && isControlFrame(activeFrame) && frame && (
-                  <>
-                    <PanelTitle>
-                      {file.controls[activeFrame.track.controlId].name} Frame
-                    </PanelTitle>
-                    <ControlFrameEdit
-                      actionIndex={activeFrame.actionIndex}
-                      animationId={activeFrame.animationId}
-                      control={file.controls[activeFrame.track.controlId]}
-                      key={`${activeFrame.animationId}-${activeFrame.track.controlId}-${activeFrame.actionIndex}`}
-                      track={activeFrame.track}
-                    />
-                  </>
+                  <ControlFramePane activeFrame={activeFrame} />
+                )}
+                {activeEvent && activeAnimationId && (
+                  <EventPanel
+                    activeAnimationId={activeAnimationId}
+                    eventId={activeEvent}
+                  />
                 )}
 
                 {activeFrame &&
                   activeFrame.track &&
-                  isControlTrack(activeFrame.track) && (
-                    <>
-                      <PanelTitle>Track Details</PanelTitle>
-                      <ControlPanel>
-                        <Control label="Name">
-                          <Label>
-                            {file.controls[activeFrame.track.controlId].name}
-                          </Label>
-                        </Control>
-                        <Control label="Duration">
-                          <Label>
-                            {formatTime(
-                              activeFrame.track.length /
-                                (currentSelectedAnimation?.speedModifier ?? 1)
-                            )}
-                          </Label>
-                        </Control>
-                      </ControlPanel>
-                    </>
+                  isControlFrame(activeFrame) && (
+                    <ControlTrackPane activeFrame={activeFrame} />
                   )}
 
-                {currentSelectedAnimation && activeAnimation && (
-                  <>
-                    <PanelTitle>Animation Details</PanelTitle>
-                    <ControlPanel>
-                      <Control label="Name">
-                        <Label>{currentSelectedAnimation.name}</Label>
-                      </Control>
-                      <Control label="Duration">
-                        <Label>
-                          {formatTime(
-                            getAnimationDuration(currentSelectedAnimation)
-                          )}
-                        </Label>
-                      </Control>
-                      <ToggleControl
-                        label="Looping"
-                        onChange={(value) =>
-                          setFile(
-                            updateLoopingAnimation(activeAnimation, value)
-                          )
-                        }
-                        value={currentSelectedAnimation.looping}
-                      />
-                      <ToggleControl
-                        label="Autoplay"
-                        onChange={(value) =>
-                          setFile(
-                            updateAutoplayAnimation(activeAnimation, value)
-                          )
-                        }
-                        value={currentSelectedAnimation.autoplay ?? false}
-                      />
-                      <Control label="Speed Modifier">
-                        <Menu
-                          align="center"
-                          arrow
-                          direction="bottom"
-                          menuButton={({ open }) => (
-                            <ToolButton
-                              active={open}
-                              label={formatSpeed(
-                                currentSelectedAnimation.speedModifier ?? 1
-                              )}
-                            />
-                          )}
-                          portal
-                          transition
-                        >
-                          <AnimationSpeedOptions
-                            animationId={activeAnimation}
-                          />
-                        </Menu>
-                      </Control>
-                    </ControlPanel>
-                  </>
+                {activeAnimationId && (
+                  <AnimationPane activeAnimationId={activeAnimationId} />
                 )}
 
-                {!activeAnimation && (
+                {!activeAnimationId && (
                   <PanelTitle>No animation selected</PanelTitle>
                 )}
               </Panel>
@@ -269,10 +187,15 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
           >
             <AnimationTimelines
               animationsPlaying={animationsPlaying}
+              onEventSelect={(eventId) => {
+                setActiveEvent(eventId);
+                setActiveFrame(null);
+              }}
               onFrameSelect={(frame) => {
                 setActiveFrame(frame);
+                setActiveEvent(null);
               }}
-              onSelectAnimation={setActiveAnimation}
+              onSelectAnimation={setActiveAnimationId}
               onStartAnimations={(ids) =>
                 setAnimationsPlaying((prev) => [...prev, ...ids])
               }
@@ -281,7 +204,8 @@ export const AnimationModule: React.FC<AnimationModuleProps> = ({
                   prev.filter((animId) => !ids.includes(animId))
                 )
               }
-              selectedAnimation={activeAnimation}
+              selectedAnimation={activeAnimationId}
+              selectedEvent={activeEvent}
               selectedFrame={activeFrame}
             />
           </ResizePanel>

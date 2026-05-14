@@ -96,6 +96,11 @@ export const removeMutationFromControl = (
     }
   });
 
+export const setControlValue = (controlId: string, value: number) =>
+  produce<GeppettoImage>((draft) => {
+    draft.controlValues[controlId] = value;
+  });
+
 export const isMutationUnderControl = (
   file: GeppettoImage,
   controlId: string,
